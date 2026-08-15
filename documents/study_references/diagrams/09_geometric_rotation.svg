@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 360" font-family="'Helvetica Neue',Arial,'Malgun Gothic','Apple SD Gothic Neo',sans-serif">
+  <defs>
+    <marker id="axh" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#555"/>
+    </marker>
+    <marker id="vpsi" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#5b8def"/>
+    </marker>
+    <marker id="vg" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#e8663d"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="560" height="360" rx="10" fill="#ffffff"/>
+  <rect x="0.5" y="0.5" width="559" height="359" rx="10" fill="none" stroke="#e3e3e3"/>
+
+  <!-- quarter circle -->
+  <path d="M 270,230 C 270,119.5 180.5,30 70,30" fill="none" stroke="#dcdcdc" stroke-width="1.4"/>
+
+  <!-- axes: origin O=(70,230) -->
+  <line x1="70" y1="230" x2="340" y2="230" stroke="#555" stroke-width="1.6" marker-end="url(#axh)"/>
+  <line x1="70" y1="230" x2="70" y2="24"  stroke="#555" stroke-width="1.6" marker-end="url(#axh)"/>
+  <text x="348" y="234" font-size="13" fill="#555">|s′⟩  (오답 방향)</text>
+  <text x="60"  y="18"  font-size="13" fill="#555" text-anchor="start">|ω⟩ (정답 방향)</text>
+
+  <!-- U_f|psi> : reflection below axis (dashed) -->
+  <line x1="70" y1="230" x2="257.9" y2="298.4" stroke="#999" stroke-width="1.6" stroke-dasharray="5 3" marker-end="url(#axh)"/>
+  <text x="264" y="306" font-size="12" fill="#888">U_f|ψ⟩ (오라클: |s′⟩축 반사)</text>
+
+  <!-- |psi> vector -->
+  <line x1="70" y1="230" x2="257.9" y2="161.6" stroke="#5b8def" stroke-width="2.4" marker-end="url(#vpsi)"/>
+  <text x="264" y="158" font-size="13" font-weight="bold" fill="#3a6fd0">|ψ⟩  (초기 균등중첩)</text>
+
+  <!-- G|psi> vector -->
+  <line x1="70" y1="230" x2="170" y2="56.8" stroke="#e8663d" stroke-width="2.4" marker-end="url(#vg)"/>
+  <text x="150" y="48" font-size="13" font-weight="bold" fill="#c14a22" text-anchor="middle">G|ψ⟩ (한 번 반복 후)</text>
+
+  <!-- angle labels -->
+  <path d="M 120,230 A 50,50 0 0 0 116.9,213.9" fill="none" stroke="#3a6fd0" stroke-width="1.3"/>
+  <text x="128" y="221" font-size="13" fill="#3a6fd0">θ</text>
+  <path d="M 138,182 A 72,72 0 0 0 108.1,133.5" fill="none" stroke="#c14a22" stroke-width="1.3"/>
+  <text x="120" y="150" font-size="13" fill="#c14a22">2θ</text>
+
+  <text x="280" y="345" text-anchor="middle" font-size="12" fill="#666">한 번의 Grover 반복 = 두 반사의 합성 = |ω⟩ 축으로 <tspan font-weight="bold">2θ 회전</tspan>. sin θ = √(M/N).</text>
+</svg>

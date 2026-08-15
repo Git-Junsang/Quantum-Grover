@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 352" font-family="'Helvetica Neue',Arial,'Malgun Gothic','Apple SD Gothic Neo',sans-serif">
+  <defs>
+    <marker id="ct-ah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#444"/>
+    </marker>
+  </defs>
+
+  <!-- card background (readable in light & dark viewers) -->
+  <rect x="0" y="0" width="800" height="352" rx="10" fill="#ffffff"/>
+  <rect x="0.5" y="0.5" width="799" height="351" rx="10" fill="none" stroke="#e3e3e3"/>
+
+  <text x="400" y="30" text-anchor="middle" font-size="15" font-weight="bold" fill="#222">매번 초기화 vs 재개 실행 — 같은 샷 수열 j = 1, 2, 5, 4, 9, 14</text>
+  <text x="400" y="49" text-anchor="middle" font-size="11.5" fill="#666">가로축은 시간(패스 수). 1패스 = N/P 사이클, 반복 1회 = 2패스</text>
+
+  <!-- ============ shot labels (above naive row) ============ -->
+  <text x="145" y="72" text-anchor="middle" font-size="10.5" fill="#666">j=1</text>
+  <text x="187" y="72" text-anchor="middle" font-size="10.5" fill="#666">j=2</text>
+  <text x="253" y="72" text-anchor="middle" font-size="10.5" fill="#666">j=5</text>
+  <text x="325" y="72" text-anchor="middle" font-size="10.5" fill="#666">j=4</text>
+  <text x="421" y="72" text-anchor="middle" font-size="10.5" fill="#666">j=9</text>
+  <text x="577" y="72" text-anchor="middle" font-size="10.5" fill="#666">j=14 · 성공</text>
+
+  <!-- ============ Row 1: naive ============ -->
+  <text x="120" y="97" text-anchor="end" font-size="12.5" font-weight="bold" fill="#222">매번 초기화</text>
+  <text x="120" y="112" text-anchor="end" font-size="11" fill="#b3562c">88 패스</text>
+
+  <!-- shot 1 -->
+  <rect x="130" y="80" width="6"   height="26" fill="#e8663d"/>
+  <rect x="136" y="80" width="12"  height="26" fill="#5b8def"/>
+  <rect x="148" y="80" width="12"  height="26" fill="#b9d0f5"/>
+  <!-- shot 2 -->
+  <rect x="160" y="80" width="6"   height="26" fill="#e8663d"/>
+  <rect x="166" y="80" width="36"  height="26" fill="#5b8def"/>
+  <rect x="202" y="80" width="12"  height="26" fill="#b9d0f5"/>
+  <!-- shot 3 -->
+  <rect x="214" y="80" width="6"   height="26" fill="#e8663d"/>
+  <rect x="220" y="80" width="60"  height="26" fill="#5b8def"/>
+  <rect x="280" y="80" width="12"  height="26" fill="#b9d0f5"/>
+  <!-- shot 4 -->
+  <rect x="292" y="80" width="6"   height="26" fill="#e8663d"/>
+  <rect x="298" y="80" width="48"  height="26" fill="#5b8def"/>
+  <rect x="346" y="80" width="12"  height="26" fill="#b9d0f5"/>
+  <!-- shot 5 -->
+  <rect x="358" y="80" width="6"   height="26" fill="#e8663d"/>
+  <rect x="364" y="80" width="108" height="26" fill="#5b8def"/>
+  <rect x="472" y="80" width="12"  height="26" fill="#b9d0f5"/>
+  <!-- shot 6 -->
+  <rect x="484" y="80" width="6"   height="26" fill="#e8663d"/>
+  <rect x="490" y="80" width="168" height="26" fill="#5b8def"/>
+  <rect x="658" y="80" width="12"  height="26" fill="#b9d0f5"/>
+  <!-- shot separators -->
+  <g stroke="#ffffff" stroke-width="1.2">
+    <line x1="160" y1="80" x2="160" y2="106"/>
+    <line x1="214" y1="80" x2="214" y2="106"/>
+    <line x1="292" y1="80" x2="292" y2="106"/>
+    <line x1="358" y1="80" x2="358" y2="106"/>
+    <line x1="484" y1="80" x2="484" y2="106"/>
+  </g>
+
+  <!-- ============ Row 2: cached ============ -->
+  <text x="120" y="162" text-anchor="end" font-size="12.5" font-weight="bold" fill="#222">재개 실행</text>
+  <text x="120" y="177" text-anchor="end" font-size="11" fill="#2f7d4f">52 패스</text>
+
+  <!-- shot 1 : cache invalid -> INIT + 1 -->
+  <rect x="130" y="145" width="6"  height="26" fill="#e8663d"/>
+  <rect x="136" y="145" width="12" height="26" fill="#5b8def"/>
+  <rect x="148" y="145" width="12" height="26" fill="#b9d0f5"/>
+  <!-- shot 2 : j=2 >= 1 -> +1 iteration -->
+  <rect x="160" y="145" width="12" height="26" fill="#5b8def"/>
+  <rect x="172" y="145" width="12" height="26" fill="#b9d0f5"/>
+  <!-- shot 3 : j=5 >= 2 -> +3 iterations -->
+  <rect x="184" y="145" width="36" height="26" fill="#5b8def"/>
+  <rect x="220" y="145" width="12" height="26" fill="#b9d0f5"/>
+  <!-- shot 4 : j=4 < 5 -> restart from INIT -->
+  <rect x="232" y="145" width="6"  height="26" fill="#e8663d"/>
+  <rect x="238" y="145" width="48" height="26" fill="#5b8def"/>
+  <rect x="286" y="145" width="12" height="26" fill="#b9d0f5"/>
+  <!-- shot 5 : j=9 >= 4 -> +5 iterations -->
+  <rect x="298" y="145" width="60" height="26" fill="#5b8def"/>
+  <rect x="358" y="145" width="12" height="26" fill="#b9d0f5"/>
+  <!-- shot 6 : j=14 >= 9 -> +5 iterations -->
+  <rect x="370" y="145" width="60" height="26" fill="#5b8def"/>
+  <rect x="430" y="145" width="12" height="26" fill="#b9d0f5"/>
+  <!-- shot separators -->
+  <g stroke="#ffffff" stroke-width="1.2">
+    <line x1="160" y1="145" x2="160" y2="171"/>
+    <line x1="184" y1="145" x2="184" y2="171"/>
+    <line x1="232" y1="145" x2="232" y2="171"/>
+    <line x1="298" y1="145" x2="298" y2="171"/>
+    <line x1="370" y1="145" x2="370" y2="171"/>
+  </g>
+
+  <!-- j_cur trace under cached row -->
+  <text x="120" y="196" text-anchor="end" font-size="10.5" fill="#888">j_cur</text>
+  <text x="145" y="196" text-anchor="middle" font-size="10.5" fill="#888">1</text>
+  <text x="172" y="196" text-anchor="middle" font-size="10.5" fill="#888">2</text>
+  <text x="208" y="196" text-anchor="middle" font-size="10.5" fill="#888">5</text>
+  <text x="265" y="196" text-anchor="middle" font-size="10.5" fill="#888">4</text>
+  <text x="334" y="196" text-anchor="middle" font-size="10.5" fill="#888">9</text>
+  <text x="406" y="196" text-anchor="middle" font-size="10.5" fill="#888">14</text>
+
+  <!-- saving bracket -->
+  <line x1="442" y1="106" x2="442" y2="215" stroke="#2f7d4f" stroke-width="1" stroke-dasharray="3,3"/>
+  <line x1="670" y1="106" x2="670" y2="215" stroke="#b3562c" stroke-width="1" stroke-dasharray="3,3"/>
+  <path d="M442,222 L670,222" stroke="#2f7d4f" stroke-width="1.4" marker-start="url(#ct-ah)" marker-end="url(#ct-ah)"/>
+  <text x="556" y="240" text-anchor="middle" font-size="12" font-weight="bold" fill="#2f7d4f">36 패스 절약</text>
+
+  <!-- callout: shot 4 restarts -->
+  <path d="M258,143 L258,128 L300,128" fill="none" stroke="#b3562c" stroke-width="1.1" marker-end="url(#ct-ah)"/>
+  <text x="306" y="132" font-size="10.5" fill="#b3562c">넷째 샷은 j=4 &lt; j_cur=5 라 되감지 않고 초기화부터 다시 시작한다</text>
+
+  <!-- ============ legend ============ -->
+  <g transform="translate(130,262)">
+    <rect x="0"   y="0" width="14" height="14" fill="#e8663d"/>
+    <text x="20"  y="11.5" font-size="11.5" fill="#333">INIT — 진폭 전 칸에 1/√N 기입 (1패스)</text>
+    <rect x="250" y="0" width="14" height="14" fill="#5b8def"/>
+    <text x="270" y="11.5" font-size="11.5" fill="#333">Grover 반복 (1회 = 2패스)</text>
+    <rect x="470" y="0" width="14" height="14" fill="#b9d0f5"/>
+    <text x="490" y="11.5" font-size="11.5" fill="#333">Born 2단 측정 + 고전 검증 (2패스)</text>
+  </g>
+
+  <text x="130" y="301" font-size="11.5" fill="#555">측정이 진폭 배열을 <tspan font-weight="bold">읽기만</tspan> 하므로 실패한 샷 뒤에도 상태가 남는다.</text>
+  <text x="130" y="318" font-size="11.5" fill="#555">다음 샷은 차이 <tspan font-style="italic">j_target − j_cur</tspan> 만큼만 이어 돌리면 된다 — 추가 메모리 0개.</text>
+  <text x="130" y="339" font-size="11" fill="#888">이 그림은 여섯 샷짜리 축소 예시다. n=15 · M=1 의 실제 평균은 24.5샷, 절감은 약 35%(몬테카를로 20,000회).</text>
+</svg>

@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 260" font-family="'Helvetica Neue',Arial,'Malgun Gothic','Apple SD Gothic Neo',sans-serif">
+  <defs>
+    <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#444"/>
+    </marker>
+  </defs>
+  <!-- card background (readable in light & dark viewers) -->
+  <rect x="0" y="0" width="740" height="260" rx="10" fill="#ffffff"/>
+  <rect x="0.5" y="0.5" width="739" height="259" rx="10" fill="none" stroke="#e3e3e3"/>
+
+  <!-- ============ Panel 1: uniform ============ -->
+  <g transform="translate(15,0)">
+    <text x="100" y="22" text-anchor="middle" font-size="14" font-weight="bold" fill="#222">① 균등중첩</text>
+    <line x1="8" y1="150" x2="196" y2="150" stroke="#333" stroke-width="1.4"/>
+    <rect x="15"  y="110" width="16" height="40" fill="#5b8def"/>
+    <rect x="37"  y="110" width="16" height="40" fill="#5b8def"/>
+    <rect x="59"  y="110" width="16" height="40" fill="#e8663d"/>
+    <rect x="81"  y="110" width="16" height="40" fill="#5b8def"/>
+    <rect x="103" y="110" width="16" height="40" fill="#5b8def"/>
+    <rect x="125" y="110" width="16" height="40" fill="#5b8def"/>
+    <rect x="147" y="110" width="16" height="40" fill="#5b8def"/>
+    <rect x="169" y="110" width="16" height="40" fill="#5b8def"/>
+    <text x="67" y="172" text-anchor="middle" font-size="10" fill="#e8663d">정답 ω</text>
+    <text x="100" y="244" text-anchor="middle" font-size="11" fill="#666">모든 진폭 = 1/√N</text>
+  </g>
+
+  <!-- arrow 1 -->
+  <line x1="216" y1="150" x2="250" y2="150" stroke="#444" stroke-width="1.4" marker-end="url(#ah)"/>
+  <text x="233" y="140" text-anchor="middle" font-size="12" font-style="italic" fill="#444">U_f</text>
+
+  <!-- ============ Panel 2: oracle ============ -->
+  <g transform="translate(255,0)">
+    <text x="100" y="22" text-anchor="middle" font-size="14" font-weight="bold" fill="#222">② 오라클</text>
+    <line x1="8" y1="150" x2="196" y2="150" stroke="#333" stroke-width="1.4"/>
+    <rect x="15"  y="110" width="16" height="40" fill="#5b8def"/>
+    <rect x="37"  y="110" width="16" height="40" fill="#5b8def"/>
+    <rect x="59"  y="150" width="16" height="40" fill="#e8663d"/>
+    <rect x="81"  y="110" width="16" height="40" fill="#5b8def"/>
+    <rect x="103" y="110" width="16" height="40" fill="#5b8def"/>
+    <rect x="125" y="110" width="16" height="40" fill="#5b8def"/>
+    <rect x="147" y="110" width="16" height="40" fill="#5b8def"/>
+    <rect x="169" y="110" width="16" height="40" fill="#5b8def"/>
+    <line x1="8" y1="120" x2="196" y2="120" stroke="#e0a020" stroke-width="1.2" stroke-dasharray="5 3"/>
+    <text x="185" y="116" text-anchor="end" font-size="10" fill="#c98800">평균 ā</text>
+    <text x="67" y="204" text-anchor="middle" font-size="10" fill="#e8663d">정답만 음수로</text>
+    <text x="100" y="244" text-anchor="middle" font-size="11" fill="#666">정답 부호 반전 → 평균이 내려감</text>
+  </g>
+
+  <!-- arrow 2 -->
+  <line x1="456" y1="150" x2="490" y2="150" stroke="#444" stroke-width="1.4" marker-end="url(#ah)"/>
+  <text x="473" y="140" text-anchor="middle" font-size="12" font-style="italic" fill="#444">U_ψ</text>
+
+  <!-- ============ Panel 3: diffusion ============ -->
+  <g transform="translate(495,0)">
+    <text x="100" y="22" text-anchor="middle" font-size="14" font-weight="bold" fill="#222">③ 확산 (평균 중심 반사)</text>
+    <line x1="8" y1="150" x2="196" y2="150" stroke="#333" stroke-width="1.4"/>
+    <rect x="15"  y="130" width="16" height="20" fill="#5b8def"/>
+    <rect x="37"  y="130" width="16" height="20" fill="#5b8def"/>
+    <rect x="59"  y="50"  width="16" height="100" fill="#e8663d"/>
+    <rect x="81"  y="130" width="16" height="20" fill="#5b8def"/>
+    <rect x="103" y="130" width="16" height="20" fill="#5b8def"/>
+    <rect x="125" y="130" width="16" height="20" fill="#5b8def"/>
+    <rect x="147" y="130" width="16" height="20" fill="#5b8def"/>
+    <rect x="169" y="130" width="16" height="20" fill="#5b8def"/>
+    <text x="67" y="44" text-anchor="middle" font-size="10" fill="#e8663d">정답 진폭 ↑↑</text>
+    <text x="100" y="244" text-anchor="middle" font-size="11" fill="#666">정답 껑충, 나머지 낮아짐</text>
+  </g>
+</svg>

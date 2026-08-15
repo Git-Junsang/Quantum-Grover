@@ -1,0 +1,35 @@
+flowchart TD
+    IDX["인덱스 i · 15비트<br/>상위 10비트 = 뱅크 내 주소 0…1023<br/>하위 5비트 = 뱅크 번호 0…31"]
+
+    subgraph AMP["amp_mem · 진폭 · Q2.16 18비트 · 읽고 쓴다"]
+        direction LR
+        A0["뱅크 0<br/>1024 × 18b"]
+        A1["뱅크 1<br/>1024 × 18b"]
+        AX["…"]
+        A31["뱅크 31<br/>1024 × 18b"]
+    end
+
+    subgraph DAT["data_mem · 탐색 대상 값 · 16비트 signed · 읽기만"]
+        direction LR
+        D0["뱅크 0<br/>1024 × 16b"]
+        D1["뱅크 1<br/>1024 × 16b"]
+        DX["…"]
+        D31["뱅크 31<br/>1024 × 16b"]
+    end
+
+    subgraph MSK["mask_mem · found 비트 · 열거 모드 전용"]
+        direction LR
+        M0["1024 × 32b<br/>한 워드가 32뱅크의 같은 주소를 덮는다"]
+    end
+
+    IDX --> AMP
+    IDX --> DAT
+    IDX --> MSK
+
+    AMP --> AS["576 Kb · RAMB18 32개 = BRAM36 16개"]
+    DAT --> DS["512 Kb · RAMB18 32개 = BRAM36 16개"]
+    MSK --> MS["32 Kb · RAMB18 2개 = BRAM36 1개"]
+
+    AS --> TOT["IP 계 BRAM36 33개<br/>RVX SoC 약 15개 → 합계 약 48 / 75 · xc7s50"]
+    DS --> TOT
+    MS --> TOT

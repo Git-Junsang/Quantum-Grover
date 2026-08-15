@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 330" font-family="'Helvetica Neue',Arial,'Malgun Gothic','Apple SD Gothic Neo',sans-serif">
+  <defs>
+    <marker id="s_up" markerWidth="10" markerHeight="10" refX="4" refY="1" orient="auto">
+      <path d="M0,7 L4,0 L8,7 Z" fill="#777"/>
+    </marker>
+    <marker id="s_dn" markerWidth="10" markerHeight="10" refX="4" refY="7" orient="auto">
+      <path d="M0,1 L4,8 L8,1 Z" fill="#777"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="720" height="330" rx="10" fill="#ffffff"/>
+  <rect x="0.5" y="0.5" width="719" height="329" rx="10" fill="none" stroke="#e3e3e3"/>
+
+  <!-- left speed axis -->
+  <line x1="70" y1="272" x2="70" y2="52" stroke="#777" stroke-width="1.5" marker-end="url(#s_up)"/>
+  <text transform="rotate(-90 44 162)" x="44" y="162" font-size="12.5" fill="#777" text-anchor="middle">한 사이클 접근량 · 속도</text>
+  <text x="82" y="60" font-size="11.5" fill="#999">빠름</text>
+  <text x="82" y="270" font-size="11.5" fill="#999">느림</text>
+
+  <!-- tier 1: registers -->
+  <rect x="150" y="50" width="452" height="64" rx="7" fill="#eaf1ff" stroke="#b9c9e8"/>
+  <text x="170" y="79" font-size="14" font-weight="bold" fill="#2f4f86">레지스터 배열 (온칩 FF)</text>
+  <text x="170" y="99" font-size="12" fill="#5b6b86">모든 진폭을 한 사이클에 병렬로 읽고 쓴다</text>
+  <text x="584" y="76" font-size="13" font-weight="bold" fill="#2f4f86" text-anchor="end">≈ 6–9 큐비트</text>
+  <text x="584" y="97" font-size="11.5" fill="#8a5a3a" text-anchor="end">한계: LUT 폭발 · 04·06</text>
+
+  <!-- tier 2: BRAM -->
+  <rect x="150" y="128" width="452" height="64" rx="7" fill="#f1f1f1" stroke="#d2d2d2"/>
+  <text x="170" y="157" font-size="14" font-weight="bold" fill="#555">온칩 BRAM</text>
+  <text x="170" y="177" font-size="12" fill="#777">포트 수(보통 1–2개)만큼만 동시 접근</text>
+  <text x="584" y="154" font-size="13" font-weight="bold" fill="#555" text-anchor="end">중간 규모</text>
+  <text x="584" y="175" font-size="11.5" fill="#888" text-anchor="end">한계: 포트·대역폭</text>
+
+  <!-- tier 3: external DDR -->
+  <rect x="150" y="206" width="452" height="64" rx="7" fill="#fdeee7" stroke="#eecab5"/>
+  <text x="170" y="235" font-size="14" font-weight="bold" fill="#b3562c">외부 DDR 메모리 (온보드)</text>
+  <text x="170" y="255" font-size="12" fill="#966a52">진폭을 순서대로 스트리밍해서 읽고 쓴다</text>
+  <text x="584" y="232" font-size="13" font-weight="bold" fill="#b3562c" text-anchor="end">≈ 32 큐비트</text>
+  <text x="584" y="253" font-size="11.5" fill="#8a5a3a" text-anchor="end">한계: 대역폭 병목 · 07</text>
+
+  <!-- right capacity axis -->
+  <line x1="648" y1="52" x2="648" y2="272" stroke="#777" stroke-width="1.5" marker-end="url(#s_dn)"/>
+  <text transform="rotate(90 674 162)" x="674" y="162" font-size="12.5" fill="#777" text-anchor="middle">담을 수 있는 큐비트 · 용량</text>
+
+  <text x="360" y="308" text-anchor="middle" font-size="12" fill="#666">온칩에 가까울수록 빠르지만 작고, 밖으로 나갈수록 커지지만 느리다 — 저장 위치가 곧 큐비트 상한을 정한다.</text>
+</svg>

@@ -1,0 +1,9 @@
+flowchart TD
+    IN([바깥 FSM에서 진입 · 목표 반복 j<br/>INIT을 할지 말지는 16.5 캐시 판정이 정함]) --> INIT["INIT · N/P 사이클<br/>amp 전 칸 ← INIT_AMP<br/>n=15 · Q2.16 → 362"]
+    IN -.재개.-> P1
+    INIT --> P1["1패스 · ORACLE + 누산<br/>value − thr 의 MSB로 술어 판정<br/>맞으면 2의 보수 negate<br/>같은 사이클에 Σ amp 누산 (35비트)"]
+    P1 --> SH["(n−1)칸 산술 우시프트<br/>round-half-to-even<br/>→ 2 × 평균 확정"]
+    SH --> P2["2패스 · DIFFUSION<br/>amp[i] ← 2 × 평균 − amp[i]<br/>Q2.16 포화 검사"]
+    P2 --> CHK{"j회 다 돌았나?"}
+    CHK -->|아니오| P1
+    CHK -->|예| OUT([안쪽 반복 종료<br/>진폭 배열은 그대로 둔 채 측정으로 · 14장])

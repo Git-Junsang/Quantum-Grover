@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 320" font-family="'Helvetica Neue',Arial,'Malgun Gothic','Apple SD Gothic Neo',sans-serif">
+  <defs>
+    <marker id="e_ar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#888"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="620" height="320" rx="10" fill="#ffffff"/>
+  <rect x="0.5" y="0.5" width="619" height="319" rx="10" fill="none" stroke="#e3e3e3"/>
+
+  <!-- decade gridlines: y=55(10^0) .. y=255(10^-8), 25px/decade -->
+  <line x1="70" y1="55"  x2="560" y2="55"  stroke="#ededed"/>
+  <line x1="70" y1="105" x2="560" y2="105" stroke="#ededed"/>
+  <line x1="70" y1="155" x2="560" y2="155" stroke="#ededed"/>
+  <line x1="70" y1="205" x2="560" y2="205" stroke="#ededed"/>
+  <text x="64" y="59"  font-size="10.5" fill="#999" text-anchor="end">10⁰</text>
+  <text x="64" y="109" font-size="10.5" fill="#999" text-anchor="end">10⁻²</text>
+  <text x="64" y="159" font-size="10.5" fill="#999" text-anchor="end">10⁻⁴</text>
+  <text x="64" y="209" font-size="10.5" fill="#999" text-anchor="end">10⁻⁶</text>
+  <text x="64" y="259" font-size="10.5" fill="#999" text-anchor="end">10⁻⁸</text>
+
+  <!-- axes -->
+  <line x1="70" y1="255" x2="560" y2="255" stroke="#555" stroke-width="1.5"/>
+  <line x1="70" y1="255" x2="70"  y2="48"  stroke="#555" stroke-width="1.5"/>
+  <text transform="rotate(-90 30 152)" x="30" y="152" font-size="12" fill="#555" text-anchor="middle">측정 오차 ℓ₂ (로그)</text>
+
+  <!-- x ticks: f=14 at x=70 .. f=40 at x=560, 18.85px/unit -->
+  <text x="107.7" y="273" font-size="11" fill="#555" text-anchor="middle">16</text>
+  <text x="183.1" y="273" font-size="11" fill="#555" text-anchor="middle">20</text>
+  <text x="258.5" y="273" font-size="11" fill="#555" text-anchor="middle">24</text>
+  <text x="333.8" y="273" font-size="11" fill="#555" text-anchor="middle">28</text>
+  <text x="409.2" y="273" font-size="11" fill="#555" text-anchor="middle">32</text>
+  <text x="484.6" y="273" font-size="11" fill="#555" text-anchor="middle">36</text>
+  <text x="560"   y="273" font-size="11" fill="#555" text-anchor="middle">40</text>
+  <text x="315" y="293" font-size="12" fill="#555" text-anchor="middle">소수부 비트 f</text>
+
+  <!-- n=12 line (dashed, lower): (107.7,92.8) to (514,255) -->
+  <polyline points="107.7,92.8 514,255" fill="none" stroke="#8aa9db" stroke-width="1.8" stroke-dasharray="5 4"/>
+  <text x="470" y="243" font-size="11" fill="#6d8bc0" text-anchor="end">n = 12</text>
+
+  <!-- n=16 main line (solid): (107.7,62.7) to (560,243.4) -->
+  <polyline points="107.7,62.7 560,243.4" fill="none" stroke="#e8663d" stroke-width="2.4"/>
+  <text x="556" y="234" font-size="11.5" font-weight="bold" fill="#c14a22" text-anchor="end">n = 16</text>
+
+  <!-- danger dot: n=16, f=16 -->
+  <circle cx="107.7" cy="62.7" r="4.5" fill="#d1372a"/>
+  <text x="120" y="60" font-size="11.5" font-weight="bold" fill="#c14a22">ℓ₂ ≈ 0.494  (붕괴!)</text>
+  <text x="120" y="75" font-size="10.5" fill="#999">n=16, f=16 — "int16이면 충분"의 반례</text>
+
+  <!-- safe dot: n=16, f_min=32 -->
+  <circle cx="409.2" cy="183" r="4.5" fill="#2f9e5b"/>
+  <text x="402" y="176" font-size="11" fill="#227a45" text-anchor="end">f_min = 32 → ℓ₂ ≈ 10⁻⁵</text>
+
+  <!-- slope rule -->
+  <text x="300" y="120" font-size="11" fill="#b3562c">f 1비트 ↑  =  오차 ½</text>
+  <line x1="300" y1="126" x2="345" y2="145" stroke="#e8a58c" stroke-width="1.4" marker-end="url(#e_ar)"/>
+
+  <text x="315" y="311" text-anchor="middle" font-size="11.5" fill="#666">ℓ₂ = O(2ⁿ⁻ᶠ). f를 1비트 늘리면 오차 절반, n을 1큐비트 늘리면 선 전체가 위로(오차 2배).</text>
+</svg>

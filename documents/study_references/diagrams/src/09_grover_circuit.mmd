@@ -1,0 +1,12 @@
+graph LR
+    subgraph INIT["1. 초기화"]
+        Q["|0⟩^⊗n"] --> H1["H^⊗n"]
+    end
+    H1 --> PSI["균등중첩 |ψ⟩\n= (1/√N) Σ|x⟩"]
+    subgraph ITER["2. Grover 반복  (× R ≈ (π/4)√N)"]
+        direction LR
+        UF["오라클 U_f\n정답 부호 반전"] --> UD["확산 U_ψ\n= 2|ψ⟩⟨ψ| − I\n평균 중심 반사"]
+    end
+    PSI --> UF
+    UD -.->|"R번 반복"| UF
+    UD --> M["3. 측정\n높은 확률로 정답 ω"]

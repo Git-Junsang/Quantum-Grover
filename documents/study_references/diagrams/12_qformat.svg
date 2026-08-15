@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 340" font-family="'Helvetica Neue',Arial,'Malgun Gothic','Apple SD Gothic Neo',sans-serif">
+  <rect x="0" y="0" width="700" height="340" rx="10" fill="#ffffff"/>
+  <rect x="0.5" y="0.5" width="699" height="339" rx="10" fill="none" stroke="#e3e3e3"/>
+
+  <text x="350" y="32" text-anchor="middle" font-size="15" font-weight="bold" fill="#222">같은 18비트, 소수점 위치만 다르다 — Q2.16 대 Q1.17</text>
+
+  <!-- ===== Q2.16 (채택) ===== -->
+  <text x="60" y="62" font-size="12" font-weight="bold" fill="#2f7d3a">Q2.16 — 채택</text>
+  <text x="380" y="62" text-anchor="middle" font-size="11" fill="#3a6fd0">소수부 f = 16 비트</text>
+
+  <rect x="60"  y="70" width="32"  height="42" fill="#e8663d" stroke="#ffffff"/>
+  <rect x="92"  y="70" width="32"  height="42" fill="#f0b429" stroke="#ffffff"/>
+  <rect x="124" y="70" width="512" height="42" fill="#5b8def" stroke="#ffffff"/>
+
+  <text x="76"  y="96" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">S</text>
+  <text x="108" y="96" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">1</text>
+  <text x="380" y="96" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#fff">2⁻¹ · 2⁻² · … · 2⁻¹⁶</text>
+
+  <text x="76"  y="126" text-anchor="middle" font-size="10" fill="#999">부호</text>
+  <text x="108" y="126" text-anchor="middle" font-size="10" fill="#999">2⁰</text>
+  <text x="636" y="126" text-anchor="end" font-size="10" fill="#999">2⁻¹⁶</text>
+
+  <text x="60" y="146" font-size="11.5" fill="#444">범위 −2 … +2 − 2⁻¹⁶   ·   분해능 2⁻¹⁶ ≈ 1.53 × 10⁻⁵   ·   1.0 = 정수 65,536</text>
+
+  <!-- ===== Q1.17 (기각) ===== -->
+  <text x="60" y="182" font-size="12" font-weight="bold" fill="#a33">Q1.17 — 기각</text>
+  <text x="364" y="182" text-anchor="middle" font-size="11" fill="#7aa0d8">소수부 f = 17 비트</text>
+
+  <rect x="60" y="190" width="32"  height="42" fill="#e8a08d" stroke="#ffffff"/>
+  <rect x="92" y="190" width="544" height="42" fill="#b9d0f5" stroke="#ffffff"/>
+
+  <text x="76"  y="216" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">S</text>
+  <text x="364" y="216" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#3a6fd0">2⁻¹ · 2⁻² · … · 2⁻¹⁷</text>
+
+  <text x="60" y="252" font-size="11.5" fill="#444">범위 −1 … +1 − 2⁻¹⁷   ·   정수부가 부호뿐이라 1.0 이상을 담지 못한다.</text>
+
+  <!-- ===== range bar ===== -->
+  <text x="120" y="276" font-size="11" fill="#a33">확산 중간값 |2·mean − amp| 의 상한 = 1 + 2/√N  (n=15면 1.011)</text>
+  <path d="M363,280 L363,292" stroke="#d23" stroke-width="1.2"/>
+  <path d="M357,286 L369,286" stroke="#d23" stroke-width="1.2"/>
+
+  <line x1="120" y1="300" x2="600" y2="300" stroke="#555" stroke-width="1.4"/>
+  <line x1="120" y1="294" x2="120" y2="306" stroke="#555"/>
+  <line x1="360" y1="292" x2="360" y2="308" stroke="#d23" stroke-width="1.6"/>
+  <line x1="600" y1="292" x2="600" y2="308" stroke="#2f7d3a" stroke-width="1.6"/>
+
+  <text x="120" y="322" text-anchor="middle" font-size="10.5" fill="#777">0</text>
+  <text x="360" y="322" text-anchor="middle" font-size="10.5" fill="#d23">1.0 — Q1.17 천장</text>
+  <text x="600" y="322" text-anchor="end" font-size="10.5" fill="#2f7d3a">2.0 — Q2.16 천장</text>
+</svg>

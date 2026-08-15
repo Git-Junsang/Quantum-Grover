@@ -1,0 +1,12 @@
+# 시뮬레이션 산출물
+*.vcd
+*.vvp
+*.out
+hardware/testbench/build/
+
+# 파이썬
+__pycache__/
+*.pyc
+
+# RVX 원격 빌드 산출물
+software/soc/**/output/

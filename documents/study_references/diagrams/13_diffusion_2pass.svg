@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 250" font-family="'Helvetica Neue',Arial,'Malgun Gothic','Apple SD Gothic Neo',sans-serif">
+  <defs>
+    <marker id="d_ar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#666"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="660" height="250" rx="10" fill="#ffffff"/>
+  <rect x="0.5" y="0.5" width="659" height="249" rx="10" fill="none" stroke="#e3e3e3"/>
+
+  <text x="330" y="32" text-anchor="middle" font-size="15" font-weight="bold" fill="#222">확산은 왜 2패스로 나눠야 하나</text>
+
+  <!-- Pass 1 -->
+  <rect x="30" y="54" width="205" height="74" rx="7" fill="#eaf1ff" stroke="#b9c9e8"/>
+  <text x="132" y="76" text-anchor="middle" font-size="13" font-weight="bold" fill="#2f4f86">1패스 · 누산 (DIFF_mac)</text>
+  <text x="132" y="97" text-anchor="middle" font-size="11.5" fill="#5b6b86">amp[0] + amp[1] + ··· + amp[N−1]</text>
+  <text x="132" y="115" text-anchor="middle" font-size="11.5" fill="#5b6b86">→ (n−1)칸 시프트 = 2×평균</text>
+
+  <!-- arrow to register -->
+  <line x1="235" y1="91" x2="272" y2="91" stroke="#666" stroke-width="1.6" marker-end="url(#d_ar)"/>
+
+  <!-- register -->
+  <rect x="274" y="68" width="112" height="46" rx="6" fill="#ffffff" stroke="#999"/>
+  <text x="330" y="90" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">2×평균</text>
+  <text x="330" y="106" text-anchor="middle" font-size="10.5" fill="#888">확정 후 고정</text>
+
+  <!-- arrow to pass 2 -->
+  <line x1="386" y1="91" x2="423" y2="91" stroke="#666" stroke-width="1.6" marker-end="url(#d_ar)"/>
+  <text x="404" y="82" text-anchor="middle" font-size="9.5" fill="#888">있어야</text>
+
+  <!-- Pass 2 -->
+  <rect x="425" y="54" width="205" height="74" rx="7" fill="#fdeee7" stroke="#eecab5"/>
+  <text x="527" y="76" text-anchor="middle" font-size="13" font-weight="bold" fill="#b3562c">2패스 · 반사 (DIFF_sub)</text>
+  <text x="527" y="99" text-anchor="middle" font-size="11.5" fill="#966a52">amp[i] ← 2×평균 − amp[i]</text>
+  <text x="527" y="117" text-anchor="middle" font-size="10.5" fill="#a9836c">(모든 i에 대해)</text>
+
+  <!-- wrong-way box -->
+  <rect x="30" y="150" width="600" height="56" rx="7" fill="#fdecec" stroke="#f0c4c4"/>
+  <text x="46" y="172" font-size="12.5" font-weight="bold" fill="#c0392b">한 사이클에 누산과 뺄셈을 섞으면?</text>
+  <text x="46" y="192" font-size="11.5" fill="#96504a">아직 다 더해지지 않은 부분합으로 뺄셈이 시작되는 타이밍 버그. 그래서 평균을 먼저 확정한 뒤 반사한다.</text>
+
+  <text x="330" y="234" text-anchor="middle" font-size="11.5" fill="#666">덧셈·뺄셈은 소수부를 깎지 않고, 오차는 가운데 (n−1)칸 시프트 한 곳에서만 생긴다.</text>
+</svg>

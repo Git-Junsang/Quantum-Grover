@@ -1,0 +1,30 @@
+flowchart TD
+    START([MEASURE 진입 · 진폭 배열 확정]) --> RD
+
+    subgraph PASS1["패스 1 — 뱅크별 제곱합 · 1,024 사이클"]
+        direction LR
+        RD["32뱅크 동시 읽기<br/>amp_mem 은 읽기만 한다"] --> SQ["제곱기 32개<br/>DSP 32/120"]
+        SQ --> ACC["뱅크별 누산 S_0 … S_31<br/>total = S_0 + … + S_31"]
+    end
+
+    ACC --> RNG["LFSR 난수 r · 0 이상 total 미만 균등"]
+
+    subgraph SEL["뱅크 선택 — 32항 prefix-sum · 32 사이클"]
+        direction LR
+        PS["누적 C_b = S_0 + … + S_b"] --> PICK{"C_b 가 r 을<br/>처음 넘는 b"}
+        PICK -->|못 넘음| CLB["b* ← 31<br/>안전망"]
+        PICK -->|넘음| RES["b* 확정<br/>잔여 r' = r − C 직전값"]
+        CLB --> RES
+    end
+
+    RNG --> PS
+    RES --> SC
+
+    subgraph PASS2["패스 2 — b* 뱅크만 직렬 스캔 · 1,024 사이클"]
+        direction LR
+        SC["그 뱅크의 a² 를 다시 누적"] --> FIND{"누적이 r' 을<br/>처음 넘는 인덱스"}
+        FIND -->|못 넘음| LAST["마지막 인덱스<br/>안전망"]
+    end
+
+    FIND -->|넘음| OUT([cand 반환 · 합계 2,080 사이클])
+    LAST --> OUT

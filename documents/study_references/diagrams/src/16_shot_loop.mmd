@@ -1,0 +1,23 @@
+flowchart TD
+    START([start 펄스]) --> SHOT["샷 시작<br/>LFSR로 j_target 추첨 · 0 ≤ j_target < m"]
+    SHOT --> CACHE{"cache_valid 이고<br/>j_cur ≤ j_target 인가?"}
+    CACHE -->|아니오| INIT["S_INIT<br/>전 칸을 INIT_AMP 로<br/>j_cur ← 0"]
+    CACHE -->|예| SKIP["INIT 생략<br/>Δj = j_target − j_cur 만 전진"]
+    INIT --> ORACLE
+    SKIP --> ORACLE
+    subgraph INNER["안쪽 — 그로버 반복 (13장)"]
+        ORACLE["S_PASS1<br/>술어 판정 → 부호 반전 → 누산"] --> MEANST["S_MEAN<br/>n−1칸 우시프트 → 2·mean"]
+        MEANST --> DIFF["S_PASS2<br/>2·mean − amp"]
+        DIFF --> BUMP["j_cur ← j_cur + 1"]
+        BUMP --> ICHK{"j_cur = j_target?"}
+        ICHK -->|아니오| ORACLE
+    end
+    ICHK -->|예| MEAS["S_MEAS<br/>Born 2단 병렬 샘플링<br/>amp_mem 읽기 전용"]
+    MEAS --> VER["S_VERIFY<br/>data_mem 한 칸을 읽어<br/>술어 재확인"]
+    VER --> OK{"후보가 술어를 만족?"}
+    OK -->|아니오| GROW["m ← min(1.2·m, √N)<br/>iter_rom 다음 항<br/>cache_valid 는 그대로 1"]
+    GROW --> SHOT
+    OK -->|예| EN{"열거 모드인가?"}
+    EN -->|아니오| DONE([S_DONE · 후보 하나 반환])
+    EN -->|예| MASK["found 비트 세우기<br/>cache_valid ← 0 · m ← 1<br/>다음 열거 라운드"]
+    MASK --> SHOT

@@ -1,0 +1,16 @@
+flowchart TD
+    A["|0⟩^⊗n 초기화"] --> B["H^⊗n 적용"]
+    B --> C["균등중첩 |ψ⟩\n= (1/√N) Σ|x⟩"]
+    C --> D{"R ≈ (π/4)√(N/M)회\n반복했는가?"}
+    D -->|"아직 (각 반복)"| E["오라클 U_f = I − 2Σ_{x∈A}|x⟩⟨x|\n조건을 만족하는 칸의 부호 반전 (표시)"]
+    E --> F["확산 U_ψ = 2|ψ⟩⟨ψ| − I\n평균 중심 반사 (증폭)"]
+    F --> D
+    D -->|"완료"| G["계산 기저 측정"]
+    G --> H["조건을 만족하는 칸\n확률 ≈ 1"]
+
+    classDef init fill:#eef4ff,stroke:#5b8def,color:#173;
+    classDef iter fill:#fff1ea,stroke:#e8663d,color:#333;
+    classDef done fill:#eafbea,stroke:#3aa83a,color:#173;
+    class A,B,C init;
+    class E,F iter;
+    class G,H done;
