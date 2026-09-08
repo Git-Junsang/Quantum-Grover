@@ -10,7 +10,11 @@ lpsoc_bbht_grover_main_ip 입니다. 계약 이름(bbht_grover_core)으로 감�
 어댑터가 src/bbht_grover_core_adapter.v 라, real 갈래는 그 어댑터를 봅니다.
 어댑터가 계약 폭을 그대로 선언하고 있으므로 실물 배선도 이 검사로 지켜집니다.
 
-    python3 check_ports.py [stub|real|v3]
+hardware_dram 갈래도 같은 계약을 지켜야 합니다. 그쪽 Main IP 는 우리가 쓴
+초안이지만 wrapper 19 + core 61 신호는 통신 계층과 맞물리는 부분이라 바뀌면
+안 됩니다. dram 갈래는 hardware_dram 의 wrapper 와 어댑터를 봅니다.
+
+    python3 check_ports.py [stub|real|v3|dram]
 """
 import io
 import os
@@ -20,8 +24,19 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.join(HERE, "..", "..")
 
-WRAPPER = os.path.join(ROOT, "hardware_bram", "src", "bbht_rvx_wrapper.v")
 CONTRACT = os.path.join(HERE, "port_contract.tsv")
+
+MODE = sys.argv[1] if len(sys.argv) > 1 else "stub"
+
+# wrapper 는 갈래마다 한 벌씩 있습니다. dram 을 뺀 나머지는 전부
+# hardware_bram 쪽을 봅니다.
+WRAPPERS = {
+    "stub": os.path.join(ROOT, "hardware_bram", "src", "bbht_rvx_wrapper.v"),
+    "real": os.path.join(ROOT, "hardware_bram", "src", "bbht_rvx_wrapper.v"),
+    "v3":   os.path.join(ROOT, "hardware_bram", "src", "bbht_rvx_wrapper.v"),
+    "dram": os.path.join(ROOT, "hardware_dram", "src", "bbht_rvx_wrapper.v"),
+}
+WRAPPER = WRAPPERS[MODE]
 
 # 계약 대조 대상. 둘 다 module bbht_grover_core 를 계약 폭 그대로 선언합니다.
 #   stub  통신 계층만 볼 때 쓰는 자리 채우개
@@ -33,8 +48,11 @@ CORES = {
     #         헤더만 다르지만, 포트가 61개 그대로인지는 따로 확인해야
     #         합니다. 어댑터를 하나 더 두면 배선이 갈릴 수 있습니다.
     "v3": os.path.join(ROOT, "hardware_bram", "src", "bbht_grover_core_adapter_v3.v"),
+    #   dram  DRAM 전량저장 갈래의 어댑터. 감싸는 Main IP 는 다르지만
+    #         계약 이름과 61신호는 같아야 합니다.
+    "dram": os.path.join(ROOT, "hardware_dram", "src", "bbht_grover_core_adapter.v"),
 }
-CORE = CORES[sys.argv[1] if len(sys.argv) > 1 else "stub"]
+CORE = CORES[MODE]
 
 # 계약에 없지만 있어야 하는 것. 인수인계 표는 clk/rstnn 을 적지 않습니다.
 IMPLICIT = {"clk", "rstnn"}
