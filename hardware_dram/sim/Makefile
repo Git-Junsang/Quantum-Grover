@@ -4,7 +4,9 @@
 #   make store      grover_dram_amp_store 단위 (지연 0 / 백프레셔 두 벌)
 #   make prep       grover_dram_prep_seq 단위 -- 체크포인트 K/H 를 대신하는 부분
 #   make core       Main IP 통합 (통신 계층 없이 코어만)
-#   make equiv      hardware_bram 과 궤적 대조 + 비용 비교 (오래 걸립니다)
+#   make equiv      hardware_bram 과 궤적 대조 + 비용 비교 (손으로 고른 8케이스)
+#   make bench250   보드 실측(2026-09-04 K4/H4)과 같은 250쌍 워크로드로 3자 대조
+#                   (250 dram + 250 normal + 250 k4h4 = 750 케이스, 3분쯤)
 #   make lint       합성 대상 RTL 만 lint
 #   make ports      PJK 인수인계 포트 계약 대조
 #   make clean
@@ -165,6 +167,45 @@ equiv: core
 	@$(BUILD)/core_k4h4/sim | tee $(BUILD)/core_k4h4.log
 	@python3 equiv_report.py $(BUILD)/core_dram.log $(BUILD)/core_bram.log \
 	                         $(BUILD)/core_k4h4.log
+
+#---------------------------------------------------------------------
+# 250쌍 벤치. equiv 의 손으로 고른 8케이스와 달리, 보드 실측이 실제로 쓴
+# 워크로드(정답 개수 M in {1,4,16,64,256} x 시드 50쌍)를 그대로 돌려
+# "DRAM 갈래가 K4/H4 를 이기냐 지냐"에 통계적으로 의미 있는 답을 냅니다.
+#
+# dram 은 한 번(250케이스), bram 은 CHECKPOINT_ENABLE=1 로 한 번만 빌드해
+# burst_enable 을 케이스마다 0/1 로 바꿔 Normal/K4H4 를 같이 얻습니다
+# (실물 칩이 런타임에 CSR 로 고르는 것과 같은 방식 -- tb_dram_bench250.v
+# 헤더 참고).
+#---------------------------------------------------------------------
+WL_DIR = $(BUILD)/bench250_wl
+
+BENCH_BRAM_V2 = $(BRAM_V2)/lpsoc_bbht_grover_main_ip.v \
+                $(BRAM_V2)/grover_arithmetic.v $(BRAM_V2)/grover_bbht.v \
+                $(BRAM_V2)/grover_checkpoint.v $(BRAM_V2)/grover_iteration.v \
+                $(BRAM_V2)/grover_loader.v $(BRAM_V2)/grover_measurement.v \
+                $(BRAM_V2)/grover_memories.v $(BRAM_V2)/grover_policy.v \
+                $(BRAM_V2)/grover_status.v
+
+bench250:
+	@mkdir -p $(WL_DIR)
+	python3 ../../software/golden/tools/dump_bench250_workload.py --out $(WL_DIR)
+	python3 bin_to_hex.py $(WL_DIR)
+	@verilator --binary --timing $(VFLAGS) -DGD_DRAM_BRANCH \
+	          -DGD_WL_DIR='"$(WL_DIR)"' -DGD_CSV_OUT='"$(BUILD)/bench250_dram.csv"' \
+	          $(TB_DIR)/tb_dram_bench250.v $(TB_DIR)/dram_burst_model.v $(DRAM_CORE) \
+	          --top-module tb_dram_bench250 --Mdir $(BUILD)/bench250_dram -o sim \
+	          > $(BUILD)/bench250_dram_build.log 2>&1 \
+	          || { tail -30 $(BUILD)/bench250_dram_build.log; exit 1; }
+	$(BUILD)/bench250_dram/sim
+	@verilator --binary --timing $(BRAMFLAGS) \
+	          -DGD_WL_DIR='"$(WL_DIR)"' -DGD_CSV_OUT='"$(BUILD)/bench250_bram.csv"' \
+	          $(TB_DIR)/tb_dram_bench250.v $(BENCH_BRAM_V2) \
+	          --top-module tb_dram_bench250 --Mdir $(BUILD)/bench250_bram -o sim \
+	          > $(BUILD)/bench250_bram_build.log 2>&1 \
+	          || { tail -30 $(BUILD)/bench250_bram_build.log; exit 1; }
+	$(BUILD)/bench250_bram/sim
+	python3 bench250_report.py $(BUILD)/bench250_dram.csv $(BUILD)/bench250_bram.csv
 
 clean:
 	rm -rf $(BUILD)
