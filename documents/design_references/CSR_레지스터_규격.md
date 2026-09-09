@@ -165,9 +165,9 @@
 |---|:-:|:-:|:-:|---|
 | MANUAL_SINGLE | 0 | 0 | 0 | J_TARGET 을 펌웨어가 지정 |
 | NORMAL_SINGLE | 1 | 0 | 0 | 표준 BBHT |
-| K4H8_SINGLE | 1 | 1 | 0 | checkpoint 모드 (K·H·E·M 은 RTL 빌드에 컴파일됨. 현 정본은 K3/H3-E4-M2. 이름의 K4H8 은 옛 표기) |
+| CKPT_SINGLE | 1 | 1 | 0 | checkpoint 모드 (K·H·E·M 은 RTL 빌드에 컴파일됨. 현 정본은 K3/H3-E4-M2) |
 | NORMAL_ENUM | 1 | 0 | 1 | 표준 BBHT 열거 |
-| K4H8_ENUM | 1 | 1 | 1 | checkpoint 열거 (K·H·E·M 은 RTL 빌드에 컴파일됨. 현 정본은 K3/H3-E4-M2. 이름의 K4H8 은 옛 표기) |
+| CKPT_ENUM | 1 | 1 | 1 | checkpoint 열거 (K·H·E·M 은 RTL 빌드에 컴파일됨. 현 정본은 K3/H3-E4-M2) |
 
 `checkpoint_auto_enable = burst_enable && auto_shot` 입니다. `auto_shot=0`
 (manual) 에서는 checkpoint 가 걸리지 않습니다.

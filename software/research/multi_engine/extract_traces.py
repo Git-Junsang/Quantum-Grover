@@ -68,7 +68,7 @@ def main() -> int:
                 burst_enable=True,
                 enum_enable=False,
             )
-            result = V098AutomaticCore(dataset, cfg).run_single(mode="K4H8")
+            result = V098AutomaticCore(dataset, cfg).run_single(mode="CKPT")
             traces.append(
                 dict(
                     target_count=target_count,

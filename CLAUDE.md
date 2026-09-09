@@ -43,16 +43,20 @@ CSR 의 모든 숫자는 [`software/csr/bbht_grover_csr.json`](software/csr/bbht
 | 큐비트 | Q = 14 (N = 16,384) |
 | 데이터 워드 | 16비트 signed / 진폭 23비트 Q1.22 계열 / P = 32 레인 |
 | 술어 | `LT` `GT` `EQ` `RANGE` |
-| 실행 모드 | `MANUAL_SINGLE` `NORMAL_SINGLE` `K4H8_SINGLE` `NORMAL_ENUM` `K4H8_ENUM` |
+| 실행 모드 | `MANUAL_SINGLE` `NORMAL_SINGLE` `CKPT_SINGLE` `NORMAL_ENUM` `CKPT_ENUM` |
 | CSR | APB, base `0xE2020000`, **4바이트 간격**, 32비트, 38개 |
 | 데이터 적재 | AHB 마스터 **SINGLE**, single outstanding. SRAM `0xE0000000`~`0xE001FFFF` |
 | 결과 FIFO | 깊이 256 |
 | 클럭 | 가속기 100 MHz / 시스템 50 MHz |
 | 최종 구성 | **K3/H3-E4-M2** — 체크포인트 3벌 · 정책 지평 3 · 연산기 4벌 · 측정 최적화 2단 |
 
-실행 모드 이름의 `K4H8` 은 **옛 표기**입니다. K·H·E·M 은 전부 RTL 빌드에
-컴파일되는 값이고 CSR 로 고르는 것이 아닙니다. 이름을 바꾸면 골든 모델
-API 가 같이 바뀌므로 그대로 두었습니다.
+실행 모드 이름은 2026-09-10 에 `K4H8_*` 에서 `CKPT_*` 로 바꿨습니다. K·H·E·M 은
+전부 RTL 빌드에 컴파일되는 값이라 CSR 모드 이름에 값을 박아 두면 빌드가 바뀔
+때마다 이름이 틀려집니다 — 실제로 K4/H8 에서 K4/H4 를 거쳐 지금은 K3/H3 입니다.
+골든 모델은 옛 이름(`K4H8_SINGLE` `K4H8_ENUM`, 그리고 `mode="K4H8"`)도 계속
+받습니다 (`RUN_MODE_ALIASES` · `_MODE_ALIASES`). 다만 `bbht_paper_bench` 의
+`CONTROL_K4H8_EQ` · `MODE_K4H8` 은 **그대로 두었습니다** — 그 파일은 보드 ELF 를
+낸 소스와 sha256 이 같아야 합니다.
 
 ### 성능을 인용할 때 — 두 축을 섞지 마십시오
 

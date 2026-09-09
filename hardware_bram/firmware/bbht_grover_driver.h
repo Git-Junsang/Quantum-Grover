@@ -3,7 +3,8 @@
  *
  * PJK 인수인계 §2.1 요청분입니다. 지금까지 proof app 다섯 개(APB / DMA /
  * Single / Enumeration / K4H8)가 각자 CSR 접근 코드를 복사해 갖고 있었는데,
- * 그것을 하나로 모읍니다.
+ * 그것을 하나로 모읍니다. 다섯째 앱 이름의 K4H8 은 그 시절 표기이고,
+ * 지금 CSR 실행 모드 이름은 CKPT_SINGLE / CKPT_ENUM 입니다.
  *
  * 이 드라이버가 강제하는 규약 다섯:
  *   1. base address 는 RVX 생성 매크로. 숫자를 박지 않습니다

@@ -2,7 +2,7 @@
 
 The dataset, Oracle, Q1.22 datapath, BBHT m sequence, logical budget, and J
 step-7 stream follow the frozen handoff.  Measurement seed expansion and the
-restricted-B bridge-level K4/H8 planner remain explicitly provisional until
+restricted-B bridge-level checkpoint planner remain explicitly provisional until
 the frozen Main-IP equations/source are supplied.  These artifacts are useful
 for control-flow review and invariant checking; they must not be advertised as
 final RTL bit-exact automatic-output vectors.
@@ -36,7 +36,7 @@ from rtl_v098_semantics import (
     V098AttemptObservation,
     audit_bbht_attempts,
     audit_enumeration_fifo,
-    audit_normal_k4h8_attempt_pair,
+    audit_normal_ckpt_attempt_pair,
     v098_m_bounds,
 )
 
@@ -117,13 +117,13 @@ def export_v098_auto_vectors(
                 mode="NORMAL", max_results=case.max_results
             )
             k4 = k4_core.run_enumeration(
-                mode="K4H8", max_results=case.max_results
+                mode="CKPT", max_results=case.max_results
             )
         else:
             normal = normal_core.run_single(mode="NORMAL")
-            k4 = k4_core.run_single(mode="K4H8")
+            k4 = k4_core.run_single(mode="CKPT")
 
-        pair = audit_normal_k4h8_attempt_pair(
+        pair = audit_normal_ckpt_attempt_pair(
             _observations(normal.attempts), _observations(k4.attempts)
         )
         if not pair.passed:
@@ -153,7 +153,7 @@ def export_v098_auto_vectors(
                 "contract_version": V098_VERSION,
                 "case": asdict(case),
                 "normal_runtime": normal_cfg.csr_write_values(),
-                "k4h8_runtime": k4_cfg.csr_write_values(),
+                "ckpt_runtime": k4_cfg.csr_write_values(),
                 "target_indices": list(dataset.target_indices),
                 "target_count": dataset.target_count,
             },
@@ -167,7 +167,7 @@ def export_v098_auto_vectors(
             },
         )
         _write_json(
-            case_dir / "expected_k4h8_semantic.json",
+            case_dir / "expected_ckpt_semantic.json",
             {
                 "scope": AUTO_COMPATIBILITY,
                 "measurement_status": "PROVISIONAL_SEED_EXPANSION",
@@ -176,14 +176,14 @@ def export_v098_auto_vectors(
             },
         )
 
-        audits: dict[str, Any] = {"normal_k4h8_pair": asdict(pair)}
+        audits: dict[str, Any] = {"normal_ckpt_pair": asdict(pair)}
         if case.enumeration:
             audits["normal_enumeration"] = audit_enumeration_fifo(
                 dataset.target_mask,
                 normal.fifo_indices,
                 reported_found_count=normal.found_count,
             ).to_dict()
-            audits["k4h8_enumeration"] = audit_enumeration_fifo(
+            audits["ckpt_enumeration"] = audit_enumeration_fifo(
                 dataset.target_mask,
                 k4.fifo_indices,
                 reported_found_count=k4.found_count,
@@ -193,7 +193,7 @@ def export_v098_auto_vectors(
                 _observations(normal.attempts), dataset.target_mask,
                 shot_cap=case.shot_cap,
             ).to_dict()
-            audits["k4h8_bbht"] = audit_bbht_attempts(
+            audits["ckpt_bbht"] = audit_bbht_attempts(
                 _observations(k4.attempts), dataset.target_mask,
                 shot_cap=case.shot_cap,
             ).to_dict()
@@ -209,7 +209,7 @@ def export_v098_auto_vectors(
                 "normal_trial_count": normal.trial_count,
                 "normal_L_BBHT": normal.L_BBHT,
                 "normal_actual_iterations": normal.actual_grover_iterations,
-                "k4h8_actual_iterations": k4.actual_grover_iterations,
+                "ckpt_actual_iterations": k4.actual_grover_iterations,
                 "pair_audit_pass": pair.passed,
             }
         )

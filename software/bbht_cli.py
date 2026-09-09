@@ -224,7 +224,7 @@ class MockTransport:
             hits = [i for i in range(self.cfg["COUNT"]) if self._match(self.data[i])]
             # 지어낸 숫자입니다. 실물의 성질 두 가지만 지킵니다.
             #   L_BBHT(Sum requested j)는 checkpoint 와 무관하게 같습니다
-            #   물리 반복(actual_iter)만 K4/H8 에서 줄어듭니다
+            #   물리 반복(actual_iter)만 체크포인트 경로에서 줄어듭니다
             # 짝맞춤 판정이 이 성질 위에 서 있으므로, 모델이 이걸 어기면
             # 실험 스크립트를 시험할 때 항상 불일치가 납니다.
             l_bbht = 120
@@ -335,10 +335,10 @@ class Board:
 
 
 # =====================================================================
-# 벤치마크 -- Normal vs true K4/H8 짝 비교
+# 벤치마크 -- Normal vs 체크포인트 짝 비교
 # =====================================================================
 def bench(board, seeds, targets, value, count, out_path):
-    """같은 (seed_j, seed_meas) 짝으로 Normal 과 K4/H8 을 각각 돌립니다.
+    """같은 (seed_j, seed_meas) 짝으로 Normal 과 체크포인트 경로를 각각 돌립니다.
 
     PJK 의 2026-09-01 보드 벤치마크와 같은 모양입니다. 짝맞춤이 핵심이고,
     두 모드가 같은 결과를 내면서 물리 반복만 줄어야 정상입니다."""
@@ -357,12 +357,12 @@ def bench(board, seeds, targets, value, count, out_path):
             sm &= 0xFFFFFFFF
 
             res = {}
-            for mode, burst in (("normal", 0), ("k4h8", 1)):
+            for mode, burst in (("normal", 0), ("ckpt", 1)):
                 board.cmd_ok("SET BURST=%d SEEDJ=0x%08X SEEDM=0x%08X" % (burst, sj, sm))
                 res[mode] = board.run()
 
             agg["n"] += 1
-            n, k = res["normal"], res["k4h8"]
+            n, k = res["normal"], res["ckpt"]
             if n is None or k is None:
                 continue
             agg["ok"] += 1
@@ -378,9 +378,9 @@ def bench(board, seeds, targets, value, count, out_path):
 
         rows.append(dict(targets=tcount, seeds=agg["n"], success=agg["ok"],
                          mismatch=agg["mism"],
-                         iter_normal=agg["iter_n"], iter_k4h8=agg["iter_k"],
+                         iter_normal=agg["iter_n"], iter_ckpt=agg["iter_k"],
                          iter_delta_pct=round(di, 2),
-                         cyc_normal=agg["cyc_n"], cyc_k4h8=agg["cyc_k"],
+                         cyc_normal=agg["cyc_n"], cyc_ckpt=agg["cyc_k"],
                          cyc_delta_pct=round(dc, 2)))
         print("targets=%-4d seeds=%d success=%d mismatch=%d  iter %d->%d (%.2f%%)  "
               "cyc %d->%d (%.2f%%)"
@@ -427,7 +427,7 @@ def main():
     ap.add_argument("--log", help="주고받은 줄 전부를 기록할 파일")
 
     sub = ap.add_subparsers(dest="sub")
-    b = sub.add_parser("bench", help="Normal vs K4/H8 짝 비교")
+    b = sub.add_parser("bench", help="Normal vs 체크포인트 짝 비교")
     b.add_argument("--seeds", type=int, default=10)
     b.add_argument("--targets", default="1,4,16,64,256")
     b.add_argument("--value", type=int, default=12345)

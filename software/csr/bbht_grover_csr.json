@@ -172,8 +172,8 @@
   "run_modes": [
     { "name": "MANUAL_SINGLE",  "auto_shot": 0, "burst_enable": 0, "enum_enable": 0, "desc": "J_TARGET 을 펌웨어가 지정" },
     { "name": "NORMAL_SINGLE",  "auto_shot": 1, "burst_enable": 0, "enum_enable": 0, "desc": "표준 BBHT" },
-    { "name": "K4H8_SINGLE",    "auto_shot": 1, "burst_enable": 1, "enum_enable": 0, "desc": "checkpoint 모드 (K·H·E·M 은 RTL 빌드에 컴파일됨. 현 정본은 K3/H3-E4-M2. 이름의 K4H8 은 옛 표기)" },
+    { "name": "CKPT_SINGLE",    "auto_shot": 1, "burst_enable": 1, "enum_enable": 0, "desc": "checkpoint 모드 (K·H·E·M 은 RTL 빌드에 컴파일됨. 현 정본은 K3/H3-E4-M2)" },
     { "name": "NORMAL_ENUM",    "auto_shot": 1, "burst_enable": 0, "enum_enable": 1, "desc": "표준 BBHT 열거" },
-    { "name": "K4H8_ENUM",      "auto_shot": 1, "burst_enable": 1, "enum_enable": 1, "desc": "checkpoint 열거 (K·H·E·M 은 RTL 빌드에 컴파일됨. 현 정본은 K3/H3-E4-M2. 이름의 K4H8 은 옛 표기)" }
+    { "name": "CKPT_ENUM",      "auto_shot": 1, "burst_enable": 1, "enum_enable": 1, "desc": "checkpoint 열거 (K·H·E·M 은 RTL 빌드에 컴파일됨. 현 정본은 K3/H3-E4-M2)" }
   ]
 }

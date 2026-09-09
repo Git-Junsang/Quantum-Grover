@@ -2,7 +2,7 @@
 
 This module intentionally contains no checkpoint-policy implementation.  It
 describes the boundary that software, golden vectors, and RTL result checkers
-must agree on.  The autonomous K4/H8 policy is an internal Main-IP detail.
+must agree on.  The autonomous checkpoint policy is an internal Main-IP detail.
 """
 
 from __future__ import annotations
@@ -99,12 +99,21 @@ DMA_STATUS_BITS = {
     "dma_done_sticky": 7,
 }
 
+# CSR 실행 모드. 체크포인트를 켠 쪽이 CKPT_* 입니다.
 RUN_MODES = {
     "MANUAL_SINGLE": (False, False, False),
     "NORMAL_SINGLE": (True, False, False),
-    "K4H8_SINGLE": (True, True, False),
+    "CKPT_SINGLE": (True, True, False),
     "NORMAL_ENUM": (True, False, True),
-    "K4H8_ENUM": (True, True, True),
+    "CKPT_ENUM": (True, True, True),
+}
+
+# 옛 이름. K 와 H 가 RTL 빌드 상수라 이름에 값을 박아 두면 빌드가 바뀔 때마다
+# 틀려집니다 -- 실제로 K4/H4 를 거쳐 지금은 K3/H3 입니다. 옛 이름으로 부르는
+# 스크립트를 위해 계속 받아 주되, 정본 이름은 위의 다섯입니다.
+RUN_MODE_ALIASES = {
+    "K4H8_SINGLE": "CKPT_SINGLE",
+    "K4H8_ENUM": "CKPT_ENUM",
 }
 
 
@@ -152,6 +161,7 @@ class V098RuntimeConfig:
     @classmethod
     def from_mode(cls, mode: str, **kwargs: Any) -> "V098RuntimeConfig":
         normalized = mode.upper()
+        normalized = RUN_MODE_ALIASES.get(normalized, normalized)
         if normalized not in RUN_MODES:
             raise ValueError(f"mode must be one of {sorted(RUN_MODES)}")
         auto_shot, burst_enable, enum_enable = RUN_MODES[normalized]

@@ -72,8 +72,8 @@ v0.7g(2026-08-20 전달본) 기준으로 쓰인 옛 판은 폐기했습니다. �
 `CKPT_K = 3` · `POLICY_H_FUTURE = 3` · `INTRA_ENGINES = 4` 이고 측정 경로 최적화
 두 단(M1·M2)이 이 소스에 붙박이라, 현재 freeze 는 **K3/H3-E4-M2** 입니다.
 앞의 넷은 `grover_param.vh` 가 아니라 wrapper 가 인스턴스에 넘기는 값입니다
-(`src/bbht_rvx_wrapper.v` 301행). CSR 실행 모드 이름이 `K4H8_*` 인 것은 이름이
-먼저 굳었기 때문이고 실제 K·H 값과는 별개입니다.
+(`src/bbht_rvx_wrapper.v` 301행). CSR 실행 모드 이름은 `CKPT_SINGLE` ·
+`CKPT_ENUM` 입니다 — 값이 빌드마다 달라지므로 이름에 K·H 를 박지 않습니다.
 
 ## 4. 입력 포트
 

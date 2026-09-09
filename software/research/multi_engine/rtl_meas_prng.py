@@ -7,7 +7,7 @@ provisional 이라고 적어 두었습니다. 모듈 머리말이 이렇게 말�
 
     "the delivered local artifacts do not contain their complete bit equations:
      the 32-to-64-bit measurement seed expansion and the restricted-B
-     bridge-level K4/H8 planner. They are isolated behind small classes so the
+     bridge-level checkpoint planner. They are isolated behind small classes so the
      frozen RTL equations can replace them without changing the search model."
 
 그 RTL 이 이제 `hardware_bram/src_v2/grover_bbht.v` 에 있습니다

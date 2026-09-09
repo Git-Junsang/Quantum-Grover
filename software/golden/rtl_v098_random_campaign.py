@@ -25,7 +25,7 @@ from rtl_v098_data import V098Dataset, build_controlled_v098_dataset
 from rtl_v098_semantics import (
     V098AttemptObservation,
     audit_enumeration_fifo,
-    audit_normal_k4h8_attempt_pair,
+    audit_normal_ckpt_attempt_pair,
 )
 from rtl_v098_vectors import (
     DEFAULT_CORE_CASES,
@@ -356,7 +356,7 @@ def _run_auto_case(
     if enumeration and case.target_count > 0:
         requested = min(case.target_count, 4)
         normal = normal_core.run_enumeration(mode="NORMAL", max_results=requested)
-        k4 = k4_core.run_enumeration(mode="K4H8", max_results=requested)
+        k4 = k4_core.run_enumeration(mode="CKPT", max_results=requested)
         normal_enum = audit_enumeration_fifo(
             dataset.target_mask,
             normal.fifo_indices,
@@ -371,9 +371,9 @@ def _run_auto_case(
     else:
         enumeration = False
         normal = normal_core.run_single(mode="NORMAL")
-        k4 = k4_core.run_single(mode="K4H8")
+        k4 = k4_core.run_single(mode="CKPT")
         enum_pass = True
-    pair = audit_normal_k4h8_attempt_pair(
+    pair = audit_normal_ckpt_attempt_pair(
         _observations(normal.attempts), _observations(k4.attempts)
     )
     passed = bool(pair.passed and enum_pass)
@@ -384,7 +384,7 @@ def _run_auto_case(
         "enumeration": enumeration,
         "normal_k4_pair_audit": asdict(pair),
         "normal": normal.to_dict(),
-        "k4h8": k4.to_dict(),
+        "ckpt": k4.to_dict(),
         "elapsed_ms": (perf_counter() - started) * 1000.0,
         "exactness": {
             "j_scheduler": "FROZEN_BIT_EXACT",
@@ -697,7 +697,7 @@ def _coverage_report(
             "manual_datapath": "BIT_EXACT_REFERENCE",
             "j_scheduler": "FROZEN_BIT_EXACT",
             "automatic_measurement": "PROVISIONAL_SEED_EXPANSION",
-            "k4h8_policy": "PROVISIONAL_ENDPOINT_REFERENCE",
+            "ckpt_policy": "PROVISIONAL_ENDPOINT_REFERENCE",
         },
     }
 
@@ -737,7 +737,7 @@ def _render_coverage_markdown(report: dict[str, Any]) -> str:
         "",
         "## 해석 경계",
         "",
-        "수동 진폭 결과와 J step-7 scheduler는 RTL bit-exact 기준이다. 자동 측정 결과와 K4/H8 physical work는 최종 Main-IP의 measurement seed 확장식 및 restricted-B planner 소스가 제공되기 전까지 의미 참조 결과다.",
+        "수동 진폭 결과와 J step-7 scheduler는 RTL bit-exact 기준이다. 자동 측정 결과와 체크포인트 physical work는 최종 Main-IP의 measurement seed 확장식 및 restricted-B planner 소스가 제공되기 전까지 의미 참조 결과다.",
         "",
     ]
     return "\n".join(lines)

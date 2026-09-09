@@ -440,7 +440,7 @@ class V098AutomaticCore:
     ) -> V098AutoResult | V098EnumerationResult:
         """Run the mode selected by CONTROL and ENUM_CFG-equivalent fields."""
 
-        mode = "K4H4" if self.cfg.burst_enable else "NORMAL"
+        mode = "CKPT" if self.cfg.burst_enable else "NORMAL"
         if self.cfg.enum_enable:
             return self.run_enumeration(mode=mode, max_results=max_results)
         if max_results is not None:
@@ -452,7 +452,7 @@ class V098AutomaticCore:
         target_mask = v098_target_mask(self.dataset.memory_image, self.cfg)
         j_source = V098JRandomSource(self.cfg.seed_j)
         measurement_source = V098MeasurementRandomSource(self.cfg.seed_meas)
-        checkpoint = V098CheckpointReference() if normalized == "K4H4" else None
+        checkpoint = V098CheckpointReference() if normalized == "CKPT" else None
         attempts, success, reason = self._run_episode(
             target_mask,
             j_source,
@@ -488,7 +488,7 @@ class V098AutomaticCore:
             raise ValueError("max_results must be positive")
         j_source = V098JRandomSource(self.cfg.seed_j)
         measurement_source = V098MeasurementRandomSource(self.cfg.seed_meas)
-        checkpoint = V098CheckpointReference() if normalized == "K4H4" else None
+        checkpoint = V098CheckpointReference() if normalized == "CKPT" else None
         found = np.zeros(V098_N_ENTRIES, dtype=np.bool_)
         fifo: list[int] = []
         all_attempts: list[V098AutoAttempt] = []
@@ -656,12 +656,17 @@ def _predict_future_j(
     return tuple(result)
 
 
+# 체크포인트를 켠 쪽이 "CKPT" 입니다. "K4H8" 과 "K4H4" 는 옛 이름이고,
+# K 와 H 가 RTL 빌드 상수라 이름에 값을 박아 두면 빌드가 바뀔 때마다
+# 틀려집니다. 옛 이름으로 부르는 캠페인 스크립트를 위해 계속 받습니다.
+_MODE_ALIASES = {"K4H8": "CKPT", "K4H4": "CKPT"}
+
+
 def _normalize_mode(mode: str) -> str:
     normalized = mode.upper()
-    if normalized == "K4H8":
-        return "K4H4"
-    if normalized not in {"NORMAL", "K4H4"}:
-        raise ValueError("mode must be NORMAL or K4H4")
+    normalized = _MODE_ALIASES.get(normalized, normalized)
+    if normalized not in {"NORMAL", "CKPT"}:
+        raise ValueError("mode must be NORMAL or CKPT")
     return normalized
 
 

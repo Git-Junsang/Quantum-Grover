@@ -44,7 +44,7 @@ generated from it.
 | Amplitude | 23-bit, Q1.22 family |
 | Parallelism | P = 32 lanes |
 | Predicates | `LT`, `GT`, `EQ`, `RANGE` |
-| Run modes | `MANUAL_SINGLE`, `NORMAL_SINGLE`, `K4H8_SINGLE`, `NORMAL_ENUM`, `K4H8_ENUM` (`K4H8` is a legacy label; the real K/H are build constants) |
+| Run modes | `MANUAL_SINGLE`, `NORMAL_SINGLE`, `CKPT_SINGLE`, `NORMAL_ENUM`, `CKPT_ENUM` (K/H are build constants, not CSR fields) |
 | CSR | APB slave, base `0xE2020000`, 4-byte stride, 32-bit, 38 registers |
 | Data load | AHB master, SINGLE, single outstanding. SRAM `0xE0000000`–`0xE001FFFF` |
 | Result FIFO | Depth 256 |

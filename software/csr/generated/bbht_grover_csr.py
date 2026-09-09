@@ -85,9 +85,9 @@ PREDICATE = {
 RUN_MODES = {
     "MANUAL_SINGLE":   dict(auto_shot=0, burst_enable=0, enum_enable=0),
     "NORMAL_SINGLE":   dict(auto_shot=1, burst_enable=0, enum_enable=0),
-    "K4H8_SINGLE":     dict(auto_shot=1, burst_enable=1, enum_enable=0),
+    "CKPT_SINGLE":     dict(auto_shot=1, burst_enable=1, enum_enable=0),
     "NORMAL_ENUM":     dict(auto_shot=1, burst_enable=0, enum_enable=1),
-    "K4H8_ENUM":       dict(auto_shot=1, burst_enable=1, enum_enable=1),
+    "CKPT_ENUM":       dict(auto_shot=1, burst_enable=1, enum_enable=1),
 }
 
 Q_BITS = 14

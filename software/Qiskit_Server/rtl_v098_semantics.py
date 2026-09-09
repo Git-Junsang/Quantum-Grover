@@ -120,29 +120,29 @@ class V098PairTraceAudit:
     measured_index_match: bool
     success_match: bool
     normal_physical_iterations: int
-    k4h8_physical_iterations: int
+    ckpt_physical_iterations: int
     violations: tuple[str, ...]
 
 
-def audit_normal_k4h8_attempt_pair(
+def audit_normal_ckpt_attempt_pair(
     normal: Sequence[V098AttemptObservation],
-    k4h8: Sequence[V098AttemptObservation],
+    ckpt: Sequence[V098AttemptObservation],
 ) -> V098PairTraceAudit:
     """Require K4/H4 to preserve the exact logical and measurement trace.
 
     The function name is retained for compatibility with pre-H4 scripts.
     """
 
-    requested_match = [x.requested_j for x in normal] == [x.requested_j for x in k4h8]
-    measured_match = [x.result_index for x in normal] == [x.result_index for x in k4h8]
-    success_match = [x.success for x in normal] == [x.success for x in k4h8]
+    requested_match = [x.requested_j for x in normal] == [x.requested_j for x in ckpt]
+    measured_match = [x.result_index for x in normal] == [x.result_index for x in ckpt]
+    success_match = [x.success for x in normal] == [x.success for x in ckpt]
     normal_physical = sum(
         x.requested_j if x.physical_iterations is None else x.physical_iterations
         for x in normal
     )
     k4_physical = sum(
         x.requested_j if x.physical_iterations is None else x.physical_iterations
-        for x in k4h8
+        for x in ckpt
     )
     violations = []
     if not requested_match:
@@ -159,13 +159,13 @@ def audit_normal_k4h8_attempt_pair(
         measured_index_match=measured_match,
         success_match=success_match,
         normal_physical_iterations=normal_physical,
-        k4h8_physical_iterations=k4_physical,
+        ckpt_physical_iterations=k4_physical,
         violations=tuple(violations),
     )
 
 
 # Canonical H4 spelling.  The older function remains source-compatible.
-audit_normal_k4h4_attempt_pair = audit_normal_k4h8_attempt_pair
+audit_normal_k4h4_attempt_pair = audit_normal_ckpt_attempt_pair
 
 
 @dataclass(frozen=True)

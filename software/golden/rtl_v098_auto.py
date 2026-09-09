@@ -6,7 +6,7 @@ and found-mask Enumeration.
 
 Two details are intentionally labelled provisional because the delivered local
 artifacts do not contain their complete bit equations: the 32-to-64-bit
-measurement seed expansion and the restricted-B bridge-level K4/H8 planner.
+measurement seed expansion and the restricted-B bridge-level checkpoint planner.
 They are isolated behind small classes so the frozen RTL equations can replace
 them without changing the search model or vector format.
 """
@@ -385,6 +385,23 @@ class V098EnumerationResult:
         return asdict(self)
 
 
+# 실행 모드 이름. 체크포인트를 켠 쪽이 "CKPT" 입니다.
+#
+# 예전 이름은 "K4H8" 이었습니다. K 와 H 가 RTL 빌드 상수라 CSR 모드 이름에
+# 값을 박아 두면 빌드가 바뀔 때마다 이름이 틀려집니다 -- 실제로 K4/H4 를
+# 거쳐 지금은 K3/H3 입니다. 옛 이름으로 부르는 스크립트가 남아 있을 수
+# 있어 계속 받아 줍니다.
+_MODE_ALIASES = {"K4H8": "CKPT"}
+
+
+def _normalize_mode(mode: str) -> str:
+    normalized = mode.upper()
+    normalized = _MODE_ALIASES.get(normalized, normalized)
+    if normalized not in {"NORMAL", "CKPT"}:
+        raise ValueError("mode must be NORMAL or CKPT")
+    return normalized
+
+
 class V098AutomaticCore:
     """State-vector automatic BBHT and Enumeration reference."""
 
@@ -415,7 +432,7 @@ class V098AutomaticCore:
     ) -> V098AutoResult | V098EnumerationResult:
         """Run the mode selected by CONTROL and ENUM_CFG-equivalent fields."""
 
-        mode = "K4H8" if self.cfg.burst_enable else "NORMAL"
+        mode = "CKPT" if self.cfg.burst_enable else "NORMAL"
         if self.cfg.enum_enable:
             return self.run_enumeration(mode=mode, max_results=max_results)
         if max_results is not None:
@@ -423,13 +440,11 @@ class V098AutomaticCore:
         return self.run_single(mode=mode)
 
     def run_single(self, *, mode: str = "NORMAL") -> V098AutoResult:
-        normalized = mode.upper()
-        if normalized not in {"NORMAL", "K4H8"}:
-            raise ValueError("mode must be NORMAL or K4H8")
+        normalized = _normalize_mode(mode)
         target_mask = v098_target_mask(self.dataset.memory_image, self.cfg)
         j_source = V098JRandomSource(self.cfg.seed_j)
         measurement_source = V098MeasurementRandomSource(self.cfg.seed_meas)
-        checkpoint = V098CheckpointReference() if normalized == "K4H8" else None
+        checkpoint = V098CheckpointReference() if normalized == "CKPT" else None
         attempts, success, reason = self._run_episode(
             target_mask,
             j_source,
@@ -460,14 +475,12 @@ class V098AutomaticCore:
         mode: str = "NORMAL",
         max_results: int | None = None,
     ) -> V098EnumerationResult:
-        normalized = mode.upper()
-        if normalized not in {"NORMAL", "K4H8"}:
-            raise ValueError("mode must be NORMAL or K4H8")
+        normalized = _normalize_mode(mode)
         if max_results is not None and max_results < 1:
             raise ValueError("max_results must be positive")
         j_source = V098JRandomSource(self.cfg.seed_j)
         measurement_source = V098MeasurementRandomSource(self.cfg.seed_meas)
-        checkpoint = V098CheckpointReference() if normalized == "K4H8" else None
+        checkpoint = V098CheckpointReference() if normalized == "CKPT" else None
         found = np.zeros(V098_N_ENTRIES, dtype=np.bool_)
         fifo: list[int] = []
         all_attempts: list[V098AutoAttempt] = []

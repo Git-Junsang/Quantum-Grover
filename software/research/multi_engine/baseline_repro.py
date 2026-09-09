@@ -84,7 +84,7 @@ def run_all(horizon: int, roster: list[tuple[int, int]]) -> list[dict]:
             for mode, burst in (("normal", False), ("ckpt", True)):
                 cfg = dataclasses.replace(base, burst_enable=burst)
                 core = V098AutomaticCore(dataset, cfg)
-                result = core.run_single(mode="K4H8" if burst else "NORMAL")
+                result = core.run_single(mode="CKPT" if burst else "NORMAL")
                 row[f"{mode}_success"] = int(result.success)
                 row[f"{mode}_trial"] = result.trial_count
                 row[f"{mode}_L"] = result.L_BBHT

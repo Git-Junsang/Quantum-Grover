@@ -1,4 +1,4 @@
-"""Semantic checks for v0.9.8 BBHT, K4/H8, and hardware Enumeration traces.
+"""Semantic checks for v0.9.8 BBHT, checkpoint, and hardware Enumeration traces.
 
 These checks do not solve the internal checkpoint policy.  They verify the
 observable contract that the optimization is forbidden to change.
@@ -120,26 +120,26 @@ class V098PairTraceAudit:
     measured_index_match: bool
     success_match: bool
     normal_physical_iterations: int
-    k4h8_physical_iterations: int
+    ckpt_physical_iterations: int
     violations: tuple[str, ...]
 
 
-def audit_normal_k4h8_attempt_pair(
+def audit_normal_ckpt_attempt_pair(
     normal: Sequence[V098AttemptObservation],
-    k4h8: Sequence[V098AttemptObservation],
+    ckpt: Sequence[V098AttemptObservation],
 ) -> V098PairTraceAudit:
-    """Require K4/H8 to preserve the exact logical and measurement trace."""
+    """Require the checkpoint path to preserve the exact logical and measurement trace."""
 
-    requested_match = [x.requested_j for x in normal] == [x.requested_j for x in k4h8]
-    measured_match = [x.result_index for x in normal] == [x.result_index for x in k4h8]
-    success_match = [x.success for x in normal] == [x.success for x in k4h8]
+    requested_match = [x.requested_j for x in normal] == [x.requested_j for x in ckpt]
+    measured_match = [x.result_index for x in normal] == [x.result_index for x in ckpt]
+    success_match = [x.success for x in normal] == [x.success for x in ckpt]
     normal_physical = sum(
         x.requested_j if x.physical_iterations is None else x.physical_iterations
         for x in normal
     )
     k4_physical = sum(
         x.requested_j if x.physical_iterations is None else x.physical_iterations
-        for x in k4h8
+        for x in ckpt
     )
     violations = []
     if not requested_match:
@@ -149,14 +149,14 @@ def audit_normal_k4h8_attempt_pair(
     if not success_match:
         violations.append("success/failure sequence changed")
     if k4_physical > normal_physical:
-        violations.append("K4/H8 physical work exceeds Normal")
+        violations.append("checkpoint physical work exceeds Normal")
     return V098PairTraceAudit(
         passed=not violations,
         requested_j_match=requested_match,
         measured_index_match=measured_match,
         success_match=success_match,
         normal_physical_iterations=normal_physical,
-        k4h8_physical_iterations=k4_physical,
+        ckpt_physical_iterations=k4_physical,
         violations=tuple(violations),
     )
 

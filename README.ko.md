@@ -38,7 +38,7 @@ C 헤더 · Verilog 헤더 · Python 헤더 · 규격 문서가 전부 여기서
 | 진폭        | Q1.22 계열 23비트                                                                             |
 | 병렬도      | P = 32 레인                                                                                   |
 | 술어        | `LT` · `GT` · `EQ` · `RANGE`                                                       |
-| 실행 모드   | `MANUAL_SINGLE` · `NORMAL_SINGLE` · `K4H8_SINGLE` · `NORMAL_ENUM` · `K4H8_ENUM` (`K4H8` 은 옛 이름. 실제 K·H 는 빌드 상수) |
+| 실행 모드   | `MANUAL_SINGLE` · `NORMAL_SINGLE` · `CKPT_SINGLE` · `NORMAL_ENUM` · `CKPT_ENUM` (K·H 는 CSR 이 아니라 빌드 상수) |
 | CSR         | APB 슬레이브, base`0xE2020000`, 4바이트 간격, 32비트, 38개                                  |
 | 데이터 적재 | AHB 마스터 SINGLE, single outstanding. SRAM`0xE0000000`~`0xE001FFFF`                      |
 | 결과 FIFO   | 깊이 256                                                                                      |

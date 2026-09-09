@@ -259,7 +259,7 @@ def export_v098_core_vectors(
             "excluded_from_claim": [
                 "v0.9.8 autonomous J PRNG",
                 "v0.9.8 measurement PRNG",
-                "K4/H8 policy telemetry",
+                "checkpoint policy telemetry",
                 "cycle_count",
             ],
         }
@@ -287,7 +287,7 @@ def export_v098_core_vectors(
         ],
         "not_claimed_without_frozen_main_ip_source": [
             "v0.9.8 J/measurement random stream bit sequence",
-            "K4/H8 restricted-B/Rolling-H8/Shadow-J decisions",
+            "checkpoint restricted-B/Rolling-H/Shadow-J decisions",
             "policy/plan telemetry and cycle_count",
         ],
     }
