@@ -16,7 +16,7 @@
 //
 //   GD_DRAM_BRANCH 정의  -> hardware_dram/src_v2 (burst_enable 은 계약
 //                           호환용, DRAM 표를 무조건 씁니다)
-//   정의 안 함           -> hardware_bram/src_v2, CHECKPOINT_ENABLE=1 로
+//   정의 안 함           -> hardware_bram/src, CHECKPOINT_ENABLE=1 로
 //                           한 번만 빌드하고 burst_enable 을 0/1 로 매
 //                           케이스마다 바꿔 같은 빌드에서 Normal 과 K4/H4
 //                           를 둘 다 얻습니다 (실물 보드가 런타임에
@@ -129,12 +129,18 @@ module tb_dram_bench250 #(
     lpsoc_bbht_grover_main_ip u_ip (
 `else
     // 실물 칩과 같은 조건입니다: CHECKPOINT_ENABLE 은 컴파일타임에 항상
-    // 켜 두고, Normal/K4H4 는 checkpoint_auto_enable(=burst_enable) 런타임
-    // 비트 하나로 매 케이스 고릅니다.
-    lpsoc_bbht_grover_main_ip #(
+    // 켜 두고, Normal/체크포인트는 checkpoint_auto_enable(=burst_enable)
+    // 런타임 비트 하나로 매 케이스 고릅니다.
+    //
+    // 2026-09-09 부터 대조 상대가 보드 정본 K3/H3-E4-M2 입니다
+    // (그전에는 src_v2 의 K4/H4 였습니다).
+    bbht_grover_main_ip #(
         .CHECKPOINT_ENABLE  (1),
-        .CKPT_K             (4),
-        .CKPT_MANUAL_ENABLE (0)
+        .CKPT_K             (3),
+        .POLICY_H_FUTURE    (3),
+        .CKPT_MANUAL_ENABLE (0),
+        .AUTO_SPEC_ENABLE   (1),
+        .INTRA_ENGINES      (4)
     ) u_ip (
 `endif
         .clk                      (clk),
@@ -319,7 +325,7 @@ module tb_dram_bench250 #(
         input integer seed_idx;
         input [31:0] sj;
         input [31:0] sm;
-        input [63:0] mode_tag;   // "dram"/"normal"/"k4h4" 를 8글자로 왼쪽 정렬
+        input [63:0] mode_tag;   // "dram"/"normal"/"ckpt" 를 8글자로 왼쪽 정렬
         input        be;         // burst_enable (bram 갈래만 의미 있음)
         integer to;
         begin
@@ -406,7 +412,7 @@ module tb_dram_bench250 #(
                 run_one(mi, si, seed_j_arr[si], seed_m_arr[si], "dram", 1'b1);
 `else
                 run_one(mi, si, seed_j_arr[si], seed_m_arr[si], "normal", 1'b0);
-                run_one(mi, si, seed_j_arr[si], seed_m_arr[si], "k4h4",   1'b1);
+                run_one(mi, si, seed_j_arr[si], seed_m_arr[si], "ckpt",   1'b1);
 `endif
             end
             $display("M=%0d 완료 (%0t)", m_values[mi], $time);

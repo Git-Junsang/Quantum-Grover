@@ -1,16 +1,16 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
--------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2024.2 (lin64) Build 5239630 Fri Nov 08 22:34:34 MST 2024
-| Date             : Mon Aug 31 16:09:11 2026
+| Date             : Mon Sep  7 17:20:28 2026
 | Host             : JoongKyu running 64-bit Ubuntu 24.04.1 LTS
-| Command          : report_power -file /home/kyu/rvx_summer26/platform/bbht_grover/imp_arty-100t_2026-08-31/imp_result/route_power.rpt
-| Design           : BBHT_GROVER_FPGA
+| Command          : report_power -file /home/kyu/rvx_summer26/platform/bbht_grover_upgrade/imp_arty-100t_k3h3_e4_m2_rvx_20260907/imp_result/route_power.rpt
+| Design           : BBHT_GROVER_UPGRADE_FPGA
 | Device           : xc7a100tcsg324-1
 | Design State     : routed
 | Grade            : commercial
 | Process          : typical
 | Characterization : Production
--------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Power Report
 
@@ -30,14 +30,14 @@ Table of Contents
 ----------
 
 +--------------------------+--------------+
-| Total On-Chip Power (W)  | 0.503        |
+| Total On-Chip Power (W)  | 0.618        |
 | Design Power Budget (W)  | Unspecified* |
 | Power Budget Margin (W)  | NA           |
-| Dynamic (W)              | 0.399        |
-| Device Static (W)        | 0.104        |
+| Dynamic (W)              | 0.513        |
+| Device Static (W)        | 0.105        |
 | Effective TJA (C/W)      | 4.6          |
-| Max Ambient (C)          | 82.7         |
-| Junction Temperature (C) | 27.3         |
+| Max Ambient (C)          | 82.2         |
+| Junction Temperature (C) | 27.8         |
 | Confidence Level         | Medium       |
 | Setting File             | ---          |
 | Simulation Activity File | ---          |
@@ -52,21 +52,21 @@ Table of Contents
 +--------------------------+-----------+----------+-----------+-----------------+
 | On-Chip                  | Power (W) | Used     | Available | Utilization (%) |
 +--------------------------+-----------+----------+-----------+-----------------+
-| Clocks                   |     0.049 |        7 |       --- |             --- |
-| Slice Logic              |     0.039 |    64387 |       --- |             --- |
-|   LUT as Logic           |     0.034 |    25343 |     63400 |           39.97 |
-|   CARRY4                 |     0.005 |     2345 |     15850 |           14.79 |
-|   Register               |    <0.001 |    30763 |    126800 |           24.26 |
-|   F7/F8 Muxes            |    <0.001 |     1619 |     63400 |            2.55 |
-|   LUT as Distributed RAM |    <0.001 |      184 |     19000 |            0.97 |
-|   Others                 |     0.000 |      470 |       --- |             --- |
-| Signals                  |     0.062 |    56762 |       --- |             --- |
-| Block RAM                |     0.080 |       99 |       135 |           73.33 |
+| Clocks                   |     0.076 |        7 |       --- |             --- |
+| Slice Logic              |     0.057 |   105619 |       --- |             --- |
+|   LUT as Logic           |     0.048 |    45068 |     63400 |           71.09 |
+|   CARRY4                 |     0.007 |     6130 |     15850 |           38.68 |
+|   Register               |     0.001 |    45223 |    126800 |           35.66 |
+|   LUT as Distributed RAM |    <0.001 |      216 |     19000 |            1.14 |
+|   F7/F8 Muxes            |    <0.001 |     1811 |     63400 |            2.86 |
+|   Others                 |     0.000 |      669 |       --- |             --- |
+| Signals                  |     0.103 |    88069 |       --- |             --- |
+| Block RAM                |     0.104 |      116 |       135 |           85.93 |
 | MMCM                     |     0.106 |        1 |         6 |           16.67 |
-| DSPs                     |     0.063 |       68 |       240 |           28.33 |
+| DSPs                     |     0.067 |      132 |       240 |           55.00 |
 | I/O                      |    <0.001 |        9 |       210 |            4.29 |
-| Static Power             |     0.104 |          |           |                 |
-| Total                    |     0.503 |          |           |                 |
+| Static Power             |     0.105 |          |           |                 |
+| Total                    |     0.618 |          |           |                 |
 +--------------------------+-----------+----------+-----------+-----------------+
 
 
@@ -76,7 +76,7 @@ Table of Contents
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
 | Source    | Voltage (V) | Total (A) | Dynamic (A) | Static (A) | Powerup (A) | Budget (A)  | Margin (A) |
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
-| Vccint    |       1.000 |     0.308 |       0.289 |      0.019 |       NA    | Unspecified | NA         |
+| Vccint    |       1.000 |     0.420 |       0.400 |      0.020 |       NA    | Unspecified | NA         |
 | Vccaux    |       1.800 |     0.077 |       0.059 |      0.018 |       NA    | Unspecified | NA         |
 | Vcco33    |       3.300 |     0.004 |       0.000 |      0.004 |       NA    | Unspecified | NA         |
 | Vcco25    |       2.500 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
@@ -85,7 +85,7 @@ Table of Contents
 | Vcco135   |       1.350 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vcco12    |       1.200 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vccaux_io |       1.800 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
-| Vccbram   |       1.000 |     0.007 |       0.004 |      0.003 |       NA    | Unspecified | NA         |
+| Vccbram   |       1.000 |     0.010 |       0.007 |      0.003 |       NA    | Unspecified | NA         |
 | MGTAVcc   |       1.000 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | MGTAVtt   |       1.200 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vccadc    |       1.800 |     0.020 |       0.000 |      0.020 |       NA    | Unspecified | NA         |
@@ -149,28 +149,27 @@ Table of Contents
 +------------------------------------------+-----------+
 | Name                                     | Power (W) |
 +------------------------------------------+-----------+
-| BBHT_GROVER_FPGA                         |     0.399 |
-|   i_platform                             |     0.397 |
-|     i_bbht_rvx_wrapper                   |     0.244 |
-|       u_main_ip                          |     0.243 |
+| BBHT_GROVER_UPGRADE_FPGA                 |     0.513 |
+|   i_platform                             |     0.501 |
+|     i_bbht_rvx_wrapper                   |     0.349 |
+|       u_main_ip                          |     0.347 |
 |     i_pll0                               |     0.106 |
 |       i_xilinx_clock_pll_0               |     0.106 |
-|     i_rtl                                |     0.040 |
+|     i_rtl                                |     0.038 |
 |       default_slave                      |     0.001 |
 |       external_peri_group                |     0.001 |
-|       i_main_core                        |     0.013 |
+|       i_main_core                        |     0.012 |
 |       i_mnim_i_grover_dma_master         |     0.002 |
 |       i_mnim_i_main_core_data            |     0.001 |
 |       i_mnim_platform_controller_master  |     0.001 |
 |       i_snim_common_peri_group_no_name   |     0.001 |
 |       i_snim_external_peri_group_no_name |     0.001 |
 |       i_snim_i_grover_csr_slave          |     0.002 |
-|       i_snim_i_system_sram_no_name       |     0.001 |
 |       i_snim_platform_controller_no_name |     0.001 |
 |       i_system_router                    |     0.001 |
-|       platform_controller                |     0.011 |
-|     i_system_sram                        |     0.007 |
-|       generate_cell[0].i_cell            |     0.006 |
+|       platform_controller                |     0.012 |
+|     i_system_sram                        |     0.008 |
+|       generate_cell[0].i_cell            |     0.007 |
 +------------------------------------------+-----------+
 
 

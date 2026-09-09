@@ -6,7 +6,7 @@ on-chip data array satisfying one of four predicates: `<`, `>`, `=`, and range
 inside an RVX SoC computes and returns the result index.
 
 - Board: Arty A7-100T (`xc7a100tcsg324-1`)
-- Reference spec: **v0.9.8** (2026-09-01). What was verified on the board wins.
+- Reference spec: **K3/H3-E4-M2** (built 2026-09-07, measured 2026-09-08). What was verified on the board wins.
 
 Korean documentation is the primary source — see [README.ko.md](README.ko.md).
 
@@ -16,15 +16,17 @@ Korean documentation is the primary source — see [README.ko.md](README.ko.md).
 
 | Item | State |
 |---|---|
-| Main IP algorithm (Q14 / P32 / DATA16) | v0.9.8 frozen, board sign-off complete |
-| Communication layer (CSR, DMA, FIFO, driver, host CLI) | Regression passing; on-board E2E not yet done |
-| 100 MHz implementation | Timing closed; reports under `hardware_bram/vivado/` |
-| **Main IP RTL source** | **Not in this repository** — only a port contract and a stub |
+| Main IP algorithm (Q14 / P32 / DATA16) | K3/H3-E4-M2 frozen, board sign-off complete |
+| Communication layer (CSR, DMA, FIFO, driver, host CLI) | Regression passing; the board build uses the frozen layer |
+| 100 MHz implementation | Timing closed (WNS +0.126 ns); reports under `hardware_bram/vivado/` |
+| **Main IP RTL source** | `hardware_bram/src/`, sha256-identical to what went into the bitstream |
+| Performance evidence | Board wall-clock **7.626x**, RTL cycles **6.1401x**, **116,426x** over a single ORCA core |
 
-Because the Main IP source is absent, wiring correctness is enforced by a
+The Main IP source is frozen, so wiring correctness is enforced by a
 [port contract check](software/contract/check_ports.py) rather than by eye. The port
 tables from the handoff document (19 wrapper + 61 core signals) are frozen into
-`port_contract.tsv`, and the regression diffs them against the RTL every run.
+`port_contract.tsv`, and the regression diffs them against the RTL every run, across
+four branches (`stub`, `real`, `final`, `dram`).
 
 ---
 
@@ -42,11 +44,24 @@ generated from it.
 | Amplitude | 23-bit, Q1.22 family |
 | Parallelism | P = 32 lanes |
 | Predicates | `LT`, `GT`, `EQ`, `RANGE` |
-| Run modes | `MANUAL_SINGLE`, `NORMAL_SINGLE`, `K4H8_SINGLE`, `NORMAL_ENUM`, `K4H8_ENUM` |
+| Run modes | `MANUAL_SINGLE`, `NORMAL_SINGLE`, `K4H8_SINGLE`, `NORMAL_ENUM`, `K4H8_ENUM` (`K4H8` is a legacy label; the real K/H are build constants) |
 | CSR | APB slave, base `0xE2020000`, 4-byte stride, 32-bit, 38 registers |
 | Data load | AHB master, SINGLE, single outstanding. SRAM `0xE0000000`–`0xE001FFFF` |
 | Result FIFO | Depth 256 |
 | Clocks | Accelerator 100 MHz / system 50 MHz |
+| Final configuration | **K3/H3-E4-M2** — 3 checkpoints, policy horizon 3, 4 intra-iteration engines, 2-stage measurement optimization |
+
+### Performance — do not mix the axes
+
+| Axis | Value | Evidence |
+|---|---|---|
+| Board wall-clock | Normal 425,502 us → **55,798 us** (7.626x) | `hardware_bram/vivado/vivado_bbht_grover_fpga/2026-09-08_k3h3_e4_m2_board_500run/` |
+| RTL cycles (6 stages) | Normal 42,308,335 → **6,890,470** (6.1401x) | `hardware_bram/results/2026-09-08_publication_6stage/` |
+| Versus software | **116,426x** over one ORCA core | `hardware_bram/vivado/vivado_bbht_grover_fpga/2026-09-08_orca_1core_baseline/` |
+
+All three use the same 500 workloads (M = 1/4/16/64/256 x 100 seeds). Board and RTL agree
+on the search trajectory 500/500, but the cycle counts themselves differ, so never build a
+ratio that mixes the two axes.
 
 ---
 
@@ -55,12 +70,13 @@ generated from it.
 The design forks on how amplitudes are reused after a failed shot.
 **Neither is final; one will be chosen later.**
 
-### `hardware_bram/` — checkpoints plus a second compute unit
+### `hardware_bram/` — checkpoints plus four intra-iteration engines
 
 The established approach, BRAM only. Amplitudes from a failed shot are not discarded;
-computation resumes from a checkpoint and advances only by the difference (K4/H4 policy).
-A second compute unit makes up the throughput. The v0.9.8 silicon-proven design belongs
-to this branch, and all code currently in the repository lives here.
+computation resumes from a checkpoint and advances only by the difference (K3/H3 policy).
+Inside one physical Grover iteration, four P=32 engines split the 512 rows (E4). The
+silicon-proven design belongs to this branch, and all code currently in the repository
+lives here.
 
 ### `hardware_dram/` — full DRAM storage plus a BRAM queue
 
@@ -73,7 +89,7 @@ burst away, this branch needs neither a checkpoint count K nor a lookahead polic
 **Draft RTL and its regression exist; the physical DRAM binding (MIG/AXI) and the
 communication layer do not yet.** Verification runs against a behavioral DRAM model
 (`make -C hardware_dram/sim`). `make -C hardware_dram/sim equiv` replays the same stimulus
-on `hardware_bram` and checks that the search trajectories match. Single Search only for
+on the frozen `hardware_bram` core and checks that the search trajectories match. Single Search only for
 now; Enumeration is rejected as a `config_error`.
 
 Both trees share the same shape — `src`, `testbench`, `sim`, `rvx`, `vivado`, `firmware` —
@@ -91,13 +107,17 @@ documents/
   papers/               Source paper PDFs (papers_ko/ holds Korean commentaries)
   check_docs.py         Documentation consistency checker
 
-hardware_bram/          Branch 1 - checkpoints plus a second compute unit, BRAM only
-  src/                  RTL
+hardware_bram/          Branch 1 - checkpoints plus four intra-iteration engines, BRAM only
+  src/                  Frozen board-proven RTL, 17 files
+  src_comm/             Our own communication layer plus the contract adapter
   testbench/            Verilog testbenches
   sim/                  Non-Verilog harnesses, build scripts, logs
+  synth/                Resource synthesis scripts
+  results/              Simulation campaign evidence (YYYY-MM-DD_<topic>/)
+  bitstream/            Bitstream bundles flashed to the board
   rvx/                  RVX platform definition and install script
   vivado/               Vivado project folders, named lowercase vivado_<project>
-  firmware/             Driver and console application
+  firmware/             Driver, console app, benchmark app, ORCA baseline
 
 hardware_dram/          Branch 2 - full DRAM storage plus BRAM queue
                         (draft RTL + regression; no physical DRAM binding or comms yet)
@@ -120,8 +140,9 @@ trash_bin/              Superseded docs and bulky artifacts. Not tracked by git
 # Communication layer regression (seconds). "ports" is the port contract check
 make -C hardware_bram/sim ports lint regress driver
 
-# Same four checks against the real core; bench250 runs the board's 250-pair workload
+# Our comms layer plus the frozen core / the frozen stack as-is / 250-pair trajectory bench
 make -C hardware_bram/sim real
+make -C hardware_bram/sim final
 make -C hardware_bram/sim bench250
 
 # Host CLI without a board

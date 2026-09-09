@@ -17,6 +17,10 @@ work/
 hardware_*/testbench/build/
 hardware_*/sim/obj_dir/
 
+# 합성 스크립트 작업 디렉터리. 다시 돌리면 나옵니다 (리포트 포함)
+hardware_*/synth/work/
+hardware_*/synth/work_main_ip/
+
 # ── Vivado 산출물 ──────────────────────────────────
 # 프로젝트를 열면 다시 생성되는 것들. 리포트·로그는 커밋합니다.
 *.jou
@@ -46,6 +50,9 @@ __pycache__/
 
 # ── Synology 색인 잔재. 미디어 파일을 두면 옆에 저절로 생깁니다 ──
 @eaDir/
+
+# ── 반입용 원본 묶음. 풀어서 저장소에 반영한 뒤에는 추적하지 않습니다 ──
+hardware_*/SERVER-*.zip
 
 # ── 전달용 아카이브. 원본 디렉터리가 저장소에 그대로 들어 있습니다 ──
 /software.tar.gz

@@ -1,0 +1,42 @@
+
+============================================================
+ FINAL PUBLICATION 100-SEED VALIDATION
+============================================================
+Underlying TB PASS logs : 2500/2500
+Workloads complete      : 500/500
+Stage observations      : 3000/3000
+Semantic equal          : 500/500
+Bad logs                : 0
+
+----- target=256 seed0 anchor -----
+Normal-E1          got=   18108 expected=   18108 PASS
+K4/H4-E1           got=   14898 expected=   14898 PASS
+K4/H4-E4           got=   12209 expected=   12209 PASS
+K3/H3-E4           got=   11100 expected=   11100 PASS
+K3/H3-E4-M1        got=    9052 expected=    9052 PASS
+K3/H3-E4-M2        got=    7045 expected=    7045 PASS
+
+Ablation source freeze  : PASS
+  bbht_rvx_wrapper.v           PASS
+  bbht_grover_main_ip.v        PASS
+  grover_measurement.v         PASS
+  grover_policy.v              PASS
+  grover_iteration.v           PASS
+  grover_checkpoint.v          PASS
+
+Frozen upgrade unchanged: PASS
+  bbht_grover_main_ip.v        PASS
+  grover_measurement.v         PASS
+  grover_policy.v              PASS
+  grover_iteration.v           PASS
+  grover_checkpoint.v          PASS
+
+----- 6-STAGE SUMMARY -----
+Normal-E1          total=    42308335 mean=  84616.67 median=  51963.50 p95=    280527 speedup=1.0000x stage_red=0.00%
+K4/H4-E1           total=    18349320 mean=  36698.64 median=  26775.00 p95=     94869 speedup=2.3057x stage_red=56.63%
+K4/H4-E4           total=    11246755 mean=  22493.51 median=  19740.50 p95=     45621 speedup=3.7618x stage_red=38.71%
+K3/H3-E4           total=    10385795 mean=  20771.59 median=  18208.00 p95=     42522 speedup=4.0737x stage_red=7.66%
+K3/H3-E4-M1        total=     8500620 mean=  17001.24 median=  14500.00 p95=     36204 speedup=4.9771x stage_red=18.15%
+K3/H3-E4-M2        total=     6890470 mean=  13780.94 median=  11212.00 p95=     30933 speedup=6.1401x stage_red=18.94%
+
+FINAL STATUS: PASS - READY TO FREEZE

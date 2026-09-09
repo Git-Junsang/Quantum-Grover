@@ -6,7 +6,7 @@ tb_dram_core 로그 대조기.
 
     dram      hardware_dram (DRAM 전량저장)
     bram      hardware_bram Normal (매 실행 처음부터 재계산)
-    k4h4      hardware_bram checkpoint_auto (K4/H4)
+    ckpt      hardware_bram checkpoint_auto (정본 K3/H3-E4-M2)
 
 두 부류로 나눠서 봅니다.
 
@@ -23,7 +23,7 @@ tb_dram_core 로그 대조기.
       iters (Grover 반복 수) 와 cyc (사이클). 이 차이가 곧 갈래의 이득이고,
       아래 표가 그걸 정리합니다.
 
-    python3 equiv_report.py dram.log bram.log [k4h4.log]
+    python3 equiv_report.py dram.log bram.log [ckpt.log]
 """
 import io
 import re
@@ -59,7 +59,7 @@ def main():
     if len(sys.argv) < 3:
         sys.exit(__doc__)
 
-    names = ["dram", "bram", "k4h4"][: len(sys.argv) - 1]
+    names = ["dram", "bram", "ckpt"][: len(sys.argv) - 1]
     logs = [parse(p) for p in sys.argv[1:]]
     base_order, base = logs[0]
 

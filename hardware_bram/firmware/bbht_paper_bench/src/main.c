@@ -1,5 +1,6 @@
 #include "platform_info.h"
 #include "ervp_printf.h"
+#include "ervp_real_clock.h"
 #include "seed_roster.h"
 #include <stdint.h>
 
@@ -15,7 +16,7 @@
  * Stage 4 : BENCH_SEED_COUNT=100, BENCH_INCLUDE_256=1
  */
 #ifndef BENCH_SEED_COUNT
-#define BENCH_SEED_COUNT 50u
+#define BENCH_SEED_COUNT 100u
 #endif
 
 #ifndef BENCH_INCLUDE_256
@@ -125,6 +126,9 @@ typedef struct {
     unsigned int l_bbht;
     unsigned int actual_iter;
     unsigned int cycle_count;
+
+    unsigned int elapsed_tick_hi;
+    unsigned int elapsed_tick_lo;
 
     unsigned int policy_cycles;
     unsigned int policy_stall;
@@ -292,6 +296,9 @@ static void run_search(
     unsigned int timeout = TIMEOUT;
     unsigned int status;
     unsigned int control;
+    uint64_t tick_start;
+    uint64_t tick_end = 0ull;
+    uint64_t elapsed_tick;
 
     clear_result(r);
     r->mode = mode;
@@ -309,14 +316,24 @@ static void run_search(
     REG32(GROVER_CSR_BASE + CSR_SEED_MEAS) = seed_meas;
     REG32(GROVER_CSR_BASE + CSR_ENUM_CFG) = 0u;
 
+    tick_start = get_real_clock_tick();
     REG32(GROVER_CSR_BASE + CSR_COMMAND) = 1u;
 
     while (timeout--) {
         status = REG32(GROVER_CSR_BASE + CSR_STATUS);
 
-        if (status & STATUS_DONE_BIT)
+        if (status & STATUS_DONE_BIT) {
+            tick_end = get_real_clock_tick();
             break;
+        }
     }
+
+    if (tick_end == 0ull)
+        tick_end = get_real_clock_tick();
+
+    elapsed_tick = tick_end - tick_start;
+    r->elapsed_tick_hi = (unsigned int)(elapsed_tick >> 32);
+    r->elapsed_tick_lo = (unsigned int)(elapsed_tick & 0xFFFFFFFFull);
 
     status = REG32(GROVER_CSR_BASE + CSR_STATUS);
     r->status = status;
@@ -462,12 +479,18 @@ int main()
     }
 
     printf("============================================================\n");
-    printf(" BBHT BOARD BENCHMARK : 50 SEEDS, NORMAL vs K4/H8\n");
+    printf(" BBHT BOARD BENCHMARK : REALTIME, NORMAL vs OPTIMIZED\n");
     printf("============================================================\n");
     printf("DATA_COUNT=%u, TARGET_VALUE=%u\n", DATA_COUNT, TARGET_VALUE);
     printf("TARGETS=1/4/16/64/256, SEEDS=%u\n", BENCH_SEED_COUNT);
     printf("BACKGROUND_SEED=0x%08x, TARGET_POS_SEED=0x%08x\n",
            BACKGROUND_SEED, TARGET_POS_SEED);
+
+    printf("HW_TIMING_SOURCE,RVX_REAL_CLOCK\n");
+    printf("HW_TIMING_UNIT,microsecond_tick\n");
+    printf("HW_TIMING_CORE_CLK_HZ,50000000\n");
+    printf("HW_TIMING_SCOPE,command_issue_to_DONE_observed,config_dma_result_read_printf_excluded\n");
+    printf("HW_REALTIME_CSV_HEADER,target_count,seed_index,seed_j,seed_meas,mode,success,result_valid,result_index,trial_count,l_bbht,actual_iter,cycle_count,timer_hi,timer_lo,status,timeout,unexpected_error,terminal_limit\n");
 
     /*
      * One deterministic random background is used for every target-count
@@ -533,6 +556,48 @@ int main()
                 &k4);
 
             consistent = pair_is_consistent(&normal, &k4);
+
+            printf(
+                "HW_REALTIME_CSV,%u,%u,0x%08x,0x%08x,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,0x%08x,%u,%u,%u\n",
+                target_count,
+                si,
+                bbht_seed_roster[si].seed_j,
+                bbht_seed_roster[si].seed_meas,
+                normal.mode,
+                (normal.result_valid && normal.result_is_target) ? 1u : 0u,
+                normal.result_valid,
+                normal.result_index,
+                normal.trial_count,
+                normal.l_bbht,
+                normal.actual_iter,
+                normal.cycle_count,
+                normal.elapsed_tick_hi,
+                normal.elapsed_tick_lo,
+                normal.status,
+                normal.timeout,
+                normal.unexpected_error,
+                normal.terminal_limit);
+
+            printf(
+                "HW_REALTIME_CSV,%u,%u,0x%08x,0x%08x,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,0x%08x,%u,%u,%u\n",
+                target_count,
+                si,
+                bbht_seed_roster[si].seed_j,
+                bbht_seed_roster[si].seed_meas,
+                k4.mode,
+                (k4.result_valid && k4.result_is_target) ? 1u : 0u,
+                k4.result_valid,
+                k4.result_index,
+                k4.trial_count,
+                k4.l_bbht,
+                k4.actual_iter,
+                k4.cycle_count,
+                k4.elapsed_tick_hi,
+                k4.elapsed_tick_lo,
+                k4.status,
+                k4.timeout,
+                k4.unexpected_error,
+                k4.terminal_limit);
 
             if (!consistent) {
                 printf(

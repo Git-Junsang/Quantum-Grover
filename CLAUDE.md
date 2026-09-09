@@ -31,9 +31,12 @@
 
 ## 2. 정합성 기준 — 무엇이 정본인가
 
-**보드에서 검증된 v0.9.8 이 정본입니다.** 모든 숫자는
-[`software/csr/bbht_grover_csr.json`](software/csr/bbht_grover_csr.json) 하나에서 나옵니다
-(C·Verilog·Python 헤더와 CSR 규격 문서가 전부 생성물).
+**보드에서 검증된 K3/H3-E4-M2 (2026-09-07 빌드) 가 정본입니다.** RTL 은
+[`hardware_bram/src/`](hardware_bram/src/) 열일곱 파일이고, 그 sha256 이
+비트스트림에 들어간 것과 바이트 동일합니다
+([`meta/source_sha256.txt`](hardware_bram/vivado/vivado_bbht_grover_fpga/meta/source_sha256.txt)).
+CSR 의 모든 숫자는 [`software/csr/bbht_grover_csr.json`](software/csr/bbht_grover_csr.json)
+하나에서 나옵니다 (C·Verilog·Python 헤더와 CSR 규격 문서가 전부 생성물).
 
 | 항목 | 값 |
 |---|---|
@@ -45,22 +48,43 @@
 | 데이터 적재 | AHB 마스터 **SINGLE**, single outstanding. SRAM `0xE0000000`~`0xE001FFFF` |
 | 결과 FIFO | 깊이 256 |
 | 클럭 | 가속기 100 MHz / 시스템 50 MHz |
+| 최종 구성 | **K3/H3-E4-M2** — 체크포인트 3벌 · 정책 지평 3 · 연산기 4벌 · 측정 최적화 2단 |
 
-**K4/H8 과 K4/H4 를 섞지 마십시오.** 두 보드 실측이 같은 250쌍 workload 를 쓰지만
-policy horizon 이 다릅니다. H8 은 Grover 반복을 2.7% 덜 쓰는 대신 policy stall 이
-23배(46.4% vs 3.54%)라 총 사이클에서 77% 손해입니다. 성능 수치의 정본은
-**K4/H4 (`2026-09-04_k4h4_single_operator_final/`)** 이고, 2026-09-01 묶음은 H8 입니다.
-`hardware_bram/src_v2/` 의 `grover_policy.v` 는 `H_FUTURE = 4` 이므로 K4/H4 쪽입니다.
+실행 모드 이름의 `K4H8` 은 **옛 표기**입니다. K·H·E·M 은 전부 RTL 빌드에
+컴파일되는 값이고 CSR 로 고르는 것이 아닙니다. 이름을 바꾸면 골든 모델
+API 가 같이 바뀌므로 그대로 두었습니다.
+
+### 성능을 인용할 때 — 두 축을 섞지 마십시오
+
+| 축 | 정본 | 값 |
+|---|---|---|
+| RTL 사이클 | [`results/2026-09-08_publication_6stage/`](hardware_bram/results/2026-09-08_publication_6stage/) | Normal 42,308,335 → M2 6,890,470 사이클, **6.1401x** |
+| 보드 실경과 시간 | [`vivado/.../2026-09-08_k3h3_e4_m2_board_500run/`](hardware_bram/vivado/vivado_bbht_grover_fpga/2026-09-08_k3h3_e4_m2_board_500run/) | Normal 425,502 us → M2 55,798 us, **7.626x** |
+| 소프트웨어 대비 | [`vivado/.../2026-09-08_orca_1core_baseline/`](hardware_bram/vivado/vivado_bbht_grover_fpga/2026-09-08_orca_1core_baseline/) | ORCA 1코어 대비 **116,426x** (실경과 시간) |
+
+세 근거는 같은 500 워크로드(M = 1/4/16/64/256 × 시드 100)를 씁니다. 궤적
+(`result_index`·`trial_count`·`L_BBHT`)은 보드와 RTL 이 500/500 일치하지만
+**사이클 값 자체는 다릅니다** — M2 는 473/500 이 정확히 3,279 사이클 차이납니다.
+그러니 보드 사이클과 RTL 사이클로 배수를 만들지 마십시오.
+
+6단계는 `Normal-E1 → K4/H4-E1 → K4/H4-E4 → K3/H3-E4 → K3/H3-E4-M1 → K3/H3-E4-M2`
+이고, 단계별 기여는 -56.63% / -38.71% / -7.66% / -18.15% / -18.94% 입니다.
+자원은 [`results/2026-09-08_resource_ablation_5config/`](hardware_bram/results/2026-09-08_resource_ablation_5config/)
+에 다섯 구성이 같은 조건으로 있습니다 (Main IP LUT 13,804 → 33,730, DSP 64 → 128).
 
 **폐기된 값 — 보이면 무시하십시오**: n=15·n=16, Q2.16·Q1.17, 8바이트 CSR 간격,
 INCR16 버스트, argmax 측정, AXI4-Lite, MicroBlaze, XC7S100.
 `trash_bin/` 안의 문서는 전부 이 구 스펙 기준이라 인용하면 안 됩니다.
 
-**Main IP RTL 소스는 `hardware_bram/src_v2/` 에 있습니다** (2026-09-05 반입).
-K4/H4 릴리스의 RTL 과 바이트 동일한 freeze 대상이라 **고치지 마십시오**. 통신 계층은
-`src/` 쪽 우리 것을 쓰고, 이름·리셋 차이는 `src/bbht_grover_core_adapter.v` 가 흡수합니다.
-배선 정합성은 `check_ports.py` 가 wrapper 19 + core 61 신호를 매번 대조해서 지킵니다
-(`stub` / `real` 두 갈래).
+**K4/H4·K4/H8 은 이제 중간 단계입니다.** 2026-09-01(K4/H8)·2026-09-04(K4/H4)
+보드 실측 묶음은 그 시점 근거로 남겨 두었지만, 최종 성능을 인용할 자리가
+아닙니다. 두 묶음은 250쌍(시드 50)이라 500 워크로드 캠페인과 총합을 맞댈 수도
+없습니다.
+
+**`hardware_bram/src/` 는 freeze 대상이라 고치지 마십시오.** 통신 계층은 두 벌이고
+(정본 `src/` · 우리 것 `src_comm/`), 회귀가 셋 다 돌려 T1~T9·D1~D11 을 확인합니다.
+배선 정합성은 `check_ports.py` 가 wrapper 19 + core 61 신호를 네 갈래
+(`stub`/`real`/`final`/`dram`)로 매번 대조해서 지킵니다.
 
 ---
 
@@ -68,15 +92,17 @@ K4/H4 릴리스의 RTL 과 바이트 동일한 freeze 대상이라 **고치지 �
 
 반복 실패 시 진폭을 어떻게 재활용하느냐에서 구현이 둘로 갈립니다. 나중에 하나를 고릅니다.
 
-- **`hardware_bram/`** — 체크포인트(K4/H4)로 차이만큼만 이어 돌리고, 연산기를 **두 벌** 둡니다.
-  **BRAM 만** 씁니다. v0.9.8 실물이 이 갈래이고 현재 코드는 전부 여기 있습니다.
+- **`hardware_bram/`** — 체크포인트(K3)로 차이만큼만 이어 돌리고, 반복 한 번에 연산기
+  **네 벌**(E4)이 협력합니다. **BRAM 만** 씁니다. 보드 실물이 이 갈래이고 현재 코드는
+  전부 여기 있습니다.
 - **`hardware_dram/`** — `j` 별 진폭을 DRAM 에 전량 저장하고, 난수 생성기가 뽑은 `j` 는
   BRAM 큐에도 올립니다. 정답 후보를 검증해 틀리면 큐에서 그 `j` 를 지우고 DRAM 에서
   다음 `j` 진폭을 큐에 올립니다. 체크포인트 K 도 정책 H 도 쓰지 않습니다 — 모든 `j` 가
   버스트 한 번 거리에 있어서 계획할 것이 없습니다. **RTL 초안과 회귀까지 있고, 물리 DRAM
   바인딩(MIG/AXI)과 통신 계층은 아직 없습니다.** 검증은 동작 수준 DRAM 모델
   (`testbench/dram_burst_model.v`) 위에서 하며, `make -C hardware_dram/sim equiv` 가
-  같은 자극을 `hardware_bram` 에도 걸어 탐색 궤적이 일치하는지 대조합니다.
+  같은 자극을 `hardware_bram` 정본에도 걸어 탐색 궤적이 일치하는지 대조합니다.
+  대조 상대는 2026-09-09 부터 K3/H3-E4-M2 입니다 (그전에는 K4/H4 였습니다).
   단일탐색 전용이고 `enum_enable=1` 은 `config_error` 로 거절합니다.
 
 두 트리는 하위 구조가 같고, CSR 정본·골든 모델·검증 벡터는 `software/` 에서 공유합니다.
@@ -96,7 +122,8 @@ K4/H4 릴리스의 RTL 과 바이트 동일한 freeze 대상이라 **고치지 �
 | `design_references/UART_명령_프로토콜.md` · `블록_인터페이스_다이어그램.md` | 통신 계약 |
 | `design_references/Main_IP_포트_규격.md` · `데이터_고정소수점_메모리_규격.md` | Main IP 계약 |
 | `design_references/다중결과탐색_*.md` · `단일검색_*.md` · `RTL_GitHub_*.md` · `전체_내용_보고서.md` | 골든 모델 분석 보고서 |
-| `design_references/PASS2_융합과_다중엔진_탐색_실측.md` | `src_v3` 측정 경로 융합과 탈락한 다중 엔진 기록 |
+| `design_references/K3H3_E4_M2_정본_반입.md` | 정본이 K4/H4 에서 바뀐 경위와 세 성능 축 |
+| `design_references/PASS2_융합과_다중엔진_탐색_실측.md` | 우리가 시도한 측정 융합·다중 엔진과, 정본이 같은 병목을 어떻게 다르게 푸는지 |
 | `design_references/diagrams/` | **design_references 의 유일한 하위 폴더.** 손그림 SVG · `campaign_*.png` · `src/*.mmd` |
 | `design_references/render_diagrams.py` | `diagrams/src/*.mmd` → `diagrams/*.svg` |
 | `study_references/` | 학습용 해설서 0~18장 + 부록 A. **파일명과 장 번호는 동결** |
@@ -111,33 +138,40 @@ K4/H4 릴리스의 RTL 과 바이트 동일한 freeze 대상이라 **고치지 �
 
 | 경로 | 역할 |
 |---|---|
-| `src/bbht_rvx_wrapper.v` | RVX user region 최상위. CSR·DMA·Main IP 를 묶습니다 |
-| `src/bbht_grover_mmio.v` | APB CSR 슬레이브 |
-| `src/bbht_ahb_loader.v` | AHB 마스터 (SINGLE) 데이터 적재기 |
-| `src/bbht_grover_user_region.vh` | RVX 가 읽는 user region 선언 |
-| `src/bbht_grover_core_adapter.v` | 계약 이름 `bbht_grover_core` 로 실물 Main IP 를 감싸는 어댑터 |
-| `src_v2/` | **실물 Main IP (PJK freeze).** 11개만 합성 경로. 통신 3개는 대조용, timing/OOC 3개는 제외 |
-| `src_v3/` | `src_v2` 포크 + PASS2 융합. 측정 경로 3개만 다르고 나머지는 바이트 동일 |
-| `testbench/tb_bbht_rvx.v` | 통신 계층 계약 T1~T9 |
+| `src/` | **보드 정본 RTL 17개 (freeze).** wrapper·mmio·loader·Main IP 10개·헤더 2개 |
+| `src/bbht_rvx_wrapper.v` | RVX user region 최상위. 어댑터 없이 Main IP 를 K3/H3-E4 로 뭅니다 |
+| `src/bbht_grover_main_ip.v` | Main IP 최상위. K·H·E·M 이 전부 컴파일 파라미터입니다 |
+| `src/grover_policy_ooc_top.v` · `grover_policy_impl_wrapper.v` | policy OOC 합성 전용. **합성 경로에 넣지 마십시오** |
+| `src_comm/` | 우리가 쓴 통신 계층. CSR 정본에서 생성한 헤더를 include 합니다 |
+| `src_comm/bbht_grover_core_adapter.v` | 계약 이름 `bbht_grover_core` 로 정본 Main IP 를 감싸는 어댑터 |
+| `src_comm/bbht_grover_user_region.vh` | 우리 갈래가 RVX 에 넘기는 user region 선언 |
+| `testbench/tb_bbht_rvx.v` | 통신 계층 계약 T1~T9. 두 갈래에 같은 TB 를 물립니다 |
 | `testbench/bbht_grover_core_stub.v` | Main IP 자리 채우개. 포트 계약 대조 대상 |
 | `testbench/ahb_sram_model.v` | AHB 슬레이브 모델 |
-| `sim/Makefile` | verilator 회귀 진입점. `ports lint regress driver` · 실물 `real` · 융합 `v3` · `bench250` |
-| `sim/tb_driver.cpp` · `run_driver_test.sh` | 드라이버 + RTL 공동 시뮬 D1~D11 |
-| `sim/tb_bench250.cpp` · `bench250_report.py` | 보드와 같은 250쌍 workload 시뮬. 여섯 지표 0.00% 일치 |
+| `sim/Makefile` | verilator 회귀 진입점. `ports lint regress driver` · `real` · `final` · `bench250` |
+| `sim/tb_driver.cpp` · `run_driver_test.sh` | 드라이버 + RTL 공동 시뮬 D1~D11 (`CORE=stub\|real\|final`) |
+| `sim/tb_bench250.cpp` · `bench250_report.py` | 250쌍 워크로드 시뮬. 궤적 불변식 확인용 |
+| `synth/` | 자원 합성. `run_main_ip.sh` 는 저장소만으로, `run_resource.sh` 는 재현 패키지 필요 |
+| `results/` | **시뮬 캠페인 근거 묶음** (`YYYY-MM-DD_<주제>/`). 재현 소스 없이 결과만 |
 | `bitstream/` | 보드에 구운 비트스트림 묶음 (`YYYY-MM-DD_<주제>`) |
-| `rvx/bbht_grover.xml` | RVX 플랫폼 정의 (clk_accel 100 MHz) |
-| `rvx/install_to_platform.sh` | 저장소 → RVX 플랫폼 설치. 무엇이 어디로 가는지가 여기 전부 |
+| `rvx/bbht_grover_upgrade.xml` | RVX 플랫폼 정의 (clk_accel 100 MHz) |
+| `rvx/install_to_platform.sh` | 저장소 → RVX 플랫폼 설치. `LAYER=final\|comm` 으로 통신 계층을 고릅니다 |
 | `vivado/vivado_<프로젝트이름>/` | **Vivado 프로젝트 한 벌.** 폴더 이름 규칙은 소문자 `vivado_` 접두 |
-| `vivado/vivado_bbht_grover_fpga/reports/` | v0.9.8 100 MHz `route_{util,timing_summary,timing_max,power}.rpt` |
-| `vivado/vivado_bbht_grover_fpga/meta/` | 그 구현의 git 커밋·diff·Vivado 버전 |
-| `vivado/vivado_bbht_grover_fpga/2026-09-01_board_benchmark_50seed/` | **보드 실측 (K4/H8).** 250쌍 paired, 반복 -72.22% · 사이클 -31.66% |
-| `vivado/vivado_bbht_grover_fpga/2026-09-04_k4h4_single_operator_final/` | **보드 실측 (K4/H4). 성능 인용은 이쪽입니다.** 같은 250쌍, 반복 -71.46% · 사이클 **-61.46%** |
+| `vivado/vivado_bbht_grover_fpga/reports/` | 최종 구현 `route_{util,util_hier,timing_summary,timing_max,power}.rpt` |
+| `vivado/vivado_bbht_grover_fpga/meta/` | 그 구현의 빌드 정보·소스 sha256·비트스트림 sha256 |
+| `vivado/vivado_bbht_grover_fpga/2026-09-08_k3h3_e4_m2_board_500run/` | **보드 실측 정본.** 500 워크로드, Normal 대비 7.626x |
+| `vivado/vivado_bbht_grover_fpga/2026-09-08_orca_1core_baseline/` | 같은 보드 ORCA 1코어 순수 SW 기준선 |
+| `vivado/vivado_bbht_grover_fpga/2026-09-01_*` · `2026-09-04_*` | 중간 단계(K4/H8·K4/H4) 보드 실측. 최종 인용처가 아닙니다 |
 | `firmware/bbht_grover_driver.{c,h}` | 재사용 드라이버 |
 | `firmware/bbht_console/` | UART 명령 셸. 재빌드 없이 조건을 바꿉니다 |
+| `firmware/bbht_paper_bench/` | 실시간 벤치 앱. 보드 실측 500런을 낸 것 |
+| `firmware/orca_sw_baseline/` | 가속기를 안 쓰는 ORCA 1코어 기준선 앱 |
 
 ### `hardware_dram/` 에만 있는 것
 
-Main IP 자체가 다른 갈래라 `src_v2/` 의 내용도 다릅니다. 재사용 8개
+Main IP 자체가 다른 갈래라 이쪽 `src_v2/` 의 내용은 `hardware_bram/src/` 와 다릅니다.
+(`hardware_bram` 의 `src_v2`·`src_v3` 은 2026-09-09 에 없앴지만, DRAM 갈래는 아직 자기
+`src_v2/` 를 씁니다.) 재사용 8개
 (`grover_param.vh` `arithmetic` `memories` `iteration` `measurement` `loader` `status`
 `dram_random`) 에 아래 신규 5개가 붙습니다. 체크포인트(`grover_checkpoint.v`)와 정책
 엔진(`grover_policy.v`)은 **일부러 안 가져왔습니다** — 모든 `j` 가 버스트 한 번 거리라
@@ -155,7 +189,7 @@ Main IP 자체가 다른 갈래라 `src_v2/` 의 내용도 다릅니다. 재사�
 | `testbench/tb_dram_prep_seq.v` | prep 시퀀서 P1~P8. 연산기 자리에 스텁을 넣습니다 |
 | `testbench/tb_dram_core.v` | Main IP 통합 C1~C8. `GD_DRAM_BRANCH` 를 빼면 `hardware_bram` 에도 물립니다 |
 | `sim/Makefile` | `ports lint store prep core equiv` |
-| `sim/equiv_report.py` | 세 갈래(dram / bram Normal / bram K4H4) 로그 대조기 |
+| `sim/equiv_report.py` | 세 갈래(dram / bram Normal / bram 체크포인트) 로그 대조기 |
 
 **아직 없는 것**: 물리 DRAM 바인딩(MIG native UI 든 AXI4 든), 통신 계층 회귀, 열거,
 버퍼 B 를 쓰는 라운드 간 프리페치, RVX 설치 스크립트, Vivado 프로젝트.
@@ -191,14 +225,19 @@ Main IP 자체가 다른 갈래라 `src_v2/` 의 내용도 다릅니다. 재사�
 # 통신 계층 회귀 (몇 초)
 make -C hardware_bram/sim ports lint regress driver
 
-# DRAM 갈래 회귀 (1분 30초쯤). equiv 는 hardware_bram 과 궤적 대조까지 (40초 더)
+# 정본 통째 / 우리 통신 계층 + 정본 코어 (각각 몇 분)
+make -C hardware_bram/sim final
+make -C hardware_bram/sim real
+
+# 250쌍 궤적 벤치 (20분쯤). CORE=real 이면 우리 통신 계층으로
+make -C hardware_bram/sim bench250
+
+# 최종 Main IP 자원 재기 (Vivado, 2분쯤)
+hardware_bram/synth/run_main_ip.sh
+
+# DRAM 갈래 회귀 (1분 30초쯤). equiv 는 hardware_bram 정본과 궤적 대조까지 (40초 더)
 make -C hardware_dram/sim
 make -C hardware_dram/sim equiv
-
-# 실물 코어로 같은 넷 / PASS2 융합판 / 보드와 같은 250쌍
-make -C hardware_bram/sim real
-make -C hardware_bram/sim v3
-make -C hardware_bram/sim bench250
 
 # CSR 정본을 고쳤으면
 python3 software/csr/gen_csr.py
@@ -212,7 +251,7 @@ python3 documents/study_references/render_diagrams.py
 # RVX
 source /opt/rvx/rvx_setup.sh
 hardware_bram/rvx/install_to_platform.sh
-cd $RVX_MINI_HOME/platform/bbht_grover && make syn && make sim_rtl
+cd $RVX_MINI_HOME/platform/bbht_grover_upgrade && make syn && make sim_rtl
 ```
 
 **이 환경의 툴체인** (2026-09-09 실측): `verilator` 5.020, `vsim`(Questa 2022.1_2),
@@ -242,7 +281,8 @@ RVX 는 `/opt/rvx` 에 로컬 전체 설치되어 있어 원격 접속이 필요
 | 무엇을 고쳤나 | 같이 볼 곳 |
 |---|---|
 | 설계 수치 | `software/csr/bbht_grover_csr.json` → `gen_csr.py` 재실행 → `CLAUDE.md` 2절 → `README*.md` 2절 |
-| 포트 | 인수인계 docx → `extract_contract.py` 재실행 → `make -C hardware_bram/sim ports` |
+| 성능·자원 수치 | 어느 축인지부터 (RTL 사이클 / 보드 실경과 시간 / 소프트웨어 대비) → 해당 근거 묶음의 `evidence.md` → `CLAUDE.md` 2절 → `README*.md` |
+| 포트 | 인수인계 docx → `extract_contract.py` 재실행 → `make -C hardware_bram/sim ports` (네 갈래 전부) |
 | 절 제목·절 번호 | 그 장으로 들어오는 모든 링크. 앵커가 밀립니다 |
 | 해설서 파일명 | **동결입니다.** 13·14장이 제목만 바뀌고 파일명을 둔 이유가 이것입니다 |
 | 디렉터리 구조 | `CLAUDE.md` 4절 · `README.md`/`README.ko.md` 4절 |
@@ -253,4 +293,7 @@ RVX 는 `/opt/rvx` 에 로컬 전체 설치되어 있어 원격 접속이 필요
 mermaid 로 안 되는 그림(진폭 막대, 기하 회전, 타임라인)은 손으로 쓴 SVG 를 `diagrams/` 에 직접 둡니다.
 
 **고전 선형 스캔과 속도를 비교하지 않습니다.** 에뮬레이션은 고전 스캔보다 느립니다.
-비교 대상은 Qiskit AerSimulator / NumPy 상태벡터 시뮬레이터입니다.
+비교 대상은 셋입니다 — 같은 보드 위의 ORCA 1코어 순수 소프트웨어 기준선(가장 정당한
+대조군. 같은 칩·같은 워크로드·같은 시드), Qiskit AerSimulator, NumPy 상태벡터
+시뮬레이터. ORCA 대비 배수가 십만 단위인 것은 P=32 병렬과 클럭 2배 때문이지
+알고리즘 우위가 아니라는 단서를 항상 붙이십시오.

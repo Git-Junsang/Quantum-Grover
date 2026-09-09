@@ -102,7 +102,7 @@
 | 비트 | 이름 | 뜻 |
 |:-:|---|---|
 | `0` | `auto_shot` | 1: BBHT 가 requested j 자동 생성 |
-| `1` | `burst_enable` | 1: checkpoint 재사용 사용 (K·H 는 RTL 빌드 상수. 현 freeze 는 K4/H4) |
+| `1` | `burst_enable` | 1: checkpoint 재사용 사용 (K·H 는 RTL 빌드 상수. 현 freeze 는 K3/H3) |
 | `3:2` | `predicate_mode` | 00 LT / 01 GT / 10 EQ / 11 RANGE |
 
 **`ENUM_CFG`** (`0x03C`)
@@ -165,9 +165,9 @@
 |---|:-:|:-:|:-:|---|
 | MANUAL_SINGLE | 0 | 0 | 0 | J_TARGET 을 펌웨어가 지정 |
 | NORMAL_SINGLE | 1 | 0 | 0 | 표준 BBHT |
-| K4H8_SINGLE | 1 | 1 | 0 | checkpoint 모드 (H 는 RTL 빌드에 컴파일됨. 현 freeze 는 H4) |
+| K4H8_SINGLE | 1 | 1 | 0 | checkpoint 모드 (K·H·E·M 은 RTL 빌드에 컴파일됨. 현 정본은 K3/H3-E4-M2. 이름의 K4H8 은 옛 표기) |
 | NORMAL_ENUM | 1 | 0 | 1 | 표준 BBHT 열거 |
-| K4H8_ENUM | 1 | 1 | 1 | checkpoint 열거 (H 는 RTL 빌드에 컴파일됨. 현 freeze 는 H4) |
+| K4H8_ENUM | 1 | 1 | 1 | checkpoint 열거 (K·H·E·M 은 RTL 빌드에 컴파일됨. 현 정본은 K3/H3-E4-M2. 이름의 K4H8 은 옛 표기) |
 
 `checkpoint_auto_enable = burst_enable && auto_shot` 입니다. `auto_shot=0`
 (manual) 에서는 checkpoint 가 걸리지 않습니다.

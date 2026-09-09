@@ -1,0 +1,2 @@
+platform,device,clock_MHz,WNS_ns,TNS_ns,WHS_ns,THS_ns,WPWS_ns,TPWS_ns,LUT,FF,BRAM_tile,DSP,Slices
+Full-RVX K3/H3-E4-M2,xc7a100tcsg324-1,100,0.126,0.0,0.016,0.0,3.0,0.0,45284,45223,116,132,15214

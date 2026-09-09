@@ -72,10 +72,11 @@ module tb_bbht_rvx;
     reg  [31:0] bk_addr = 32'd0;
     reg  [31:0] bk_data = 32'd0;
 
-    bbht_rvx_wrapper #(
-        .SRAM_BASE (SRAM_BASE),
-        .SRAM_LAST (SRAM_LAST)
-    ) dut (
+    // 파라미터를 넘기지 않습니다. 통신 계층 두 갈래를 같은 TB 로 물리려는
+    // 것입니다 -- 정본(src/)의 wrapper 는 파라미터가 없고, 적재 범위는
+    // bbht_ahb_loader 의 기본값(E0000000~E001FFFF)이 아래 localparam 과
+    // 같습니다. 범위를 바꿔 시험할 일이 생기면 loader 쪽 기본값을 보십시오.
+    bbht_rvx_wrapper dut (
         .clk (clk), .rstnn (rstnn),
         .psel (psel), .penable (penable), .pwrite (pwrite),
         .paddr (paddr), .pwdata (pwdata),

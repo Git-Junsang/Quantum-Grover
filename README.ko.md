@@ -6,7 +6,7 @@
 결과 인덱스를 돌려줍니다.
 
 - 보드: Arty A7-100T (`xc7a100tcsg324-1`)
-- 정합성 기준: **v0.9.8** (2026-09-01). 보드에서 검증된 쪽이 정본입니다.
+- 정합성 기준: **K3/H3-E4-M2** (2026-09-07 빌드, 2026-09-08 실측). 보드에서 검증된 쪽이 정본입니다.
 
 ---
 
@@ -14,10 +14,11 @@
 
 | 무엇                                                     | 상태                                                          |
 | -------------------------------------------------------- | ------------------------------------------------------------- |
-| Main IP 알고리즘 (Q14 / P32 / DATA16)                    | v0.9.8 freeze. 보드 sign-off 완료                             |
-| 통신 계층 (CSR · DMA · FIFO · 드라이버 · 호스트 CLI) | 회귀 통과. 실보드 E2E 는 미완                                 |
-| 100 MHz 구현                                             | 타이밍 클로즈. 리포트는`hardware_bram/vivado/`              |
-| **Main IP RTL 소스**                               | `hardware_bram/src_v2/` 에 있습니다 (K4/H4 freeze). 어댑터로 통신 계층에 붙습니다 |
+| Main IP 알고리즘 (Q14 / P32 / DATA16)                    | K3/H3-E4-M2 freeze. 보드 sign-off 완료                        |
+| 통신 계층 (CSR · DMA · FIFO · 드라이버 · 호스트 CLI) | 회귀 통과. 보드에 구워진 것은 정본 통신 계층입니다            |
+| 100 MHz 구현                                             | 타이밍 클로즈 (WNS +0.126 ns). 리포트는`hardware_bram/vivado/` |
+| **Main IP RTL 소스**                               | `hardware_bram/src/` 에 있습니다. 비트스트림에 들어간 것과 sha256 동일 |
+| 성능 근거                                                | 보드 실경과 시간 **7.626x**, RTL 사이클 **6.1401x**, ORCA 1코어 대비 **116,426x** |
 
 Main IP 소스가 freeze 대상이라 배선 정합성은 사람 눈이 아니라
 [포트 계약 대조](software/contract/check_ports.py)가 지킵니다. 인수인계 문서의
@@ -37,11 +38,23 @@ C 헤더 · Verilog 헤더 · Python 헤더 · 규격 문서가 전부 여기서
 | 진폭        | Q1.22 계열 23비트                                                                             |
 | 병렬도      | P = 32 레인                                                                                   |
 | 술어        | `LT` · `GT` · `EQ` · `RANGE`                                                       |
-| 실행 모드   | `MANUAL_SINGLE` · `NORMAL_SINGLE` · `K4H8_SINGLE` · `NORMAL_ENUM` · `K4H8_ENUM` |
+| 실행 모드   | `MANUAL_SINGLE` · `NORMAL_SINGLE` · `K4H8_SINGLE` · `NORMAL_ENUM` · `K4H8_ENUM` (`K4H8` 은 옛 이름. 실제 K·H 는 빌드 상수) |
 | CSR         | APB 슬레이브, base`0xE2020000`, 4바이트 간격, 32비트, 38개                                  |
 | 데이터 적재 | AHB 마스터 SINGLE, single outstanding. SRAM`0xE0000000`~`0xE001FFFF`                      |
 | 결과 FIFO   | 깊이 256                                                                                      |
 | 클럭        | 가속기 100 MHz / 시스템 50 MHz                                                                |
+| 최종 구성   | **K3/H3-E4-M2** — 체크포인트 3벌 · 정책 지평 3 · 반복 내 연산기 4벌 · 측정 최적화 2단        |
+
+### 성능 — 축을 섞지 마십시오
+
+| 축 | 값 | 근거 |
+|---|---|---|
+| 보드 실경과 시간 | Normal 425,502 us → **55,798 us** (7.626x) | `hardware_bram/vivado/vivado_bbht_grover_fpga/2026-09-08_k3h3_e4_m2_board_500run/` |
+| RTL 사이클 (6단계) | Normal 42,308,335 → **6,890,470** (6.1401x) | `hardware_bram/results/2026-09-08_publication_6stage/` |
+| 소프트웨어 대비 | ORCA 1코어 대비 **116,426x** | `hardware_bram/vivado/vivado_bbht_grover_fpga/2026-09-08_orca_1core_baseline/` |
+
+셋 다 같은 500 워크로드(M = 1/4/16/64/256 × 시드 100)입니다. 궤적은 보드와 RTL 이
+500/500 일치하지만 사이클 값 자체는 다르므로, 두 축을 섞어 배수를 만들면 안 됩니다.
 
 ---
 
@@ -50,11 +63,12 @@ C 헤더 · Verilog 헤더 · Python 헤더 · 규격 문서가 전부 여기서
 반복 실패 시 진폭 배열을 어떻게 재활용하느냐에서 구현이 둘로 나뉩니다.
 **아직 어느 쪽도 확정이 아니고, 나중에 하나를 고릅니다.**
 
-### `hardware_bram/` — 체크포인트 + 연산기 두 벌
+### `hardware_bram/` — 체크포인트 + 반복 내 연산기 네 벌
 
 기존 방식입니다. BRAM 만 씁니다. 실패한 샷의 진폭을 버리지 않고 체크포인트에서
-차이만큼만 이어 돌립니다(K4/H4 정책). 연산기를 두 벌 두어 처리량을 벌충합니다.
-v0.9.8 실물이 이 갈래이고, 지금 저장소에 있는 코드는 전부 여기 속합니다.
+차이만큼만 이어 돌립니다(K3/H3 정책). 물리 Grover 반복 한 번 안에서 P=32 연산기
+네 벌이 512행을 나눠 처리합니다(E4). 보드 실물이 이 갈래이고, 지금 저장소에 있는
+코드는 전부 여기 속합니다.
 
 ### `hardware_dram/` — DRAM 전량 저장 + BRAM 큐
 
@@ -83,13 +97,17 @@ documents/
   papers/               원문 논문 PDF (papers_ko/ 에 한국어 해설본)
   check_docs.py         문서 정합성 검사기
 
-hardware_bram/          갈래 1 — 체크포인트 + 연산기 두 벌, BRAM 전용
-  src/                  RTL
+hardware_bram/          갈래 1 — 체크포인트 + 반복 내 연산기 네 벌, BRAM 전용
+  src/                  보드 정본 RTL 17개 (freeze)
+  src_comm/             우리가 쓴 통신 계층 + 어댑터
   testbench/            Verilog 테스트벤치
   sim/                  비 Verilog 하네스 · 빌드 스크립트 · 로그
+  synth/                자원 합성 스크립트
+  results/              시뮬 캠페인 근거 묶음 (YYYY-MM-DD_<주제>/)
+  bitstream/            보드에 구운 비트스트림 묶음
   rvx/                  RVX 플랫폼 정의와 설치 스크립트
   vivado/               Vivado 프로젝트 폴더. 이름은 소문자 vivado_<프로젝트이름>
-  firmware/             드라이버와 콘솔 앱
+  firmware/             드라이버 · 콘솔 앱 · 벤치 앱 · ORCA 기준선
 
 hardware_dram/          갈래 2 — DRAM 전량 저장 + BRAM 큐
                         (RTL 초안 + 회귀. 물리 DRAM 바인딩과 통신 계층은 아직)
@@ -112,8 +130,9 @@ trash_bin/              구 스펙 문서와 대용량 산출물 보관. git 추
 # 통신 계층 회귀 (몇 초). ports 가 포트 계약 대조입니다
 make -C hardware_bram/sim ports lint regress driver
 
-# 실물 코어로 같은 넷. 보드와 같은 250쌍 workload 는 bench250
+# 우리 통신 계층 + 정본 코어 / 보드 정본 통째 / 250쌍 궤적 벤치
 make -C hardware_bram/sim real
+make -C hardware_bram/sim final
 make -C hardware_bram/sim bench250
 
 # 호스트 CLI 를 보드 없이

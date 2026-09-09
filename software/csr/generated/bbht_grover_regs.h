@@ -155,8 +155,8 @@ extern void         bbht_host_wr(unsigned int off, unsigned int val);
 /* 권장 운용 모드 (auto_shot, burst_enable, enum_enable) */
 /*   MANUAL_SINGLE  auto=0 burst=0 enum=0  J_TARGET 을 펌웨어가 지정 */
 /*   NORMAL_SINGLE  auto=1 burst=0 enum=0  표준 BBHT */
-/*   K4H8_SINGLE    auto=1 burst=1 enum=0  checkpoint 모드 (H 는 RTL 빌드에 컴파일됨. 현 freeze 는 H4) */
+/*   K4H8_SINGLE    auto=1 burst=1 enum=0  checkpoint 모드 (K·H·E·M 은 RTL 빌드에 컴파일됨. 현 정본은 K3/H3-E4-M2. 이름의 K4H8 은 옛 표기) */
 /*   NORMAL_ENUM    auto=1 burst=0 enum=1  표준 BBHT 열거 */
-/*   K4H8_ENUM      auto=1 burst=1 enum=1  checkpoint 열거 (H 는 RTL 빌드에 컴파일됨. 현 freeze 는 H4) */
+/*   K4H8_ENUM      auto=1 burst=1 enum=1  checkpoint 열거 (K·H·E·M 은 RTL 빌드에 컴파일됨. 현 정본은 K3/H3-E4-M2. 이름의 K4H8 은 옛 표기) */
 
 #endif /* BBHT_GROVER_REGS_H */

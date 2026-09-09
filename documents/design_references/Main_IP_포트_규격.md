@@ -2,14 +2,16 @@
 
 ## 1. 적용 범위
 
-기준은 **보드에서 검증된 v0.9.8 Main IP** 이고, 실물 RTL 은 `hardware_bram/src_v2/`
-에 있습니다. K4/H4 릴리스(`2026-09-04_k4h4_single_operator_final`)의 RTL 과 바이트
-동일한 freeze 사본이라 **고치지 마십시오.**
+기준은 **보드에서 검증된 K3/H3-E4-M2 Main IP** 이고, 실물 RTL 은
+`hardware_bram/src/` 에 있습니다. 2026-09-07 비트스트림에 들어간 것과 sha256 이
+같은 freeze 사본이라 **고치지 마십시오.**
 
 - 합성 프로파일: Q14 / P32 / signed DATA16 / signed 23비트 진폭(소수부 22)
-- 실제 top module: `lpsoc_bbht_grover_main_ip`
-- 계약 이름 `bbht_grover_core` 는 `hardware_bram/src/bbht_grover_core_adapter.v`
-  가 만들어 줍니다. 이름·리셋 차이를 여기서 흡수합니다
+- 실제 top module: `bbht_grover_main_ip`
+- 정본 wrapper(`src/bbht_rvx_wrapper.v`)는 이 모듈을 **어댑터 없이 직접** 뭅니다
+- 우리 통신 계층(`src_comm/`)을 쓸 때만 계약 이름 `bbht_grover_core` 가 필요하고,
+  `src_comm/bbht_grover_core_adapter.v` 가 이름·리셋(`rstn` → `rstnn`) 차이를
+  흡수합니다. 포트 61개는 두 갈래가 1:1 로 같습니다
 - 단일 검색과 열거, 결과 FIFO(256칸), checkpoint policy 가 **전부 Main IP 안**에
   있습니다. 바깥에 둘 것은 APB CSR·AHB 적재·UART 뿐입니다
 
@@ -33,9 +35,9 @@ make -C hardware_bram/sim ports-real   # 실물 코어를 물린 상태
 |---|---|
 | 계약 원본 | `software/contract/LPSoC_BBHT_Grover_팀원_Handoff_SW_통신_v0.9.8반영_2026-09-01.docx` |
 | docx SHA-256 | `46a5d17805e52caecff4cebbfd1240f9ae7976a54e06b81d2bc391455ba748da` |
-| 실물 RTL | `hardware_bram/src_v2/` (K4/H4 릴리스와 바이트 동일) |
+| 실물 RTL | `hardware_bram/src/` (2026-09-07 비트스트림과 sha256 동일) |
 | 골든 모델 | `software/golden/rtl_v098_auto.py` 외 `rtl_v098_*` |
-| 보드 실측 | `hardware_bram/vivado/vivado_bbht_grover_fpga/2026-09-04_k4h4_single_operator_final/` |
+| 보드 실측 | `hardware_bram/vivado/vivado_bbht_grover_fpga/2026-09-08_k3h3_e4_m2_board_500run/` |
 
 소스가 충돌하면 우선순위는 **실물 RTL → 포트 계약 tsv → 골든 모델 → 이 문서** 입니다.
 
@@ -44,7 +46,8 @@ v0.7g(2026-08-20 전달본) 기준으로 쓰인 옛 판은 폐기했습니다. �
 
 ## 3. 확정 합성 파라미터
 
-`hardware_bram/src_v2/grover_param.vh` 에서 직접 뽑은 값입니다.
+`hardware_bram/src/grover_param.vh` 와 `bbht_rvx_wrapper.v` 가 넘기는
+파라미터에서 직접 뽑은 값입니다.
 
 | 항목 | 값 |
 |---|---:|
@@ -61,12 +64,16 @@ v0.7g(2026-08-20 전달본) 기준으로 쓰인 옛 판은 폐기했습니다. �
 | BBHT budget | 576 |
 | 기본 `shot_cap` | 100 |
 | Result FIFO 깊이 | 256 |
-| checkpoint 슬롯 `CKPT_K` | 4 |
-| policy horizon `H_FUTURE` | 4 |
+| checkpoint 슬롯 `CKPT_K` | 3 |
+| policy horizon `POLICY_H_FUTURE` | 3 |
+| 반복 내 연산기 `INTRA_ENGINES` | 4 |
 | 열거 기본 `fail_repeat_limit` | 3 |
 
-`CKPT_K = 4` · `H_FUTURE = 4` 이므로 현재 freeze 는 **K4/H4** 입니다. CSR 실행 모드
-이름이 `K4H8_*` 인 것은 이름이 먼저 굳었기 때문이고, 호라이즌 값과는 별개입니다.
+`CKPT_K = 3` · `POLICY_H_FUTURE = 3` · `INTRA_ENGINES = 4` 이고 측정 경로 최적화
+두 단(M1·M2)이 이 소스에 붙박이라, 현재 freeze 는 **K3/H3-E4-M2** 입니다.
+앞의 넷은 `grover_param.vh` 가 아니라 wrapper 가 인스턴스에 넘기는 값입니다
+(`src/bbht_rvx_wrapper.v` 301행). CSR 실행 모드 이름이 `K4H8_*` 인 것은 이름이
+먼저 굳었기 때문이고 실제 K·H 값과는 별개입니다.
 
 ## 4. 입력 포트
 

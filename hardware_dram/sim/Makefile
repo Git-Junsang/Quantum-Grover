@@ -5,8 +5,8 @@
 #   make prep       grover_dram_prep_seq 단위 -- 체크포인트 K/H 를 대신하는 부분
 #   make core       Main IP 통합 (통신 계층 없이 코어만)
 #   make equiv      hardware_bram 과 궤적 대조 + 비용 비교 (손으로 고른 8케이스)
-#   make bench250   보드 실측(2026-09-04 K4/H4)과 같은 250쌍 워크로드로 3자 대조
-#                   (250 dram + 250 normal + 250 k4h4 = 750 케이스, 3분쯤)
+#   make bench250   250쌍 워크로드로 3자 대조
+#                   (250 dram + 250 normal + 250 ckpt = 750 케이스, 3분쯤)
 #   make lint       합성 대상 RTL 만 lint
 #   make ports      PJK 인수인계 포트 계약 대조
 #   make clean
@@ -26,7 +26,7 @@ RTL_DIR   = ../src
 V2_DIR    = ../src_v2
 TB_DIR    = ../testbench
 CSR_DIR   = ../../software/csr/generated
-BRAM_V2   = ../../hardware_bram/src_v2
+BRAM_SRC  = ../../hardware_bram/src
 
 # 합성 경로에 들어가는 코어 파일만 적습니다. glob 을 쓰면 안 됩니다.
 DRAM_CORE = $(V2_DIR)/lpsoc_bbht_grover_main_ip.v \
@@ -43,15 +43,17 @@ DRAM_CORE = $(V2_DIR)/lpsoc_bbht_grover_main_ip.v \
             $(V2_DIR)/grover_status.v
 
 # equiv 대조용. hardware_bram 쪽은 읽기만 하고 절대 고치지 않습니다.
-BRAM_CORE = $(BRAM_V2)/lpsoc_bbht_grover_main_ip.v \
-            $(BRAM_V2)/grover_arithmetic.v $(BRAM_V2)/grover_bbht.v \
-            $(BRAM_V2)/grover_checkpoint.v $(BRAM_V2)/grover_iteration.v \
-            $(BRAM_V2)/grover_loader.v $(BRAM_V2)/grover_measurement.v \
-            $(BRAM_V2)/grover_memories.v $(BRAM_V2)/grover_policy.v \
-            $(BRAM_V2)/grover_status.v
+# 2026-09-09 부터 대조 상대가 보드 정본 K3/H3-E4-M2 입니다 (그전에는
+# src_v2 의 K4/H4 였습니다).
+BRAM_CORE = $(BRAM_SRC)/bbht_grover_main_ip.v \
+            $(BRAM_SRC)/grover_arithmetic.v $(BRAM_SRC)/grover_bbht.v \
+            $(BRAM_SRC)/grover_checkpoint.v $(BRAM_SRC)/grover_iteration.v \
+            $(BRAM_SRC)/grover_loader.v $(BRAM_SRC)/grover_measurement.v \
+            $(BRAM_SRC)/grover_memories.v $(BRAM_SRC)/grover_policy.v \
+            $(BRAM_SRC)/grover_status.v
 
 VFLAGS    = -Wno-fatal -Wno-DECLFILENAME -I$(V2_DIR) -I$(TB_DIR)
-BRAMFLAGS = -Wno-fatal -Wno-DECLFILENAME -I$(BRAM_V2) -I$(TB_DIR)
+BRAMFLAGS = -Wno-fatal -Wno-DECLFILENAME -I$(BRAM_SRC) -I$(TB_DIR)
 
 # DRAM 지연 두 벌. 실물 MIG 지연을 알게 되면 SLOW 쪽 숫자만 바꾸면 됩니다.
 FAST = -GWR_LAT=0 -GRD_LAT=1  -GBEAT_GAP=0 -GSTALL_EN=0
@@ -72,7 +74,7 @@ ports:
 #---------------------------------------------------------------------
 # 합성 대상만 lint. 테스트벤치와 DRAM 모델은 뺍니다.
 #
-# hardware_bram 의 lint-real 과 같은 이유로 -Wall 을 안 씁니다. src_v2 의
+# hardware_bram 의 lint-real 과 같은 이유로 -Wall 을 안 씁니다. 정본의
 # 재사용 파일들이 원래 내는 폭 경고가 수십 건이라 회귀가 거기서 멈춥니다.
 #---------------------------------------------------------------------
 lint:
@@ -148,7 +150,7 @@ core:
 
 #---------------------------------------------------------------------
 # 궤적 대조. 같은 테스트벤치를 hardware_bram Main IP 에도 물려서
-# 세 벌(dram / bram Normal / bram K4H4)을 같은 자극으로 돌립니다.
+# 세 벌(dram / bram Normal / bram 체크포인트)을 같은 자극으로 돌립니다.
 #
 # 이게 이 갈래의 정합성 근거입니다. 보드에서 검증된 v0.9.8 과 답도 궤적도
 # 같아야 하고, 비용만 달라야 합니다.
@@ -161,31 +163,26 @@ equiv: core
 	          || { tail -30 $(BUILD)/core_bram_build.log; exit 1; }
 	@$(BUILD)/core_bram/sim | tee $(BUILD)/core_bram.log
 	@verilator --binary --timing $(BRAMFLAGS) -GCKPT_AUTO=1 $(TB_DIR)/tb_dram_core.v $(BRAM_CORE) \
-	          --top-module tb_dram_core --Mdir $(BUILD)/core_k4h4 -o sim \
-	          > $(BUILD)/core_k4h4_build.log 2>&1 \
-	          || { tail -30 $(BUILD)/core_k4h4_build.log; exit 1; }
-	@$(BUILD)/core_k4h4/sim | tee $(BUILD)/core_k4h4.log
+	          --top-module tb_dram_core --Mdir $(BUILD)/core_ckpt -o sim \
+	          > $(BUILD)/core_ckpt_build.log 2>&1 \
+	          || { tail -30 $(BUILD)/core_ckpt_build.log; exit 1; }
+	@$(BUILD)/core_ckpt/sim | tee $(BUILD)/core_ckpt.log
 	@python3 equiv_report.py $(BUILD)/core_dram.log $(BUILD)/core_bram.log \
-	                         $(BUILD)/core_k4h4.log
+	                         $(BUILD)/core_ckpt.log
 
 #---------------------------------------------------------------------
 # 250쌍 벤치. equiv 의 손으로 고른 8케이스와 달리, 보드 실측이 실제로 쓴
 # 워크로드(정답 개수 M in {1,4,16,64,256} x 시드 50쌍)를 그대로 돌려
-# "DRAM 갈래가 K4/H4 를 이기냐 지냐"에 통계적으로 의미 있는 답을 냅니다.
+# "DRAM 갈래가 정본 체크포인트를 이기냐 지냐"에 통계적으로 의미 있는 답을 냅니다.
 #
 # dram 은 한 번(250케이스), bram 은 CHECKPOINT_ENABLE=1 로 한 번만 빌드해
-# burst_enable 을 케이스마다 0/1 로 바꿔 Normal/K4H4 를 같이 얻습니다
+# burst_enable 을 케이스마다 0/1 로 바꿔 Normal/체크포인트를 같이 얻습니다
 # (실물 칩이 런타임에 CSR 로 고르는 것과 같은 방식 -- tb_dram_bench250.v
 # 헤더 참고).
 #---------------------------------------------------------------------
 WL_DIR = $(BUILD)/bench250_wl
 
-BENCH_BRAM_V2 = $(BRAM_V2)/lpsoc_bbht_grover_main_ip.v \
-                $(BRAM_V2)/grover_arithmetic.v $(BRAM_V2)/grover_bbht.v \
-                $(BRAM_V2)/grover_checkpoint.v $(BRAM_V2)/grover_iteration.v \
-                $(BRAM_V2)/grover_loader.v $(BRAM_V2)/grover_measurement.v \
-                $(BRAM_V2)/grover_memories.v $(BRAM_V2)/grover_policy.v \
-                $(BRAM_V2)/grover_status.v
+BENCH_BRAM_SRC = $(BRAM_CORE)
 
 bench250:
 	@mkdir -p $(WL_DIR)
@@ -200,7 +197,7 @@ bench250:
 	$(BUILD)/bench250_dram/sim
 	@verilator --binary --timing $(BRAMFLAGS) \
 	          -DGD_WL_DIR='"$(WL_DIR)"' -DGD_CSV_OUT='"$(BUILD)/bench250_bram.csv"' \
-	          $(TB_DIR)/tb_dram_bench250.v $(BENCH_BRAM_V2) \
+	          $(TB_DIR)/tb_dram_bench250.v $(BENCH_BRAM_SRC) \
 	          --top-module tb_dram_bench250 --Mdir $(BUILD)/bench250_bram -o sim \
 	          > $(BUILD)/bench250_bram_build.log 2>&1 \
 	          || { tail -30 $(BUILD)/bench250_bram_build.log; exit 1; }

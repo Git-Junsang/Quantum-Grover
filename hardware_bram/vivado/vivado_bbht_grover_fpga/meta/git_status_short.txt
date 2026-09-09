@@ -1,7 +1,0 @@
- m rvx_install
-?? platform/bbht_grover/
-?? platform/tip_hello/arch/
-?? platform/tip_hello/imp_arty-100t_2026-08-23-00/
-?? platform/tip_hello/imp_arty-100t_2026-08-23/
-?? questa_sim-2022.1_2-online.bin
-?? questa_sim-2022.1_2-online.bin:Zone.Identifier

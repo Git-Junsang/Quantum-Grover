@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
 250쌍 벤치 3자 대조. hardware_bram/sim/bench250_report.py 와 같은 논리를
-dram/bram-Normal/bram-K4H4 세 갈래에 적용합니다.
+dram/bram-Normal/bram-체크포인트 세 갈래에 적용합니다.
 
     python3 bench250_report.py <dram.csv> <bram.csv>
 
-<bram.csv> 는 mode 열에 normal/k4h4 가 섞인 500행짜리 파일이고, <dram.csv>
+<bram.csv> 는 mode 열에 normal/ckpt 가 섞인 500행짜리 파일이고, <dram.csv>
 는 mode=dram 인 250행짜리 파일입니다 (tb_dram_bench250.v 가 그렇게 냅니다).
 
 불변식 (반드시 같아야 하는 것)
@@ -41,13 +41,13 @@ def check_trajectory(dram, bram):
         for s in range(50):
             d = dram.get((m, s, "dram"))
             n = bram.get((m, s, "normal"))
-            k = bram.get((m, s, "k4h4"))
+            k = bram.get((m, s, "ckpt"))
             if d is None or n is None or k is None:
                 bad.append((m, s, "누락"))
                 continue
             for f in TRAJ_FIELDS:
                 if not (d[f] == n[f] == k[f]):
-                    bad.append((m, s, "%s: dram=%s normal=%s k4h4=%s"
+                    bad.append((m, s, "%s: dram=%s normal=%s ckpt=%s"
                                 % (f, d[f], n[f], k[f])))
                     break
     return bad
@@ -131,7 +131,7 @@ def main():
     errs += cfgerr_check(bram, "bram")
 
     paired_stats("Normal 대비", dram, bram, "normal")
-    paired_stats("K4/H4 대비", dram, bram, "k4h4")
+    paired_stats("체크포인트 대비", dram, bram, "ckpt")
 
     print()
     if bad or errs:

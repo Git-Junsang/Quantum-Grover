@@ -1,0 +1,4 @@
+architecture,runs,aggregate_cycles,speedup_vs_k4h4_e1_tb
+k4h4_e1,250,8836298,1.000000
+k3h4_e1,250,8818101,1.002064
+k3h3_e1,250,8596609,1.027882

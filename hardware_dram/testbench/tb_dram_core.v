@@ -10,7 +10,7 @@
 // 상위집합). 그래서
 //
 //   GD_DRAM_BRANCH 정의  -> hardware_dram/src_v2 + DRAM 모델
-//   정의 안 함           -> hardware_bram/src_v2 (CKPT_AUTO 로 Normal/K4H4)
+//   정의 안 함           -> hardware_bram/src (CKPT_AUTO 로 Normal/K3H3-E4-M2)
 //
 // 두 벌을 같은 자극으로 돌려서 CASE 줄을 맞대면, hardware_dram 이
 // 검증된 v0.9.8 과 "같은 답을 같은 궤적으로" 내는지가 확인됩니다.
@@ -146,14 +146,20 @@ module tb_dram_core #(
 `else
     // hardware_bram 의 Main IP 는 체크포인트 하드웨어 자체가 컴파일
     // 파라미터로 붙었다 떨어졌다 합니다. CHECKPOINT_ENABLE 기본값이 0 이라
-    // 그냥 물리면 checkpoint_auto_enable 을 아무리 올려도 K4/H4 가 안
-    // 켜집니다 (실물 경로에서는 bbht_grover_core_adapter.v 가 1 로
-    // 올려 줍니다). 여기서는 CKPT_AUTO 로 같이 묶어, 0 이면 순수 Normal,
-    // 1 이면 K4/H4 가 되게 합니다.
-    lpsoc_bbht_grover_main_ip #(
+    // 그냥 물리면 checkpoint_auto_enable 을 아무리 올려도 체크포인트 경로가
+    // 안 켜집니다 (실물 경로에서는 wrapper 가 1 로 올려 줍니다).
+    // 여기서는 CKPT_AUTO 로 같이 묶어, 0 이면 순수 Normal, 1 이면 보드
+    // 정본과 같은 K3/H3-E4-M2 가 되게 합니다.
+    //
+    // 2026-09-09 이전에는 이 자리가 src_v2 의 K4/H4 였습니다. 대조 상대가
+    // 바뀌었으므로 옛 로그의 사이클과 맞대지 마십시오.
+    bbht_grover_main_ip #(
         .CHECKPOINT_ENABLE  (CKPT_AUTO),
-        .CKPT_K             (4),
-        .CKPT_MANUAL_ENABLE (0)
+        .CKPT_K             (3),
+        .POLICY_H_FUTURE    (3),
+        .CKPT_MANUAL_ENABLE (0),
+        .AUTO_SPEC_ENABLE   (1),
+        .INTRA_ENGINES      (4)
     ) u_ip (
 `endif
         .clk                      (clk),

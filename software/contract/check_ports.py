@@ -5,16 +5,19 @@
 port_contract.tsv (PJK 인수인계 §3.3/§3.4 에서 뽑은 것) 와 실제 Verilog 를
 대조합니다. 이름·방향·폭·signed 가 하나라도 어긋나면 종료코드 1 입니다.
 
-실물 Main IP 는 hardware_bram/src_v2 에 있고 모듈 이름이
-lpsoc_bbht_grover_main_ip 입니다. 계약 이름(bbht_grover_core)으로 감싸는
-어댑터가 src/bbht_grover_core_adapter.v 라, real 갈래는 그 어댑터를 봅니다.
-어댑터가 계약 폭을 그대로 선언하고 있으므로 실물 배선도 이 검사로 지켜집니다.
+hardware_bram 은 통신 계층이 두 벌입니다.
+
+    final  보드에 구워진 정본 (hardware_bram/src). wrapper 가 어댑터 없이
+           bbht_grover_main_ip 를 직접 물고, 리셋 이름이 rstn 입니다.
+    real   우리 통신 계층 (hardware_bram/src_comm) + 어댑터. 어댑터가 계약
+           이름 bbht_grover_core 와 리셋 이름 rstnn 로 맞춰 줍니다.
+    stub   같은 통신 계층에 자리 채우개를 끼운 것. 통신 계층만 볼 때 씁니다.
 
 hardware_dram 갈래도 같은 계약을 지켜야 합니다. 그쪽 Main IP 는 우리가 쓴
 초안이지만 wrapper 19 + core 61 신호는 통신 계층과 맞물리는 부분이라 바뀌면
 안 됩니다. dram 갈래는 hardware_dram 의 wrapper 와 어댑터를 봅니다.
 
-    python3 check_ports.py [stub|real|v3|dram]
+    python3 check_ports.py [stub|real|final|dram]
 """
 import io
 import os
@@ -28,34 +31,82 @@ CONTRACT = os.path.join(HERE, "port_contract.tsv")
 
 MODE = sys.argv[1] if len(sys.argv) > 1 else "stub"
 
-# wrapper 는 갈래마다 한 벌씩 있습니다. dram 을 뺀 나머지는 전부
-# hardware_bram 쪽을 봅니다.
-WRAPPERS = {
-    "stub": os.path.join(ROOT, "hardware_bram", "src", "bbht_rvx_wrapper.v"),
-    "real": os.path.join(ROOT, "hardware_bram", "src", "bbht_rvx_wrapper.v"),
-    "v3":   os.path.join(ROOT, "hardware_bram", "src", "bbht_rvx_wrapper.v"),
-    "dram": os.path.join(ROOT, "hardware_dram", "src", "bbht_rvx_wrapper.v"),
+# 갈래마다 wrapper 한 벌, 그 wrapper 가 무는 코어 한 벌입니다.
+#   wrapper  §3.3 을 대조할 파일
+#   core     §3.4 를 대조할 파일
+#   module   그 파일 안의 모듈 이름
+#   inst     wrapper 안에서 코어를 무는 인스턴스 이름
+#   rst      코어가 쓰는 리셋 이름 (계약 표에는 clk/리셋이 없습니다).
+#            wrapper 는 RVX 가 주는 rstnn 으로 어느 갈래나 같습니다
+BRANCHES = {
+    # 보드 정본. wrapper 가 Main IP 를 직접 물고 리셋이 rstn 입니다.
+    "final": dict(wrapper=("hardware_bram", "src", "bbht_rvx_wrapper.v"),
+                  core=("hardware_bram", "src", "bbht_grover_main_ip.v"),
+                  module="bbht_grover_main_ip", inst="u_main_ip", rst="rstn",
+                  params=("hardware_bram", "src", "grover_param.vh")),
+    # 우리 통신 계층 + 어댑터. 어댑터가 계약 이름과 rstnn 로 맞춰 줍니다.
+    "real":  dict(wrapper=("hardware_bram", "src_comm", "bbht_rvx_wrapper.v"),
+                  core=("hardware_bram", "src_comm", "bbht_grover_core_adapter.v"),
+                  module="bbht_grover_core", inst="u_core", rst="rstnn"),
+    # 같은 통신 계층에 자리 채우개를 끼운 것.
+    "stub":  dict(wrapper=("hardware_bram", "src_comm", "bbht_rvx_wrapper.v"),
+                  core=("hardware_bram", "testbench", "bbht_grover_core_stub.v"),
+                  module="bbht_grover_core", inst="u_core", rst="rstnn"),
+    # DRAM 전량저장 갈래. 감싸는 Main IP 는 다르지만 계약 61신호는 같습니다.
+    "dram":  dict(wrapper=("hardware_dram", "src", "bbht_rvx_wrapper.v"),
+                  core=("hardware_dram", "src", "bbht_grover_core_adapter.v"),
+                  module="bbht_grover_core", inst="u_core", rst="rstnn"),
 }
-WRAPPER = WRAPPERS[MODE]
 
-# 계약 대조 대상. 둘 다 module bbht_grover_core 를 계약 폭 그대로 선언합니다.
-#   stub  통신 계층만 볼 때 쓰는 자리 채우개
-#   real  실물 Main IP(lpsoc_bbht_grover_main_ip) 를 감싼 어댑터
-CORES = {
-    "stub": os.path.join(ROOT, "hardware_bram", "testbench", "bbht_grover_core_stub.v"),
-    "real": os.path.join(ROOT, "hardware_bram", "src", "bbht_grover_core_adapter.v"),
-    #   v3    PASS2 융합판(src_v3) 을 감싼 어댑터. 몸통은 real 과 같고
-    #         헤더만 다르지만, 포트가 61개 그대로인지는 따로 확인해야
-    #         합니다. 어댑터를 하나 더 두면 배선이 갈릴 수 있습니다.
-    "v3": os.path.join(ROOT, "hardware_bram", "src", "bbht_grover_core_adapter_v3.v"),
-    #   dram  DRAM 전량저장 갈래의 어댑터. 감싸는 Main IP 는 다르지만
-    #         계약 이름과 61신호는 같아야 합니다.
-    "dram": os.path.join(ROOT, "hardware_dram", "src", "bbht_grover_core_adapter.v"),
-}
-CORE = CORES[MODE]
+if MODE not in BRANCHES:
+    sys.exit("갈래는 %s 중 하나입니다 (받은 값: %s)"
+             % ("|".join(BRANCHES), MODE))
 
-# 계약에 없지만 있어야 하는 것. 인수인계 표는 clk/rstnn 을 적지 않습니다.
-IMPLICIT = {"clk", "rstnn"}
+BRANCH = BRANCHES[MODE]
+WRAPPER = os.path.join(ROOT, *BRANCH["wrapper"])
+CORE = os.path.join(ROOT, *BRANCH["core"])
+PARAMS = (os.path.join(ROOT, *BRANCH["params"])
+          if "params" in BRANCH else None)
+
+
+def load_defines(path):
+    """grover_param.vh 의 `define 을 {이름: 식} 으로. 폭 계산에만 씁니다.
+
+    정본 Main IP 는 포트 폭을 `GP_INDEX_W-1 처럼 매크로로 씁니다. 어댑터
+    갈래는 숫자를 그대로 적으므로 이 표가 필요 없습니다.
+    """
+    if not path:
+        return {}
+    out = {}
+    for line in io.open(path, encoding="utf-8"):
+        m = re.match(r"\s*`define\s+(GP_\w+)\s+(.+?)\s*(?://.*)?$", line)
+        if m:
+            out[m.group(1)] = m.group(2)
+    return out
+
+
+DEFINES = load_defines(PARAMS)
+
+
+def resolve_width(expr):
+    """`GP_J_W-1 같은 상한 식을 숫자 폭으로. 못 풀면 원문 그대로 돌려줍니다."""
+    text = expr
+    for _ in range(8):
+        if "`" not in text:
+            break
+        text = re.sub(r"`(GP_\w+)",
+                      lambda m: "(%s)" % DEFINES.get(m.group(1), "`" + m.group(1)),
+                      text)
+    if "`" in text or not re.fullmatch(r"[\d\s()+\-*/<>]+", text):
+        return None
+    try:
+        return int(eval(text, {"__builtins__": {}})) + 1
+    except Exception:
+        return None
+
+# 계약에 없지만 있어야 하는 것. 인수인계 표는 clk 과 리셋을 적지 않습니다.
+WRAPPER_IMPLICIT = {"clk", "rstnn"}
+CORE_IMPLICIT = {"clk", BRANCH["rst"]}
 
 
 def load_contract():
@@ -80,7 +131,11 @@ def module_ports(path, modname):
         rng = mm.group(4)
         if rng:
             hi = rng.split(":")[0].strip()
-            width = str(int(hi) + 1) if hi.isdigit() else hi
+            if hi.isdigit():
+                width = str(int(hi) + 1)
+            else:
+                resolved = resolve_width(hi)
+                width = str(resolved) if resolved is not None else hi
         else:
             width = "1"
         ports[mm.group(5)] = ("IN" if mm.group(1) == "input" else "OUT",
@@ -91,13 +146,13 @@ def module_ports(path, modname):
 def inst_ports(path, instname):
     """.port(sig) 인스턴스 연결 포트 이름."""
     src = re.sub(r"//[^\n]*", "", io.open(path, encoding="utf-8").read())
-    m = re.search(r"\b\w+\s+" + instname + r"\s*\((.*?)\n\s*\);", src, re.S)
+    m = re.search(r"\b" + instname + r"\s*\((.*?)\n\s*\);", src, re.S)
     if not m:
         sys.exit("인스턴스를 못 찾았습니다: %s in %s" % (instname, path))
     return set(re.findall(r"\.\s*([A-Za-z_]\w*)\s*\(", m.group(1)))
 
 
-def compare(title, expect, actual, connected=None):
+def compare(title, expect, actual, implicit, connected=None):
     print("=" * 72)
     print(title)
     print("=" * 72)
@@ -121,12 +176,12 @@ def compare(title, expect, actual, connected=None):
             print("  FAIL %-28s %s" % (port, ", ".join(prob)))
             bad += 1
 
-    extra = set(actual) - {p for _, p, _, _, _ in expect} - IMPLICIT
+    extra = set(actual) - {p for _, p, _, _, _ in expect} - implicit
     for p in sorted(extra):
         print("  FAIL %-28s 계약에 없는 포트" % p)
         bad += 1
 
-    missing_implicit = IMPLICIT - set(actual)
+    missing_implicit = implicit - set(actual)
     for p in sorted(missing_implicit):
         print("  FAIL %-28s clk/rstnn 누락" % p)
         bad += 1
@@ -141,11 +196,13 @@ def main():
     bad = 0
 
     bad += compare("§3.3  bbht_rvx_wrapper 외부 APB/AHB 포트",
-                   c["wrapper"], module_ports(WRAPPER, "bbht_rvx_wrapper"))
+                   c["wrapper"], module_ports(WRAPPER, "bbht_rvx_wrapper"),
+                   WRAPPER_IMPLICIT)
 
     bad += compare("§3.4  Main IP generic interface (선언 + wrapper 연결)",
-                   c["core"], module_ports(CORE, "bbht_grover_core"),
-                   connected=inst_ports(WRAPPER, "u_core"))
+                   c["core"], module_ports(CORE, BRANCH["module"]),
+                   CORE_IMPLICIT,
+                   connected=inst_ports(WRAPPER, BRANCH["inst"]))
 
     print()
     if bad:

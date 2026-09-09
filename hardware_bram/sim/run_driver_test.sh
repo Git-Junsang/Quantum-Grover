@@ -17,46 +17,60 @@ BUILD=${BUILD:-/tmp/sjs_drv}
 rm -rf "$BUILD"
 mkdir -p "$BUILD/src"
 
-# CORE=stub  스텁 (기본). 통신 계약만 몇 초에 확인합니다
-# CORE=real  실물 Main IP (src_v2 freeze)
-# CORE=v3    PASS2 융합판 (src_v3)
+# CORE=stub   우리 통신 계층 + 자리 채우개 (기본). 통신 계약만 몇 초에 확인합니다
+# CORE=real   우리 통신 계층 + 어댑터 + 정본 Main IP
+# CORE=final  보드 정본 통째 (src/ 의 wrapper·mmio·loader·Main IP)
 CORE=${CORE:-stub}
+
+# 정본 Main IP 중 합성 경로에 들어가는 열입니다. glob 을 쓰면 policy OOC
+# 전용 파일까지 딸려 와서 최상위가 둘이 됩니다.
+CORE_FILES="bbht_grover_main_ip.v \
+            grover_arithmetic.v grover_bbht.v grover_checkpoint.v \
+            grover_iteration.v grover_loader.v grover_measurement.v \
+            grover_memories.v grover_policy.v grover_status.v"
+
+cp "$HERE/tb_driver.cpp" "$BUILD/src/"
+
 case "$CORE" in
-    v3) V2DIR=src_v3; ADAPTER=bbht_grover_core_adapter_v3.v ;;
-    *)  V2DIR=src_v2; ADAPTER=bbht_grover_core_adapter.v ;;
+    final)
+        # 통신 계층까지 정본. 어댑터가 끼지 않습니다.
+        cp "$HERE/../src/bbht_rvx_wrapper.v"   "$BUILD/src/"
+        cp "$HERE/../src/bbht_grover_mmio.v"   "$BUILD/src/"
+        cp "$HERE/../src/bbht_ahb_loader.v"    "$BUILD/src/"
+        cp "$HERE/../src/grover_param.vh"      "$BUILD/src/"
+        CORE_SRC=""
+        for f in $CORE_FILES; do
+            cp "$HERE/../src/$f" "$BUILD/src/"
+            CORE_SRC="$CORE_SRC $BUILD/src/$f"
+        done
+        ;;
+    real)
+        # 우리 통신 계층 + 어댑터 + 정본 Main IP.
+        cp "$HERE/../src_comm/bbht_"*.v        "$BUILD/src/"
+        cp "$HERE/../src/grover_param.vh"      "$BUILD/src/"
+        CORE_SRC="$BUILD/src/bbht_grover_core_adapter.v"
+        for f in $CORE_FILES; do
+            cp "$HERE/../src/$f" "$BUILD/src/"
+            CORE_SRC="$CORE_SRC $BUILD/src/$f"
+        done
+        ;;
+    *)
+        cp "$HERE/../src_comm/bbht_"*.v        "$BUILD/src/"
+        rm -f "$BUILD/src/bbht_grover_core_adapter.v"
+        cp "$HERE/../testbench/bbht_grover_core_stub.v" "$BUILD/src/"
+        CORE_SRC="$BUILD/src/bbht_grover_core_stub.v"
+        ;;
 esac
 
-cp "$HERE/tb_driver.cpp"                 "$BUILD/src/"
-cp "$HERE/../src/bbht_"*.v                "$BUILD/src/"
-
-# src_v2 에서 실제로 합성 경로에 들어가는 파일만 적습니다. glob 을 쓰면
-# 타이밍 증명용 wrapper 와 OOC top 까지 딸려 와서 최상위가 둘이 됩니다.
-V2_FILES="lpsoc_bbht_grover_main_ip.v \
-          grover_arithmetic.v grover_bbht.v grover_checkpoint.v \
-          grover_iteration.v grover_loader.v grover_measurement.v \
-          grover_memories.v grover_policy.v grover_status.v"
-
-if [ "$CORE" = "real" ] || [ "$CORE" = "v3" ]; then
-    cp "$HERE/../$V2DIR/grover_param.vh" "$BUILD/src/"
-    CORE_SRC="$BUILD/src/$ADAPTER"
-    for f in $V2_FILES; do
-        cp "$HERE/../$V2DIR/$f" "$BUILD/src/"
-        CORE_SRC="$CORE_SRC $BUILD/src/$f"
-    done
-else
-    rm -f "$BUILD/src/bbht_grover_core_adapter"*.v
-    cp "$HERE/../testbench/bbht_grover_core_stub.v" "$BUILD/src/"
-    CORE_SRC="$BUILD/src/bbht_grover_core_stub.v"
-fi
 cp "$HERE/../../software/csr/generated/bbht_grover_csr.vh" "$BUILD/src/"
 cp "$HERE/../../software/csr/generated/bbht_grover_regs.h" "$BUILD/src/"
 cp "$HERE/../firmware/bbht_grover_driver."{c,h}    "$BUILD/src/"
 
 # 실물은 탐색 한 번이 수십만 사이클이라 드라이버 폴링 상한을 크게 잡습니다.
-if [ "$CORE" = "real" ] || [ "$CORE" = "v3" ]; then
-    DRV_TIMEOUT=20000000
-else
+if [ "$CORE" = "stub" ]; then
     DRV_TIMEOUT=100000
+else
+    DRV_TIMEOUT=20000000
 fi
 DEFS="-DBBHT_HOST_TEST -DBBHT_NO_PRINTF -DBBHT_TIMEOUT=$DRV_TIMEOUT"
 
