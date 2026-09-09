@@ -13,11 +13,23 @@ result_index 로는 판정할 수 없습니다. BBHT 가 후보를 술어로 자
 진폭이 깨져도 답은 맞게 나옵니다.
 """
 import csv
+import os
 import sys
 
-# 보드 실측 2026-09-04 (MEASURED).
-BOARD = dict(n_iter=14883, n_cyc=20229755, k_iter=4247, k_cyc=7796908,
-             stall=276027, trial=3647)
+# 보드 실측 대조 상대.
+#
+# 2026-09-08 묶음의 M2 경로(mode=1)가 지금 src/ 와 같은 코어입니다. 그쪽은
+# 시드 100개(500 워크로드)이고 이 벤치는 앞 50개(250 워크로드)이므로, 겹치는
+# 250개만 워크로드별로 맞대 봅니다. 합계가 아니라 한 건씩 보는 것이 핵심입니다.
+BOARD_M2 = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), os.pardir, "vivado",
+    "vivado_bbht_grover_fpga", "2026-09-08_k3h3_e4_m2_board_500run",
+    "per_run_m2.csv")
+
+# 앞선 K4/H4-E1 보드 실측(2026-09-04)의 250쌍 합계입니다. 코어가 다르므로
+# 사이클을 맞대면 안 되고, 논리 궤적(총 샷·Normal 반복)만 같아야 합니다.
+BOARD_K4H4 = dict(n_iter=14883, n_cyc=20229755, k_iter=4247, k_cyc=7796908,
+                  stall=276027, trial=3647)
 
 FIELDS = ("trial", "l_bbht", "iter", "result_index")
 
@@ -60,6 +72,52 @@ def check_paired(name, rows):
     return len(bad)
 
 
+def check_board(rows):
+    """보드 M2 실측과 워크로드별로 맞댑니다.
+
+    논리 궤적 넷은 **전부 같아야** 합니다. 사이클은 대부분 같지만 몇 건이
+    어긋납니다 -- 보드는 500 워크로드를 연달아 돌아서 체크포인트 준비 비용을
+    앞에서 한 번만 내는 데 반해 이 벤치는 250개만 돌기 때문으로 보이며,
+    원인을 확정하지는 않았습니다. 그래서 사이클은 세어서 보여만 주고
+    실패로 잡지 않습니다.
+    """
+    path = os.path.normpath(BOARD_M2)
+    if not os.path.exists(path):
+        print(f"\n=== 보드 실측 대조 === 건너뜀 (없음: {path})")
+        return 0
+
+    with open(path, encoding="utf-8") as handle:
+        board = {(int(r["target_count"]), int(r["seed_index"])): r
+                 for r in csv.DictReader(handle)}
+
+    pairs = [(rows[k], board[(k[0], k[1])]) for k in rows
+             if k[2] == "k4" and (k[0], k[1]) in board]
+
+    print(f"\n=== 보드 실측 대조 (2026-09-08 M2, 같은 코어) ===")
+    if not pairs:
+        print("  겹치는 워크로드가 없습니다")
+        return 0
+
+    bad = 0
+    for label, ours, theirs in (("result_index", "result_index", "result_index"),
+                                ("trial_count", "trial", "trial_count"),
+                                ("L_BBHT", "l_bbht", "l_bbht"),
+                                ("actual_iter", "iter", "actual_iter")):
+        hit = sum(s[ours] == b[theirs] for s, b in pairs)
+        mark = "ok  " if hit == len(pairs) else "FAIL"
+        print(f"  {mark} {label:<14}{hit:>4}/{len(pairs)}")
+        if hit != len(pairs):
+            bad += len(pairs) - hit
+
+    same = sum(int(s["cycles"]) == int(b["cycle_count"]) for s, b in pairs)
+    tot_s = sum(int(s["cycles"]) for s, _ in pairs)
+    tot_b = sum(int(b["cycle_count"]) for _, b in pairs)
+    print(f"       cycle_count   {same:>4}/{len(pairs)}  "
+          f"합계 {tot_s:,} 대 {tot_b:,} ({100 * (tot_s / tot_b - 1):+.2f}%)")
+    print("       사이클은 실패로 잡지 않습니다 -- 함수 주석 참고")
+    return bad
+
+
 def check_cross(base, cmp_):
     fails = 0
     for mode in ("normal", "k4"):
@@ -84,16 +142,7 @@ def main() -> int:
     fails = check_paired(sys.argv[1], base)
 
     if len(sys.argv) == 2:
-        print("\n=== 보드 실측(2026-09-04) 대조 ===")
-        print(f"{'항목':<16}{'보드':>13}{'시뮬':>13}{'오차':>9}")
-        for label, board, sim in (
-                ("Normal 반복", BOARD["n_iter"], n["iter"]),
-                ("Normal 사이클", BOARD["n_cyc"], n["cycles"]),
-                ("K4 반복", BOARD["k_iter"], k["iter"]),
-                ("K4 사이클", BOARD["k_cyc"], k["cycles"]),
-                ("policy stall", BOARD["stall"], k["policy_stall"]),
-                ("총 샷", BOARD["trial"], n["trial"])):
-            print(f"{label:<16}{board:>13,}{sim:>13,}{100 * (sim / board - 1):>8.2f}%")
+        fails += check_board(base)
     else:
         cmp_ = load(sys.argv[2])
         n2, k2 = report(sys.argv[2], cmp_)

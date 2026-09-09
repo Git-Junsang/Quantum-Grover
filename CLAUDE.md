@@ -71,6 +71,15 @@ CSR 의 모든 숫자는 [`software/csr/bbht_grover_csr.json`](software/csr/bbht
 **사이클 값 자체는 다릅니다** — M2 는 473/500 이 정확히 3,279 사이클 차이납니다.
 그러니 보드 사이클과 RTL 사이클로 배수를 만들지 마십시오.
 
+우리 `bench250` 하네스는 드라이버로 연속 실행해서 보드에 더 가깝습니다 —
+같은 250 워크로드에서 논리 축 250/250, 사이클도 230/250 이 정확히 같습니다
+([`results/2026-09-10_bench250_final_core/`](hardware_bram/results/2026-09-10_bench250_final_core/)).
+
+**골든 모델은 궤적 재현기가 아닙니다.** 측정 난수 확장과 체크포인트 플래너가
+가정(`MEASUREMENT_ASSUMPTION` · `CHECKPOINT_ASSUMPTION`)이라 같은 250 워크로드에서
+답은 250/250 유효하지만 `trial_count` 는 36/250 만 맞습니다. 오라클·고정소수점·
+FIFO·종료 조건을 보는 **의미 참조**로만 쓰십시오.
+
 6단계는 `Normal-E1 → K4/H4-E1 → K4/H4-E4 → K3/H3-E4 → K3/H3-E4-M1 → K3/H3-E4-M2`
 이고, 단계별 기여는 -56.63% / -38.71% / -7.66% / -18.15% / -18.94% 입니다.
 자원은 [`results/2026-09-08_resource_ablation_5config/`](hardware_bram/results/2026-09-08_resource_ablation_5config/)
@@ -154,7 +163,7 @@ INCR16 버스트, argmax 측정, AXI4-Lite, MicroBlaze, XC7S100.
 | `testbench/ahb_sram_model.v` | AHB 슬레이브 모델 |
 | `sim/Makefile` | verilator 회귀 진입점. `ports lint regress driver` · `real` · `final` · `bench250` |
 | `sim/tb_driver.cpp` · `run_driver_test.sh` | 드라이버 + RTL 공동 시뮬 D1~D11 (`CORE=stub\|real\|final`) |
-| `sim/tb_bench250.cpp` · `bench250_report.py` | 250쌍 워크로드 시뮬. 궤적 불변식 확인용 |
+| `sim/tb_bench250.cpp` · `bench250_report.py` | 250쌍 워크로드 시뮬. 궤적 불변식 + 보드 M2 실측과 워크로드별 대조 |
 | `synth/` | 자원 합성. `run_main_ip.sh` 는 저장소만으로, `run_resource.sh` 는 재현 패키지 필요 |
 | `results/` | **시뮬 캠페인 근거 묶음** (`YYYY-MM-DD_<주제>/`). 재현 소스 없이 결과만 |
 | `bitstream/` | 보드에 구운 비트스트림 묶음 (`YYYY-MM-DD_<주제>`) |
