@@ -1,0 +1,72 @@
+{
+  "horizon": 4,
+  "elapsed_s": 5.989014625549316,
+  "per_target": {
+    "1": {
+      "seeds": 50,
+      "normal_success": 50,
+      "ckpt_success": 50,
+      "normal_iter": 8414,
+      "ckpt_iter": 3235,
+      "normal_trial": 1127,
+      "ckpt_trial": 1127,
+      "normal_L": 8414,
+      "ckpt_L": 8414,
+      "logical_match": 50
+    },
+    "4": {
+      "seeds": 50,
+      "normal_success": 50,
+      "ckpt_success": 50,
+      "normal_iter": 3615,
+      "ckpt_iter": 1427,
+      "normal_trial": 905,
+      "ckpt_trial": 905,
+      "normal_L": 3615,
+      "ckpt_L": 3615,
+      "logical_match": 50
+    },
+    "16": {
+      "seeds": 50,
+      "normal_success": 50,
+      "ckpt_success": 50,
+      "normal_iter": 1882,
+      "ckpt_iter": 751,
+      "normal_trial": 732,
+      "ckpt_trial": 732,
+      "normal_L": 1882,
+      "ckpt_L": 1882,
+      "logical_match": 50
+    },
+    "64": {
+      "seeds": 50,
+      "normal_success": 50,
+      "ckpt_success": 50,
+      "normal_iter": 662,
+      "ckpt_iter": 290,
+      "normal_trial": 505,
+      "ckpt_trial": 505,
+      "normal_L": 662,
+      "ckpt_L": 662,
+      "logical_match": 50
+    },
+    "256": {
+      "seeds": 50,
+      "normal_success": 50,
+      "ckpt_success": 50,
+      "normal_iter": 310,
+      "ckpt_iter": 147,
+      "normal_trial": 378,
+      "ckpt_trial": 378,
+      "normal_L": 310,
+      "ckpt_L": 310,
+      "logical_match": 50
+    }
+  },
+  "total_normal_iter": 14883,
+  "total_ckpt_iter": 5850,
+  "board_total_normal_iter": 14883,
+  "board_total_ckpt_iter": 4134,
+  "exact_match": false,
+  "logical_tuple_match": 250
+}

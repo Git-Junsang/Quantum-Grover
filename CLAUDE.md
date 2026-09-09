@@ -1,237 +1,256 @@
 # CLAUDE.md
 
-## 0. 프로젝트
+## 프로젝트
 
-**주제 (2026-07-28 확정)**: `<`, `>`, `=`, 범위(`a < x < b`) 네 가지 술어를 지원하는 **다중 타겟 Grover 탐색 에뮬레이터 가속기**. 온칩 BRAM에 담긴 데이터 배열 `value[i]` 중 술어를 만족하는 인덱스를 찾아, 하나를 반환하거나 반복 호출로 전부 열거합니다.
+`<`, `>`, `=`, 범위(`a < x < b`) 네 술어를 지원하는 **다중 타겟 Grover 탐색 에뮬레이터
+가속기**. 호스트 PC 가 UART 로 술어와 임계값을 보내면 RVX SoC 안의 커스텀 IP 가 계산해
+결과 인덱스를 돌려줍니다. 보드는 Arty A7-100T (`xc7a100tcsg324-1`).
 
-**최종 형태**: 호스트 PC가 UART로 술어와 임계값을 보내면, RVX SoC 안의 커스텀 IP가 계산해 결과 인덱스를 돌려줍니다. 특수 IP만 직접 설계하고 나머지 주변 회로(CPU·버스·UART·SRAM)는 RVX가 생성합니다.
+**사용자**: 양자 알고리즘을 처음 접한 학부생. FPGA 경험은 있으나 설정·RTL 은 자세히 답할 것.
 
-**핵심 기여**: 검증에 실패한 샷의 진폭 배열을 버리지 않고 **차이만큼만 이어 돌리는 재개 캐시**. 추가 BRAM 0개로 약 35%를 절감하며(n=15·M=1·몬테카를로 20,000회. M이 커지면 완만히 낮아져 M=256에서 29%), 결과는 새로 초기화해서 돌린 것과 비트 단위로 동일합니다.
-
-**사용자**: 양자 알고리즘을 처음 접한 학부생. FPGA 사용 경험은 있으나 **설정·RTL 관련은 자세히 답할 것.**
+---
 
 ## 1. 작업 규칙
 
-- 대화는 **한국어 존댓말**로. (내부 추론은 영어로 해도 무방)
-- 코드 주석은 **자세히** 달되 이모지 사용 등 AI티를 내지 말 것.
-  - 단, `documents/study_references/` 해설서 본문의 💡🔍❓⚠️🔑✏️ 표기는 **문서 고유의 기존 관습**이므로 유지합니다. 이모지 금지는 코드 주석에 대한 규칙입니다.
-  - 해설서에 **새 콜아웃 박스를 만들지 마십시오.** 보충 설명은 흐르는 산문으로 기존 문단에 녹입니다.
-- 수식은 채팅에 쓰지 말 것 (터미널에서 LaTeX가 보이지 않습니다). `.md` 파일에 쓰고 링크만 주십시오.
-- GitHub push 허용. 단 **커밋 메시지·PR에 Claude/Anthropic을 명시하지 말 것** (`Co-Authored-By`, "Generated with" 류 일절 금지).
+- 대화는 **한국어 존댓말**. 내부 추론은 영어 무방.
+- 코드 주석은 **자세히** 달되 이모지 등 AI 티를 내지 말 것.
+  - 예외: `documents/study_references/` 해설서 본문의 💡🔍❓⚠️🔑✏️ 표기는 문서 고유 관습이라
+    **기존 것만 보존**합니다. 새 콜아웃 박스는 만들지 말고 산문으로 녹이십시오.
+- 수식은 채팅에 쓰지 말 것 (터미널에 LaTeX 가 안 보입니다). `.md` 에 쓰고 링크만 주십시오.
+- GitHub push 허용. 단 **커밋 메시지·PR 에 Claude/Anthropic 을 명시하지 말 것**.
+- `hardware_*/vivado/` 아래에는 **Vivado 프로젝트 폴더만** 두고, 이름은 소문자 `vivado_<프로젝트이름>` 입니다.
+  그 안에는 **리포트와 재현 불가능한 실측만** 남깁니다. 빌드·합성·시뮬 로그처럼 다시 돌리면
+  나오는 것은 두지 않습니다. 실측 묶음 폴더는 `YYYY-MM-DD_<주제>`, 그 안의 파일은
+  소문자 snake_case 로 짧게 (`result.txt` `summary.csv` `evidence.md`) — 폴더가 이미
+  말해 주는 프로젝트명·날짜를 파일명에 되풀이하지 마십시오.
+- README 는 루트의 `README.md` · `README.ko.md` **둘뿐**입니다. 하위 폴더에 README 를
+  만들지 말고, 설명이 필요하면 `documents/design_references/` 에 별도 문서를 만드십시오.
+- `.gitignore` 도 루트에 **하나뿐**입니다.
 
-## 2. 저장소 구조
+---
 
-| 경로 | 성격 |
-|---|---|
-| `hardware/src/` | RTL 본체 (Verilog). 파라미터 헤더 `grover_param.vh` 포함 |
-| `hardware/testbench/` | 테스트벤치. iverilog 회귀의 진입점 |
-| `hardware/sim/` | verilator 하네스 |
-| `software/` | 골든 모델(Python), RVX 플랫폼·앱·드라이버, 호스트 CLI, 벤치마크 |
-| `documents/study_references/` | **주교재.** 0~18장 해설서 + 부록 A. 대상은 사람(학부생) |
-| `documents/design/개발계획.md` | **현행 정본.** 개발 순서·Phase별 Task·합격 기준 (2026-08-15) |
-| `documents/design/블록도.md` · `반복횟수_결정.md` | 2026-07 결정 기록. **구 스펙이 남아 있어 머리의 경고 블록을 먼저 읽을 것** |
-| `documents/check_docs.py` | 문서 정합성 검사기. 문서를 고친 뒤 **반드시 돌릴 것** (6절) |
-| `documents/presentation/` | 발표자료. 이름 규칙 `YYYY-MM-DD_<종류>_<주제>` |
-| `documents/papers/` | 원문 논문·강의자료 PDF. **읽기 전용 참고자료** |
-| `documents/papers_ko/` | 논문 6편의 한국어 해설본. 원문 대조용 **보조** 자료 |
+## 2. 정합성 기준 — 무엇이 정본인가
 
-`hardware/`·`software/` 는 아직 비어 있습니다. 이전에 있던 `project1/`(학습용 RTL 스케치)은 **삭제되었습니다** — 해설서에서 인용하지 마십시오.
-
-## 3. 확정 설계 — 숫자의 단일 출처
-
-**모든 수치의 정본은 [해설서 15.4절](documents/study_references/15_논문지도와_설계결정표.md#154-우리-프로젝트의-좌표--확정-설계-결정표)입니다.** 아래는 자주 쓰는 값의 요약이며, 어긋나면 15.4가 이깁니다.
+**보드에서 검증된 v0.9.8 이 정본입니다.** 모든 숫자는
+[`software/csr/bbht_grover_csr.json`](software/csr/bbht_grover_csr.json) 하나에서 나옵니다
+(C·Verilog·Python 헤더와 CSR 규격 문서가 전부 생성물).
 
 | 항목 | 값 |
 |---|---|
-| 보드 | Arty-S7-50 (`xc7s50csga324-1`). BRAM36 75개 / DSP 120개. **실물은 아직 없음 — 나중에 생길 예정** |
-| 목표 큐비트 | n = 15 (N = 32,768) |
-| 진폭 | 실수 전용 고정소수점 **18비트 Q2.16**, round-half-to-even, 포화, 재정규화 없음 |
-| 데이터 워드 | 16비트 signed |
-| 병렬도 | P = 32 레인. 인덱스 하위 5비트로 뱅크 선택 |
-| 반복 1회 | 2패스 = 2N/P = **2,048 사이클** |
-| 메모리 | amp 16 + data 16 + mask 1 = **BRAM36 33개**, SoC 포함 ~48/75 |
-| 곱셈기 | 확산·오라클·INIT 경로 **0개**. 측정 경로만 제곱기 32개(DSP 32/120) |
-| 측정 | **Born 확률 샘플링** 2단 병렬. argmax가 **아님** |
-| 반복 횟수 | **BBHT** 기본(M을 모른다고 가정). 평균 24.5샷 (n=15·M=1·몬테카를로 20,000회) |
-| SoC | RVX `rvc_orca` RV32 + **APB 슬레이브(CSR) + AHB 마스터(DMA)**. 호스트는 UART |
-| 샷 루프 | **두 모드 공존.** BBHT 자율 모드(하드웨어 바깥 FSM)가 최종 형태, 펌웨어 구동 모드(앱이 절대값 `j_target` 기록)는 캐시 검증·M-known 비교·골든 대조용으로 영구 유지. 개발 순서 **Phase 5a(펌웨어) → 5b(하드웨어)**. `j_cur`·`cache_valid` 는 어느 쪽이든 하드웨어 소유 |
+| 큐비트 | Q = 14 (N = 16,384) |
+| 데이터 워드 | 16비트 signed / 진폭 23비트 Q1.22 계열 / P = 32 레인 |
+| 술어 | `LT` `GT` `EQ` `RANGE` |
+| 실행 모드 | `MANUAL_SINGLE` `NORMAL_SINGLE` `K4H8_SINGLE` `NORMAL_ENUM` `K4H8_ENUM` |
+| CSR | APB, base `0xE2020000`, **4바이트 간격**, 32비트, 38개 |
+| 데이터 적재 | AHB 마스터 **SINGLE**, single outstanding. SRAM `0xE0000000`~`0xE001FFFF` |
+| 결과 FIFO | 깊이 256 |
+| 클럭 | 가속기 100 MHz / 시스템 50 MHz |
 
-**폐기된 값 — 옛 문서에서 보이면 무시하십시오**: XC7S100, n=16 목표, Q1.17, argmax 측정, 직렬 CDF 측정, AXI4-Lite CSR, AXI-Stream `data_loader`, MicroBlaze, "검증 실패 시 초기화부터 통째로 다시".
+**K4/H8 과 K4/H4 를 섞지 마십시오.** 두 보드 실측이 같은 250쌍 workload 를 쓰지만
+policy horizon 이 다릅니다. H8 은 Grover 반복을 2.7% 덜 쓰는 대신 policy stall 이
+23배(46.4% vs 3.54%)라 총 사이클에서 77% 손해입니다. 성능 수치의 정본은
+**K4/H4 (`2026-09-04_k4h4_single_operator_final/`)** 이고, 2026-09-01 묶음은 H8 입니다.
+`hardware_bram/src_v2/` 의 `grover_policy.v` 는 `H_FUTURE = 4` 이므로 K4/H4 쪽입니다.
 
-**아직 미정 — 9개** (억지로 채우지 말 것). 정본은 [16.9절](documents/study_references/16_반복제어와_재개캐시.md#169-아직-정하지-않은-것)(4개)과 [17.8절](documents/study_references/17_RVX_SoC_통합.md#178-아직-정하지-않은-것)(5개)입니다.
+**폐기된 값 — 보이면 무시하십시오**: n=15·n=16, Q2.16·Q1.17, 8바이트 CSR 간격,
+INCR16 버스트, argmax 측정, AXI4-Lite, MicroBlaze, XC7S100.
+`trash_bin/` 안의 문서는 전부 이 구 스펙 기준이라 인용하면 안 됩니다.
 
-1. (16.9) M=0 종료 조건 — BBHT 상한 도달로 선언할지, 고전 스캔 1패스로 확정할지
-2. (16.9) `j ~ U[0,m)` 의 균등성 — LFSR 마스킹은 균등하지 않음. 기각 샘플링 등 규약 필요
-3. (16.9) 난수 소비 규약 — LFSR 다항식·시드·샷당 추출 횟수·범위 매핑. 어긋나면 bit-exact가 영원히 안 맞음
-4. (16.9) `m ← min(1.2m, √N)` 의 하드웨어 산술
-5. (17.8) **CSR 맵 전체가 초안** — RVX mmio 생성기 입력 XML 스키마부터 확인 필요
-6. (17.8) 열거 결과 반환 경로 — `result_fifo` 를 둘지, 호스트가 M번 호출할지
-7. (17.8) `M_max` 값 (예시 256, 확정 아님)
-8. (17.8) RVX SoC의 실제 자원 점유 — Phase 0의 `make imp_fpga` 리포트로 실측
-9. (17.8) **클럭이 정말 100 MHz인가** — RVX 기본 생성물은 `SYSTEM_CLK_HZ = 50,000,000`. 100 MHz는 요구해야 얻는 값
+**Main IP RTL 소스는 `hardware_bram/src_v2/` 에 있습니다** (2026-09-05 반입).
+K4/H4 릴리스의 RTL 과 바이트 동일한 freeze 대상이라 **고치지 마십시오**. 통신 계층은
+`src/` 쪽 우리 것을 쓰고, 이름·리셋 차이는 `src/bbht_grover_core_adapter.v` 가 흡수합니다.
+배선 정합성은 `check_ports.py` 가 wrapper 19 + core 61 신호를 매번 대조해서 지킵니다
+(`stub` / `real` 두 갈래).
 
-## 4. 명령어
+---
 
-### 시뮬레이션 (로컬)
+## 3. 두 갈래 — 아직 어느 쪽도 확정이 아님
 
-```bash
-make -C hardware/testbench regress        # iverilog + vvp 회귀
-```
+반복 실패 시 진폭을 어떻게 재활용하느냐에서 구현이 둘로 갈립니다. 나중에 하나를 고릅니다.
 
-**이 환경의 툴체인**: `iverilog`, `vvp`, `verilator`, `gtkwave` 사용 가능. **`vivado`·`vsim`·`riscv-gcc` 는 없습니다.**
+- **`hardware_bram/`** — 체크포인트(K4/H4)로 차이만큼만 이어 돌리고, 연산기를 **두 벌** 둡니다.
+  **BRAM 만** 씁니다. v0.9.8 실물이 이 갈래이고 현재 코드는 전부 여기 있습니다.
+- **`hardware_dram/`** — `j` 별 진폭을 DRAM 에 전량 저장하고, 난수 생성기가 뽑은 `j` 는
+  BRAM 큐에도 올립니다. 정답 후보를 검증해 틀리면 큐에서 그 `j` 를 지우고 DRAM 에서
+  다음 `j` 진폭을 큐에 올립니다. 체크포인트 K 도 정책 H 도 쓰지 않습니다 — 모든 `j` 가
+  버스트 한 번 거리에 있어서 계획할 것이 없습니다. **RTL 초안과 회귀까지 있고, 물리 DRAM
+  바인딩(MIG/AXI)과 통신 계층은 아직 없습니다.** 검증은 동작 수준 DRAM 모델
+  (`testbench/dram_burst_model.v`) 위에서 하며, `make -C hardware_dram/sim equiv` 가
+  같은 자극을 `hardware_bram` 에도 걸어 탐색 궤적이 일치하는지 대조합니다.
+  단일탐색 전용이고 `enum_enable=1` 은 `config_error` 로 거절합니다.
 
-### RVX (원격 빌드)
+두 트리는 하위 구조가 같고, CSR 정본·골든 모델·검증 벡터는 `software/` 에서 공유합니다.
+한쪽 갈래에만 해당하는 것을 `software/` 에 넣지 마십시오.
 
-```bash
-source /home/coder/rvx_lec_hw/rvx_setup.sh
-cd $RVX_MINI_HOME/platform/<플랫폼>
-make syn && make sim_rtl                  # 원격 ModelSim
-make imp_fpga TARGET_IMP_CLASS=arty-50    # 원격 Vivado
-```
+---
 
-RVX Mini(씬 클라이언트) 판이라 생성·시뮬·합성이 전부 **원격 서버(`cau01.rvx.coreicc.net`)** 에서 돕니다. 로컬 폴백이 없으므로 접속이 막히면 RTL 시뮬과 합성이 통째로 멈춥니다. 참고할 예제는 `platform/lec_apb/`(APB 슬레이브 최소 구성)와 `platform/lec_ahb/`(AHB 마스터 + APB 슬레이브 가속기 — **우리가 따를 패턴**)입니다.
+## 4. 디렉터리와 파일의 역할
 
-### 해설서 다이어그램
+### `documents/`
 
-```bash
-cd documents/study_references
-python3 render_diagrams.py           # src/*.mmd → diagrams/*.svg
-python3 render_diagrams.py --force   # 캐시 무시 재렌더
-```
-
-## 5. 해설서 작성 규칙
-
-- 본문은 다이어그램을 `<img src="diagrams/<name>.svg">` 로 참조합니다. **mermaid fence를 본문에 직접 쓰지 않습니다** — 어느 뷰어에서든 보이게 하려는 의도입니다.
-- mermaid 소스는 `diagrams/src/*.mmd` 에 보존됩니다. mermaid로 표현이 안 되는 그림(진폭 막대그래프, 기하학적 회전, 타임라인, 예산 막대)은 **손으로 작성한 SVG를 `diagrams/` 에 직접** 둡니다 — 대응하는 `.mmd` 가 없으며 `render_diagrams.py` 가 건드리지 않습니다.
-- 각 장은 개념이 앞에서 뒤로 단조롭게 쌓이도록 배치되어 있습니다. 장 시작부의 "이 장을 읽기 위한 준비" 링크와 장 간 상호 링크를 깨뜨리지 마세요. **파일명과 장 번호는 동결**입니다(13·14장은 제목만 바뀌었고 파일명은 그대로).
-- 수식은 LaTeX(`$...$`, `$$...$$`), 상태는 켓(`$|\psi\rangle$`) 표기.
-- 실측 수치에는 **조건을 병기**하십시오 — "평균 24.5샷(n=15·M=1·몬테카를로 20,000회)" 식으로. 조건 없이 인용하면 나중에 어긋납니다.
-- **고전 선형 스캔과 속도를 비교하지 않습니다.** √N 이득은 실기 양자의 이야기이고 에뮬레이션은 O(N·√(N/M))이라 고전 스캔보다 느립니다. 비교 대상은 Qiskit AerSimulator / NumPy 상태벡터 시뮬레이터입니다.
-
-## 6. 문서 정합성 — 무엇을 고치면 무엇을 확인해야 하는가
-
-문서가 서로를 촘촘히 참조하고 있어서, 한 곳을 고치면 다른 곳이 조용히 어긋납니다.
-**문서를 건드린 뒤에는 반드시 검사기를 돌리십시오.**
-
-```bash
-python3 documents/check_docs.py        # 오류 0건이어야 합니다 (종료 코드 0)
-python3 documents/check_docs.py -v     # 통계까지
-```
-
-검사기가 잡는 것: 죽은 링크 · 없는 절 앵커 · 없는 그림 · 고아 그림 · 렌더 안 된 `.mmd` ·
-되살아난 폐기 스펙 · 확정 수치와 다른 값 · 장 구조(요약 절·준비 링크) · 본문 mermaid fence.
-
-### 6.1 정본은 하나뿐입니다
-
-| 무엇 | 정본 | 나머지 문서의 역할 |
-|---|---|---|
-| 설계 수치 전부 | **[15.4절 확정 설계 결정표](documents/study_references/15_논문지도와_설계결정표.md#154-우리-프로젝트의-좌표--확정-설계-결정표)** | 값을 적되 15.4를 정본으로 표시 |
-| 플랫폼·자원 예산 | [15.5절](documents/study_references/15_논문지도와_설계결정표.md#155-확정-플랫폼과-자원-예산) | 〃 |
-| 미정 항목 | [16.9절](documents/study_references/16_반복제어와_재개캐시.md#169-아직-정하지-않은-것) · [17.8절](documents/study_references/17_RVX_SoC_통합.md#178-아직-정하지-않은-것) | 〃 |
-| 개발 순서·검증 기준 | [개발계획.md](documents/design/개발계획.md) | — |
-
-`documents/design/블록도.md` 와 `반복횟수_결정.md` 는 **2026-07 시점 기록**입니다. 본문에 낡은
-수치(NB=16, Q1.17, AXI, BRAM36 32개)가 남아 있는 것이 정상이고, 머리의 경고 블록이 독자를 15.4로
-보냅니다. **이 두 문서의 본문 수치를 현행으로 고치지 마십시오** — 결정 이력이 사라집니다.
-
-### 6.2 고친 곳별 확인 목록
-
-| 무엇을 고쳤나 | 반드시 같이 확인할 곳 |
+| 경로 | 역할 |
 |---|---|
-| **설계 수치 하나라도** (비트폭·자원·사이클·샷 수·절감률) | 15.4 · 15.5 → `CLAUDE.md` 3절 → 저장소 `README.md` 2·3절 → 해당 장 본문 → `documents/presentation/README.md` 의 "현행 대비" 표 |
-| **절 제목** | 그 장으로 들어오는 모든 링크. 앵커가 바뀝니다 — `check_docs.py` 가 잡습니다 |
-| **절 번호(절 추가·삭제)** | 뒤따르는 모든 절 번호가 밀립니다. 다른 장이 `#4.7` 로 걸어 둔 링크가 조용히 딴 절을 가리키게 됩니다. **실제로 4장에 절을 추가했을 때 7장·14장 링크가 이렇게 깨졌습니다** |
-| **장 제목** | `study_references/README.md` 목차 · `10.9절` 다음 단계 · 저장소 `README.md` 7절 표 |
-| **파일명** | **동결입니다.** 13·14장은 제목만 바뀌었고 파일명은 그대로 둔 이유가 이것입니다(13장으로 25곳, 15장으로 12곳, 3장으로 41곳이 들어옵니다) |
-| **다이어그램** | `.mmd` 를 고쳤으면 `python3 documents/study_references/render_diagrams.py` · 손 SVG 를 고쳤으면 그대로 · 그림을 없앴으면 `<img>` 참조도 |
-| **디렉터리 구조** | `CLAUDE.md` 2절 · 저장소 `README.md` 4절 · `개발계획.md` §5 트리 |
-| **미정 항목이 결정됨** | 16.9 또는 17.8 에서 빼고 → 15.4 에 넣고 → `CLAUDE.md` 3절 "아직 미정" 에서 빼기 |
-| **발표자료 추가** | `documents/presentation/README.md` 색인 표 · 이름 규칙 `YYYY-MM-DD_<종류>_<주제>` |
+| `design_references/` | **설계 문서.** 해설서와 같은 기술문서체로 씁니다 |
+| `design_references/CSR_레지스터_규격.md` | `gen_csr.py` **생성물.** 손으로 고치지 마십시오 |
+| `design_references/호스트_조작_방법.md` | 호스트에서 부리는 법. 통신 계층의 주 문서 |
+| `design_references/UART_명령_프로토콜.md` · `블록_인터페이스_다이어그램.md` | 통신 계약 |
+| `design_references/Main_IP_포트_규격.md` · `데이터_고정소수점_메모리_규격.md` | Main IP 계약 |
+| `design_references/다중결과탐색_*.md` · `단일검색_*.md` · `RTL_GitHub_*.md` · `전체_내용_보고서.md` | 골든 모델 분석 보고서 |
+| `design_references/PASS2_융합과_다중엔진_탐색_실측.md` | `src_v3` 측정 경로 융합과 탈락한 다중 엔진 기록 |
+| `design_references/diagrams/` | **design_references 의 유일한 하위 폴더.** 손그림 SVG · `campaign_*.png` · `src/*.mmd` |
+| `design_references/render_diagrams.py` | `diagrams/src/*.mmd` → `diagrams/*.svg` |
+| `study_references/` | 학습용 해설서 0~18장 + 부록 A. **파일명과 장 번호는 동결** |
+| `papers/` | 원문 논문 PDF. 읽기 전용 |
+| `papers/papers_ko/` | 논문 한국어 해설본. 원문 대조용 보조 자료 |
+| `check_docs.py` | 문서 정합성 검사기. **문서를 고친 뒤 반드시 돌릴 것** |
 
-### 6.3 검사기가 못 잡는 것 — 사람이 봐야 합니다
+### `hardware_bram/` (와 같은 구조의 `hardware_dram/`)
 
-기계는 링크가 **존재하는지**만 압니다. 다음은 직접 읽어 확인하십시오.
+아래 표는 두 갈래가 공유하는 모양입니다. `hardware_dram/` 에만 있는 것은 그다음 표에
+따로 적었습니다.
 
-- **인용한 주장이 대상 절에 실제로 있는가.** 예: 14.3절이 "9.4절에서 두 막대가 나란히 **자란다**"고
-  썼는데 9.4절의 $N=4$·$M=2$ 는 확률이 제자리인 퇴화 사례였습니다. 앵커는 멀쩡했고 내용만 틀렸습니다.
-- **선수 개념 역전.** 뒤 장에서 정의되는 용어를 앞 장이 설명 없이 쓰는 것. 12장이 뱅크·2단 측정을
-  앞질러 쓰지 않는지, 0장이 `data_mem`·`mask_mem` 을 정의 없이 쓰지 않는지.
-- **폐기된 주장이 표현만 바꿔 살아 있는 곳.** "가장 큰 진폭을 고르면 된다"(= argmax),
-  "정답 인덱스의 진폭을 뒤집는다"(= 오라클이 정답을 안다), "재시도할 때 처음부터 다시"(= 캐시 부정).
-- **실측 수치의 조건 누락.** "평균 24.5샷"은 n=15·M=1·몬테카를로 20,000회 조건입니다.
-  조건 없이 인용하면 n=16 수치(26.5샷)와 뒤섞입니다.
-- **새 콜아웃 박스.** 💡🔍❓⚠️🔑✏️ 는 기존 것만 보존하고 **새로 만들지 않습니다.**
-  개편 전 원본과 개수를 대조하십시오.
+| 경로 | 역할 |
+|---|---|
+| `src/bbht_rvx_wrapper.v` | RVX user region 최상위. CSR·DMA·Main IP 를 묶습니다 |
+| `src/bbht_grover_mmio.v` | APB CSR 슬레이브 |
+| `src/bbht_ahb_loader.v` | AHB 마스터 (SINGLE) 데이터 적재기 |
+| `src/bbht_grover_user_region.vh` | RVX 가 읽는 user region 선언 |
+| `src/bbht_grover_core_adapter.v` | 계약 이름 `bbht_grover_core` 로 실물 Main IP 를 감싸는 어댑터 |
+| `src_v2/` | **실물 Main IP (PJK freeze).** 11개만 합성 경로. 통신 3개는 대조용, timing/OOC 3개는 제외 |
+| `src_v3/` | `src_v2` 포크 + PASS2 융합. 측정 경로 3개만 다르고 나머지는 바이트 동일 |
+| `testbench/tb_bbht_rvx.v` | 통신 계층 계약 T1~T9 |
+| `testbench/bbht_grover_core_stub.v` | Main IP 자리 채우개. 포트 계약 대조 대상 |
+| `testbench/ahb_sram_model.v` | AHB 슬레이브 모델 |
+| `sim/Makefile` | verilator 회귀 진입점. `ports lint regress driver` · 실물 `real` · 융합 `v3` · `bench250` |
+| `sim/tb_driver.cpp` · `run_driver_test.sh` | 드라이버 + RTL 공동 시뮬 D1~D11 |
+| `sim/tb_bench250.cpp` · `bench250_report.py` | 보드와 같은 250쌍 workload 시뮬. 여섯 지표 0.00% 일치 |
+| `bitstream/` | 보드에 구운 비트스트림 묶음 (`YYYY-MM-DD_<주제>`) |
+| `rvx/bbht_grover.xml` | RVX 플랫폼 정의 (clk_accel 100 MHz) |
+| `rvx/install_to_platform.sh` | 저장소 → RVX 플랫폼 설치. 무엇이 어디로 가는지가 여기 전부 |
+| `vivado/vivado_<프로젝트이름>/` | **Vivado 프로젝트 한 벌.** 폴더 이름 규칙은 소문자 `vivado_` 접두 |
+| `vivado/vivado_bbht_grover_fpga/reports/` | v0.9.8 100 MHz `route_{util,timing_summary,timing_max,power}.rpt` |
+| `vivado/vivado_bbht_grover_fpga/meta/` | 그 구현의 git 커밋·diff·Vivado 버전 |
+| `vivado/vivado_bbht_grover_fpga/2026-09-01_board_benchmark_50seed/` | **보드 실측 (K4/H8).** 250쌍 paired, 반복 -72.22% · 사이클 -31.66% |
+| `vivado/vivado_bbht_grover_fpga/2026-09-04_k4h4_single_operator_final/` | **보드 실측 (K4/H4). 성능 인용은 이쪽입니다.** 같은 250쌍, 반복 -71.46% · 사이클 **-61.46%** |
+| `firmware/bbht_grover_driver.{c,h}` | 재사용 드라이버 |
+| `firmware/bbht_console/` | UART 명령 셸. 재빌드 없이 조건을 바꿉니다 |
 
-### 6.4 개편 이력
+### `hardware_dram/` 에만 있는 것
 
-2026-08-15 에 해설서를 전면 개편했습니다. 그 전 원본은 git 이전 커밋에 있습니다.
-주요 변경: 측정 argmax → **Born 2단 병렬** / Q1.17 → **Q2.16** / 최솟값 탐색 주제 → **확장으로 강등** /
-16·17·18장 신설(재개 캐시 · RVX SoC · 골든 모델 검증) / Part 5~8 재편 / `project1/` 인용 전면 제거.
+Main IP 자체가 다른 갈래라 `src_v2/` 의 내용도 다릅니다. 재사용 8개
+(`grover_param.vh` `arithmetic` `memories` `iteration` `measurement` `loader` `status`
+`dram_random`) 에 아래 신규 5개가 붙습니다. 체크포인트(`grover_checkpoint.v`)와 정책
+엔진(`grover_policy.v`)은 **일부러 안 가져왔습니다** — 모든 `j` 가 버스트 한 번 거리라
+계획할 것이 없습니다.
+
+| 경로 | 역할 |
+|---|---|
+| `src_v2/grover_dram_amp_store.v` | 반복마다 512행을 DRAM 슬롯에 store / 필요할 때 restore |
+| `src_v2/grover_dram_prep_seq.v` | 버퍼 A 준비 시퀀서. **체크포인트 K/H 를 대신하는 자리** |
+| `src_v2/grover_dram_shot_fsm.v` | 외곽 BBHT 라운드 제어 |
+| `src_v2/grover_dram_queue.v` | 버퍼 A/B 두 벌과 역할별 포트 뮤스 |
+| `src_v2/grover_dram_param.vh` | 슬롯 주소맵. 92바이트/행 × 512행 = 47,104바이트/슬롯 |
+| `testbench/dram_burst_model.v` | 동작 수준 DRAM 모델. 지연·백프레셔가 전부 파라미터 |
+| `testbench/tb_dram_amp_store.v` | store/restore 왕복 A1~A5 |
+| `testbench/tb_dram_prep_seq.v` | prep 시퀀서 P1~P8. 연산기 자리에 스텁을 넣습니다 |
+| `testbench/tb_dram_core.v` | Main IP 통합 C1~C8. `GD_DRAM_BRANCH` 를 빼면 `hardware_bram` 에도 물립니다 |
+| `sim/Makefile` | `ports lint store prep core equiv` |
+| `sim/equiv_report.py` | 세 갈래(dram / bram Normal / bram K4H4) 로그 대조기 |
+
+**아직 없는 것**: 물리 DRAM 바인딩(MIG native UI 든 AXI4 든), 통신 계층 회귀, 열거,
+버퍼 B 를 쓰는 라운드 간 프리페치, RVX 설치 스크립트, Vivado 프로젝트.
+
+### `software/` — 두 갈래가 공유
+
+| 경로 | 역할 |
+|---|---|
+| `csr/bbht_grover_csr.json` | **모든 숫자의 출처** |
+| `csr/gen_csr.py` | → C·Verilog·Python 헤더 + CSR 규격 문서. `--check` 로 검증 |
+| `csr/generated/` | 생성물. 손으로 고치면 회귀가 잡습니다 |
+| `contract/*.docx` | **인수인계 통신 계약 원본.** 포트 계약의 출처 |
+| `contract/port_contract.tsv` | 포트 계약 (인수인계 §3.3 wrapper 19 + §3.4 core 61) |
+| `contract/extract_contract.py` | 옆의 docx → tsv. 재현 가능 (docx sha256 을 헤더에 남깁니다) |
+| `contract/check_ports.py` | tsv ↔ RTL 자동 대조 |
+| `golden/rtl_v098_*.py` · `rtl_v07g.py` | 골든 모델 |
+| `golden/tools/` | 벡터 생성기 · 캠페인 분석 · 체크포인트 K 최적화 모델 |
+| `bin/` | 검증 벡터와 데이터 파일 (hex · json) |
+| `bbht_cli.py` | 호스트 CLI. `--port mock` 이면 보드 없이 됩니다 |
+
+### `trash_bin/` — git 추적 안 함
+
+구 스펙 문서와 대용량 산출물 보관소입니다. **여기서 인용하지 마십시오.**
+`documents_design/` 구 설계 문서 11편 · `KJE/` 구 펌웨어와 71M 분석 결과 ·
+`PJK/` 비트스트림과 136M 아카이브 · `PJK_handoff/` K4/H8 시절 인수인계 요약본 2편 ·
+`SJS/` 구 README · `presentation/` 세미나·스펙결정 발표자료 · `old_tools/` 폐기된 Vivado 스텁.
 
 ---
 
-# 1. Think Before Coding
+## 5. 명령어
 
-**Don't assume. Don't hide confusion. Surface tradeoffs.**
+```bash
+# 통신 계층 회귀 (몇 초)
+make -C hardware_bram/sim ports lint regress driver
 
-Before implementing:
+# DRAM 갈래 회귀 (1분 30초쯤). equiv 는 hardware_bram 과 궤적 대조까지 (40초 더)
+make -C hardware_dram/sim
+make -C hardware_dram/sim equiv
 
-- State your assumptions explicitly. If uncertain, ask.
-- If multiple interpretations exist, present them - don't pick silently.
-- If a simpler approach exists, say so. Push back when warranted.
-- If something is unclear, stop. Name what's confusing. Ask.
+# 실물 코어로 같은 넷 / PASS2 융합판 / 보드와 같은 250쌍
+make -C hardware_bram/sim real
+make -C hardware_bram/sim v3
+make -C hardware_bram/sim bench250
 
-## 2. Simplicity First
+# CSR 정본을 고쳤으면
+python3 software/csr/gen_csr.py
 
-**Minimum code that solves the problem. Nothing speculative.**
+# 문서를 고쳤으면 (오류 0건이어야 합니다)
+python3 documents/check_docs.py
 
-- No features beyond what was asked.
-- No abstractions for single-use code.
-- No "flexibility" or "configurability" that wasn't requested.
-- No error handling for impossible scenarios.
-- If you write 200 lines and it could be 50, rewrite it.
+# 해설서 다이어그램
+python3 documents/study_references/render_diagrams.py
 
-Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
-
-## 3. Surgical Changes
-
-**Touch only what you must. Clean up only your own mess.**
-
-When editing existing code:
-
-- Don't "improve" adjacent code, comments, or formatting.
-- Don't refactor things that aren't broken.
-- Match existing style, even if you'd do it differently.
-- If you notice unrelated dead code, mention it - don't delete it.
-
-When your changes create orphans:
-
-- Remove imports/variables/functions that YOUR changes made unused.
-- Don't remove pre-existing dead code unless asked.
-
-The test: Every changed line should trace directly to the user's request.
-
-## 4. Goal-Driven Execution
-
-**Define success criteria. Loop until verified.**
-
-Transform tasks into verifiable goals:
-
-- "Add validation" → "Write tests for invalid inputs, then make them pass"
-- "Fix the bug" → "Write a test that reproduces it, then make it pass"
-- "Refactor X" → "Ensure tests pass before and after"
-
-For multi-step tasks, state a brief plan:
-
-```
-1. [Step] → verify: [check]
-2. [Step] → verify: [check]
-3. [Step] → verify: [check]
+# RVX
+source /opt/rvx/rvx_setup.sh
+hardware_bram/rvx/install_to_platform.sh
+cd $RVX_MINI_HOME/platform/bbht_grover && make syn && make sim_rtl
 ```
 
-Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
+**이 환경의 툴체인** (2026-09-09 실측): `verilator` 5.020, `vsim`(Questa 2022.1_2),
+`vivado` 2026.1(노드락 라이선스, `xc7a100tcsg324-1` 합성·구현·비트스트림 가능), RISC-V GCC,
+`iverilog`/`vvp` 12.0. 회귀는 **전부 verilator** 로 돌아갑니다 — `hardware_*/testbench/` 에는
+테스트벤치 소스만 있고 Makefile 이 없으며, `sim/Makefile` 이 그것들을 물어 갑니다.
+**헤드리스라 `gtkwave` 와 Vivado GUI 는 설치돼 있어도 못 띄웁니다** — `-mode batch` 전용.
+RVX 는 `/opt/rvx` 에 로컬 전체 설치되어 있어 원격 접속이 필요 없습니다.
+따를 예제는 `platform/tip_quantized_cnn/`(커스텀 IP + `user/rtl`·`user/api`).
+
+경로에 공백("중앙대학교 학부인턴")이 있어서 verilator 생성 Makefile 을 제자리에서 못 돌립니다.
+`sim/Makefile` 이 `--Mdir /tmp/...` 로 빼는 이유가 이것이니 건드리지 마십시오.
 
 ---
 
-**These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+## 6. 문서를 고쳤을 때 같이 확인할 곳
+
+`check_docs.py` 는 죽은 링크 · 없는 앵커 · 없는 그림 · 고아 그림 · 렌더 안 된 `.mmd` ·
+되살아난 폐기 스펙 · 본문 mermaid fence 를 잡습니다. 다음은 **기계가 못 잡으니 사람이** 봅니다.
+
+- 인용한 주장이 대상 절에 실제로 있는가
+- 뒤 장에서 정의되는 용어를 앞 장이 설명 없이 쓰지 않는가
+- 폐기된 주장이 표현만 바꿔 살아 있지 않은가 ("가장 큰 진폭을 고른다" = argmax,
+  "정답 인덱스의 진폭을 뒤집는다" = 오라클이 정답을 안다)
+- 실측 수치에 조건이 붙어 있는가
+
+| 무엇을 고쳤나 | 같이 볼 곳 |
+|---|---|
+| 설계 수치 | `software/csr/bbht_grover_csr.json` → `gen_csr.py` 재실행 → `CLAUDE.md` 2절 → `README*.md` 2절 |
+| 포트 | 인수인계 docx → `extract_contract.py` 재실행 → `make -C hardware_bram/sim ports` |
+| 절 제목·절 번호 | 그 장으로 들어오는 모든 링크. 앵커가 밀립니다 |
+| 해설서 파일명 | **동결입니다.** 13·14장이 제목만 바뀌고 파일명을 둔 이유가 이것입니다 |
+| 디렉터리 구조 | `CLAUDE.md` 4절 · `README.md`/`README.ko.md` 4절 |
+| 다이어그램 | `.mmd` 를 고쳤으면 `render_diagrams.py` 실행 |
+
+해설서 본문은 다이어그램을 `<img src="diagrams/<name>.svg">` 로 참조합니다.
+**본문에 mermaid fence 를 직접 쓰지 않습니다** — 어느 뷰어에서든 보이게 하려는 의도입니다.
+mermaid 로 안 되는 그림(진폭 막대, 기하 회전, 타임라인)은 손으로 쓴 SVG 를 `diagrams/` 에 직접 둡니다.
+
+**고전 선형 스캔과 속도를 비교하지 않습니다.** 에뮬레이션은 고전 스캔보다 느립니다.
+비교 대상은 Qiskit AerSimulator / NumPy 상태벡터 시뮬레이터입니다.

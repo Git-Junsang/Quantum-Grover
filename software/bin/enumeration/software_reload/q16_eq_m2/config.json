@@ -1,0 +1,15 @@
+{
+  "profile": "RTL_Q16_PROJECTED",
+  "qubits": 16,
+  "parallelism": 32,
+  "data_w": 16,
+  "frac_bits": 22,
+  "amp_w": 23,
+  "predicate_mode": "EQ",
+  "threshold_a": 7,
+  "threshold_b": 0,
+  "data_count": 65536,
+  "seed_j": 270544965,
+  "seed_meas": 305418365,
+  "exclude_backend": "SOFTWARE_RELOAD"
+}

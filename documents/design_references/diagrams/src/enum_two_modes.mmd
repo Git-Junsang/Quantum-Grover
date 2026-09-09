@@ -1,0 +1,15 @@
+flowchart TD
+    A["RVX 펌웨어: m=1"] --> B["0 이상 m 미만에서 j 선택"]
+    B --> C["J_TARGET 설정 후 단일 결과 Main IP 시작"]
+    C --> D["Grover 정수 데이터패스"]
+    D --> E["Born 측정: 인덱스 1개"]
+    E --> F{"Predicate 만족 및 미발견 인덱스인가?"}
+    F -->|실패| G["m 증가 후 재시도"]
+    G --> B
+    F -->|성공| H["결과 인덱스 저장"]
+    H --> I{"제외 방식 선택"}
+    I -->|SOFTWARE_RELOAD| J["발견 데이터를 비타겟 값으로 변경 후 재전송"]
+    I -->|PROJECTED_MASK_MEM| K["found_mask의 해당 비트 설정"]
+    J --> L["진폭 checkpoint 무효화"]
+    K --> L
+    L --> M["m=1에서 다음 Enumeration round 시작"]

@@ -1,0 +1,34 @@
+{
+  "profile": "RTL_Q16_PROJECTED",
+  "rtl_validation_status": "PROJECTED_NOT_RTL_VALIDATED",
+  "derivation": "v0.7g Q14 arithmetic, P32 mapping, BBHT and cache rules",
+  "dataset": "data.hex",
+  "data_count": 4096,
+  "active_n": 65536,
+  "cases": [
+    {
+      "name": "normal_j1",
+      "directory": "normal_j1",
+      "expected_result": "normal_j1/expected_result.json",
+      "expected_physical_iterations": 1
+    },
+    {
+      "name": "resume_j4",
+      "directory": "resume_j4",
+      "expected_result": "resume_j4/expected_result.json",
+      "expected_physical_iterations": 3
+    },
+    {
+      "name": "exact_hit_j4",
+      "directory": "exact_hit_j4",
+      "expected_result": "exact_hit_j4/expected_result.json",
+      "expected_physical_iterations": 0
+    },
+    {
+      "name": "restart_j2",
+      "directory": "restart_j2",
+      "expected_result": "restart_j2/expected_result.json",
+      "expected_physical_iterations": 2
+    }
+  ]
+}

@@ -1,12 +1,57 @@
-# 시뮬레이션 산출물
+# 저장소 전체에서 쓰는 단 하나의 gitignore 입니다.
+# 하위 디렉터리에 별도 .gitignore 를 두지 않습니다.
+
+# ── 보관용. 지우지는 않되 추적하지도 않는 것 ──────────────
+trash_bin/
+
+# ── 시뮬레이션 산출물 ────────────────────────────────
 *.vcd
 *.vvp
 *.out
-hardware/testbench/build/
+*.wlf
+obj_dir/
+transcript
+work/
 
-# 파이썬
+# iverilog / verilator 가 만드는 중간 산출물 디렉터리
+hardware_*/testbench/build/
+hardware_*/sim/obj_dir/
+
+# ── Vivado 산출물 ──────────────────────────────────
+# 프로젝트를 열면 다시 생성되는 것들. 리포트·로그는 커밋합니다.
+*.jou
+*.str
+*.cache/
+*.hw/
+*.ip_user_files/
+*.runs/
+*.sim/
+*.srcs/
+.Xil/
+vivado_*.backup.log
+vivado_pid*.str
+
+# ── RVX 산출물 ─────────────────────────────────────
+# /opt/rvx 플랫폼을 가리키는 심링크는 다른 PC 에서 깨집니다
+hardware_*/rvx/platform_link
+hardware_*/rvx/**/output/
+
+# ── 파이썬 ─────────────────────────────────────────
 __pycache__/
 *.pyc
+.venv/
 
-# RVX 원격 빌드 산출물
-software/soc/**/output/
+# ── NFS 잔재 (열린 채 삭제된 파일. 잡고 있는 쪽이 닫으면 사라집니다) ──
+.nfs*
+
+# ── Synology 색인 잔재. 미디어 파일을 두면 옆에 저절로 생깁니다 ──
+@eaDir/
+
+# ── 전달용 아카이브. 원본 디렉터리가 저장소에 그대로 들어 있습니다 ──
+/software.tar.gz
+/software/Qiskit_Server.zip
+/software/Qiskit_Server/Qiskit_Server_Results.tar.gz
+
+# ── 서버 캠페인 실행 잔재 (PID 와 nohup 출력) ──────────
+/software/Qiskit_Server/server_campaign.pid
+/software/Qiskit_Server/server_campaign.out

@@ -1,0 +1,47 @@
+{
+  "profile": "RTL_V07G",
+  "dataset": "data.hex",
+  "data_count": 4096,
+  "cases": [
+    {
+      "name": "normal_j1",
+      "directory": "normal_j1",
+      "expected_result": "normal_j1/expected_result.json"
+    },
+    {
+      "name": "burst_j1",
+      "directory": "burst_j1",
+      "expected_result": "burst_j1/expected_result.json"
+    },
+    {
+      "name": "normal_j4",
+      "directory": "normal_j4",
+      "expected_result": "normal_j4/expected_result.json"
+    },
+    {
+      "name": "burst_j4",
+      "directory": "burst_j4",
+      "expected_result": "burst_j4/expected_result.json"
+    },
+    {
+      "name": "normal_j8",
+      "directory": "normal_j8",
+      "expected_result": "normal_j8/expected_result.json"
+    },
+    {
+      "name": "burst_j8",
+      "directory": "burst_j8",
+      "expected_result": "burst_j8/expected_result.json"
+    },
+    {
+      "name": "normal_j6",
+      "directory": "normal_j6",
+      "expected_result": "normal_j6/expected_result.json"
+    },
+    {
+      "name": "burst_j6",
+      "directory": "burst_j6",
+      "expected_result": "burst_j6/expected_result.json"
+    }
+  ]
+}

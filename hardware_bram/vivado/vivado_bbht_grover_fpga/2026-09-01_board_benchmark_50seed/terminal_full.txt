@@ -1,0 +1,84 @@
+[RVX/START] EMU@FPGA
+============================================================
+ BBHT BOARD BENCHMARK : 50 SEEDS, NORMAL vs K4/H8
+============================================================
+DATA_COUNT=16384, TARGET_VALUE=12345
+TARGETS=1/4/16/64/256, SEEDS=50
+BACKGROUND_SEED=0x5eed1234, TARGET_POS_SEED=0xa17e2026
+DATASET,target_count,1,checksum,0x673f125d,first_target,507
+PROGRESS,target=1,seed=10/50,pair_fail=0,mismatch=0
+PROGRESS,target=1,seed=20/50,pair_fail=0,mismatch=0
+PROGRESS,target=1,seed=30/50,pair_fail=0,mismatch=0
+PROGRESS,target=1,seed=40/50,pair_fail=0,mismatch=0
+PROGRESS,target=1,seed=50/50,pair_fail=0,mismatch=0
+
+RESULT target=1
+  pair_pass    = 50/50
+  success      = Normal 50/50, K4/H8 50/50
+  physical_iter= Normal 8414, K4/H8 2230, reduction 73.49%
+  cycles       = Normal 10186883, K4/H8 6443381, reduction 36.74%
+  policy_stall = 3186294
+  plan_mismatch= 0
+SUMMARY_CSV,1,50,0,50,50,8414,2230,7349,10186883,6443381,3674,3186294,0
+DATASET,target_count,4,checksum,0x65a0846e,first_target,507
+PROGRESS,target=4,seed=10/50,pair_fail=0,mismatch=0
+PROGRESS,target=4,seed=20/50,pair_fail=0,mismatch=0
+PROGRESS,target=4,seed=30/50,pair_fail=0,mismatch=0
+PROGRESS,target=4,seed=40/50,pair_fail=0,mismatch=0
+PROGRESS,target=4,seed=50/50,pair_fail=0,mismatch=0
+
+RESULT target=4
+  pair_pass    = 50/50
+  success      = Normal 50/50, K4/H8 50/50
+  physical_iter= Normal 3615, K4/H8 1007, reduction 72.14%
+  cycles       = Normal 4940549, K4/H8 3717106, reduction 24.76%
+  policy_stall = 1902711
+  plan_mismatch= 0
+SUMMARY_CSV,4,50,0,50,50,3615,1007,7214,4940549,3717106,2476,1902711,0
+DATASET,target_count,16,checksum,0x3fbaff29,first_target,507
+PROGRESS,target=16,seed=10/50,pair_fail=0,mismatch=0
+PROGRESS,target=16,seed=20/50,pair_fail=0,mismatch=0
+PROGRESS,target=16,seed=30/50,pair_fail=0,mismatch=0
+PROGRESS,target=16,seed=40/50,pair_fail=0,mismatch=0
+PROGRESS,target=16,seed=50/50,pair_fail=0,mismatch=0
+
+RESULT target=16
+  pair_pass    = 50/50
+  success      = Normal 50/50, K4/H8 50/50
+  physical_iter= Normal 1882, K4/H8 532, reduction 71.73%
+  cycles       = Normal 2920180, K4/H8 2099548, reduction 28.10%
+  policy_stall = 919654
+  plan_mismatch= 0
+SUMMARY_CSV,16,50,0,50,50,1882,532,7173,2920180,2099548,2810,919654,0
+DATASET,target_count,64,checksum,0x72b6d504,first_target,507
+PROGRESS,target=64,seed=10/50,pair_fail=0,mismatch=0
+PROGRESS,target=64,seed=20/50,pair_fail=0,mismatch=0
+PROGRESS,target=64,seed=30/50,pair_fail=0,mismatch=0
+PROGRESS,target=64,seed=40/50,pair_fail=0,mismatch=0
+PROGRESS,target=64,seed=50/50,pair_fail=0,mismatch=0
+
+RESULT target=64
+  pair_pass    = 50/50
+  success      = Normal 50/50, K4/H8 50/50
+  physical_iter= Normal 662, K4/H8 234, reduction 64.65%
+  cycles       = Normal 1359349, K4/H8 1015193, reduction 25.31%
+  policy_stall = 329292
+  plan_mismatch= 0
+SUMMARY_CSV,64,50,0,50,50,662,234,6465,1359349,1015193,2531,329292,0
+DATASET,target_count,256,checksum,0x71b6fe37,first_target,507
+PROGRESS,target=256,seed=10/50,pair_fail=0,mismatch=0
+PROGRESS,target=256,seed=20/50,pair_fail=0,mismatch=0
+PROGRESS,target=256,seed=30/50,pair_fail=0,mismatch=0
+PROGRESS,target=256,seed=40/50,pair_fail=0,mismatch=0
+PROGRESS,target=256,seed=50/50,pair_fail=0,mismatch=0
+
+RESULT target=256
+  pair_pass    = 50/50
+  success      = Normal 50/50, K4/H8 50/50
+  physical_iter= Normal 310, K4/H8 131, reduction 57.74%
+  cycles       = Normal 822794, K4/H8 549578, reduction 33.20%
+  policy_stall = 78417
+  plan_mismatch= 0
+SUMMARY_CSV,256,50,0,50,50,310,131,5774,822794,549578,3320,78417,0
+BBHT PAPER BOARD BENCHMARK PASS
+[RVX/END]

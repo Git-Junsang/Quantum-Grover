@@ -11,7 +11,8 @@
 # 그 답입니다 -- 무엇을 어디에 넣는지가 전부 여기 적혀 있고, 저장소에서
 # 플랫폼으로 가는 방향만 있으므로 되돌리기도 쉽습니다.
 #
-# 하지 않는 것: Main IP(PJK 소유) 배치. 그건 PJK 트리에서 옵니다.
+# Main IP 도 함께 옮깁니다. 실물이 2026-09-05 에 src_v2/ 로 들어왔고,
+# CORE=v2|v3 로 어느 코어를 설치할지 고릅니다 (아래 3번).
 set -e
 
 HERE=$(cd "$(dirname "$0")" && pwd)
@@ -105,6 +106,10 @@ say "user/api" "driver + regs.h"
 mkdir -p "$PLATFORM/app"
 cp -r "$HW/firmware/bbht_console"                 "$PLATFORM/app/"
 say "app/bbht_console" "UART 명령 셸"
+# 250쌍 자동 벤치. 보드 실측을 시뮬(sim/bench250_report.py)과 같은 워크로드로
+# 재현하는 앱입니다. 시드 로스터 50개와 참조 데이터셋이 안에 들어 있습니다.
+cp -r "$HW/firmware/bbht_paper_bench"             "$PLATFORM/app/"
+say "app/bbht_paper_bench" "250쌍 자동 벤치 (M=1/4/16/64/256 x 시드 50)"
 
 echo
 echo "다음 단계:"

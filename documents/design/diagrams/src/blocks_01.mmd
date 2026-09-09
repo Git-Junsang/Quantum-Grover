@@ -1,9 +1,0 @@
-graph LR
-    HOST["호스트<br/>MicroBlaze 또는 PC"]
-    CSR["레지스터<br/>axi_csr"]
-    ACC["가속기<br/>grover_top"]
-    HOST -->|"술어 · 임계값 · 반복 횟수"| CSR
-    CSR --> ACC
-    ACC -->|"측정 결과 · 검증 통과 여부"| CSR
-    CSR --> HOST
-    HOST -->|"탐색 데이터 value[ ]"| ACC

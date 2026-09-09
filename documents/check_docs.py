@@ -34,27 +34,34 @@ VERBOSE = '-v' in sys.argv
 BANNED = [
     # (정규식, 설명, 허용 파일 목록)
     (r'XC7S100',
-     '폐기된 목표 FPGA (현행 Arty-S7-50 / xc7s50csga324-1)',
+     '폐기된 목표 FPGA (현행 Arty A7-100T / xc7a100tcsg324-1)',
      ['15_논문지도와_설계결정표.md', 'CLAUDE.md', '블록도.md', '반복횟수_결정.md',
-      '개발계획.md', 'presentation/README.md']),
+      '개발계획.md']),
 
     (r'BRAM(36)?\s*(120|66)\s*개|BRAM\s*120\b',
-     '폐기된 자원 수치 (XC7S100 기준). 현행 IP 33개 / 보드 75개',
-     ['블록도.md', '반복횟수_결정.md', 'presentation/README.md']),
+     '폐기된 자원 수치 (XC7S100 기준). 현행 IP 33개 / 보드 135개',
+     ['블록도.md', '반복횟수_결정.md']),
 
     (r'DSP\s*160|160\s*개.*DSP',
-     '폐기된 DSP 수치 (XC7S100 기준). 현행 보드 120개',
+     '폐기된 DSP 수치 (XC7S100 기준). 현행 보드 240개',
      ['블록도.md', '반복횟수_결정.md']),
+
+    (r'xc7s50|Arty-?S7-?50',
+     '폐기된 목표 보드 (2026-08-28 Arty A7-100T / xc7a100tcsg324-1 로 변경)',
+     ['15_논문지도와_설계결정표.md', 'CLAUDE.md', '블록도.md', '반복횟수_결정.md',
+      '개발계획.md', '툴체인_사용법.md',
+      '2026-07-10_세미나_양자컴퓨팅-입문.md', '체크포인트_일반화_문헌조사.md',
+      '체크포인트_K최적화_2차분석.md']),
 
     (r'AXI4-Lite|AXI-?Stream',
      '폐기된 버스 (현행 APB 슬레이브 + AHB 마스터). RVX 에 AXI-Stream 심이 없음',
      ['17_RVX_SoC_통합.md', '15_논문지도와_설계결정표.md', 'CLAUDE.md',
-      '블록도.md', '반복횟수_결정.md', '개발계획.md', 'presentation/README.md']),
+      '블록도.md', '반복횟수_결정.md', '개발계획.md']),
 
     (r'MicroBlaze',
      '폐기된 SoC (현행 RVX rvc_orca)',
      ['15_논문지도와_설계결정표.md', 'CLAUDE.md', '블록도.md',
-      'README.md', 'presentation/README.md']),
+      'README.md']),
 
     (r'DSP가?\s*잡히면',
      '"DSP가 잡히면 잘못 짠 것"은 폐기됨 — 측정 경로는 제곱기 32개를 정상적으로 씁니다',
@@ -128,7 +135,10 @@ def md_files():
     out = []
     for p in glob.glob(os.path.join(ROOT, '**', '*.md'), recursive=True):
         rel = os.path.relpath(p, ROOT)
-        if '/facts/' in rel or rel.startswith('papers_ko') or 'papers_ko/' in rel:
+        # trash_bin 은 구 스펙 보관소라 검사 대상이 아닙니다.
+        # papers_ko 는 논문 번역본이라 우리 설계 수치를 따르지 않습니다.
+        if (rel.startswith('trash_bin/') or '/facts/' in rel
+                or 'papers_ko/' in rel):
             continue
         out.append(rel)
     return sorted(out)

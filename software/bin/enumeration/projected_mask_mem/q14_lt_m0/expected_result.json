@@ -1,0 +1,35 @@
+{
+  "model_variant": "RTL_V09_PROJECTED_ENUM_MASK_MEM",
+  "rtl_validation_status": "PROJECTED_NOT_RTL_VALIDATED",
+  "case": {
+    "case_id": "PROJECTED_MASK_MEM-q14_lt_m0",
+    "profile_name": "Q14",
+    "data_count": 4096,
+    "target_count": 0,
+    "oracle_mode": "LT",
+    "backend": "PROJECTED_MASK_MEM",
+    "layout": "HEAD",
+    "burst_enable": true,
+    "requested_count": null
+  },
+  "threshold_a": 0,
+  "threshold_b": 0,
+  "expected_target_indices": [],
+  "round_files": [],
+  "result": {
+    "found_indices": [],
+    "found_count": 0,
+    "duplicate_free": true,
+    "initial_target_count": 0,
+    "remaining_target_count": 0,
+    "termination_reason": "NO_TARGETS_REMAIN",
+    "consecutive_round_failures": 0,
+    "total_shots": 0,
+    "total_logical_grover_iterations": 0,
+    "total_physical_grover_iterations": 0,
+    "total_phase_oracle_calls": 0,
+    "total_candidate_verification_calls": 0,
+    "total_time_ms": 0.247,
+    "rounds": []
+  }
+}
