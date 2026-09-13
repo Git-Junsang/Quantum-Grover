@@ -29,7 +29,7 @@ CORE_FILES="bbht_grover_main_ip.v \
             grover_iteration.v grover_loader.v grover_measurement.v \
             grover_memories.v grover_policy.v grover_status.v"
 
-cp "$HERE/tb_driver.cpp" "$BUILD/src/"
+cp "$HERE/../testbench/tb_driver.cpp" "$BUILD/src/"
 
 case "$CORE" in
     final)

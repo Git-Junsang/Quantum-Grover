@@ -77,8 +77,11 @@ C 헤더 · Verilog 헤더 · Python 헤더 · 규격 문서가 전부 여기서
 DRAM 에서 다음 `j` 의 진폭을 가져와 큐에 올립니다. 어떤 `j` 든 버스트 한 번이면
 닿으므로 체크포인트 개수 K 도, 앞을 내다보는 정책 H 도 필요하지 않습니다.
 
-**RTL 초안과 회귀가 있고, 물리 DRAM 바인딩(MIG/AXI)과 통신 계층은 아직 없습니다.**
-검증은 동작 수준 DRAM 모델 위에서 합니다 (`make -C hardware_dram/sim`). 같은 자극을
+**RTL 초안과 회귀, 그리고 호스트 통신 경로(APB CSR · AHB 적재)를 묶은 최상단
+`src/bbht_dram_top.v` 가 있습니다. 물리 DRAM 바인딩(MIG/AXI)과 RVX 설치는 아직
+없습니다** — 최상단이 DRAM burst 포트를 밖으로 내 두었고, 거기에 브리지를 붙이는 일이
+남았습니다. 검증은 동작 수준 DRAM 모델 위에서 합니다 (`make -C hardware_dram/sim`,
+최상단은 `top` 타깃). 같은 자극을
 `hardware_bram` 에도 걸어 탐색 궤적이 일치하는지 보는 대조는 `make -C hardware_dram/sim equiv`
 입니다. 지금은 단일탐색만 되고 열거는 `config_error` 로 거절합니다.
 
@@ -96,13 +99,15 @@ documents/
   study_references/     학습용 해설서 0~18장 + 부록 A
   papers/               원문 논문 PDF (papers_ko/ 에 한국어 해설본)
   check_docs.py         문서 정합성 검사기
+  *.pptx · *.docx       최종 Main IP 발표 자료와 프로젝트 최종 집약본 (읽기 전용 원본)
 
 hardware_bram/          갈래 1 — 체크포인트 + 반복 내 연산기 네 벌, BRAM 전용
   src/                  보드 정본 RTL 17개 (freeze)
-  src_comm/             우리가 쓴 통신 계층 + 어댑터
-  testbench/            Verilog 테스트벤치
-  sim/                  비 Verilog 하네스 · 빌드 스크립트 · 로그
-  synth/                자원 합성 스크립트
+  src_comm/             우리가 쓴 통신 계층 + 어댑터 + 최상단 bbht_bram_top
+  src_ablation/         6단계 ablation · K/H 단독 실험의 공통소스와 구성별 top
+  testbench/            테스트벤치. verilator C++ 하네스 포함
+  sim/                  Makefile · 러너 · 보고 스크립트
+  synth/                Vivado 배치 스크립트. 자원 합성
   results/              시뮬 캠페인 근거 묶음 (YYYY-MM-DD_<주제>/)
   bitstream/            보드에 구운 비트스트림 묶음
   rvx/                  RVX 플랫폼 정의와 설치 스크립트
@@ -110,7 +115,9 @@ hardware_bram/          갈래 1 — 체크포인트 + 반복 내 연산기 네 
   firmware/             드라이버 · 콘솔 앱 · 벤치 앱 · ORCA 기준선
 
 hardware_dram/          갈래 2 — DRAM 전량 저장 + BRAM 큐
-                        (RTL 초안 + 회귀. 물리 DRAM 바인딩과 통신 계층은 아직)
+                        (RTL 초안 + 최상단 + 회귀. 물리 DRAM 바인딩과 RVX 설치는 아직)
+                        하위 구조는 hardware_bram 과 같고, bram 에만 있는 폴더
+                        (src_comm · src_ablation · synth · bitstream)만 없습니다
 
 software/
   csr/                  CSR 정본 JSON 과 헤더 생성기       ← 두 갈래가 공유

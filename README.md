@@ -86,9 +86,11 @@ and verifying it, a wrong answer causes the queue entry for that `j` to be dropp
 the next `j` amplitude set to be fetched from DRAM onto the queue. Since any `j` is one
 burst away, this branch needs neither a checkpoint count K nor a lookahead policy H.
 
-**Draft RTL and its regression exist; the physical DRAM binding (MIG/AXI) and the
-communication layer do not yet.** Verification runs against a behavioral DRAM model
-(`make -C hardware_dram/sim`). `make -C hardware_dram/sim equiv` replays the same stimulus
+**Draft RTL, its regression, and a top level `src/bbht_dram_top.v` that ties in the
+host path (APB CSR and AHB dataset load) exist; the physical DRAM binding (MIG/AXI) and
+the RVX install do not yet.** The top level exposes the DRAM burst port so a bridge can
+attach there. Verification runs against a behavioral DRAM model
+(`make -C hardware_dram/sim`; the `top` target covers the top level). `make -C hardware_dram/sim equiv` replays the same stimulus
 on the frozen `hardware_bram` core and checks that the search trajectories match. Single Search only for
 now; Enumeration is rejected as a `config_error`.
 
@@ -106,13 +108,15 @@ documents/
   study_references/     Tutorial chapters 0-18 plus appendix A (Korean)
   papers/               Source paper PDFs (papers_ko/ holds Korean commentaries)
   check_docs.py         Documentation consistency checker
+  *.pptx, *.docx        Final Main IP slides and the project master document (read-only originals)
 
 hardware_bram/          Branch 1 - checkpoints plus four intra-iteration engines, BRAM only
   src/                  Frozen board-proven RTL, 17 files
-  src_comm/             Our own communication layer plus the contract adapter
-  testbench/            Verilog testbenches
-  sim/                  Non-Verilog harnesses, build scripts, logs
-  synth/                Resource synthesis scripts
+  src_comm/             Our own communication layer, the contract adapter, and the bbht_bram_top top level
+  src_ablation/         Common-source RTL and per-config tops for the 6-stage and K/H ablations
+  testbench/            Testbenches, including the verilator C++ harnesses
+  sim/                  Makefile, runners, report scripts
+  synth/                Vivado batch scripts for resource synthesis
   results/              Simulation campaign evidence (YYYY-MM-DD_<topic>/)
   bitstream/            Bitstream bundles flashed to the board
   rvx/                  RVX platform definition and install script
@@ -120,7 +124,9 @@ hardware_bram/          Branch 1 - checkpoints plus four intra-iteration engines
   firmware/             Driver, console app, benchmark app, ORCA baseline
 
 hardware_dram/          Branch 2 - full DRAM storage plus BRAM queue
-                        (draft RTL + regression; no physical DRAM binding or comms yet)
+                        (draft RTL + top level + regression; no physical DRAM binding or RVX install yet)
+                        Same layout as hardware_bram, without the bram-only folders
+                        (src_comm, src_ablation, synth, bitstream)
 
 software/
   csr/                  CSR source of truth and header generator   <- shared by both branches

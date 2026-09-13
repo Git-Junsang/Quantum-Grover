@@ -111,14 +111,20 @@ INCR16 버스트, argmax 측정, AXI4-Lite, MicroBlaze, XC7S100.
 - **`hardware_dram/`** — `j` 별 진폭을 DRAM 에 전량 저장하고, 난수 생성기가 뽑은 `j` 는
   BRAM 큐에도 올립니다. 정답 후보를 검증해 틀리면 큐에서 그 `j` 를 지우고 DRAM 에서
   다음 `j` 진폭을 큐에 올립니다. 체크포인트 K 도 정책 H 도 쓰지 않습니다 — 모든 `j` 가
-  버스트 한 번 거리에 있어서 계획할 것이 없습니다. **RTL 초안과 회귀까지 있고, 물리 DRAM
-  바인딩(MIG/AXI)과 통신 계층은 아직 없습니다.** 검증은 동작 수준 DRAM 모델
+  버스트 한 번 거리에 있어서 계획할 것이 없습니다. **RTL 초안과 회귀, 호스트 통신 경로를
+  묶은 최상단(`src/bbht_dram_top.v`)까지 있고, 물리 DRAM 바인딩(MIG/AXI)과 RVX 설치는
+  아직 없습니다.** 최상단은 DRAM burst 포트를 밖으로 냅니다. 같은 폴더의
+  `bbht_rvx_wrapper.v` + 어댑터는 포트 계약 대조용 판이라 DRAM 을 안쪽에서 묶어 두었고,
+  복원이 필요한 탐색에서 멈춥니다. 검증은 동작 수준 DRAM 모델
   (`testbench/dram_burst_model.v`) 위에서 하며, `make -C hardware_dram/sim equiv` 가
   같은 자극을 `hardware_bram` 정본에도 걸어 탐색 궤적이 일치하는지 대조합니다.
   대조 상대는 2026-09-09 부터 K3/H3-E4-M2 입니다 (그전에는 K4/H4 였습니다).
   단일탐색 전용이고 `enum_enable=1` 은 `config_error` 로 거절합니다.
 
-두 트리는 하위 구조가 같고, CSR 정본·골든 모델·검증 벡터는 `software/` 에서 공유합니다.
+두 트리는 하위 구조가 같습니다(`src/` `testbench/` `sim/` `results/` `firmware/` `rvx/` `vivado/`).
+bram 에만 있는 폴더는 둘 중 하나입니다 — 모듈 이름이 정본 `src/` 와 겹쳐서 나눈 RTL
+(`src_comm/` `src_ablation/`), 아니면 dram 에 아직 없는 역할(`synth/` `bitstream/`). 4절.
+CSR 정본·골든 모델·검증 벡터는 `software/` 에서 공유합니다.
 한쪽 갈래에만 해당하는 것을 `software/` 에 넣지 마십시오.
 
 ---
@@ -143,11 +149,14 @@ INCR16 버스트, argmax 측정, AXI4-Lite, MicroBlaze, XC7S100.
 | `papers/` | 원문 논문 PDF. 읽기 전용 |
 | `papers/papers_ko/` | 논문 한국어 해설본. 원문 대조용 보조 자료 |
 | `check_docs.py` | 문서 정합성 검사기. **문서를 고친 뒤 반드시 돌릴 것** |
+| `Main_IP_Final_20260910.pptx` · `LPSoC_BBHT_Grover_최종집약본_v1.0.4_2026-09-09.docx` | 발표 자료와 프로젝트 최종 집약본 원본. 읽기 전용. 집약본은 K4/H8 부터의 이력을 그대로 담고 있어 옛 수치가 섞여 있으니 인용은 2절 정본에서 하십시오 |
 
 ### `hardware_bram/` (와 같은 구조의 `hardware_dram/`)
 
-아래 표는 두 갈래가 공유하는 모양입니다. `hardware_dram/` 에만 있는 것은 그다음 표에
-따로 적었습니다.
+아래 표는 두 갈래가 공유하는 모양에 `hardware_bram/` 에만 있는 폴더를 더한 것입니다.
+`hardware_dram/` 에만 있는 것은 그다음 표에 따로 적었습니다. 파일을 새로 둘 때는
+dram 에 같은 역할의 폴더가 있으면 그리로 보내십시오 (테스트벤치는 C++ 하네스까지
+`testbench/`, 러너와 보고 스크립트는 `sim/`).
 
 | 경로 | 역할 |
 |---|---|
@@ -158,13 +167,18 @@ INCR16 버스트, argmax 측정, AXI4-Lite, MicroBlaze, XC7S100.
 | `src_comm/` | 우리가 쓴 통신 계층. CSR 정본에서 생성한 헤더를 include 합니다 |
 | `src_comm/bbht_grover_core_adapter.v` | 계약 이름 `bbht_grover_core` 로 정본 Main IP 를 감싸는 어댑터 |
 | `src_comm/bbht_grover_user_region.vh` | 우리 갈래가 RVX 에 넘기는 user region 선언 |
+| `src_comm/bbht_bram_top.v` | 최상단. 우리 mmio·loader 에 정본 Main IP 를 어댑터 없이 직접 뭄. 포트는 `bbht_rvx_wrapper` 와 같고 `hardware_dram/src/bbht_dram_top.v` 와 짝 |
+| `src_ablation/` | 6단계 ablation · K/H 단독 실험의 공통소스 28개. 정본에 `MEAS_M1/M2` 스위치를 더한 판(정본과 다른 것은 `bbht_grover_main_ip.v` `bbht_rvx_wrapper.v` `grover_measurement.v` 셋) + 구성별 standalone top 8벌 + UART 브리지·데이터셋 생성기 + 공통 XDC. 캠페인 입력이라 **고치지 마십시오** |
 | `testbench/tb_bbht_rvx.v` | 통신 계층 계약 T1~T9. 두 갈래에 같은 TB 를 물립니다 |
 | `testbench/bbht_grover_core_stub.v` | Main IP 자리 채우개. 포트 계약 대조 대상 |
 | `testbench/ahb_sram_model.v` | AHB 슬레이브 모델 |
-| `sim/Makefile` | verilator 회귀 진입점. `ports lint regress driver` · `real` · `final` · `bench250` |
-| `sim/tb_driver.cpp` · `run_driver_test.sh` | 드라이버 + RTL 공동 시뮬 D1~D11 (`CORE=stub\|real\|final`) |
-| `sim/tb_bench250.cpp` · `bench250_report.py` | 250쌍 워크로드 시뮬. 궤적 불변식 + 보드 M2 실측과 워크로드별 대조 |
-| `synth/` | 자원 합성. `run_main_ip.sh` 는 저장소만으로, `run_resource.sh` 는 재현 패키지 필요 |
+| `testbench/tb_bbht_bram_top.v` | 최상단 H1~H15. APB 로 호스트 순서를 흉내 내고 Q14 전체 적재, NORMAL/CKPT 짝 궤적 비교, 열거까지 |
+| `testbench/tb_publication_plusargs.v` | ablation 캠페인 TB (iverilog, `+TC` `+SEED_*` 플러스인자). 표시 문자열의 `k4h4` 는 하드코딩 잔재 |
+| `sim/Makefile` | 회귀 진입점. verilator: `ports lint regress driver` · `real` · `final` · `top` · `bench250` · `bench500` / iverilog: `anchor` · `publication` · `kh` |
+| `testbench/tb_driver.cpp` · `sim/run_driver_test.sh` | 드라이버 + RTL 공동 시뮬 D1~D11 (`CORE=stub\|real\|final`) |
+| `testbench/tb_bench250.cpp` · `sim/bench250_report.py` | 250쌍 워크로드 시뮬. 궤적 불변식 + 보드 M2 실측과 워크로드별 대조 (`bench500` 도 같은 짝) |
+| `sim/run_publication.py` · `publication_report.py` · `run_kh.py` | 재현 패키지 러너 이식판. 6단계 2,500회 · K/H 750회를 돌려 `results/` 기대값과 정확 대조 |
+| `synth/` | Vivado 배치 스크립트. `run_main_ip.sh` 정본 OOC · `run_resource.sh` 5구성 ablation |
 | `results/` | **시뮬 캠페인 근거 묶음** (`YYYY-MM-DD_<주제>/`). 재현 소스 없이 결과만 |
 | `bitstream/` | 보드에 구운 비트스트림 묶음 (`YYYY-MM-DD_<주제>`) |
 | `rvx/bbht_grover_upgrade.xml` | RVX 플랫폼 정의 (clk_accel 100 MHz) |
@@ -182,9 +196,12 @@ INCR16 버스트, argmax 측정, AXI4-Lite, MicroBlaze, XC7S100.
 
 ### `hardware_dram/` 에만 있는 것
 
-Main IP 자체가 다른 갈래라 이쪽 `src_v2/` 의 내용은 `hardware_bram/src/` 와 다릅니다.
-(`hardware_bram` 의 `src_v2`·`src_v3` 은 2026-09-09 에 없앴지만, DRAM 갈래는 아직 자기
-`src_v2/` 를 씁니다.) 재사용 8개
+Main IP 자체가 다른 갈래라 이쪽 `src/` 의 내용은 `hardware_bram/src/` 와 다릅니다.
+`hardware_bram` 은 `src/`(freeze 정본)와 `src_comm/`(우리 통신 계층)으로 나뉘지만, 이쪽은
+freeze 대상이 없어서 **`src/` 한 폴더**에 Main IP 초안(`grover_*` · `lpsoc_*`)과 통신 계층
+(`bbht_*`, `hardware_bram/src_comm/` 과 mmio·loader 바이트 동일)을 같이 둡니다
+(2026-09-11 에 옛 `src_v2/` 를 `src/` 로 합쳤습니다). 최상위가 둘이라 `sim/Makefile` 은
+파일을 하나씩 나열합니다 — glob 으로 모으지 마십시오. 재사용 8개
 (`grover_param.vh` `arithmetic` `memories` `iteration` `measurement` `loader` `status`
 `dram_random`) 에 아래 신규 5개가 붙습니다. 체크포인트(`grover_checkpoint.v`)와 정책
 엔진(`grover_policy.v`)은 **일부러 안 가져왔습니다** — 모든 `j` 가 버스트 한 번 거리라
@@ -192,19 +209,22 @@ Main IP 자체가 다른 갈래라 이쪽 `src_v2/` 의 내용은 `hardware_bram
 
 | 경로 | 역할 |
 |---|---|
-| `src_v2/grover_dram_amp_store.v` | 반복마다 512행을 DRAM 슬롯에 store / 필요할 때 restore |
-| `src_v2/grover_dram_prep_seq.v` | 버퍼 A 준비 시퀀서. **체크포인트 K/H 를 대신하는 자리** |
-| `src_v2/grover_dram_shot_fsm.v` | 외곽 BBHT 라운드 제어 |
-| `src_v2/grover_dram_queue.v` | 버퍼 A/B 두 벌과 역할별 포트 뮤스 |
-| `src_v2/grover_dram_param.vh` | 슬롯 주소맵. 92바이트/행 × 512행 = 47,104바이트/슬롯 |
+| `src/grover_dram_amp_store.v` | 반복마다 512행을 DRAM 슬롯에 store / 필요할 때 restore |
+| `src/grover_dram_prep_seq.v` | 버퍼 A 준비 시퀀서. **체크포인트 K/H 를 대신하는 자리** |
+| `src/grover_dram_shot_fsm.v` | 외곽 BBHT 라운드 제어 |
+| `src/grover_dram_queue.v` | 버퍼 A/B 두 벌과 역할별 포트 뮤스 |
+| `src/grover_dram_param.vh` | 슬롯 주소맵. 92바이트/행 × 512행 = 47,104바이트/슬롯 |
+| `src/bbht_dram_top.v` | **이 갈래의 최상단.** mmio + AHB 적재기 + Main IP 를 직접 물고 DRAM burst 포트를 밖으로 냄 |
+| `src/bbht_rvx_wrapper.v` · `bbht_grover_core_adapter.v` | 포트 계약판. `check_ports.py dram` 대조용이고 DRAM 이 묶여 있어 실제로는 못 씀 |
 | `testbench/dram_burst_model.v` | 동작 수준 DRAM 모델. 지연·백프레셔가 전부 파라미터 |
 | `testbench/tb_dram_amp_store.v` | store/restore 왕복 A1~A5 |
 | `testbench/tb_dram_prep_seq.v` | prep 시퀀서 P1~P8. 연산기 자리에 스텁을 넣습니다 |
 | `testbench/tb_dram_core.v` | Main IP 통합 C1~C8. `GD_DRAM_BRANCH` 를 빼면 `hardware_bram` 에도 물립니다 |
-| `sim/Makefile` | `ports lint store prep core equiv` |
-| `sim/equiv_report.py` | 세 갈래(dram / bram Normal / bram 체크포인트) 로그 대조기 |
+| `testbench/tb_bbht_dram_top.v` | 최상단 H1~H14. APB 로 호스트 순서를 흉내 내고, C1~C7 은 `tb_dram_core` 와 궤적 대조 |
+| `sim/Makefile` | `ports lint store prep core top equiv`. `top` 은 기본 지연과 백프레셔 두 벌 |
+| `sim/equiv_report.py` | 세 갈래(dram / bram Normal / bram 체크포인트) 로그 대조기. `--names` 로 최상단 대조에도 씀 |
 
-**아직 없는 것**: 물리 DRAM 바인딩(MIG native UI 든 AXI4 든), 통신 계층 회귀, 열거,
+**아직 없는 것**: 물리 DRAM 바인딩(MIG native UI 든 AXI4 든), 열거,
 버퍼 B 를 쓰는 라운드 간 프리페치, RVX 설치 스크립트, Vivado 프로젝트.
 
 ### `software/` — 두 갈래가 공유
@@ -228,7 +248,8 @@ Main IP 자체가 다른 갈래라 이쪽 `src_v2/` 의 내용은 `hardware_bram
 구 스펙 문서와 대용량 산출물 보관소입니다. **여기서 인용하지 마십시오.**
 `documents_design/` 구 설계 문서 11편 · `KJE/` 구 펌웨어와 71M 분석 결과 ·
 `PJK/` 비트스트림과 136M 아카이브 · `PJK_handoff/` K4/H8 시절 인수인계 요약본 2편 ·
-`SJS/` 구 README · `presentation/` 세미나·스펙결정 발표자료 · `old_tools/` 폐기된 Vivado 스텁.
+`SJS/` 구 README · `presentation/` 세미나·스펙결정 발표자료 · `old_tools/` 폐기된 Vivado 스텁 ·
+`SERVER_repro_package_v1.0/` 재현 패키지 zip 에서 저장소에 들이지 않은 81개 (standalone 판 전체, 구 17장 판본, 옛 스크립트, DSE 원본 18 MB 등).
 
 ---
 
@@ -242,13 +263,26 @@ make -C hardware_bram/sim ports lint regress driver
 make -C hardware_bram/sim final
 make -C hardware_bram/sim real
 
+# 최상단 bbht_bram_top 회귀 (1분 30초쯤)
+make -C hardware_bram/sim top
+
 # 250쌍 궤적 벤치 (20분쯤). CORE=real 이면 우리 통신 계층으로
 make -C hardware_bram/sim bench250
+
+# 6단계 ablation · K/H 단독 실험 재현 (iverilog). anchor 는 5회뿐이라 금방,
+# publication 은 2,500회, kh 는 750회. JOBS=N 으로 병렬도
+make -C hardware_bram/sim anchor
+make -C hardware_bram/sim publication
+make -C hardware_bram/sim kh
 
 # 최종 Main IP 자원 재기 (Vivado, 2분쯤)
 hardware_bram/synth/run_main_ip.sh
 
-# DRAM 갈래 회귀 (1분 30초쯤). equiv 는 hardware_bram 정본과 궤적 대조까지 (40초 더)
+# 5구성 자원 ablation (Vivado)
+hardware_bram/synth/run_resource.sh
+
+# DRAM 갈래 회귀 (1분 30초쯤, 최상단 bbht_dram_top 의 top 까지). equiv 는
+# hardware_bram 정본과 궤적 대조까지 (40초 더)
 make -C hardware_dram/sim
 make -C hardware_dram/sim equiv
 

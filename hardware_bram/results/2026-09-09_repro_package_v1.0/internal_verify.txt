@@ -1,0 +1,9 @@
+Internal package construction audit
+Date: 2026-09-09
+- Portable Python scripts: syntax checked with Python 3.13.5 PASS
+- Shell scripts: bash -n PASS
+- Required reproduction inputs: 15/15 present
+- Publication common-source key SHA values match frozen authoritative ablation hashes
+- Final RVX key SHA values match frozen final K3/H3-E4-M2 hashes
+- Full functional simulation was NOT executed inside the ChatGPT container because iverilog/vvp/Vivado are not installed here; the package runners are intended to execute on the target reproduction server.
+- Package SHA manifest verified before archive creation.

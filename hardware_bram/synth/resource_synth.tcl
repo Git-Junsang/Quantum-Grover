@@ -1,9 +1,8 @@
-# 5구성 공통조건 합성 -- 재현 패키지가 있어야 돕니다.
+# 5구성 공통조건 합성 -- run_resource.sh 가 경로를 환경변수로 넘겨 부릅니다.
 #
-# 대상 top 5벌(k4h4_e1 ... k3h3_e4_m2)과 ablation 공통소스, 그리고 standalone
-# top·UART 브리지·데이터셋 생성기는 이 저장소에 없습니다. 결과표만
-# results/2026-09-08_resource_ablation_5config/ 에 근거로 두고, 재현은 패키지
-# 쪽에서 합니다. run_resource.sh 가 경로를 환경변수로 넘깁니다.
+# 대상 top 5벌(k4h4_e1 ... k3h3_e4_m2)과 ablation 공통소스, standalone top 이
+# 쓰는 UART 브리지·데이터셋 생성기, 공통 XDC 가 전부 ../src_ablation/ 에
+# 있습니다. 결과표는 results/2026-09-08_resource_ablation_5config/.
 #
 # 조건: Vivado 2024.2 / xc7a100tcsg324-1 / 공통 소스·공통 XDC / 합성까지만.
 # 논문 주 수치는 여기서 나오는 u_main_ip 계층 사용량입니다.

@@ -24,6 +24,13 @@ tb_dram_core 로그 대조기.
       아래 표가 그걸 정리합니다.
 
     python3 equiv_report.py dram.log bram.log [ckpt.log]
+
+같은 대조를 최상단 회귀(tb_bbht_dram_top)에도 씁니다. 그때는 두 로그가 둘 다
+dram 갈래라 이름을 바꿔 줘야 표가 헷갈리지 않습니다.
+
+    python3 equiv_report.py --names dram,top core_dram.log top.log
+
+첫 이름이 비용 비교의 기준입니다. 이름 개수는 로그 개수와 같아야 합니다.
 """
 import io
 import re
@@ -56,15 +63,25 @@ def parse(path):
 
 
 def main():
-    if len(sys.argv) < 3:
+    args = sys.argv[1:]
+    names = None
+    if args and args[0] == "--names":
+        if len(args) < 2:
+            sys.exit(__doc__)
+        names = args[1].split(",")
+        args = args[2:]
+    if len(args) < 2:
         sys.exit(__doc__)
+    if names is None:
+        names = ["dram", "bram", "ckpt"][: len(args)]
+    if len(names) != len(args):
+        sys.exit("--names 개수(%d)와 로그 개수(%d)가 다릅니다" % (len(names), len(args)))
 
-    names = ["dram", "bram", "ckpt"][: len(sys.argv) - 1]
-    logs = [parse(p) for p in sys.argv[1:]]
+    logs = [parse(p) for p in args]
     base_order, base = logs[0]
 
     print("=" * 78)
-    print("궤적 대조 -- 세 갈래가 같은 답을 같은 경로로 내는가")
+    print("궤적 대조 -- %s 가 같은 답을 같은 경로로 내는가" % " / ".join(names))
     print("=" * 78)
 
     errors = 0
@@ -129,12 +146,12 @@ def main():
         for n in names[1:]:
             for field, unit in (("iters", "Grover 반복"), ("cyc", "사이클")):
                 ref = totals[n][field]
-                got = totals["dram"][field]
+                got = totals[names[0]][field]
                 if ref == 0:
                     continue
                 pct = (got - ref) * 100.0 / ref
-                print("  %s 합계: dram %d vs %s %d  (%+.2f%%)"
-                      % (unit, got, n, ref, pct))
+                print("  %s 합계: %s %d vs %s %d  (%+.2f%%)"
+                      % (unit, names[0], got, n, ref, pct))
 
     print()
     print("  주의: 위 사이클 수는 dram_burst_model 의 파라미터 지연으로 잰 값입니다.")

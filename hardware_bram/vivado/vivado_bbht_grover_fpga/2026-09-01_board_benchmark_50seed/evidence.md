@@ -21,7 +21,12 @@
 - Aggregate cycles: **20,229,755 -> 13,824,806 (-31.66%)**
 
 ## Files
-- `bench_app.zip`: exact test app package used for the final 50-seed run
+- `bench_app/`: exact test app package used for the final 50-seed run. It was
+  shipped as `bench_app.zip` and extracted in place on 2026-09-13; the archive's
+  hash in `sha256sums.txt` is kept as the record of the original. Two changes from
+  the archive: its `README.md` is now `notes.md` (the repository allows README files
+  only at the root), and the `tools/__pycache__/` bytecode was dropped. Every other
+  file is byte-identical to the archive member.
 - `terminal_full.txt`: exact final 50-seed terminal output
 - `result.txt`: concise aggregate result
 - `summary.csv`: target-level summary

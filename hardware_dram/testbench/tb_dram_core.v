@@ -1,15 +1,17 @@
 //=====================================================================
 // tb_dram_core.v -- Main IP 통합 회귀 (통신 계층 없이 코어만)
 //
-// 통신 계층(APB CSR / AHB 적재기 / RVX wrapper)은 나중에 따로 붙습니다.
-// 그래서 여기서는 lpsoc_bbht_grover_main_ip 의 포트를 직접 흔들고, DRAM
-// 자리에는 dram_burst_model 을 답니다.
+// 여기서는 lpsoc_bbht_grover_main_ip 의 포트를 직접 흔들고, DRAM 자리에는
+// dram_burst_model 을 답니다. 통신 계층(APB CSR / AHB 적재기)을 거친 판은
+// tb_bbht_dram_top.v 이고, 그쪽 C1~C7 이 이 파일과 레이블·자극이 같아서
+// make top 이 두 로그를 맞댑니다. 이 파일의 C1~C7 을 바꾸면 그쪽도 같이
+// 바꿔야 합니다.
 //
 // 같은 파일을 hardware_bram 쪽 Main IP 에도 씁니다. 두 갈래의 포트 목록이
 // dram_* 를 빼면 완전히 같기 때문입니다 (dram 쪽이 진부분집합이 아니라
 // 상위집합). 그래서
 //
-//   GD_DRAM_BRANCH 정의  -> hardware_dram/src_v2 + DRAM 모델
+//   GD_DRAM_BRANCH 정의  -> hardware_dram/src + DRAM 모델
 //   정의 안 함           -> hardware_bram/src (CKPT_AUTO 로 Normal/K3H3-E4-M2)
 //
 // 두 벌을 같은 자극으로 돌려서 CASE 줄을 맞대면, hardware_dram 이
@@ -151,7 +153,7 @@ module tb_dram_core #(
     // 여기서는 CKPT_AUTO 로 같이 묶어, 0 이면 순수 Normal, 1 이면 보드
     // 정본과 같은 K3/H3-E4-M2 가 되게 합니다.
     //
-    // 2026-09-09 이전에는 이 자리가 src_v2 의 K4/H4 였습니다. 대조 상대가
+    // 2026-09-09 이전에는 이 자리가 hardware_bram/src_v2 의 K4/H4 였습니다. 대조 상대가
     // 바뀌었으므로 옛 로그의 사이클과 맞대지 마십시오.
     bbht_grover_main_ip #(
         .CHECKPOINT_ENABLE  (CKPT_AUTO),

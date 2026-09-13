@@ -3,7 +3,13 @@
 #   make        스텁 갈래 회귀 (몇 초)
 #   make real   우리 통신 계층 + 어댑터 + 정본 Main IP
 #   make final  보드 정본 통째 (src/ 만으로)
+#   make top    최상단 bbht_bram_top 회귀 (Q14 전체 적재, NORMAL/CKPT 짝,
+#               열거까지. 빌드 포함 1분 30초쯤)
 #   make lint   lint 만
+#   make bench250 / bench500
+#               250쌍 / 500 워크로드 궤적 벤치 (20분 / 40분쯤)
+#   make anchor | publication | kh
+#               6단계 ablation 과 K/H 단독 실험 재현. iverilog 로 돕니다 (맨 아래 절)
 #   make clean
 #
 # 갈래가 셋인 이유는 통신 계층이 두 벌이기 때문입니다.
@@ -59,7 +65,8 @@ FROZEN_WNO = -Wno-DECLFILENAME -Wno-WIDTHEXPAND -Wno-WIDTHTRUNC \
 
 .PHONY: all regress driver lint csr ports clean \
         ports-real lint-real regress-real driver-real real \
-        ports-final lint-final regress-final driver-final final
+        ports-final lint-final regress-final driver-final final \
+        top lint-top
 
 all: ports regress driver
 
@@ -108,8 +115,9 @@ lint: csr ports
 	@echo "lint 통과"
 
 clean:
-	rm -rf $(BUILD) $(REAL_BUILD) $(FINAL_BUILD) \
-	       /tmp/sjs_drv /tmp/sjs_drv_real /tmp/sjs_drv_final
+	rm -rf $(BUILD) $(REAL_BUILD) $(FINAL_BUILD) $(TOP_BUILD) \
+	       /tmp/sjs_drv /tmp/sjs_drv_real /tmp/sjs_drv_final \
+	       /tmp/sjs_publication /tmp/sjs_kh
 
 #---------------------------------------------------------------------
 # 우리 통신 계층 + 정본 Main IP
@@ -176,6 +184,40 @@ lint-final: csr ports-final
 	@echo "lint 통과 (정본)"
 
 #---------------------------------------------------------------------
+# 최상단 회귀
+#
+# src_comm/bbht_bram_top.v 는 우리 통신 계층(mmio, loader)에 정본 Main IP
+# 를 어댑터 없이 바로 문 최상단입니다. hardware_dram 의 bbht_dram_top 과
+# 짝이고, 호스트가 하는 순서 그대로(설정 -> DMA -> COMMAND -> STATUS 폴링
+# -> 결과 읽기) 돌립니다. 확인 항목 H1~H15 는 TB 머리말에 있습니다.
+#
+# tb_bbht_rvx(T1~T10)와 겹치는 것도 있지만 이쪽은 Q14 전체(16,384개)를
+# 적재하고, 같은 설정을 NORMAL_SINGLE 과 CKPT_SINGLE 로 한 번씩 돌려
+# 궤적이 같은지 TB 안에서 판정합니다.
+#---------------------------------------------------------------------
+TOP_RTL   = $(COMM_DIR)/bbht_bram_top.v $(COMM_DIR)/bbht_grover_mmio.v \
+            $(COMM_DIR)/bbht_ahb_loader.v $(CORE_SRCS)
+TOP_SRCS  = $(TB_DIR)/tb_bbht_bram_top.v $(TB_DIR)/ahb_sram_model.v $(TOP_RTL)
+TOP_FLAGS = -Wno-fatal -Wno-DECLFILENAME -I$(CSR_DIR) -I$(SRC_DIR) \
+            -I$(COMM_DIR) -I$(TB_DIR)
+TOP_BUILD = /tmp/sjs_build_top
+
+lint-top: csr
+	verilator --lint-only $(FROZEN_WNO) \
+	          -I$(CSR_DIR) -I$(SRC_DIR) -I$(COMM_DIR) \
+	          $(TOP_RTL) --top-module bbht_bram_top
+	@echo "lint 통과 (최상단 bbht_bram_top)"
+
+top: lint-top
+	@mkdir -p $(TOP_BUILD)
+	@verilator --binary --timing $(TOP_FLAGS) $(TOP_SRCS) \
+	          --top-module tb_bbht_bram_top --Mdir $(TOP_BUILD) -o sim \
+	          > $(TOP_BUILD)/build.log 2>&1 \
+	          || { tail -30 $(TOP_BUILD)/build.log; exit 1; }
+	@$(TOP_BUILD)/sim | tee $(TOP_BUILD)/top.log
+	@grep -q '^PASS' $(TOP_BUILD)/top.log || { echo "top 실패"; exit 1; }
+
+#---------------------------------------------------------------------
 # 250쌍 벤치 -- 같은 워크로드를 RTL 로 돌려 궤적 불변량을 봅니다
 #
 #   make bench250              정본 통신 계층 + 정본 코어
@@ -217,7 +259,7 @@ bench250-wl:
 
 bench250: csr bench250-wl
 	@rm -rf $(BENCH_BUILD); mkdir -p $(BENCH_BUILD)/src
-	@cp tb_bench250.cpp $(BENCH_COMM) $(CORE_SRCS) $(BENCH_BUILD)/src/
+	@cp $(TB_DIR)/tb_bench250.cpp $(BENCH_COMM) $(CORE_SRCS) $(BENCH_BUILD)/src/
 	@cp $(SRC_DIR)/grover_param.vh $(BENCH_BUILD)/src/
 	@cp $(CSR_DIR)/bbht_grover_csr.vh $(CSR_DIR)/bbht_grover_regs.h $(BENCH_BUILD)/src/
 	@cp ../firmware/bbht_grover_driver.c ../firmware/bbht_grover_driver.h $(BENCH_BUILD)/src/
@@ -239,3 +281,87 @@ bench250-check:
 	@$(MAKE) bench250 CORE=final BENCH_OUT=/tmp/sjs_bench250_final.csv
 	@$(MAKE) bench250 CORE=real  BENCH_OUT=/tmp/sjs_bench250_real.csv
 	@python3 bench250_report.py /tmp/sjs_bench250_final.csv /tmp/sjs_bench250_real.csv
+
+#---------------------------------------------------------------------
+# 500 워크로드 벤치 -- 보드 500런·6단계 ablation 과 같은 워크로드
+#
+#   make bench500              정본 통신 계층 + 정본 코어
+#   make bench500 CORE=real    우리 통신 계층 + 어댑터 + 정본 코어
+#
+# 250쌍 벤치와 하는 일은 같고 시드 로스터만 100쌍입니다 (5타겟 x 100시드).
+# 따로 둔 이유는 두 가지입니다.
+#
+#   1. 250쌍 하네스가 이미 낸 근거(results/2026-09-10_bench250_final_core/)를
+#      건드리지 않으려고. tb_bench250.cpp 는 시드 배열이 50 으로 고정입니다
+#   2. 500개를 한 프로세스에서 연달아 돌아야 보드 앱과 실행 순서가 같습니다.
+#      50개씩 두 번 나눠 돌면 체크포인트 준비 비용을 두 번 내게 됩니다
+#
+# 이 벤치의 비교 상대는 둘입니다. 둘 다 같은 500 워크로드입니다.
+#
+#   results/2026-09-08_publication_6stage/          RTL 사이클 축 (iverilog)
+#     의 K3/H3-E4-M2 단계 -- 우리 src/ 와 같은 구성
+#   vivado/.../2026-09-08_k3h3_e4_m2_board_500run/  보드 실경과 시간 축
+#
+# 250쌍보다 두 배 걸립니다. 40분쯤 잡으십시오.
+#---------------------------------------------------------------------
+BENCH500_BUILD = /tmp/sjs_bench500_$(BENCH_CORE)
+BENCH500_WL    = /tmp/sjs_bench500_wl
+BENCH500_OUT  ?= $(BENCH500_BUILD)/bench500_$(BENCH_CORE).csv
+
+.PHONY: bench500 bench500-wl
+
+bench500-wl:
+	@python3 ../../software/golden/tools/dump_bench500_workload.py --out $(BENCH500_WL)
+
+bench500: csr bench500-wl
+	@rm -rf $(BENCH500_BUILD); mkdir -p $(BENCH500_BUILD)/src
+	@cp $(TB_DIR)/tb_bench500.cpp $(BENCH_COMM) $(CORE_SRCS) $(BENCH500_BUILD)/src/
+	@cp $(SRC_DIR)/grover_param.vh $(BENCH500_BUILD)/src/
+	@cp $(CSR_DIR)/bbht_grover_csr.vh $(CSR_DIR)/bbht_grover_regs.h $(BENCH500_BUILD)/src/
+	@cp ../firmware/bbht_grover_driver.c ../firmware/bbht_grover_driver.h $(BENCH500_BUILD)/src/
+	@gcc -c -O2 $(BENCH_DEFS) -I$(BENCH500_BUILD)/src \
+	     $(BENCH500_BUILD)/src/bbht_grover_driver.c -o $(BENCH500_BUILD)/driver.o
+	@verilator --cc --exe --build -Wno-fatal -Wno-DECLFILENAME \
+	     --Mdir $(BENCH500_BUILD)/obj \
+	     -CFLAGS "$(BENCH_DEFS) -I$(BENCH500_BUILD)/src -O2" \
+	     -LDFLAGS "$(BENCH500_BUILD)/driver.o" -I$(BENCH500_BUILD)/src \
+	     $(foreach f,$(notdir $(BENCH_COMM) $(CORE_SRCS)),$(BENCH500_BUILD)/src/$(f)) \
+	     --top-module bbht_rvx_wrapper $(BENCH500_BUILD)/src/tb_bench500.cpp \
+	     -o bench > $(BENCH500_BUILD)/build.log 2>&1 \
+	     || { tail -20 $(BENCH500_BUILD)/build.log; exit 1; }
+	@echo "500 워크로드 실행 중 ($(BENCH_CORE)). 40분쯤 걸립니다."
+	@WL_DIR=$(BENCH500_WL) $(BENCH500_BUILD)/obj/bench > $(BENCH500_OUT)
+	@python3 bench500_report.py $(BENCH500_OUT)
+
+#---------------------------------------------------------------------
+# 6단계 ablation 과 K/H 단독 실험 재현
+#
+#   make anchor         타깃 256 · 시드 0 하나로 여섯 단계 사이클을 정확 대조 (5회)
+#   make publication    500 워크로드 x 5구성 = 2,500회 + 집계. 총합이
+#                       results/2026-09-08_publication_6stage/summary.csv 와 같아야 PASS
+#   make kh             K/H 단독 E1, 250 워크로드 x 3구성 = 750회.
+#                       results/2026-09-09_kh_isolated_e1/summary.csv 와 대조
+#
+#   JOBS=N 으로 병렬도를 정합니다 (기본 nproc).
+#
+# 재현 패키지 v1.0 의 러너(repro.sh anchor|publication|kh)를 옮겨 온 것입니다.
+# 소스는 ../src_ablation/ -- 정본 src/ 에 MEAS_M1/M2 스위치를 더한 공통소스와
+# 구성별 standalone top 8벌이라 src/ 와 모듈 이름이 겹쳐 폴더를 나눴습니다.
+#
+# 여기만 verilator 가 아니라 iverilog 입니다. 패키지 러너가 iverilog 를 썼고,
+# 기대 사이클은 같은 시뮬레이터 의미론에서만 정확히 맞는다고 패키지가 적어
+# 두었습니다 (results/2026-09-09_repro_package_v1.0/reproduction_levels.md).
+# 로그는 /tmp/sjs_publication, /tmp/sjs_kh 에 쌓입니다.
+#---------------------------------------------------------------------
+JOBS ?= $(shell nproc)
+
+.PHONY: anchor publication kh
+
+anchor:
+	python3 run_publication.py --anchor --jobs $(JOBS)
+
+publication:
+	python3 run_publication.py --full --jobs $(JOBS)
+
+kh:
+	python3 run_kh.py --jobs $(JOBS)

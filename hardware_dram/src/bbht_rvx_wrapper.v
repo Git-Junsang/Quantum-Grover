@@ -278,7 +278,7 @@ module bbht_rvx_wrapper #(
     // Main IP. 여기서는 인수인계 §3.4 의 포트 계약대로 인스턴스만 합니다
     // (hardware_bram 의 bbht_grover_core 와 이름·포트가 동일합니다).
     // 이 갈래(hardware_dram)의 실체는 hardware_bram 처럼 freeze 된
-    // PJK 원본이 아니라 src_v2/lpsoc_bbht_grover_main_ip.v 의 DRAM
+    // PJK 원본이 아니라 같은 폴더 lpsoc_bbht_grover_main_ip.v 의 DRAM
     // 전량저장 초안입니다 -- 통신 계층은 여전히 건드리지 않습니다.
     //=================================================================
     bbht_grover_core u_core (

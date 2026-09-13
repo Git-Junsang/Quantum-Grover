@@ -4,7 +4,7 @@
 //
 // tb_dram_core.v 의 C1~C9 는 제가 손으로 고른 8~9개뿐이라 "DRAM 갈래가
 // K4/H4 를 이기냐 지냐" 를 결론 낼 표본이 못 됩니다. 여기서는
-// hardware_bram/sim/tb_bench250.cpp 가 보드에 쓴 것과 같은 워크로드
+// hardware_bram/testbench/tb_bench250.cpp 가 보드에 쓴 것과 같은 워크로드
 // (정답 개수 M in {1,4,16,64,256} x 시드 50쌍 = 250) 를 그대로 씁니다.
 //
 //   predicate = EQ, threshold_a = 12345, data_count = 16384, auto_shot = 1,
@@ -14,7 +14,7 @@
 // tb_dram_core.v 와 같은 방식으로 Main IP 포트를 직접 흔듭니다. 답과 궤적은
 // 그 계층을 거치든 안 거치든 바뀌지 않습니다.
 //
-//   GD_DRAM_BRANCH 정의  -> hardware_dram/src_v2 (burst_enable 은 계약
+//   GD_DRAM_BRANCH 정의  -> hardware_dram/src (burst_enable 은 계약
 //                           호환용, DRAM 표를 무조건 씁니다)
 //   정의 안 함           -> hardware_bram/src, CHECKPOINT_ENABLE=1 로
 //                           한 번만 빌드하고 burst_enable 을 0/1 로 매
@@ -133,7 +133,7 @@ module tb_dram_bench250 #(
     // 런타임 비트 하나로 매 케이스 고릅니다.
     //
     // 2026-09-09 부터 대조 상대가 보드 정본 K3/H3-E4-M2 입니다
-    // (그전에는 src_v2 의 K4/H4 였습니다).
+    // (그전에는 hardware_bram/src_v2 의 K4/H4 였습니다).
     bbht_grover_main_ip #(
         .CHECKPOINT_ENABLE  (1),
         .CKPT_K             (3),

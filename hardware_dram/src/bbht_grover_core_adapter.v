@@ -9,13 +9,14 @@
 // 폭 변환도 논리도 없습니다.
 //
 // hardware_bram 판과의 차이는 실체뿐입니다: 이쪽은
-// src_v2/lpsoc_bbht_grover_main_ip.v (DRAM 전량저장 초안, 단일탐색
+// 같은 폴더의 lpsoc_bbht_grover_main_ip.v (DRAM 전량저장 초안, 단일탐색
 // 범위)를 감쌉니다. CHECKPOINT_ENABLE/CKPT_K/CKPT_MANUAL_ENABLE/
 // AUTO_SPEC_ENABLE 파라미터는 이 갈래에 없는 개념이라 아예 선언하지
 // 않습니다 -- checkpoint_manual_enable/policy_*/checkpoint_auto_enable
 // 입력은 계약 호환을 위해 그대로 받아 Main IP 쪽에서 미사용으로 둡니다.
 //
-// src_v2 에서 이 초안이 실제로 인스턴스하는 파일은 다음과 같습니다.
+// 이 초안이 실제로 인스턴스하는 파일은 다음과 같습니다 (전부 같은 폴더.
+// 2026-09-11 에 src_v2 를 src 로 합쳤습니다).
 //   lpsoc_bbht_grover_main_ip.v   최상위 (신규)
 //   grover_dram_shot_fsm.v        외곽 BBHT 라운드 제어 (신규)
 //   grover_dram_prep_seq.v        버퍼-A 준비 시퀀서 -- 체크포인트 대체 (신규)

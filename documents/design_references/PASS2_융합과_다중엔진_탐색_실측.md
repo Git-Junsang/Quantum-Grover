@@ -183,7 +183,7 @@ BBHT 가 후보를 술어로 자가 검증하므로 진폭이 깨져도 답은 �
 
 ### 3.5 250쌍 실측
 
-시뮬레이션 하네스(`hardware_bram/sim/tb_bench250.cpp`)가 보드 벤치와 같은 구성을
+시뮬레이션 하네스(`hardware_bram/testbench/tb_bench250.cpp`)가 보드 벤치와 같은 구성을
 씁니다 — 데이터셋 5벌, `seed_roster_50.json` 50쌍, 같은 시드로 Normal 과 K4 를
 돌리는 paired 방식. **융합 없는 src_v2 로 돌리면 보드 실측과 여섯 지표 전부
 0.00% 로 일치합니다.**
