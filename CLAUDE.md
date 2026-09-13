@@ -31,10 +31,11 @@
 
 ## 2. 정합성 기준 — 무엇이 정본인가
 
-**보드에서 검증된 K3/H3-E4-M2 (2026-09-07 빌드) 가 정본입니다.** RTL 은
-[`hardware_bram/src/`](hardware_bram/src/) 열일곱 파일이고, 그 sha256 이
-비트스트림에 들어간 것과 바이트 동일합니다
+**보드에서 검증된 K3/H3-E4-M2 (2026-09-07 빌드) 가 정본입니다.** 그 빌드에 들어간
+RTL 17개는 태그 `board-k3h3-e4-m2` 의 `hardware_bram/src/` 이고, sha256 이
+비트스트림과 바이트 동일합니다
 ([`meta/source_sha256.txt`](hardware_bram/vivado/vivado_bbht_grover_fpga/meta/source_sha256.txt)).
+main 의 [`hardware_bram/src/`](hardware_bram/src/) 는 그 뒤의 **최신판 한 벌**입니다 (이 절 끝).
 CSR 의 모든 숫자는 [`software/csr/bbht_grover_csr.json`](software/csr/bbht_grover_csr.json)
 하나에서 나옵니다 (C·Verilog·Python 헤더와 CSR 규격 문서가 전부 생성물).
 
@@ -94,10 +95,23 @@ INCR16 버스트, argmax 측정, AXI4-Lite, MicroBlaze, XC7S100.
 아닙니다. 두 묶음은 250쌍(시드 50)이라 500 워크로드 캠페인과 총합을 맞댈 수도
 없습니다.
 
-**`hardware_bram/src/` 는 freeze 대상이라 고치지 마십시오.** 통신 계층은 두 벌이고
-(정본 `src/` · 우리 것 `src_comm/`), 회귀가 셋 다 돌려 T1~T9·D1~D11 을 확인합니다.
-배선 정합성은 `check_ports.py` 가 wrapper 19 + core 61 신호를 네 갈래
-(`stub`/`real`/`final`/`dram`)로 매번 대조해서 지킵니다.
+**main 의 `hardware_bram/src/` 는 최신판 한 벌입니다** (2026-09-13 정리). 통신 계층은
+우리 판(wrapper · mmio · loader · 어댑터. CSR 정본 생성 헤더를 include)이고, Main IP 는
+6단계 ablation 공통소스 판입니다. 보드 정본에 `MEAS_M1_ENABLE` · `MEAS_M2_ENABLE`
+스위치만 더한 것이라 둘 다 1(기본)이면 보드와 동작이 같습니다. 옛 판은 태그로 남아
+있습니다.
+
+| 태그 | 그 시점의 `hardware_bram/` |
+|---|---|
+| `board-k3h3-e4-m2` | `src/` = 보드 비트스트림과 바이트 동일한 17개. `src_comm/` · `src_ablation/` 이 따로 있고 `make final` · `anchor` · `publication` · `kh` · `synth/run_resource.sh` 가 돎 |
+| `backup-src_comm` | `src_comm` 을 `src/` 로 합친 직후. Main IP 는 보드 정본 그대로 |
+| `backup-src_ablation` | ablation 코어까지 합친 최신판. 이 정리를 마친 main 과 같은 코드 |
+
+**보드에 구운 것과 main 의 차이 두 가지는 보드에서 아직 확인하지 않았습니다.**
+통신 계층이 우리 판으로 바뀌었고(시뮬에서는 보드 정본 통신 계층과 같은 TB 를 똑같이
+통과했습니다), user region 이 가속기 클럭을 보드 정본의 `clk_accel` 대신 `gclk_accel`
+로 뭅니다. 다시 굽기 전에 이 둘을 먼저 보십시오. 배선 정합성은 `check_ports.py` 가
+wrapper 19 + core 61 신호를 세 갈래(`stub`/`real`/`dram`)로 매번 대조해서 지킵니다.
 
 ---
 
@@ -122,8 +136,7 @@ INCR16 버스트, argmax 측정, AXI4-Lite, MicroBlaze, XC7S100.
   단일탐색 전용이고 `enum_enable=1` 은 `config_error` 로 거절합니다.
 
 두 트리는 하위 구조가 같습니다(`src/` `testbench/` `sim/` `results/` `firmware/` `rvx/` `vivado/`).
-bram 에만 있는 폴더는 둘 중 하나입니다 — 모듈 이름이 정본 `src/` 와 겹쳐서 나눈 RTL
-(`src_comm/` `src_ablation/`), 아니면 dram 에 아직 없는 역할(`synth/` `bitstream/`). 4절.
+bram 에만 있는 폴더는 dram 에 아직 없는 역할인 `synth/` 와 `bitstream/` 둘입니다. 4절.
 CSR 정본·골든 모델·검증 벡터는 `software/` 에서 공유합니다.
 한쪽 갈래에만 해당하는 것을 `software/` 에 넣지 마십시오.
 
@@ -160,29 +173,26 @@ dram 에 같은 역할의 폴더가 있으면 그리로 보내십시오 (테스�
 
 | 경로 | 역할 |
 |---|---|
-| `src/` | **보드 정본 RTL 17개 (freeze).** wrapper·mmio·loader·Main IP 10개·헤더 2개 |
-| `src/bbht_rvx_wrapper.v` | RVX user region 최상위. 어댑터 없이 Main IP 를 K3/H3-E4 로 뭅니다 |
-| `src/bbht_grover_main_ip.v` | Main IP 최상위. K·H·E·M 이 전부 컴파일 파라미터입니다 |
+| `src/` | **최신판 RTL 한 벌 19개.** 통신 계층 4(wrapper·mmio·loader·어댑터) · 최상단 `bbht_bram_top` · user region · Main IP 10 · 헤더 1 · policy OOC 전용 2 |
+| `src/bbht_rvx_wrapper.v` | RVX user region 최상위. 계약 이름 `bbht_grover_core` 를 물고, 어댑터가 Main IP 로 잇습니다 |
+| `src/bbht_grover_core_adapter.v` | 계약 이름·리셋(`rstnn`)과 실물 `bbht_grover_main_ip`(`rstn`) 사이의 얇은 껍데기. K·H·E·M 파라미터 기본값이 여기 있습니다 |
+| `src/bbht_bram_top.v` | 최상단. mmio·loader 에 Main IP 를 어댑터 없이 직접 뭄. 포트는 `bbht_rvx_wrapper` 와 같고 `hardware_dram/src/bbht_dram_top.v` 와 짝. wrapper 와 둘 중 하나만 합성합니다 |
+| `src/bbht_grover_user_region.vh` | RVX 에 넘기는 user region 결선. 가속기 클럭을 `gclk_accel` 로 뭅니다 (보드 정본은 `clk_accel`) |
+| `src/bbht_grover_main_ip.v` | Main IP 최상위. K·H·E·M 이 전부 컴파일 파라미터이고 `MEAS_M1/M2_ENABLE` 이 둘 다 1 이면 보드 정본과 같은 동작입니다 |
 | `src/grover_policy_ooc_top.v` · `grover_policy_impl_wrapper.v` | policy OOC 합성 전용. **합성 경로에 넣지 마십시오** |
-| `src_comm/` | 우리가 쓴 통신 계층. CSR 정본에서 생성한 헤더를 include 합니다 |
-| `src_comm/bbht_grover_core_adapter.v` | 계약 이름 `bbht_grover_core` 로 정본 Main IP 를 감싸는 어댑터 |
-| `src_comm/bbht_grover_user_region.vh` | 우리 갈래가 RVX 에 넘기는 user region 선언 |
-| `src_comm/bbht_bram_top.v` | 최상단. 우리 mmio·loader 에 정본 Main IP 를 어댑터 없이 직접 뭄. 포트는 `bbht_rvx_wrapper` 와 같고 `hardware_dram/src/bbht_dram_top.v` 와 짝 |
-| `src_ablation/` | 6단계 ablation · K/H 단독 실험의 공통소스 28개. 정본에 `MEAS_M1/M2` 스위치를 더한 판(정본과 다른 것은 `bbht_grover_main_ip.v` `bbht_rvx_wrapper.v` `grover_measurement.v` 셋) + 구성별 standalone top 8벌 + UART 브리지·데이터셋 생성기 + 공통 XDC. 캠페인 입력이라 **고치지 마십시오** |
 | `testbench/tb_bbht_rvx.v` | 통신 계층 계약 T1~T9. 두 갈래에 같은 TB 를 물립니다 |
 | `testbench/bbht_grover_core_stub.v` | Main IP 자리 채우개. 포트 계약 대조 대상 |
 | `testbench/ahb_sram_model.v` | AHB 슬레이브 모델 |
 | `testbench/tb_bbht_bram_top.v` | 최상단 H1~H15. APB 로 호스트 순서를 흉내 내고 Q14 전체 적재, NORMAL/CKPT 짝 궤적 비교, 열거까지 |
-| `testbench/tb_publication_plusargs.v` | ablation 캠페인 TB (iverilog, `+TC` `+SEED_*` 플러스인자). 표시 문자열의 `k4h4` 는 하드코딩 잔재 |
-| `sim/Makefile` | 회귀 진입점. verilator: `ports lint regress driver` · `real` · `final` · `top` · `bench250` · `bench500` / iverilog: `anchor` · `publication` · `kh` |
-| `testbench/tb_driver.cpp` · `sim/run_driver_test.sh` | 드라이버 + RTL 공동 시뮬 D1~D11 (`CORE=stub\|real\|final`) |
+| `sim/Makefile` | verilator 회귀 진입점. `ports lint regress driver` · `real` · `top` · `bench250` · `bench500` |
+| `testbench/tb_driver.cpp` · `sim/run_driver_test.sh` | 드라이버 + RTL 공동 시뮬 D1~D11 (`CORE=stub\|real`) |
 | `testbench/tb_bench250.cpp` · `sim/bench250_report.py` | 250쌍 워크로드 시뮬. 궤적 불변식 + 보드 M2 실측과 워크로드별 대조 (`bench500` 도 같은 짝) |
-| `sim/run_publication.py` · `publication_report.py` · `run_kh.py` | 재현 패키지 러너 이식판. 6단계 2,500회 · K/H 750회를 돌려 `results/` 기대값과 정확 대조 |
-| `synth/` | Vivado 배치 스크립트. `run_main_ip.sh` 정본 OOC · `run_resource.sh` 5구성 ablation |
+| `synth/` | Main IP 자원 재기. `run_main_ip.sh` 가 `src/` 만으로 OOC 합성합니다 (5구성 `run_resource.sh` 는 태그 `board-k3h3-e4-m2`) |
 | `results/` | **시뮬 캠페인 근거 묶음** (`YYYY-MM-DD_<주제>/`). 재현 소스 없이 결과만 |
 | `bitstream/` | 보드에 구운 비트스트림 묶음 (`YYYY-MM-DD_<주제>`) |
 | `rvx/bbht_grover_upgrade.xml` | RVX 플랫폼 정의 (clk_accel 100 MHz) |
-| `rvx/install_to_platform.sh` | 저장소 → RVX 플랫폼 설치. `LAYER=final\|comm` 으로 통신 계층을 고릅니다 |
+| `rvx/install_to_platform.sh` | 저장소 → RVX 플랫폼 설치. `src/` 의 통신 계층·어댑터·Main IP 와 user region 을 옮깁니다 |
+| `rvx/bbht_grover_user_region.vh.generated` | RVX `make syn` 이 뽑아 준 user region 빈 템플릿. RVX 가 IP 를 바꿨을 때 우리 user region 과 대조하는 용도 |
 | `vivado/vivado_<프로젝트이름>/` | **Vivado 프로젝트 한 벌.** 폴더 이름 규칙은 소문자 `vivado_` 접두 |
 | `vivado/vivado_bbht_grover_fpga/reports/` | 최종 구현 `route_{util,util_hier,timing_summary,timing_max,power}.rpt` |
 | `vivado/vivado_bbht_grover_fpga/meta/` | 그 구현의 빌드 정보·소스 sha256·비트스트림 sha256 |
@@ -197,9 +207,9 @@ dram 에 같은 역할의 폴더가 있으면 그리로 보내십시오 (테스�
 ### `hardware_dram/` 에만 있는 것
 
 Main IP 자체가 다른 갈래라 이쪽 `src/` 의 내용은 `hardware_bram/src/` 와 다릅니다.
-`hardware_bram` 은 `src/`(freeze 정본)와 `src_comm/`(우리 통신 계층)으로 나뉘지만, 이쪽은
-freeze 대상이 없어서 **`src/` 한 폴더**에 Main IP 초안(`grover_*` · `lpsoc_*`)과 통신 계층
-(`bbht_*`, `hardware_bram/src_comm/` 과 mmio·loader 바이트 동일)을 같이 둡니다
+두 갈래 모두 **`src/` 한 폴더**에 Main IP 와 통신 계층을 같이 둡니다. 이쪽은 Main IP
+초안(`grover_*` · `lpsoc_*`)과 통신 계층(`bbht_*`, `hardware_bram/src/` 와 mmio·loader
+바이트 동일)입니다
 (2026-09-11 에 옛 `src_v2/` 를 `src/` 로 합쳤습니다). 최상위가 둘이라 `sim/Makefile` 은
 파일을 하나씩 나열합니다 — glob 으로 모으지 마십시오. 재사용 8개
 (`grover_param.vh` `arithmetic` `memories` `iteration` `measurement` `loader` `status`
@@ -259,27 +269,21 @@ freeze 대상이 없어서 **`src/` 한 폴더**에 Main IP 초안(`grover_*` ·
 # 통신 계층 회귀 (몇 초)
 make -C hardware_bram/sim ports lint regress driver
 
-# 정본 통째 / 우리 통신 계층 + 정본 코어 (각각 몇 분)
-make -C hardware_bram/sim final
+# 통신 계층 + 어댑터 + Main IP (몇 분)
 make -C hardware_bram/sim real
 
 # 최상단 bbht_bram_top 회귀 (1분 30초쯤)
 make -C hardware_bram/sim top
 
-# 250쌍 궤적 벤치 (20분쯤). CORE=real 이면 우리 통신 계층으로
+# 250쌍 궤적 벤치 (20분쯤)
 make -C hardware_bram/sim bench250
 
-# 6단계 ablation · K/H 단독 실험 재현 (iverilog). anchor 는 5회뿐이라 금방,
-# publication 은 2,500회, kh 는 750회. JOBS=N 으로 병렬도
-make -C hardware_bram/sim anchor
-make -C hardware_bram/sim publication
-make -C hardware_bram/sim kh
+# 6단계 ablation · K/H 단독 실험 재현은 태그에서 (standalone top 틀이라 main 에 없음)
+git worktree add /tmp/board board-k3h3-e4-m2
+make -C /tmp/board/hardware_bram/sim anchor      # publication · kh 도 같은 자리
 
 # 최종 Main IP 자원 재기 (Vivado, 2분쯤)
 hardware_bram/synth/run_main_ip.sh
-
-# 5구성 자원 ablation (Vivado)
-hardware_bram/synth/run_resource.sh
 
 # DRAM 갈래 회귀 (1분 30초쯤, 최상단 bbht_dram_top 의 top 까지). equiv 는
 # hardware_bram 정본과 궤적 대조까지 (40초 더)
@@ -329,7 +333,7 @@ RVX 는 `/opt/rvx` 에 로컬 전체 설치되어 있어 원격 접속이 필요
 |---|---|
 | 설계 수치 | `software/csr/bbht_grover_csr.json` → `gen_csr.py` 재실행 → `CLAUDE.md` 2절 → `README*.md` 2절 |
 | 성능·자원 수치 | 어느 축인지부터 (RTL 사이클 / 보드 실경과 시간 / 소프트웨어 대비) → 해당 근거 묶음의 `evidence.md` → `CLAUDE.md` 2절 → `README*.md` |
-| 포트 | 인수인계 docx → `extract_contract.py` 재실행 → `make -C hardware_bram/sim ports` (네 갈래 전부) |
+| 포트 | 인수인계 docx → `extract_contract.py` 재실행 → `make -C hardware_bram/sim ports` (세 갈래 전부) |
 | 절 제목·절 번호 | 그 장으로 들어오는 모든 링크. 앵커가 밀립니다 |
 | 해설서 파일명 | **동결입니다.** 13·14장이 제목만 바뀌고 파일명을 둔 이유가 이것입니다 |
 | 디렉터리 구조 | `CLAUDE.md` 4절 · `README.md`/`README.ko.md` 4절 |

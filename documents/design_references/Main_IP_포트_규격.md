@@ -3,15 +3,18 @@
 ## 1. 적용 범위
 
 기준은 **보드에서 검증된 K3/H3-E4-M2 Main IP** 이고, 실물 RTL 은
-`hardware_bram/src/` 에 있습니다. 2026-09-07 비트스트림에 들어간 것과 sha256 이
-같은 freeze 사본이라 **고치지 마십시오.**
+`hardware_bram/src/` 에 있습니다. 2026-09-13 에 6단계 ablation 공통소스 판으로
+올려서 보드 정본에 `MEAS_M1_ENABLE` · `MEAS_M2_ENABLE` 스위치(기본 1)만 더해졌고,
+둘 다 1 이면 동작이 같습니다. 비트스트림과 바이트 동일한 판은 태그
+`board-k3h3-e4-m2` 에 있습니다.
 
 - 합성 프로파일: Q14 / P32 / signed DATA16 / signed 23비트 진폭(소수부 22)
 - 실제 top module: `bbht_grover_main_ip`
-- 정본 wrapper(`src/bbht_rvx_wrapper.v`)는 이 모듈을 **어댑터 없이 직접** 뭅니다
-- 우리 통신 계층(`src_comm/`)을 쓸 때만 계약 이름 `bbht_grover_core` 가 필요하고,
-  `src_comm/bbht_grover_core_adapter.v` 가 이름·리셋(`rstn` → `rstnn`) 차이를
-  흡수합니다. 포트 61개는 두 갈래가 1:1 로 같습니다
+- `src/bbht_rvx_wrapper.v` 는 계약 이름 `bbht_grover_core` 를 물고,
+  `src/bbht_grover_core_adapter.v` 가 이름·리셋(`rstn` → `rstnn`) 차이를
+  흡수합니다. 포트 61개는 1:1 로 같습니다
+- 최상단 `src/bbht_bram_top.v` 는 이 모듈을 **어댑터 없이 직접** 뭅니다
+  (보드에 구운 정본 wrapper 도 그렇게 물었습니다)
 - 단일 검색과 열거, 결과 FIFO(256칸), checkpoint policy 가 **전부 Main IP 안**에
   있습니다. 바깥에 둘 것은 APB CSR·AHB 적재·UART 뿐입니다
 
@@ -35,7 +38,7 @@ make -C hardware_bram/sim ports-real   # 실물 코어를 물린 상태
 |---|---|
 | 계약 원본 | `software/contract/LPSoC_BBHT_Grover_팀원_Handoff_SW_통신_v0.9.8반영_2026-09-01.docx` |
 | docx SHA-256 | `46a5d17805e52caecff4cebbfd1240f9ae7976a54e06b81d2bc391455ba748da` |
-| 실물 RTL | `hardware_bram/src/` (2026-09-07 비트스트림과 sha256 동일) |
+| 실물 RTL | `hardware_bram/src/` (비트스트림과 sha256 동일한 판은 태그 `board-k3h3-e4-m2`) |
 | 골든 모델 | `software/golden/rtl_v098_auto.py` 외 `rtl_v098_*` |
 | 보드 실측 | `hardware_bram/vivado/vivado_bbht_grover_fpga/2026-09-08_k3h3_e4_m2_board_500run/` |
 
@@ -46,7 +49,7 @@ v0.7g(2026-08-20 전달본) 기준으로 쓰인 옛 판은 폐기했습니다. �
 
 ## 3. 확정 합성 파라미터
 
-`hardware_bram/src/grover_param.vh` 와 `bbht_rvx_wrapper.v` 가 넘기는
+`hardware_bram/src/grover_param.vh` 와 어댑터·최상단이 넘기는
 파라미터에서 직접 뽑은 값입니다.
 
 | 항목 | 값 |
@@ -69,10 +72,10 @@ v0.7g(2026-08-20 전달본) 기준으로 쓰인 옛 판은 폐기했습니다. �
 | 반복 내 연산기 `INTRA_ENGINES` | 4 |
 | 열거 기본 `fail_repeat_limit` | 3 |
 
-`CKPT_K = 3` · `POLICY_H_FUTURE = 3` · `INTRA_ENGINES = 4` 이고 측정 경로 최적화
-두 단(M1·M2)이 이 소스에 붙박이라, 현재 freeze 는 **K3/H3-E4-M2** 입니다.
-앞의 넷은 `grover_param.vh` 가 아니라 wrapper 가 인스턴스에 넘기는 값입니다
-(`src/bbht_rvx_wrapper.v` 301행). CSR 실행 모드 이름은 `CKPT_SINGLE` ·
+`CKPT_K = 3` · `POLICY_H_FUTURE = 3` · `INTRA_ENGINES = 4` · `MEAS_M1_ENABLE = 1` ·
+`MEAS_M2_ENABLE = 1` 이라 현재 구성은 **K3/H3-E4-M2** 입니다. 이 값들은
+`grover_param.vh` 가 아니라 인스턴스에 넘기는 파라미터입니다
+(`src/bbht_grover_core_adapter.v` 의 기본값, `src/bbht_bram_top.v` 의 인스턴스). CSR 실행 모드 이름은 `CKPT_SINGLE` ·
 `CKPT_ENUM` 입니다 — 값이 빌드마다 달라지므로 이름에 K·H 를 박지 않습니다.
 
 ## 4. 입력 포트

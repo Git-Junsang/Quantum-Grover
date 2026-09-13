@@ -8,9 +8,9 @@
 맞대는 상대가 둘입니다. 셋 다 워크로드가 같습니다 (M = 1/4/16/64/256 x 시드 100).
 
   1. 6단계 ablation 캠페인의 K3/H3-E4-M2 단계 -- RTL 사이클 축.
-     iverilog 로 돌았고 소스는 src_ablation/ 에 있습니다 (make anchor ·
-     make publication 으로 다시 돌립니다). 우리 src/ 에
-     MEAS_M1/M2 스위치를 더한 것이고 둘 다 1 이면 src/ 와 같은 동작입니다
+     iverilog 로 돌았습니다. 그 공통소스의 Main IP 가 지금 src/ 의 Main IP 이고
+     (MEAS_M1/M2 스위치, 기본 1 = 보드 구성), 캠페인 재현은 태그
+     board-k3h3-e4-m2 에서 make anchor · make publication 으로 합니다
   2. 2026-09-08 보드 500런의 M2 경로 -- 보드 실경과 시간 축.
      같은 코어를 Arty A7 에 구워 돌린 것입니다
 

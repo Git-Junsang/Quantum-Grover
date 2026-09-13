@@ -423,7 +423,8 @@ endmodule
 
 module grover_born_sampler #(
     parameter integer AMP_READ_LATENCY = 1,
-    parameter integer E4_DUAL_BUILD    = 0
+    parameter integer E4_DUAL_BUILD    = 0,
+    parameter integer E4_HIER_SELECT   = 0
 ) (
     input  wire                                  clk,
     input  wire                                  rstn,
@@ -936,7 +937,8 @@ module grover_born_sampler #(
                             // Every pair is consecutive.  When the odd row is
                             // the last row of a 32-row group, the updated global
                             // BUILD total is exactly that group's CDF endpoint.
-                            if (sq1_row[4:0] == 5'd31)
+                            if ((E4_HIER_SELECT != 0) &&
+                                (sq1_row[4:0] == 5'd31))
                                 group_cdf[sq1_row[`GP_ROW_W-1:5]] <=
                                     build_total_pair_ext[TW-1:0];
 
@@ -960,7 +962,8 @@ module grover_born_sampler #(
                         row_cumulative  <= {TW{1'b0}};
                         rw_valid_d      <= 1'b0;
                         rw_pipe_valid   <= 1'b0;
-                        if (E4_DUAL_BUILD != 0) begin
+                        if ((E4_DUAL_BUILD != 0) &&
+                            (E4_HIER_SELECT != 0)) begin
                             group_scan_index <= 4'd0;
                             group_prev_cdf   <= {TW{1'b0}};
                             st               <= S_GROUP_SCAN;
@@ -997,7 +1000,8 @@ module grover_born_sampler #(
                         row_cumulative  <= {TW{1'b0}};
                         rw_valid_d      <= 1'b0;
                         rw_pipe_valid   <= 1'b0;
-                        if (E4_DUAL_BUILD != 0) begin
+                        if ((E4_DUAL_BUILD != 0) &&
+                            (E4_HIER_SELECT != 0)) begin
                             group_scan_index <= 4'd0;
                             group_prev_cdf   <= {TW{1'b0}};
                             st               <= S_GROUP_SCAN;
@@ -1261,7 +1265,8 @@ endmodule
 
 module grover_measure_verify #(
     parameter integer AMP_READ_LATENCY = 1,
-    parameter integer E4_DUAL_BUILD    = 0
+    parameter integer E4_DUAL_BUILD    = 0,
+    parameter integer E4_HIER_SELECT   = 0
 ) (
     input  wire                                  clk,
     input  wire                                  rstn,
@@ -1334,7 +1339,8 @@ module grover_measure_verify #(
 
     grover_born_sampler #(
         .AMP_READ_LATENCY(AMP_READ_LATENCY),
-        .E4_DUAL_BUILD   (E4_DUAL_BUILD)
+        .E4_DUAL_BUILD   (E4_DUAL_BUILD),
+        .E4_HIER_SELECT  (E4_HIER_SELECT)
     ) u_born (
         .clk               (clk),
         .rstn              (rstn),

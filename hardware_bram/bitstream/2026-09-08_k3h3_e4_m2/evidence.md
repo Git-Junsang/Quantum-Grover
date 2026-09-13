@@ -25,8 +25,8 @@
 ## 소스와의 대응
 
 `../../vivado/vivado_bbht_grover_fpga/meta/source_sha256.txt` 가 이 비트스트림에
-들어간 RTL 의 sha256 을 적고 있고, `hardware_bram/src/` 의 17개 파일과 **바이트
-동일**합니다. 펌웨어 소스는 `hardware_bram/firmware/bbht_paper_bench/` 와
+들어간 RTL 의 sha256 을 적고 있고, 태그 `board-k3h3-e4-m2` 의 `hardware_bram/src/`
+17개 파일과 **바이트 동일**합니다. main 의 `src/` 는 그 뒤 최신판 한 벌로 정리했습니다. 펌웨어 소스는 `hardware_bram/firmware/bbht_paper_bench/` 와
 `hardware_bram/firmware/orca_sw_baseline/` 입니다.
 
 ## 굽는 법

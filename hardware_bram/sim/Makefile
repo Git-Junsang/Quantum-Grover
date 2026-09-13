@@ -7,8 +7,6 @@
 #   make lint   lint 만
 #   make bench250 / bench500
 #               250쌍 / 500 워크로드 궤적 벤치 (20분 / 40분쯤)
-#   make anchor | publication | kh
-#               6단계 ablation 과 K/H 단독 실험 재현. iverilog 로 돕니다 (맨 아래 절)
 #   make clean
 #
 # 갈래가 둘인 이유는 코어 자리에 무엇을 끼우느냐입니다. 통신 계층(wrapper·
@@ -36,7 +34,7 @@ SRC_DIR   = ../src
 TB_DIR    = ../testbench
 CSR_DIR   = ../../software/csr/generated
 
-# 정본 Main IP 중 합성 경로에 들어가는 열입니다. glob 을 쓰면 policy OOC
+# Main IP 중 합성 경로에 들어가는 열입니다. glob 을 쓰면 policy OOC
 # 전용인 grover_policy_ooc_top.v 와 grover_policy_impl_wrapper.v 까지 딸려 와
 # 최상위가 셋이 됩니다.
 CORE_FILES = bbht_grover_main_ip.v \
@@ -59,7 +57,8 @@ VFLAGS = -Wno-fatal -Wno-DECLFILENAME -I$(CSR_DIR) -I$(SRC_DIR) -I$(TB_DIR)
 # 워치독을 크게 열어 두어야 합니다.
 CORE_DEFS = -DGUARD_POLLS=3000000 -DSIM_TIMEOUT_NS=4000_000_000
 
-# 정본 소스가 원래 내는 경고들입니다. freeze 대상이라 고칠 수 없으므로
+# Main IP 소스가 원래 내는 경고들입니다. 보드 정본과 같은 코드를 유지하려고
+# 고치지 않으므로
 # 기본 경고집합으로 두고 실제 오류(폭 불일치, 미해결 참조)만 잡습니다.
 FROZEN_WNO = -Wno-DECLFILENAME -Wno-WIDTHEXPAND -Wno-WIDTHTRUNC \
              -Wno-LATCH -Wno-UNOPTFLAT -Wno-CMPCONST
@@ -108,8 +107,7 @@ lint: csr ports
 
 clean:
 	rm -rf $(BUILD) $(REAL_BUILD) $(TOP_BUILD) \
-	       /tmp/sjs_drv /tmp/sjs_drv_real \
-	       /tmp/sjs_publication /tmp/sjs_kh
+	       /tmp/sjs_drv /tmp/sjs_drv_real
 
 #---------------------------------------------------------------------
 # 통신 계층 + 어댑터 + Main IP
@@ -280,36 +278,3 @@ bench500: csr bench500-wl
 	@echo "500 워크로드 실행 중 ($(BENCH_CORE)). 40분쯤 걸립니다."
 	@WL_DIR=$(BENCH500_WL) $(BENCH500_BUILD)/obj/bench > $(BENCH500_OUT)
 	@python3 bench500_report.py $(BENCH500_OUT)
-
-#---------------------------------------------------------------------
-# 6단계 ablation 과 K/H 단독 실험 재현
-#
-#   make anchor         타깃 256 · 시드 0 하나로 여섯 단계 사이클을 정확 대조 (5회)
-#   make publication    500 워크로드 x 5구성 = 2,500회 + 집계. 총합이
-#                       results/2026-09-08_publication_6stage/summary.csv 와 같아야 PASS
-#   make kh             K/H 단독 E1, 250 워크로드 x 3구성 = 750회.
-#                       results/2026-09-09_kh_isolated_e1/summary.csv 와 대조
-#
-#   JOBS=N 으로 병렬도를 정합니다 (기본 nproc).
-#
-# 재현 패키지 v1.0 의 러너(repro.sh anchor|publication|kh)를 옮겨 온 것입니다.
-# 소스는 ../src_ablation/ -- 정본 src/ 에 MEAS_M1/M2 스위치를 더한 공통소스와
-# 구성별 standalone top 8벌이라 src/ 와 모듈 이름이 겹쳐 폴더를 나눴습니다.
-#
-# 여기만 verilator 가 아니라 iverilog 입니다. 패키지 러너가 iverilog 를 썼고,
-# 기대 사이클은 같은 시뮬레이터 의미론에서만 정확히 맞는다고 패키지가 적어
-# 두었습니다 (results/2026-09-09_repro_package_v1.0/reproduction_levels.md).
-# 로그는 /tmp/sjs_publication, /tmp/sjs_kh 에 쌓입니다.
-#---------------------------------------------------------------------
-JOBS ?= $(shell nproc)
-
-.PHONY: anchor publication kh
-
-anchor:
-	python3 run_publication.py --anchor --jobs $(JOBS)
-
-publication:
-	python3 run_publication.py --full --jobs $(JOBS)
-
-kh:
-	python3 run_kh.py --jobs $(JOBS)

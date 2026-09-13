@@ -37,10 +37,8 @@ K 와 H 를 같이 줄일 때 정말로 이득인지, 아니면 둘 중 하나�
 - 워크로드가 250 (시드 50) 이라 500 워크로드 캠페인과 총합을 비교할 수 없습니다.
 - TB 표시 문자열에 `k4h4` 가 하드코딩으로 남아 있습니다. 실제 인스턴스
   파라미터는 top 파일이 정하며 따로 감사됐다고 원 기록에 적혀 있습니다.
-- 재현 소스는 top 3벌이 `hardware_bram/src_ablation/`, 러너가
-  `hardware_bram/sim/run_kh.py` 입니다 (2026-09-13 에 재현 패키지
-  `05_KH_ISOLATED/` 에서 들였습니다). `make -C hardware_bram/sim kh` 로 750회를
-  돌려 `summary.csv` 와 맞댑니다.
+- 재현 소스(top 3벌 · 러너)는 태그 `board-k3h3-e4-m2` 에 있습니다. 거기서
+  `make -C hardware_bram/sim kh` 로 750회를 돌려 `summary.csv` 와 맞댑니다.
 
 ## 파일
 

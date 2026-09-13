@@ -59,17 +59,18 @@ K3/H3 이 K4/H4 보다 반복을 조금 더 쓰면서도(9,058 → 9,582) 총 �
 근거는 `hardware_bram/vivado/vivado_bbht_grover_fpga/2026-09-08_k3h3_e4_m2_board_500run/`
 이고, 같은 궤적을 따르지만 사이클 값 자체는 다릅니다 (그쪽 evidence.md 참조).
 
-**재현 소스는 이 폴더 밖에 있습니다.** ablation 용 공통소스와 top 5벌은
-`hardware_bram/src_ablation/`, TB 는 `hardware_bram/testbench/tb_publication_plusargs.v`,
-러너는 `hardware_bram/sim/run_publication.py` 입니다 (2026-09-13 에 재현 패키지
-`04_PUBLICATION_6STAGE/` 에서 들였습니다). 이 폴더는 결과와 기대값만 보관합니다.
-`make -C hardware_bram/sim anchor` 는 타깃 256 · 시드 0 하나로 여섯 단계 사이클을
-정확 대조하고, `make -C hardware_bram/sim publication` 은 2,500회를 전부 돌려
-`summary.csv` 의 총합과 맞댑니다.
+**재현 소스는 태그 `board-k3h3-e4-m2` 에 있습니다.** ablation 용 공통소스와 top
+5벌은 그 태그의 `hardware_bram/src_ablation/`, TB 는 `testbench/tb_publication_plusargs.v`,
+러너는 `sim/run_publication.py` 입니다. 거기서 `make -C hardware_bram/sim anchor` 가
+타깃 256 · 시드 0 하나로 여섯 단계 사이클을 정확 대조하고(2026-09-13 확인, 여섯 단계
+전부 일치), `make -C hardware_bram/sim publication` 이 2,500회를 전부 돌려
+`summary.csv` 의 총합과 맞댑니다. top 들이 standalone 틀이라 main 에서는 뺐습니다.
+이 폴더는 결과와 기대값만 보관합니다.
 
-그 공통소스는 `hardware_bram/src/` 의 최종 소스에 `MEAS_M1_ENABLE` ·
-`MEAS_M2_ENABLE` 스위치를 더한 것입니다. 두 스위치를 다 1 로 두면 최종 소스와
-동작이 같습니다 — 즉 6단계의 마지막 칸이 우리 `src/` 가 하는 일입니다.
+그 공통소스는 보드 정본에 `MEAS_M1_ENABLE` · `MEAS_M2_ENABLE` 스위치를 더한 것이고,
+2026-09-13 부터 main 의 `hardware_bram/src/` Main IP 가 바로 이것입니다(바이트 동일).
+두 스위치를 다 1(기본)로 두면 보드 정본과 동작이 같습니다 — 즉 6단계의 마지막 칸이
+`src/` 가 하는 일입니다.
 
 ## 파일
 

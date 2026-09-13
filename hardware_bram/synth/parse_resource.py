@@ -7,7 +7,8 @@
     python3 parse_resource.py
         run_resource.sh 가 만든 work/<구성>/post_synth_util_hier.rpt 다섯 벌을
         읽어 u_main_ip 계층 사용량을 기대표와 대조합니다. 하나라도 어긋나면
-        종료코드 1 입니다.
+        종료코드 1 입니다. run_resource.sh 와 5구성 top 은 standalone 틀이라
+        최신판에서 뺐고 태그 board-k3h3-e4-m2 에만 있습니다.
 
     python3 parse_resource.py --main-ip work_main_ip/util.rpt
         run_main_ip.sh 가 만든 OOC 리포트 하나를 읽어 최종 구성 기대값 옆에

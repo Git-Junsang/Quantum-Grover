@@ -16,17 +16,17 @@ Korean documentation is the primary source — see [README.ko.md](README.ko.md).
 
 | Item | State |
 |---|---|
-| Main IP algorithm (Q14 / P32 / DATA16) | K3/H3-E4-M2 frozen, board sign-off complete |
-| Communication layer (CSR, DMA, FIFO, driver, host CLI) | Regression passing; the board build uses the frozen layer |
+| Main IP algorithm (Q14 / P32 / DATA16) | K3/H3-E4-M2, board sign-off complete |
+| Communication layer (CSR, DMA, FIFO, driver, host CLI) | Regression passing. main carries our layer; the board build used PJK's original layer (ours is not on the board yet) |
 | 100 MHz implementation | Timing closed (WNS +0.126 ns); reports under `hardware_bram/vivado/` |
-| **Main IP RTL source** | `hardware_bram/src/`, sha256-identical to what went into the bitstream |
+| **Main IP RTL source** | `hardware_bram/src/`, one current tree. The sha256-identical board source is tag `board-k3h3-e4-m2` |
 | Performance evidence | Board wall-clock **7.626x**, RTL cycles **6.1401x**, **116,426x** over a single ORCA core |
 
-The Main IP source is frozen, so wiring correctness is enforced by a
+Wiring correctness is enforced by a
 [port contract check](software/contract/check_ports.py) rather than by eye. The port
 tables from the handoff document (19 wrapper + 61 core signals) are frozen into
 `port_contract.tsv`, and the regression diffs them against the RTL every run, across
-four branches (`stub`, `real`, `final`, `dram`).
+three branches (`stub`, `real`, `dram`).
 
 ---
 
@@ -111,9 +111,8 @@ documents/
   *.pptx, *.docx        Final Main IP slides and the project master document (read-only originals)
 
 hardware_bram/          Branch 1 - checkpoints plus four intra-iteration engines, BRAM only
-  src/                  Frozen board-proven RTL, 17 files
-  src_comm/             Our own communication layer, the contract adapter, and the bbht_bram_top top level
-  src_ablation/         Common-source RTL and per-config tops for the 6-stage and K/H ablations
+  src/                  One current RTL tree (comms layer, adapter, top level, Main IP).
+                        The exact board source is tag board-k3h3-e4-m2
   testbench/            Testbenches, including the verilator C++ harnesses
   sim/                  Makefile, runners, report scripts
   synth/                Vivado batch scripts for resource synthesis
@@ -126,7 +125,7 @@ hardware_bram/          Branch 1 - checkpoints plus four intra-iteration engines
 hardware_dram/          Branch 2 - full DRAM storage plus BRAM queue
                         (draft RTL + top level + regression; no physical DRAM binding or RVX install yet)
                         Same layout as hardware_bram, without the bram-only folders
-                        (src_comm, src_ablation, synth, bitstream)
+                        (synth, bitstream)
 
 software/
   csr/                  CSR source of truth and header generator   <- shared by both branches
@@ -146,9 +145,8 @@ trash_bin/              Superseded docs and bulky artifacts. Not tracked by git
 # Communication layer regression (seconds). "ports" is the port contract check
 make -C hardware_bram/sim ports lint regress driver
 
-# Our comms layer plus the frozen core / the frozen stack as-is / 250-pair trajectory bench
+# Comms layer + adapter + Main IP / 250-pair trajectory bench
 make -C hardware_bram/sim real
-make -C hardware_bram/sim final
 make -C hardware_bram/sim bench250
 
 # Host CLI without a board

@@ -11,19 +11,27 @@
 지웠습니다. zip 안에 든 `BBHT_Grover_Reproduction_Package_v1.0_20260909.tar.gz` 는
 zip 의 나머지 파일 202개와 바이트까지 같은 사본이라 따로 풀지 않고 버렸습니다.
 
+같은 날 `hardware_bram/src/` 를 최신판 한 벌로 정리했습니다. 그래서 반입한 것 중
+일부는 main 에 없고 태그에만 있습니다.
+
+| 태그 | 그 시점의 `hardware_bram/` |
+|---|---|
+| `board-k3h3-e4-m2` | 반입 직후. `src/` 가 보드 정본 17개 그대로이고 `src_comm/` · `src_ablation/` 과 ablation 러너가 전부 있음 |
+| `backup-src_comm` | `src_comm` 을 `src/` 로 합친 직후 |
+| `backup-src_ablation` | ablation 코어까지 `src/` 로 합친 최신판 |
+
 ## 어디로 갔는가
 
 | 패키지 안 위치 | 저장소 위치 |
 |---|---|
-| `02_FINAL_RTL/{src,include}` | `hardware_bram/src/` — 최종 K3/H3-E4-M2 RVX 소스 17개 |
+| `02_FINAL_RTL/{src,include}` | 태그 `board-k3h3-e4-m2` 의 `hardware_bram/src/` — 보드 정본 17개. main 의 `src/` 에는 그중 Main IP 쪽 11개가 바이트 그대로 남았습니다 |
 | `02_FINAL_RTL/bbht_grover_upgrade.xml` | `hardware_bram/rvx/bbht_grover_upgrade.xml` |
-| `03_COMMON_SIM/rtl_support/` · `04_PUBLICATION_6STAGE/{src,include,tops}/` · `05_KH_ISOLATED/tops/` | `hardware_bram/src_ablation/` |
-| `07_STANDALONE_FPGA/constraints/` | `hardware_bram/src_ablation/` — 5구성 자원 합성의 공통 XDC 로만 씁니다 |
-| `04_PUBLICATION_6STAGE/tb/` | `hardware_bram/testbench/tb_publication_plusargs.v` |
-| `04_PUBLICATION_6STAGE/scripts/` · `05_KH_ISOLATED/scripts/` | `hardware_bram/sim/run_publication.py` · `publication_report.py` · `run_kh.py` |
+| `04_PUBLICATION_6STAGE/src/` 의 `bbht_grover_main_ip.v` · `grover_measurement.v` | main 의 `hardware_bram/src/` — 2026-09-13 부터 Main IP 가 이 공통소스 판입니다 |
+| `03_COMMON_SIM/rtl_support/` · `04_PUBLICATION_6STAGE/{src,include,tops}/` · `05_KH_ISOLATED/tops/` · `07_STANDALONE_FPGA/constraints/` | 태그 `board-k3h3-e4-m2` 의 `hardware_bram/src_ablation/` |
+| `04_PUBLICATION_6STAGE/{tb,scripts}/` · `05_KH_ISOLATED/scripts/` | 태그 `board-k3h3-e4-m2` 의 `testbench/tb_publication_plusargs.v` · `sim/run_publication.py` · `publication_report.py` · `run_kh.py` |
 | `03_COMMON_SIM/datasets/` · `04_PUBLICATION_6STAGE/expected/` · `09_REFERENCE_RESULTS/publication/` | `hardware_bram/results/2026-09-08_publication_6stage/` |
 | `05_KH_ISOLATED/expected/` | `hardware_bram/results/2026-09-09_kh_isolated_e1/` |
-| `06_RESOURCE_SYNTHESIS/` | `hardware_bram/synth/run_resource.sh` · `resource_synth.tcl` · `parse_resource.py` |
+| `06_RESOURCE_SYNTHESIS/` | `hardware_bram/synth/parse_resource.py`. `run_resource.sh` · `resource_synth.tcl` 은 태그 `board-k3h3-e4-m2` |
 | `06_RESOURCE_SYNTHESIS/expected/` · `09_REFERENCE_RESULTS/resource/` | `hardware_bram/results/2026-09-08_resource_ablation_5config/` |
 | `08_RVX_INTEGRATION/hw_realtime_firmware/source/` | `hardware_bram/firmware/bbht_paper_bench/` |
 | `08_RVX_INTEGRATION/orca_sw_baseline/` | `hardware_bram/firmware/orca_sw_baseline/` |
@@ -57,13 +65,13 @@ zip 의 나머지 파일 202개와 바이트까지 같은 사본이라 따로 �
   동일하고 ETRI 저작권 표기가 붙어 있습니다
 - 패키지 배치를 전제로 한 안내와 러너 — 폴더마다 있던 `README*`,
   `10_REPRO_RUNNER/`, `01_ENVIRONMENT/`, `08_RVX_INTEGRATION/prepare_new_platform.sh`.
-  러너 역할은 `hardware_bram/sim/Makefile` 의 `anchor` · `publication` · `kh` 와
-  `hardware_bram/synth/run_resource.sh`, `hardware_bram/rvx/install_to_platform.sh` 가
-  이어받았습니다
+  러너 역할은 태그 `board-k3h3-e4-m2` 의 `hardware_bram/sim/Makefile`
+  (`anchor` · `publication` · `kh`)과 `synth/run_resource.sh`, 그리고
+  `hardware_bram/rvx/install_to_platform.sh` 가 이어받았습니다
 - `*/scripts/original/` — 원 캠페인 서버 경로가 박힌 옛 스크립트. 패키지 스스로
   이식판을 따로 만들어 둔 것들입니다
-- `06_RESOURCE_SYNTHESIS/` 의 portable 스크립트 — `hardware_bram/synth/` 에 같은
-  논리에 주석을 붙인 판이 이미 있습니다
+- `06_RESOURCE_SYNTHESIS/` 의 portable 스크립트 — 같은 논리에 주석을 붙인 판이
+  태그 `board-k3h3-e4-m2` 의 `hardware_bram/synth/` 에 있습니다
 - `11_OPTIONAL_CHECKPOINT_DSE/` — 옛 체크포인트 DSE 하네스와 18 MB 원본 CSV.
   패키지가 "공식 tie-break 캠페인을 이것만으로 정확히 재현한다고 주장하지 말라"
   고 적어 둔 자료입니다 (`missing.md` 참고)
@@ -76,19 +84,26 @@ zip 의 나머지 파일 202개와 바이트까지 같은 사본이라 따로 �
 
 ## 정합성 확인
 
-2026-09-13 반입 뒤 매니페스트를 저장소 경로로 옮겨 대조했고 **전부 일치**합니다.
+반입 뒤 매니페스트를 저장소 경로로 옮겨 대조했고 **전부 일치**합니다. 보드 정본과
+ablation 공통소스 전체는 태그에서, main 의 Main IP 는 main 에서 봅니다.
 
 ```bash
-cd hardware_bram
+# 태그에서 -- 보드 정본 17개와 ablation 공통소스 23개
+git worktree add /tmp/board board-k3h3-e4-m2 && cd /tmp/board/hardware_bram
 R=results/2026-09-09_repro_package_v1.0
 sed -e 's#02_FINAL_RTL/bbht_grover_upgrade.xml#rvx/bbht_grover_upgrade.xml#' \
     -e 's#02_FINAL_RTL/[a-z]*/#src/#' $R/sha256_final_rtl.txt | sha256sum -c
 sed -e 's#04_PUBLICATION_6STAGE/tb/#testbench/#' \
     -e 's#04_PUBLICATION_6STAGE/[a-z]*/#src_ablation/#' $R/sha256_publication_src.txt | sha256sum -c
+
+# main 에서 -- src/ 의 Main IP 13개가 ablation 공통소스와 바이트 동일
+cd hardware_bram
+grep -E '04_PUBLICATION_6STAGE/(src/(bbht_grover_main_ip|grover_)|include/grover_param)' \
+    $R/sha256_publication_src.txt | sed 's#04_PUBLICATION_6STAGE/[a-z]*/#src/#' | sha256sum -c
 ```
 
-`hardware_bram/src/` 17개는 `../../vivado/vivado_bbht_grover_fpga/meta/source_sha256.txt`
-와도 일치합니다. 즉 저장소의 정본 RTL 은 2026-09-07 비트스트림에 들어간 것과
+보드 정본 17개는 `../../vivado/vivado_bbht_grover_fpga/meta/source_sha256.txt` 와도
+일치합니다. 즉 태그 `board-k3h3-e4-m2` 의 RTL 이 2026-09-07 비트스트림에 들어간 것과
 바이트 동일합니다.
 
 ## 파일

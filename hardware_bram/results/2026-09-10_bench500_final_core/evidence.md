@@ -103,9 +103,13 @@ Normal 대비 7.626x)에서 하십시오. 이 벤치가 보탠 것은 정본 RTL
 ## 재현
 
 ```bash
-make -C hardware_bram/sim bench500              # 정본 통신 계층 + 정본 코어
-make -C hardware_bram/sim bench500 CORE=real    # 우리 통신 계층 + 어댑터 + 정본 코어
+make -C hardware_bram/sim bench500              # 통신 계층 + 어댑터 + Main IP
 ```
+
+이 묶음을 낸 2026-09-10 에는 통신 계층이 두 벌이라 같은 벤치를 보드 정본 통신
+계층으로도(`make bench500`), 우리 통신 계층으로도(`make bench500 CORE=real`)
+돌렸습니다. 2026-09-13 부터 main 에는 우리 통신 계층 한 벌뿐이라 위 명령이 뒤쪽
+조합이고, 앞쪽 조합은 태그 `board-k3h3-e4-m2` 에서 돕니다.
 
 이 환경(verilator 5.020)에서 40분쯤 걸립니다.
 

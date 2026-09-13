@@ -194,7 +194,7 @@ module bbht_bram_top #(
                      && !done_pending;
 
     //=================================================================
-    // §checkpoint 게이트 (src_comm/bbht_rvx_wrapper.v, 정본 wrapper 와 같음)
+    // §checkpoint 게이트 (같은 폴더의 bbht_rvx_wrapper.v, 보드 정본 wrapper 와 같음)
     //
     // CONTROL 의 burst 비트 하나가 Normal 과 체크포인트를 가릅니다
     // (CSR 정본 run_modes).
@@ -331,7 +331,9 @@ module bbht_bram_top #(
         .POLICY_H_FUTURE    (3),      // 정책 지평 3
         .CKPT_MANUAL_ENABLE (0),      // 수동 체크포인트 경로 없음
         .AUTO_SPEC_ENABLE   (1),      // speculative plan FIFO 켬
-        .INTRA_ENGINES      (4)       // 반복 한 번에 연산기 4벌 (E4)
+        .INTRA_ENGINES      (4),      // 반복 한 번에 연산기 4벌 (E4)
+        .MEAS_M1_ENABLE     (1),      // 측정 BUILD 두 행/사이클 (M1)
+        .MEAS_M2_ENABLE     (1)       // M1 + 16x32 계층 행 선택 (M2)
     ) u_main_ip (
         .clk                        (clk),
         .rstn                       (rstnn),

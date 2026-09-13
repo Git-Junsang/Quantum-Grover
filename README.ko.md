@@ -14,13 +14,13 @@
 
 | 무엇                                                     | 상태                                                          |
 | -------------------------------------------------------- | ------------------------------------------------------------- |
-| Main IP 알고리즘 (Q14 / P32 / DATA16)                    | K3/H3-E4-M2 freeze. 보드 sign-off 완료                        |
-| 통신 계층 (CSR · DMA · FIFO · 드라이버 · 호스트 CLI) | 회귀 통과. 보드에 구워진 것은 정본 통신 계층입니다            |
+| Main IP 알고리즘 (Q14 / P32 / DATA16)                    | K3/H3-E4-M2. 보드 sign-off 완료                               |
+| 통신 계층 (CSR · DMA · FIFO · 드라이버 · 호스트 CLI) | 회귀 통과. main 은 우리 통신 계층이고, 보드에 구워진 것은 PJK 정본 통신 계층입니다 (우리 것은 보드 확인 전) |
 | 100 MHz 구현                                             | 타이밍 클로즈 (WNS +0.126 ns). 리포트는`hardware_bram/vivado/` |
-| **Main IP RTL 소스**                               | `hardware_bram/src/` 에 있습니다. 비트스트림에 들어간 것과 sha256 동일 |
+| **Main IP RTL 소스**                               | `hardware_bram/src/` 에 최신판 한 벌. 비트스트림과 sha256 동일한 판은 태그 `board-k3h3-e4-m2` |
 | 성능 근거                                                | 보드 실경과 시간 **7.626x**, RTL 사이클 **6.1401x**, ORCA 1코어 대비 **116,426x** |
 
-Main IP 소스가 freeze 대상이라 배선 정합성은 사람 눈이 아니라
+배선 정합성은 사람 눈이 아니라
 [포트 계약 대조](software/contract/check_ports.py)가 지킵니다. 인수인계 문서의
 포트 표(wrapper 19 + core 61)를 `port_contract.tsv` 로 굳혀 두고 회귀가 매번 RTL 과 맞춰 봅니다.
 
@@ -102,9 +102,8 @@ documents/
   *.pptx · *.docx       최종 Main IP 발표 자료와 프로젝트 최종 집약본 (읽기 전용 원본)
 
 hardware_bram/          갈래 1 — 체크포인트 + 반복 내 연산기 네 벌, BRAM 전용
-  src/                  보드 정본 RTL 17개 (freeze)
-  src_comm/             우리가 쓴 통신 계층 + 어댑터 + 최상단 bbht_bram_top
-  src_ablation/         6단계 ablation · K/H 단독 실험의 공통소스와 구성별 top
+  src/                  최신판 RTL 한 벌 (통신 계층 + 어댑터 + 최상단 + Main IP).
+                        보드에 구운 판은 태그 board-k3h3-e4-m2
   testbench/            테스트벤치. verilator C++ 하네스 포함
   sim/                  Makefile · 러너 · 보고 스크립트
   synth/                Vivado 배치 스크립트. 자원 합성
@@ -117,7 +116,7 @@ hardware_bram/          갈래 1 — 체크포인트 + 반복 내 연산기 네 
 hardware_dram/          갈래 2 — DRAM 전량 저장 + BRAM 큐
                         (RTL 초안 + 최상단 + 회귀. 물리 DRAM 바인딩과 RVX 설치는 아직)
                         하위 구조는 hardware_bram 과 같고, bram 에만 있는 폴더
-                        (src_comm · src_ablation · synth · bitstream)만 없습니다
+                        (synth · bitstream)만 없습니다
 
 software/
   csr/                  CSR 정본 JSON 과 헤더 생성기       ← 두 갈래가 공유
@@ -137,9 +136,8 @@ trash_bin/              구 스펙 문서와 대용량 산출물 보관. git 추
 # 통신 계층 회귀 (몇 초). ports 가 포트 계약 대조입니다
 make -C hardware_bram/sim ports lint regress driver
 
-# 우리 통신 계층 + 정본 코어 / 보드 정본 통째 / 250쌍 궤적 벤치
+# 통신 계층 + 어댑터 + Main IP / 250쌍 궤적 벤치
 make -C hardware_bram/sim real
-make -C hardware_bram/sim final
 make -C hardware_bram/sim bench250
 
 # 호스트 CLI 를 보드 없이

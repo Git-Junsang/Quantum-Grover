@@ -20,7 +20,11 @@
 //   CKPT_K=3           체크포인트 3벌
 //   POLICY_H_FUTURE=3  정책 지평 3
 //   INTRA_ENGINES=4    반복 한 번에 P=32 연산기 4벌이 협력 (E4)
-//   측정 경로 M1·M2 는 이 소스에 붙박이라 파라미터가 없습니다
+//   MEAS_M1_ENABLE=1   측정 BUILD 를 사이클당 두 행으로 (M1)
+//   MEAS_M2_ENABLE=1   M1 + 16x32 계층 행 선택 (M2)
+//   M1·M2 스위치는 2026-09-13 에 Main IP 를 6단계 ablation 공통소스 판으로
+//   올리면서 생긴 파라미터입니다. 둘 다 1 이면 보드에 구운 Main IP 와 동작이
+//   같고, 하나라도 0 이면 ablation 의 앞 단계 구성이 됩니다.
 //
 // src/ 에서 Main IP 로 합성 경로에 들어가는 파일은 아래 열하나입니다
 // (통신 계층 셋과 이 어댑터는 따로 들어갑니다).
@@ -51,7 +55,9 @@ module bbht_grover_core #(
     parameter integer POLICY_H_FUTURE    = 3,
     parameter integer CKPT_MANUAL_ENABLE = 0,
     parameter integer AUTO_SPEC_ENABLE   = 1,
-    parameter integer INTRA_ENGINES      = 4
+    parameter integer INTRA_ENGINES      = 4,
+    parameter integer MEAS_M1_ENABLE     = 1,
+    parameter integer MEAS_M2_ENABLE     = 1
 ) (
     input  wire        clk,
     input  wire        rstnn,
@@ -150,7 +156,9 @@ module bbht_grover_core #(
         .POLICY_H_FUTURE    (POLICY_H_FUTURE),
         .CKPT_MANUAL_ENABLE (CKPT_MANUAL_ENABLE),
         .AUTO_SPEC_ENABLE   (AUTO_SPEC_ENABLE),
-        .INTRA_ENGINES      (INTRA_ENGINES)
+        .INTRA_ENGINES      (INTRA_ENGINES),
+        .MEAS_M1_ENABLE     (MEAS_M1_ENABLE),
+        .MEAS_M2_ENABLE     (MEAS_M2_ENABLE)
     ) u_main_ip (
         .clk                        (clk),
         .rstn                       (rstnn),

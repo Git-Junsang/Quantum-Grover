@@ -35,7 +35,12 @@ module bbht_grover_main_ip #(
     parameter integer AUTO_SPEC_ENABLE  = 1,
     // E2 branch default: two P=32 engines cooperate inside each physical
     // Grover iteration. Set to 1 to reproduce the frozen physical kernel.
-    parameter integer INTRA_ENGINES     = 1
+    parameter integer INTRA_ENGINES     = 1,
+    // Paper-ablation measurement controls.
+    // M1: E4 two-row/cycle Born BUILD.
+    // M2: M1 + hierarchical 16x32 row selection.
+    parameter integer MEAS_M1_ENABLE    = 1,
+    parameter integer MEAS_M2_ENABLE    = 1
 ) (
     input  wire                                  clk,
     input  wire                                  rstn,
@@ -1771,7 +1776,13 @@ module bbht_grover_main_ip #(
 
     grover_measure_verify #(
         .AMP_READ_LATENCY((CHECKPOINT_ENABLE != 0) ? 2 : 1),
-        .E4_DUAL_BUILD   (((INTRA_ENGINES == 4) && (CHECKPOINT_ENABLE != 0)) ? 1 : 0)
+        .E4_DUAL_BUILD   (((INTRA_ENGINES == 4) &&
+                           (CHECKPOINT_ENABLE != 0) &&
+                           (MEAS_M1_ENABLE != 0)) ? 1 : 0),
+        .E4_HIER_SELECT  (((INTRA_ENGINES == 4) &&
+                           (CHECKPOINT_ENABLE != 0) &&
+                           (MEAS_M1_ENABLE != 0) &&
+                           (MEAS_M2_ENABLE != 0)) ? 1 : 0)
     ) u_measure_verify (
         .clk                  (clk),
         .rstn                 (rstn),
