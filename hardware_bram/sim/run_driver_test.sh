@@ -17,9 +17,8 @@ BUILD=${BUILD:-/tmp/sjs_drv}
 rm -rf "$BUILD"
 mkdir -p "$BUILD/src"
 
-# CORE=stub   우리 통신 계층 + 자리 채우개 (기본). 통신 계약만 몇 초에 확인합니다
-# CORE=real   우리 통신 계층 + 어댑터 + 정본 Main IP
-# CORE=final  보드 정본 통째 (src/ 의 wrapper·mmio·loader·Main IP)
+# CORE=stub   통신 계층 + 자리 채우개 (기본). 통신 계약만 몇 초에 확인합니다
+# CORE=real   통신 계층 + 어댑터 + Main IP
 CORE=${CORE:-stub}
 
 # 정본 Main IP 중 합성 경로에 들어가는 열입니다. glob 을 쓰면 policy OOC
@@ -31,34 +30,30 @@ CORE_FILES="bbht_grover_main_ip.v \
 
 cp "$HERE/../testbench/tb_driver.cpp" "$BUILD/src/"
 
+# 통신 계층 셋(wrapper·mmio·loader)은 두 갈래 모두 src/ 의 같은 파일입니다.
+# 코어 자리에 무엇을 끼우느냐만 다릅니다.
+for f in bbht_rvx_wrapper.v bbht_grover_mmio.v bbht_ahb_loader.v; do
+    cp "$HERE/../src/$f" "$BUILD/src/"
+done
+
 case "$CORE" in
-    final)
-        # 통신 계층까지 정본. 어댑터가 끼지 않습니다.
-        cp "$HERE/../src/bbht_rvx_wrapper.v"   "$BUILD/src/"
-        cp "$HERE/../src/bbht_grover_mmio.v"   "$BUILD/src/"
-        cp "$HERE/../src/bbht_ahb_loader.v"    "$BUILD/src/"
-        cp "$HERE/../src/grover_param.vh"      "$BUILD/src/"
-        CORE_SRC=""
-        for f in $CORE_FILES; do
-            cp "$HERE/../src/$f" "$BUILD/src/"
-            CORE_SRC="$CORE_SRC $BUILD/src/$f"
-        done
-        ;;
     real)
-        # 우리 통신 계층 + 어댑터 + 정본 Main IP.
-        cp "$HERE/../src_comm/bbht_"*.v        "$BUILD/src/"
-        cp "$HERE/../src/grover_param.vh"      "$BUILD/src/"
+        # 어댑터 + Main IP. 어댑터가 계약 이름 bbht_grover_core 로 감쌉니다.
+        cp "$HERE/../src/bbht_grover_core_adapter.v" "$BUILD/src/"
+        cp "$HERE/../src/grover_param.vh"            "$BUILD/src/"
         CORE_SRC="$BUILD/src/bbht_grover_core_adapter.v"
         for f in $CORE_FILES; do
             cp "$HERE/../src/$f" "$BUILD/src/"
             CORE_SRC="$CORE_SRC $BUILD/src/$f"
         done
         ;;
-    *)
-        cp "$HERE/../src_comm/bbht_"*.v        "$BUILD/src/"
-        rm -f "$BUILD/src/bbht_grover_core_adapter.v"
+    stub)
         cp "$HERE/../testbench/bbht_grover_core_stub.v" "$BUILD/src/"
         CORE_SRC="$BUILD/src/bbht_grover_core_stub.v"
+        ;;
+    *)
+        echo "CORE 는 stub 또는 real 입니다 (받은 값: $CORE)" >&2
+        exit 1
         ;;
 esac
 

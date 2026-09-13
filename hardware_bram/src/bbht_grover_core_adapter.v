@@ -1,27 +1,29 @@
 //=====================================================================
 // bbht_grover_core_adapter.v -- 실물 Main IP 를 통신 계층에 끼우는 어댑터
 //
-// 통신 계층(src_comm/bbht_rvx_wrapper.v)은 인수인계 §3.4 계약 이름 그대로인
+// 통신 계층(같은 폴더의 bbht_rvx_wrapper.v)은 인수인계 §3.4 계약 이름 그대로인
 // bbht_grover_core 를 인스턴스합니다. 정본 Main IP 의 모듈 이름은
 // bbht_grover_main_ip 이고 리셋 이름이 rstn 이라, 그 둘만 맞춰 주는 얇은
 // 껍데기를 둡니다. 신호는 61개 전부 1:1 이고 폭 변환도 논리도 없습니다.
 //
 // 이 파일이 있는 이유:
-//   - Main IP 소스(src/)는 freeze 대상이라 손대지 않습니다
+//   - Main IP 는 보드 정본과 같은 모듈 이름을 그대로 둡니다
 //   - 우리 wrapper 도 계약 이름을 유지해야 check_ports 가 그대로 돕니다
 //   - 그래서 이름·리셋 차이만 여기서 흡수합니다
 //
-// 정본 wrapper(src/bbht_rvx_wrapper.v)는 어댑터 없이 bbht_grover_main_ip 를
-// 직접 물립니다. 어댑터는 우리 통신 계층 갈래에서만 씁니다.
+// 보드에 구운 정본 wrapper(태그 board-k3h3-e4-m2 의 src/bbht_rvx_wrapper.v)는
+// 어댑터 없이 bbht_grover_main_ip 를 직접 물었습니다. 2026-09-13 에 통신
+// 계층을 우리 판 하나로 합치면서 이 어댑터가 합성 경로에 들어갑니다.
 //
 // 파라미터 기본값은 2026-09-07 보드 최종 구성 K3/H3-E4-M2 입니다.
-// 정본 wrapper 가 넘기는 값과 같습니다 (src/bbht_rvx_wrapper.v 301행).
+// 보드 정본 wrapper 가 넘기던 값과 같습니다.
 //   CKPT_K=3           체크포인트 3벌
 //   POLICY_H_FUTURE=3  정책 지평 3
 //   INTRA_ENGINES=4    반복 한 번에 P=32 연산기 4벌이 협력 (E4)
 //   측정 경로 M1·M2 는 이 소스에 붙박이라 파라미터가 없습니다
 //
-// src/ 에서 합성 경로에 들어가는 파일은 아래 열하나입니다.
+// src/ 에서 Main IP 로 합성 경로에 들어가는 파일은 아래 열하나입니다
+// (통신 계층 셋과 이 어댑터는 따로 들어갑니다).
 //   bbht_grover_main_ip.v         최상위
 //   grover_iteration.v            데이터패스 · 제어 FSM
 //   grover_arithmetic.v           술어 · 가산트리 · 평균 · 확산
@@ -34,10 +36,10 @@
 //   grover_loader.v               Main IP 내부 적재 제어
 //   grover_param.vh               헤더
 //
-// 나머지 넷은 합성 경로에 넣지 마십시오.
-//   bbht_rvx_wrapper.v / bbht_grover_mmio.v / bbht_ahb_loader.v
-//       정본 통신 계층입니다. src_comm/ 쪽 우리 것과 역할이 겹칩니다.
-//       한 갈래만 골라 넣어야 최상위가 하나로 남습니다.
+// 같은 폴더에 있어도 합성 경로에 넣지 않는 것
+//   bbht_bram_top.v
+//       어댑터 없이 Main IP 를 직접 무는 다른 최상단입니다. wrapper 와 둘 중
+//       하나만 넣어야 최상위가 하나로 남습니다.
 //   grover_policy_ooc_top.v / grover_policy_impl_wrapper.v
 //       policy OOC 합성 전용입니다. 최상위가 둘이 됩니다.
 //=====================================================================

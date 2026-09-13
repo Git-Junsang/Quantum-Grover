@@ -1,7 +1,7 @@
 //=====================================================================
 // tb_bbht_bram_top.v -- hardware_bram 최상단 회귀 (호스트 경로 통째)
 //
-// 검증 대상은 src_comm/bbht_bram_top.v 입니다. 그 안에 CSR(mmio), 데이터셋
+// 검증 대상은 src/bbht_bram_top.v 입니다. 그 안에 CSR(mmio), 데이터셋
 // DMA(loader), 보드 정본 Main IP(K3/H3-E4-M2)가 들어 있고, 바깥에는 둘만
 // 붙습니다.
 //

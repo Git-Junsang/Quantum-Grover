@@ -4,8 +4,8 @@
 // hardware_dram/src/bbht_dram_top.v 와 짝입니다. 두 파일은 결선이 한
 // 줄씩 같고 다른 것은 둘뿐입니다.
 //
-//   Main IP    이쪽은 src/bbht_grover_main_ip.v (보드 정본 K3/H3-E4-M2,
-//              freeze), 저쪽은 hardware_dram/src 의 DRAM 전량저장 초안
+//   Main IP    이쪽은 src/bbht_grover_main_ip.v (K3/H3-E4-M2), 저쪽은
+//              hardware_dram/src 의 DRAM 전량저장 초안
 //   DRAM 포트  이쪽은 없음 (BRAM 만 씀), 저쪽은 최상단 포트로 나감
 //
 // 호스트 PC 에서 가속기까지의 경로
@@ -25,10 +25,11 @@
 //   dram 갈래는 계약판이 DRAM 을 안쪽에서 묶어 두어 따로 최상단이
 //   필요했고, 두 갈래의 최상단 모양을 맞추려고 이쪽에도 같은 파일을 둡니다.
 //
-//   보드에 구운 src/bbht_rvx_wrapper.v 와는 mmio 가 다른 판입니다. 이쪽
-//   mmio·loader 는 CSR 정본 JSON 에서 생성한 헤더를 쓰는 우리 것이고
-//   hardware_dram/src 의 것과 바이트 동일합니다. CSR 주소와 비트는 두
-//   판이 같다는 것을 make final / make real 이 같은 TB 로 확인합니다.
+//   보드에 구운 통신 계층(태그 board-k3h3-e4-m2 의 src/)과는 mmio 가 다른
+//   판입니다. 이쪽 mmio·loader 는 CSR 정본 JSON 에서 생성한 헤더를 쓰는 우리
+//   것이고 hardware_dram/src 의 것과 바이트 동일합니다. CSR 주소와 비트가 두
+//   판에서 같다는 것은 그 태그에서 make final / make real 이 같은 TB 로
+//   확인했습니다.
 //
 // 결선 판단
 //   1. start 수락 조건        아래 §start
@@ -320,9 +321,9 @@ module bbht_bram_top #(
     );
 
     //=================================================================
-    // Main IP (보드 정본 K3/H3-E4-M2, src/ freeze). 어댑터를 거치지 않고
-    // 직접 뭅니다. 파라미터는 정본 wrapper(src/bbht_rvx_wrapper.v 301행)가
-    // 넘기는 값과 같고, 리셋 이름만 다릅니다 (Main IP 는 rstn).
+    // Main IP (K3/H3-E4-M2). 어댑터를 거치지 않고 직접 뭅니다. 파라미터는
+    // 보드 정본 wrapper 가 넘기던 값과 같고, 리셋 이름만 다릅니다 (Main IP 는
+    // rstn).
     //=================================================================
     bbht_grover_main_ip #(
         .CHECKPOINT_ENABLE  (1),      // 체크포인트 하드웨어를 합성에 넣음

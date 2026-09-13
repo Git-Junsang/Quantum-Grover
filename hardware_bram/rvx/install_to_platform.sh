@@ -12,8 +12,6 @@
 # 수정으로 두지 말고 재현 가능하게 관리" 하라고 요청합니다. 이 스크립트가
 # 그 답입니다 -- 무엇을 어디에 넣는지가 전부 여기 적혀 있고, 저장소에서
 # 플랫폼으로 가는 방향만 있으므로 되돌리기도 쉽습니다.
-#
-# 통신 계층이 두 벌이라 LAYER 로 고릅니다 (아래 3번).
 set -e
 
 HERE=$(cd "$(dirname "$0")" && pwd)
@@ -33,17 +31,7 @@ fi
 
 say() { printf '  %-52s %s\n' "$1" "$2"; }
 
-# LAYER=final (기본)  보드 정본 통째. src/ 의 wrapper·mmio·loader·Main IP
-# LAYER=comm          우리 통신 계층(src_comm/) + 어댑터 + src/ 의 Main IP
-#
-# 둘 다 module bbht_rvx_wrapper 를 정의하므로 한쪽만 설치해야 합니다.
-LAYER=${LAYER:-final}
-case "$LAYER" in
-    final|comm) ;;
-    *) echo "LAYER 는 final 또는 comm 이어야 합니다 (받은 값: $LAYER)" >&2; exit 1 ;;
-esac
-
-echo "설치 대상: $PLATFORM  (LAYER=$LAYER)"
+echo "설치 대상: $PLATFORM"
 
 # 1. CSR 정본에서 헤더를 다시 생성합니다. 이 순서를 지켜야 RTL 과 C 가
 #    같은 맵을 봅니다. 정본 mmio 는 이 헤더를 include 하지 않고 같은 값을
@@ -59,12 +47,15 @@ say "${PLATFORM_NAME}.xml" "-> $PLATFORM/"
 
 # 3. 유저 RTL. 생성된 CSR 헤더도 include 경로에 같이 둡니다.
 #
-#    src/       보드 정본 (freeze. 고치지 마십시오)
-#    src_comm/  우리 통신 계층 + 어댑터 (고쳐도 됩니다)
+#    src/ 한 폴더에 통신 계층(wrapper·mmio·loader·어댑터)과 Main IP 가
+#    같이 있습니다. 2026-09-07 보드에 구운 빌드의 소스는 태그
+#    board-k3h3-e4-m2 에 있습니다.
 #
 #    아래 목록만 옮깁니다. grover_policy_ooc_top.v 와
 #    grover_policy_impl_wrapper.v 는 policy OOC 합성 전용이라 플랫폼에
-#    들어가면 최상위가 셋이 됩니다.
+#    들어가면 최상위가 셋이 됩니다. bbht_bram_top.v 도 옮기지 않습니다 --
+#    wrapper 와 같은 자리에 들어가는 다른 최상단이라 둘 다 넣으면 최상위가
+#    둘이 됩니다.
 CORE_SRC="bbht_grover_main_ip.v \
           grover_arithmetic.v grover_bbht.v grover_checkpoint.v \
           grover_iteration.v grover_loader.v grover_measurement.v \
@@ -76,20 +67,12 @@ for f in $CORE_SRC; do
 done
 cp "$HW/src/grover_param.vh"                      "$PLATFORM/user/rtl/include/"
 
-if [ "$LAYER" = "final" ]; then
-    cp "$HW/src/bbht_rvx_wrapper.v" "$HW/src/bbht_grover_mmio.v" \
-       "$HW/src/bbht_ahb_loader.v"                "$PLATFORM/user/rtl/src/"
-    cp "$HW/src/bbht_grover_upgrade_user_region.vh" \
-       "$PLATFORM/user/rtl/include/${PLATFORM_NAME}_user_region.vh"
-    say "user/rtl/{src,include}" "정본 통신 계층 3 + Main IP 10 + 헤더"
-else
-    cp "$HW/src_comm/bbht_rvx_wrapper.v" "$HW/src_comm/bbht_grover_mmio.v" \
-       "$HW/src_comm/bbht_ahb_loader.v" \
-       "$HW/src_comm/bbht_grover_core_adapter.v"  "$PLATFORM/user/rtl/src/"
-    cp "$HW/src_comm/bbht_grover_user_region.vh" \
-       "$PLATFORM/user/rtl/include/${PLATFORM_NAME}_user_region.vh"
-    say "user/rtl/{src,include}" "우리 통신 계층 3 + 어댑터 + Main IP 10 + 헤더"
-fi
+cp "$HW/src/bbht_rvx_wrapper.v" "$HW/src/bbht_grover_mmio.v" \
+   "$HW/src/bbht_ahb_loader.v" \
+   "$HW/src/bbht_grover_core_adapter.v"          "$PLATFORM/user/rtl/src/"
+cp "$HW/src/bbht_grover_user_region.vh" \
+   "$PLATFORM/user/rtl/include/${PLATFORM_NAME}_user_region.vh"
+say "user/rtl/{src,include}" "통신 계층 3 + 어댑터 + Main IP 10 + 헤더"
 cp "$ROOT/software/csr/generated/bbht_grover_csr.vh" "$PLATFORM/user/rtl/include/"
 
 # 3b. 사용자 RTL 등록. imp 쪽 set_fpga_syn_env.tcl 이 이 파일을 source 해서

@@ -8,7 +8,7 @@
 //             <-AHB--  bbht_ahb_loader   --> Main IP 데이터 적재 (System SRAM)
 //
 // 이 파일이 hardware_bram 쪽과 다른 점은 하나, DRAM burst 포트를 최상단
-// 포트로 끌어낸다는 것입니다. 짝은 hardware_bram/src_comm/bbht_bram_top.v
+// 포트로 끌어낸다는 것입니다. 짝은 hardware_bram/src/bbht_bram_top.v
 // 이고, 두 파일의 결선은 DRAM 포트와 Main IP 를 빼면 한 줄씩 같습니다.
 //
 //   Main IP --dram_wr_* / dram_rd_*--> (이 모듈의 포트) --> MIG/AXI 브리지

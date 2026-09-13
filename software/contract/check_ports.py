@@ -5,19 +5,21 @@
 port_contract.tsv (PJK 인수인계 §3.3/§3.4 에서 뽑은 것) 와 실제 Verilog 를
 대조합니다. 이름·방향·폭·signed 가 하나라도 어긋나면 종료코드 1 입니다.
 
-hardware_bram 은 통신 계층이 두 벌입니다.
+hardware_bram 의 통신 계층은 src/ 한 벌입니다 (2026-09-13 에 src_comm 을
+src 로 합쳤습니다). 코어 자리에 무엇을 끼우느냐로 갈래가 둘입니다.
 
-    final  보드에 구워진 정본 (hardware_bram/src). wrapper 가 어댑터 없이
-           bbht_grover_main_ip 를 직접 물고, 리셋 이름이 rstn 입니다.
-    real   우리 통신 계층 (hardware_bram/src_comm) + 어댑터. 어댑터가 계약
-           이름 bbht_grover_core 와 리셋 이름 rstnn 로 맞춰 줍니다.
+    real   통신 계층 (hardware_bram/src) + 어댑터. 어댑터가 계약 이름
+           bbht_grover_core 와 리셋 이름 rstnn 로 맞춰 줍니다.
     stub   같은 통신 계층에 자리 채우개를 끼운 것. 통신 계층만 볼 때 씁니다.
+
+보드에 구운 정본 wrapper 는 어댑터 없이 bbht_grover_main_ip 를 직접 물었고,
+그것을 대조하던 final 갈래는 태그 board-k3h3-e4-m2 에 남아 있습니다.
 
 hardware_dram 갈래도 같은 계약을 지켜야 합니다. 그쪽 Main IP 는 우리가 쓴
 초안이지만 wrapper 19 + core 61 신호는 통신 계층과 맞물리는 부분이라 바뀌면
 안 됩니다. dram 갈래는 hardware_dram 의 wrapper 와 어댑터를 봅니다.
 
-    python3 check_ports.py [stub|real|final|dram]
+    python3 check_ports.py [stub|real|dram]
 """
 import io
 import os
@@ -39,17 +41,12 @@ MODE = sys.argv[1] if len(sys.argv) > 1 else "stub"
 #   rst      코어가 쓰는 리셋 이름 (계약 표에는 clk/리셋이 없습니다).
 #            wrapper 는 RVX 가 주는 rstnn 으로 어느 갈래나 같습니다
 BRANCHES = {
-    # 보드 정본. wrapper 가 Main IP 를 직접 물고 리셋이 rstn 입니다.
-    "final": dict(wrapper=("hardware_bram", "src", "bbht_rvx_wrapper.v"),
-                  core=("hardware_bram", "src", "bbht_grover_main_ip.v"),
-                  module="bbht_grover_main_ip", inst="u_main_ip", rst="rstn",
-                  params=("hardware_bram", "src", "grover_param.vh")),
-    # 우리 통신 계층 + 어댑터. 어댑터가 계약 이름과 rstnn 로 맞춰 줍니다.
-    "real":  dict(wrapper=("hardware_bram", "src_comm", "bbht_rvx_wrapper.v"),
-                  core=("hardware_bram", "src_comm", "bbht_grover_core_adapter.v"),
+    # 통신 계층 + 어댑터. 어댑터가 계약 이름과 rstnn 로 맞춰 줍니다.
+    "real":  dict(wrapper=("hardware_bram", "src", "bbht_rvx_wrapper.v"),
+                  core=("hardware_bram", "src", "bbht_grover_core_adapter.v"),
                   module="bbht_grover_core", inst="u_core", rst="rstnn"),
     # 같은 통신 계층에 자리 채우개를 끼운 것.
-    "stub":  dict(wrapper=("hardware_bram", "src_comm", "bbht_rvx_wrapper.v"),
+    "stub":  dict(wrapper=("hardware_bram", "src", "bbht_rvx_wrapper.v"),
                   core=("hardware_bram", "testbench", "bbht_grover_core_stub.v"),
                   module="bbht_grover_core", inst="u_core", rst="rstnn"),
     # DRAM 전량저장 갈래. 감싸는 Main IP 는 다르지만 계약 61신호는 같습니다.
