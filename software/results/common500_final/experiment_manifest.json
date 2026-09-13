@@ -1,0 +1,29 @@
+{
+  "created_utc": "2026-09-11T05:10:49.327275+00:00",
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "platform": "Linux-7.0.14-8-pve-x86_64-with-glibc2.39",
+  "packages": {
+    "qiskit": "2.5.2",
+    "qiskit-aer": "0.17.2",
+    "numpy": "2.5.3"
+  },
+  "target_counts": [
+    1,
+    4,
+    16,
+    64,
+    256
+  ],
+  "seed_count": 100,
+  "workload_count": 500,
+  "include_qiskit": true,
+  "include_fixed_models": true,
+  "input_sha256": {
+    "official_board_seed_roster.h": "82eb2a35925c54f8813108a77d6e1a759bf640e8bf60d8e40aed3f69d82adb8a",
+    "dataset_target_1.bin": "49ed208e31f5e64d5e0a5048bfa118a134883f8c0f4ac744946c13362bdb91b3",
+    "dataset_target_4.bin": "39f050c4ce2ecf51766022f8a7fa2bac736987933613130a208fc2c44d220367",
+    "dataset_target_16.bin": "6ca57cbc428c72f64e9f9fb3e812ab8090f3ee769512335e7cf85742266e988f",
+    "dataset_target_64.bin": "903e997ee650f880d95f8e2a2b704933825f7649bee07d476a05036e8b5db455",
+    "dataset_target_256.bin": "7903ef48c95182fe3d05dfbf72818314113b8c65832c2adb9a870faf50314539"
+  }
+}
