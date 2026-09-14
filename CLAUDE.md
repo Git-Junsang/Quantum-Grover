@@ -36,8 +36,10 @@ RTL 17개는 태그 `board-k3h3-e4-m2` 의 `hardware_bram/src/` 이고, sha256 �
 비트스트림과 바이트 동일합니다
 ([`meta/source_sha256.txt`](hardware_bram/vivado/vivado_bbht_grover_fpga/meta/source_sha256.txt)).
 main 의 [`hardware_bram/src/`](hardware_bram/src/) 는 그 뒤의 **최신판 한 벌**입니다 (이 절 끝).
-CSR 의 모든 숫자는 [`software/csr/bbht_grover_csr.json`](software/csr/bbht_grover_csr.json)
-하나에서 나옵니다 (C·Verilog·Python 헤더와 CSR 규격 문서가 전부 생성물).
+CSR 의 숫자는 [`CSR_레지스터_규격.md`](documents/design_references/CSR_레지스터_규격.md) 와
+`software/models/common/final_hardware_contract.py` 두 곳에 있습니다. 둘을 만들던 정본
+JSON 과 생성기(`software/csr/`)는 2026-09-13 `software/` 재편 때 저장소에서 빠졌으므로
+이제 두 곳을 손으로 맞춥니다 (5절 끝).
 
 | 항목 | 값 |
 |---|---|
@@ -54,10 +56,13 @@ CSR 의 모든 숫자는 [`software/csr/bbht_grover_csr.json`](software/csr/bbht
 실행 모드 이름은 2026-09-10 에 `K4H8_*` 에서 `CKPT_*` 로 바꿨습니다. K·H·E·M 은
 전부 RTL 빌드에 컴파일되는 값이라 CSR 모드 이름에 값을 박아 두면 빌드가 바뀔
 때마다 이름이 틀려집니다 — 실제로 K4/H8 에서 K4/H4 를 거쳐 지금은 K3/H3 입니다.
-골든 모델은 옛 이름(`K4H8_SINGLE` `K4H8_ENUM`, 그리고 `mode="K4H8"`)도 계속
-받습니다 (`RUN_MODE_ALIASES` · `_MODE_ALIASES`). 다만 `bbht_paper_bench` 의
-`CONTROL_K4H8_EQ` · `MODE_K4H8` 은 **그대로 두었습니다** — 그 파일은 보드 ELF 를
-낸 소스와 sha256 이 같아야 합니다.
+`bbht_paper_bench` 의 `CONTROL_K4H8_EQ` · `MODE_K4H8` 은 **그대로 두었습니다** — 그
+파일은 보드 ELF 를 낸 소스와 sha256 이 같아야 합니다.
+
+소프트웨어 기준모델은 CSR 모드 이름 대신 **정책 이름**으로 부릅니다.
+`final_hardware_contract.py` 의 `RUN_MODES` 에 `K3H3_*` · `K3H3_E4_M2_*` · `K4H4_*` ·
+`K4H8_*` 가 있고 `CKPT_*` 는 없습니다. `checkpoint_bbht_model.py` 는 `mode="K4H8"` 을
+옛 K4/H4 정책으로, `"K3H3_E4_M2"` 를 K3/H3 로 옮겨 받습니다.
 
 ### 성능을 인용할 때 — 두 축을 섞지 마십시오
 
@@ -76,10 +81,13 @@ CSR 의 모든 숫자는 [`software/csr/bbht_grover_csr.json`](software/csr/bbht
 같은 250 워크로드에서 논리 축 250/250, 사이클도 230/250 이 정확히 같습니다
 ([`results/2026-09-10_bench250_final_core/`](hardware_bram/results/2026-09-10_bench250_final_core/)).
 
-**골든 모델은 궤적 재현기가 아닙니다.** 측정 난수 확장과 체크포인트 플래너가
-가정(`MEASUREMENT_ASSUMPTION` · `CHECKPOINT_ASSUMPTION`)이라 같은 250 워크로드에서
-답은 250/250 유효하지만 `trial_count` 는 36/250 만 맞습니다. 오라클·고정소수점·
-FIFO·종료 조건을 보는 **의미 참조**로만 쓰십시오.
+**소프트웨어 기준모델은 궤적까지 재현합니다.** `software/models/rtl_reference_model/`
+이 측정 난수(xorshift64)와 K3/H3 정책을 RTL 식대로 옮겨서, 같은 500 워크로드에서 보드
+M2 와 `result_index` · `trial_count` · `L_BBHT` 가 500/500, 물리 반복
+`actual_grover_iterations` 도 500/500 맞습니다
+([Common500 검증 보고서](software/results/common500_final/common500_validation_report.md)).
+`cycle_count` 는 모델에 없습니다 — 정책 지연 · plan FIFO · E4/M2 타이밍은 하드웨어
+몫이라 일부러 흉내 내지 않았습니다. 사이클은 RTL 이나 보드에서 인용하십시오.
 
 6단계는 `Normal-E1 → K4/H4-E1 → K4/H4-E4 → K3/H3-E4 → K3/H3-E4-M1 → K3/H3-E4-M2`
 이고, 단계별 기여는 -56.63% / -38.71% / -7.66% / -18.15% / -18.94% 입니다.
@@ -111,7 +119,8 @@ INCR16 버스트, argmax 측정, AXI4-Lite, MicroBlaze, XC7S100.
 통신 계층이 우리 판으로 바뀌었고(시뮬에서는 보드 정본 통신 계층과 같은 TB 를 똑같이
 통과했습니다), user region 이 가속기 클럭을 보드 정본의 `clk_accel` 대신 `gclk_accel`
 로 뭅니다. 다시 굽기 전에 이 둘을 먼저 보십시오. 배선 정합성은 `check_ports.py` 가
-wrapper 19 + core 61 신호를 세 갈래(`stub`/`real`/`dram`)로 매번 대조해서 지킵니다.
+wrapper 19 + core 61 신호를 세 갈래(`stub`/`real`/`dram`)로 대조해 지켜 왔는데, 대조
+기준 `port_contract.tsv` 가 2026-09-13 에 빠져서 지금은 돌지 않습니다 (5절 끝).
 
 ---
 
@@ -137,7 +146,7 @@ wrapper 19 + core 61 신호를 세 갈래(`stub`/`real`/`dram`)로 매번 대조
 
 두 트리는 하위 구조가 같습니다(`src/` `testbench/` `sim/` `results/` `firmware/` `rvx/` `vivado/`).
 bram 에만 있는 폴더는 dram 에 아직 없는 역할인 `synth/` 와 `bitstream/` 둘입니다. 4절.
-CSR 정본·골든 모델·검증 벡터는 `software/` 에서 공유합니다.
+기준모델·검증 벡터·비교 실험은 `software/` 에서 공유합니다.
 한쪽 갈래에만 해당하는 것을 `software/` 에 넣지 마십시오.
 
 ---
@@ -149,11 +158,12 @@ CSR 정본·골든 모델·검증 벡터는 `software/` 에서 공유합니다.
 | 경로 | 역할 |
 |---|---|
 | `design_references/` | **설계 문서.** 해설서와 같은 기술문서체로 씁니다 |
-| `design_references/CSR_레지스터_규격.md` | `gen_csr.py` **생성물.** 손으로 고치지 마십시오 |
+| `design_references/CSR_레지스터_규격.md` | CSR 38개의 기록. 생성기가 빠져서 이제 손으로 관리합니다. `final_hardware_contract.py` 의 `CSR_OFFSETS` 와 같이 고치십시오 |
+| `design_references/소프트웨어_기준모델과_Common500.md` | `software/` 의 기준모델 · Common500 비교 실험 · RTL 정답 벡터 안내 |
 | `design_references/호스트_조작_방법.md` | 호스트에서 부리는 법. 통신 계층의 주 문서 |
 | `design_references/UART_명령_프로토콜.md` · `블록_인터페이스_다이어그램.md` | 통신 계약 |
 | `design_references/Main_IP_포트_규격.md` · `데이터_고정소수점_메모리_규격.md` | Main IP 계약 |
-| `design_references/다중결과탐색_*.md` · `단일검색_*.md` · `RTL_GitHub_*.md` · `전체_내용_보고서.md` | 골든 모델 분석 보고서 |
+| `design_references/다중결과탐색_*.md` · `단일검색_*.md` · `RTL_GitHub_*.md` · `전체_내용_보고서.md` | 골든 모델 분석 보고서 (2026-08 캠페인 기록과 그 뒤 확정된 것) |
 | `design_references/K3H3_E4_M2_정본_반입.md` | 정본이 K4/H4 에서 바뀐 경위와 세 성능 축 |
 | `design_references/PASS2_융합과_다중엔진_탐색_실측.md` | 우리가 시도한 측정 융합·다중 엔진과, 정본이 같은 병목을 어떻게 다르게 푸는지 |
 | `design_references/diagrams/` | **design_references 의 유일한 하위 폴더.** 손그림 SVG · `campaign_*.png` · `src/*.mmd` |
@@ -239,19 +249,26 @@ Main IP 자체가 다른 갈래라 이쪽 `src/` 의 내용은 `hardware_bram/sr
 
 ### `software/` — 두 갈래가 공유
 
+2026-09-13 에 역할 중심으로 다시 짰습니다. 안내 문서는
+[`소프트웨어_기준모델과_Common500.md`](documents/design_references/소프트웨어_기준모델과_Common500.md)
+입니다 (하위 폴더 README 를 두지 않는 규칙 때문에 그리로 옮겼습니다).
+
 | 경로 | 역할 |
 |---|---|
-| `csr/bbht_grover_csr.json` | **모든 숫자의 출처** |
-| `csr/gen_csr.py` | → C·Verilog·Python 헤더 + CSR 규격 문서. `--check` 로 검증 |
-| `csr/generated/` | 생성물. 손으로 고치면 회귀가 잡습니다 |
-| `contract/*.docx` | **인수인계 통신 계약 원본.** 포트 계약의 출처 |
-| `contract/port_contract.tsv` | 포트 계약 (인수인계 §3.3 wrapper 19 + §3.4 core 61) |
-| `contract/extract_contract.py` | 옆의 docx → tsv. 재현 가능 (docx sha256 을 헤더에 남깁니다) |
-| `contract/check_ports.py` | tsv ↔ RTL 자동 대조 |
-| `golden/rtl_v098_*.py` · `rtl_v07g.py` | 골든 모델 |
-| `golden/tools/` | 벡터 생성기 · 캠페인 분석 · 체크포인트 K 최적화 모델 |
-| `bin/` | 검증 벡터와 데이터 파일 (hex · json) |
-| `bbht_cli.py` | 호스트 CLI. `--port mock` 이면 보드 없이 됩니다 |
+| `models/common/` | 공통 설정·결과 자료형·데이터셋·BBHT 계약. `final_hardware_contract.py` 가 CSR 오프셋·실행 모드·체크포인트 상수를 담습니다 |
+| `models/numpy_model/` | Float64 상태벡터 기준 |
+| `models/qiskit_model/` | Qiskit Aer 상태벡터, 그리고 같은 J-LFSR·측정 규칙으로 도는 NumPy/Qiskit BBHT 실행기 |
+| `models/rtl_reference_model/` | Q1.22 bit-exact 산술·LFSR·측정(`fixed_point_statevector.py`)과 Normal·K4/H4·K3/H3·DRAM all-j 정책 모델(`checkpoint_bbht_model.py`) |
+| `experiments/common500_benchmark/` | 보드와 같은 500 워크로드로 8 backend 를 비교하는 실험 |
+| `rtl_vectors/` | RTL 정답 벡터. requested-j bit-exact 256개(zip) · 열거 두 방식 |
+| `results/common500_final/` | Common500 4,000행 결과·표·그래프·검증 보고서 |
+| `contract/check_ports.py` | tsv ↔ RTL 포트 대조기. 대조 기준 `port_contract.tsv` 가 빠져서 지금은 돌지 않습니다 |
+| `requirements.txt` | Common500 재실행용 파이썬 패키지 |
+
+재편 때 빠진 것은 `csr/`(CSR 정본 JSON · 생성기 · 생성 헤더), `contract/` 의 tsv ·
+추출기 · 인수인계 docx, `golden/`(옛 골든 모델과 `tools/`), `bin/`(옛 벡터),
+`bbht_cli.py`(호스트 CLI), `Qiskit_Server/`, `research/` 입니다. 커밋 `7d5455c` 에
+그대로 있습니다.
 
 ### `trash_bin/` — git 추적 안 함
 
@@ -290,8 +307,9 @@ hardware_bram/synth/run_main_ip.sh
 make -C hardware_dram/sim
 make -C hardware_dram/sim equiv
 
-# CSR 정본을 고쳤으면
-python3 software/csr/gen_csr.py
+# 소프트웨어 기준모델 Common500 비교 (가상환경에 software/requirements.txt 를 설치한 뒤.
+# NumPy·Qiskit 까지 전부 돌리면 수 시간. 끊겨도 같은 명령이 이어서 돕니다)
+bash software/experiments/common500_benchmark/run_full_benchmark.sh
 
 # 문서를 고쳤으면 (오류 0건이어야 합니다)
 python3 documents/check_docs.py
@@ -304,6 +322,23 @@ source /opt/rvx/rvx_setup.sh
 hardware_bram/rvx/install_to_platform.sh
 cd $RVX_MINI_HOME/platform/bbht_grover_upgrade && make syn && make sim_rtl
 ```
+
+**2026-09-13 `software/` 재편 뒤로 main 에서 돌지 않는 것이 있습니다.** 빠진 파일
+셋 — CSR 생성 헤더(`software/csr/generated/`), 포트 계약표
+(`software/contract/port_contract.tsv`), 벤치 워크로드 생성기
+(`software/golden/tools/dump_bench*_workload.py`) — 을 다음이 씁니다.
+
+| 멈추는 것 | 빠진 파일 |
+|---|---|
+| `hardware_bram/sim` · `hardware_dram/sim` 의 모든 `make` 타깃 | CSR 헤더 (`--check` 와 include), `ports` 는 tsv, `bench250` · `bench500` 은 워크로드 생성기 |
+| `hardware_bram/sim/run_driver_test.sh` | CSR 헤더 두 개를 복사합니다 |
+| `hardware_bram/rvx/install_to_platform.sh` | `gen_csr.py` 를 부르고 생성 헤더를 옮깁니다 |
+| 펌웨어 빌드 | `bbht_grover_driver.h` 가 `bbht_grover_regs.h` 를 include 합니다 |
+| RTL 통신 계층 합성 | `bbht_grover_mmio.v` · `bbht_ahb_loader.v` · `bbht_rvx_wrapper.v` 가 `bbht_grover_csr.vh` 를 include 합니다 |
+
+되살리려면 커밋 `7d5455c` 에서 그 파일들을 꺼내십시오. 태그 `board-k3h3-e4-m2`
+워크트리 안에서는 전부 돕니다. 문서 검사(`check_docs.py`)와 Common500 실험은 영향이
+없습니다.
 
 **이 환경의 툴체인** (2026-09-09 실측): `verilator` 5.020, `vsim`(Questa 2022.1_2),
 `vivado` 2026.1(노드락 라이선스, `xc7a100tcsg324-1` 합성·구현·비트스트림 가능), RISC-V GCC,
@@ -331,9 +366,9 @@ RVX 는 `/opt/rvx` 에 로컬 전체 설치되어 있어 원격 접속이 필요
 
 | 무엇을 고쳤나 | 같이 볼 곳 |
 |---|---|
-| 설계 수치 | `software/csr/bbht_grover_csr.json` → `gen_csr.py` 재실행 → `CLAUDE.md` 2절 → `README*.md` 2절 |
+| 설계 수치 | `CSR_레지스터_규격.md` 와 `software/models/common/final_hardware_contract.py` 를 같이 → `CLAUDE.md` 2절 → `README*.md` 2절 → 해설서 [15.4절](documents/study_references/15_논문지도와_설계결정표.md#154-우리-프로젝트의-좌표--확정-설계-결정표) |
 | 성능·자원 수치 | 어느 축인지부터 (RTL 사이클 / 보드 실경과 시간 / 소프트웨어 대비) → 해당 근거 묶음의 `evidence.md` → `CLAUDE.md` 2절 → `README*.md` |
-| 포트 | 인수인계 docx → `extract_contract.py` 재실행 → `make -C hardware_bram/sim ports` (세 갈래 전부) |
+| 포트 | `Main_IP_포트_규격.md` 와 RTL 을 같이. 포트 계약 tsv 와 추출기가 빠져서 자동 대조(`make ports`)는 지금 없습니다 |
 | 절 제목·절 번호 | 그 장으로 들어오는 모든 링크. 앵커가 밀립니다 |
 | 해설서 파일명 | **동결입니다.** 13·14장이 제목만 바뀌고 파일명을 둔 이유가 이것입니다 |
 | 디렉터리 구조 | `CLAUDE.md` 4절 · `README.md`/`README.ko.md` 4절 |

@@ -12,7 +12,7 @@
 
 | 항목 | 상태 |
 |---|---|
-| `rtl_v07g.py` | v0.7g 단일 결과 bit-exact 기준 모델. 이 문서를 쓸 당시의 기준 |
+| 소프트웨어 기준모델 `checkpoint_bbht_model.py` | 현행. mask 방식 열거를 재현한다 (`run_enumeration`) |
 | `SOFTWARE_RELOAD` | 하드웨어 지원 없이 펌웨어로만 하는 방식. 지금은 대조군 |
 | `PROJECTED_MASK_MEM` | mask 방식. **v0.9.8 에 채택돼 하드웨어로 들어갔다** |
 | Main IP 내부 Enumeration FSM·결과 FIFO | **구현됨.** `grover_iteration.v` 의 `found_mask_row_in`, FIFO 256칸 |
@@ -101,24 +101,28 @@ Python 실행시간을 FPGA 실행시간으로 인용하면 안 된다.
 
 ## 9. Python 실행 예시
 
-현행 골든 모델(`software/golden/rtl_v098_auto.py`)은 mask 방식을 그대로 재현한다. `enum_enable=True` 면 `run_configured()` 가 열거로 간다.
+현행 소프트웨어 기준모델(`software/models/rtl_reference_model/checkpoint_bbht_model.py`)이 mask 방식을 그대로 재현한다. `enum_enable=True` 면 `run_configured()` 가 열거로 가고, `burst_enable=True` 면 K3/H3 체크포인트 정책을 쓴다. 경로는 Common500 실행 스크립트처럼 잡는다.
 
 ```python
-from rtl_v098_data import build_controlled_v098_dataset
-from rtl_v098_auto import V098AutomaticCore
+import sys
+for sub in ("common", "rtl_reference_model"):
+    sys.path.insert(0, f"software/models/{sub}")
+
+from benchmark_dataset import build_controlled_v098_dataset
+from checkpoint_bbht_model import V098AutomaticCore
 
 dataset = build_controlled_v098_dataset(
     predicate_mode="EQ",
     data_count=16384,
     target_count=4,
     enum_enable=True,
-    burst_enable=True,      # checkpoint 모드. False 면 Normal
+    burst_enable=True,      # K3/H3 체크포인트. False 면 Normal
     fail_repeat_limit=3,
 )
 result = V098AutomaticCore(dataset, dataset.config).run_configured(max_results=256)
 ```
 
-검증 벡터를 만드는 쪽은 `software/golden/tools/rtl_enum_vectors.py`, FIFO 계약 감사는 `software/golden/rtl_v098_semantics.py` 의 `audit_enumeration_fifo()` 다.
+열거 정답 벡터는 `software/rtl_vectors/enumeration/` 에 있고, attempt · FIFO 의미 검사는 `software/models/common/bbht_control_semantics.py` 가 맡는다.
 
 ## 10. 통합에서 어떻게 정해졌나
 

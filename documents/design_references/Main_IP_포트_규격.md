@@ -20,32 +20,29 @@
 
 ### 이 문서와 계약 파일의 관계
 
-포트 계약의 정본은 문서가 아니라 **`software/contract/port_contract.tsv`** 입니다.
-인수인계 docx §3.3(wrapper 19개) · §3.4(Main IP 61개)에서 `extract_contract.py` 가
-뽑아 커밋한 것이고, `check_ports.py` 가 RTL 과 매번 대조합니다.
+포트 계약은 인수인계 docx §3.3(wrapper 19개) · §3.4(Main IP 61개)에서
+`extract_contract.py` 가 뽑은 `software/contract/port_contract.tsv` 로 굳혀 두고,
+`check_ports.py` 가 RTL 과 대조해 왔습니다 (`make -C hardware_bram/sim ports` ·
+`ports-real`). 2026-09-13 `software/` 재편 때 tsv · 추출기 · docx 가 저장소에서 빠져서
+**자동 대조는 지금 멈춰 있습니다.** 셋 다 커밋 `7d5455c` 에 있습니다.
 
-```bash
-make -C hardware_bram/sim ports        # 스텁을 물린 상태
-make -C hardware_bram/sim ports-real   # 실물 코어를 물린 상태
-```
-
-아래 표는 그 tsv 를 사람이 읽으라고 옮긴 것입니다. **둘이 어긋나면 tsv 가
-맞습니다.**
+아래 표는 그 tsv 를 사람이 읽으라고 옮긴 것이고, 지금은 저장소에 남은 유일한 계약
+기록입니다. 표와 실물이 어긋나면 실물 RTL 을 따르고 표를 고치십시오.
 
 ## 2. 근거
 
 | 항목 | 값 |
 |---|---|
-| 계약 원본 | `software/contract/LPSoC_BBHT_Grover_팀원_Handoff_SW_통신_v0.9.8반영_2026-09-01.docx` |
+| 계약 원본 | 인수인계 docx `LPSoC_BBHT_Grover_팀원_Handoff_SW_통신_v0.9.8반영_2026-09-01.docx` (2026-09-13 저장소에서 빠짐. 커밋 `7d5455c` 의 `software/contract/`) |
 | docx SHA-256 | `46a5d17805e52caecff4cebbfd1240f9ae7976a54e06b81d2bc391455ba748da` |
 | 실물 RTL | `hardware_bram/src/` (비트스트림과 sha256 동일한 판은 태그 `board-k3h3-e4-m2`) |
-| 골든 모델 | `software/golden/rtl_v098_auto.py` 외 `rtl_v098_*` |
+| 소프트웨어 기준모델 | `software/models/rtl_reference_model/` ([안내](소프트웨어_기준모델과_Common500.md)) |
 | 보드 실측 | `hardware_bram/vivado/vivado_bbht_grover_fpga/2026-09-08_k3h3_e4_m2_board_500run/` |
 
-소스가 충돌하면 우선순위는 **실물 RTL → 포트 계약 tsv → 골든 모델 → 이 문서** 입니다.
+소스가 충돌하면 우선순위는 **실물 RTL → 이 문서 → 소프트웨어 기준모델** 입니다.
 
-v0.7g(2026-08-20 전달본) 기준으로 쓰인 옛 판은 폐기했습니다. 그 세대의 8-case
-골든벡터는 `software/bin/v07g_handoff_8cases/` 에 회귀용으로 남아 있습니다.
+v0.7g(2026-08-20 전달본) 기준으로 쓰인 옛 판은 폐기했습니다. 현행 RTL 정답 벡터는
+`software/rtl_vectors/` 에 있습니다.
 
 ## 3. 확정 합성 파라미터
 
@@ -103,7 +100,7 @@ v0.7g(2026-08-20 전달본) 기준으로 쓰인 옛 판은 폐기했습니다. �
 | `policy_valid` | 1 | manual 계획 유효 |
 | `policy_source_j` | 7 | 어느 checkpoint 에서 출발할지 |
 | `policy_next_count` | 3 | 이번 전진 뒤 채울 슬롯 수 |
-| `policy_next_j_flat` | 28 | 그 슬롯들의 `j` 4개 (7비트 × 4) |
+| `policy_next_j_flat` | 28 | 그 슬롯들의 `j` (7비트 × 4. 폭은 물리 슬롯 4개 분량이고 K3 은 3개까지 씁니다) |
 
 wrapper 는 `checkpoint_auto_enable = burst_enable && auto_shot` 로 유도하고
 **manual 쪽 입력은 전부 0 으로 묶습니다.** 두 경로를 동시에 열면 계획 출처가
@@ -223,8 +220,9 @@ seed 가 0이면 내부 fallback 을 씁니다. 두 스트림은 독립이고, �
 다음 요청이 실제와 달랐다는 직접 증거입니다.
 
 `policy_stall_cycles` 는 policy horizon 을 고를 때의 판단 근거입니다 — H8 은
-반복을 2.7% 덜 쓰는 대신 stall 을 23배 물어 총 사이클에서 손해를 봤고, 그래서
-freeze 가 H4 입니다.
+반복을 2.7% 덜 쓰는 대신 stall 을 23배 물어 총 사이클에서 손해를 봤고(2026-09-04),
+K/H 단독 실험에서도 H4 → H3 이 사이클을 2.58% 더 줄였습니다
+(`hardware_bram/results/2026-09-09_kh_isolated_e1/`). 그래서 현재 구성이 H3 입니다.
 
 ## 6. Search transaction
 
@@ -299,8 +297,9 @@ load_done -> accepted_write_count == data_count
 
 ## 8. Checkpoint 계약
 
-진폭 상태를 **슬롯 4개**(`CKPT_K = 4`)에 두고, policy 가 요청 `j` 마다 두 가지를
-정합니다.
+진폭 상태를 **슬롯 3개**(`CKPT_K = 3`)에 두고, policy 가 요청 `j` 마다 두 가지를
+정합니다. 메모리는 물리 슬롯 4개 분량(행 위상 4뱅크 인터리브, RAMB36 44개)이고 K3 은
+그중 3개를 씁니다.
 
 1. 어느 슬롯에서 출발할 것인가 (`source_j`)
 2. 이번 전진이 끝난 뒤 슬롯을 무엇으로 채울 것인가
@@ -340,7 +339,7 @@ Normal 과 checkpoint 모드의 `trial_count` · `L_BBHT` · `result_index` 가 
 | 큐비트 runtime 설정 | `n_qubits` 가변 | Q14 고정 + `data_count` 만 runtime |
 | 데이터 적재 | AHB `INCR16` 버스트 | AHB SINGLE, single outstanding |
 | 열거 | Main IP 밖 상위 계층에서 구현 | Main IP 안. 결과 FIFO 256칸 포함 |
-| checkpoint | 1-entry `cache_j` / `cache_valid` | 슬롯 4개 + policy DP |
+| checkpoint | 1-entry `cache_j` / `cache_valid` | 슬롯 3개 + policy DP (지평 3) |
 
 비트폭과 P32 매핑은 [데이터_고정소수점_메모리_규격.md](데이터_고정소수점_메모리_규격.md),
 CSR 맵은 [CSR_레지스터_규격.md](CSR_레지스터_규격.md) 를 따릅니다.

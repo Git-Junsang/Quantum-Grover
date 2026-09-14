@@ -15,21 +15,23 @@
 | 무엇                                                     | 상태                                                          |
 | -------------------------------------------------------- | ------------------------------------------------------------- |
 | Main IP 알고리즘 (Q14 / P32 / DATA16)                    | K3/H3-E4-M2. 보드 sign-off 완료                               |
-| 통신 계층 (CSR · DMA · FIFO · 드라이버 · 호스트 CLI) | 회귀 통과. main 은 우리 통신 계층이고, 보드에 구워진 것은 PJK 정본 통신 계층입니다 (우리 것은 보드 확인 전) |
+| 통신 계층 (CSR · DMA · FIFO · 드라이버 · UART 콘솔) | 시뮬 회귀 통과 (2026-09-13 재편 전 기준 — 지금은 빠진 파일 때문에 못 돌림, 5절). main 은 우리 통신 계층이고, 보드에 구워진 것은 PJK 정본 통신 계층입니다 (우리 것은 보드 확인 전) |
 | 100 MHz 구현                                             | 타이밍 클로즈 (WNS +0.126 ns). 리포트는`hardware_bram/vivado/` |
 | **Main IP RTL 소스**                               | `hardware_bram/src/` 에 최신판 한 벌. 비트스트림과 sha256 동일한 판은 태그 `board-k3h3-e4-m2` |
 | 성능 근거                                                | 보드 실경과 시간 **7.626x**, RTL 사이클 **6.1401x**, ORCA 1코어 대비 **116,426x** |
+| 소프트웨어 기준모델                                      | NumPy · Qiskit Aer · Q1.22 bit-exact · K3/H3 정책 모델. 보드와 같은 500 워크로드에서 탐색 궤적과 물리 반복이 500/500 일치 |
 
-배선 정합성은 사람 눈이 아니라
-[포트 계약 대조](software/contract/check_ports.py)가 지킵니다. 인수인계 문서의
-포트 표(wrapper 19 + core 61)를 `port_contract.tsv` 로 굳혀 두고 회귀가 매번 RTL 과 맞춰 봅니다.
+배선 정합성은 [포트 대조기](software/contract/check_ports.py)가 인수인계 문서의 포트 표
+(wrapper 19 + core 61)와 RTL 을 맞춰 보며 지켜 왔습니다. 대조 기준 `port_contract.tsv` 가
+2026-09-13 `software/` 재편 때 빠져서 지금은 멈춰 있습니다 (5절).
 
 ---
 
 ## 2. 확정 수치
 
-모든 숫자의 단일 출처는 [`software/csr/bbht_grover_csr.json`](software/csr/bbht_grover_csr.json) 입니다.
-C 헤더 · Verilog 헤더 · Python 헤더 · 규격 문서가 전부 여기서 생성됩니다.
+CSR 수치의 기록은 [CSR_레지스터_규격.md](documents/design_references/CSR_레지스터_규격.md) 와
+`software/models/common/final_hardware_contract.py` 두 곳입니다. 둘을 만들던 정본 JSON 과
+헤더 생성기는 2026-09-13 `software/` 재편 때 빠졌으므로 이제 두 곳을 손으로 맞춥니다.
 
 | 항목        | 값                                                                                            |
 | ----------- | --------------------------------------------------------------------------------------------- |
@@ -86,7 +88,7 @@ DRAM 에서 다음 `j` 의 진폭을 가져와 큐에 올립니다. 어떤 `j` �
 입니다. 지금은 단일탐색만 되고 열거는 `config_error` 로 거절합니다.
 
 두 트리는 `src` · `testbench` · `sim` · `rvx` · `vivado` · `firmware` 로 같은 모양을 하고,
-CSR 정본과 골든 모델과 검증 벡터는 `software/` 에서 공유합니다.
+소프트웨어 기준모델과 검증 벡터와 비교 실험은 `software/` 에서 공유합니다.
 
 ---
 
@@ -118,12 +120,13 @@ hardware_dram/          갈래 2 — DRAM 전량 저장 + BRAM 큐
                         하위 구조는 hardware_bram 과 같고, bram 에만 있는 폴더
                         (synth · bitstream)만 없습니다
 
-software/
-  csr/                  CSR 정본 JSON 과 헤더 생성기       ← 두 갈래가 공유
-  contract/             포트 계약과 자동 대조기            ← 두 갈래가 공유
-  golden/               골든 모델 (Python)
-  bin/                  검증 벡터와 데이터 파일
-  bbht_cli.py           호스트 CLI
+software/               두 갈래가 공유
+  models/               NumPy · Qiskit · Q1.22 bit-exact · 체크포인트 정책 기준모델
+  experiments/          Common500 비교 실험 (보드와 같은 500 워크로드)
+  rtl_vectors/          RTL 정답 벡터 (requested-j 256케이스 · 열거 두 방식)
+  results/              Common500 최종 결과 · 표 · 그래프 · 검증 보고서
+  contract/             포트 대조기 check_ports.py (대조 기준 tsv 는 빠져 있음)
+  requirements.txt      Common500 재실행용 파이썬 패키지
 
 trash_bin/              구 스펙 문서와 대용량 산출물 보관. git 추적 안 함
 ```
@@ -132,19 +135,22 @@ trash_bin/              구 스펙 문서와 대용량 산출물 보관. git 추
 
 ## 5. 빠르게 돌려 보기
 
-```bash
-# 통신 계층 회귀 (몇 초). ports 가 포트 계약 대조입니다
-make -C hardware_bram/sim ports lint regress driver
+> **지금 main 에서는 시뮬 회귀와 RVX 설치가 돌지 않습니다.** 2026-09-13 `software/` 재편 때
+> CSR 생성 헤더(`software/csr/generated/`) · 포트 계약표(`software/contract/port_contract.tsv`) ·
+> 벤치 워크로드 생성기(`software/golden/tools/`)가 빠졌는데, 아래 `make` 타깃과 설치 스크립트가
+> 그 파일들을 씁니다. 되살리려면 커밋 `7d5455c` 에서 꺼내십시오. 태그 `board-k3h3-e4-m2`
+> 워크트리 안에서는 전부 돕니다.
 
-# 통신 계층 + 어댑터 + Main IP / 250쌍 궤적 벤치
+```bash
+# 통신 계층 회귀 / 통신 계층 + 어댑터 + Main IP / 250쌍 궤적 벤치 (위 파일이 있을 때)
+make -C hardware_bram/sim ports lint regress driver
 make -C hardware_bram/sim real
 make -C hardware_bram/sim bench250
 
-# 호스트 CLI 를 보드 없이
-python3 software/bbht_cli.py --port mock \
-    -c "GEN COUNT=4096 TARGETS=3 VAL=777" -c LOAD -c "SET MODE=EQ A=777" -c RUN
+# 소프트웨어 기준모델 Common500 비교 (가상환경에 software/requirements.txt 를 설치한 뒤)
+bash software/experiments/common500_benchmark/run_full_benchmark.sh
 
-# RVX 플랫폼에 설치
+# RVX 플랫폼에 설치 (위 파일이 있을 때)
 source /opt/rvx/rvx_setup.sh
 hardware_bram/rvx/install_to_platform.sh
 
@@ -152,8 +158,9 @@ hardware_bram/rvx/install_to_platform.sh
 python3 documents/check_docs.py
 ```
 
-CSR 정본을 고쳤다면 `python3 software/csr/gen_csr.py` 로 헤더를 다시 만드십시오.
-회귀가 `--check` 를 먼저 돌리므로 생성물만 손으로 고쳐 놓고 통과시킬 수 없습니다.
+보드에서는 콘솔 앱(`hardware_bram/firmware/bbht_console/`)을 올리고 시리얼 터미널로
+명령을 칩니다. 순서는 [호스트_조작_방법.md](documents/design_references/호스트_조작_방법.md)
+에 있습니다.
 
 ---
 
@@ -166,6 +173,7 @@ CSR 정본을 고쳤다면 `python3 software/csr/gen_csr.py` 로 헤더를 다�
 | Main IP 포트               | [design_references/Main_IP_포트_규격.md](documents/design_references/Main_IP_포트_규격.md)                         |
 | 고정소수점과 메모리 배치   | [design_references/데이터_고정소수점_메모리_규격.md](documents/design_references/데이터_고정소수점_메모리_규격.md) |
 | UART 명령                  | [design_references/UART_명령_프로토콜.md](documents/design_references/UART_명령_프로토콜.md)                       |
+| 소프트웨어 기준모델과 비교 실험 | [design_references/소프트웨어_기준모델과_Common500.md](documents/design_references/소프트웨어_기준모델과_Common500.md) |
 | Grover 알고리즘 자체       | [study_references/](documents/study_references/README.md) 0~18장                                                   |
 
 영문 요약은 [README.md](README.md) 에 있습니다.

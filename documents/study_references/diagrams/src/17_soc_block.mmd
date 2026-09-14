@@ -1,32 +1,27 @@
 flowchart LR
-    HOST["호스트 PC<br/>파이썬 스크립트<br/>ASCII 라인 명령"]
-
-    subgraph SOC["RVX SoC (생성물)"]
+    HOST["호스트 PC<br/>시리얼 터미널<br/>ASCII 라인 명령"]
+    subgraph SOC["RVX SoC · 50 MHz"]
         direction TB
-        UARTIP["readymade UART<br/>115200 8N1"]
-        CORE["rvc_orca<br/>RV32 코어"]
+        UARTIP["UART · 115200 8N1"]
+        CORE["rvc_orca RV32 코어<br/>콘솔 앱 · 드라이버"]
         NOC["munoc 인터커넥트"]
-        SRAM["system SRAM<br/>0xe0000000"]
+        SRAM["시스템 SRAM 128 KB<br/>0xE0000000 ~ 0xE001FFFF"]
+        BR["RVX 생성 비동기 브리지<br/>sni_apb_asynch · mni_ahbm_asynch"]
         UARTIP --- CORE
         CORE --- NOC
         NOC --- SRAM
+        NOC --- BR
     end
-
-    subgraph IP["그로버 가속기 IP (직접 설계)"]
+    subgraph IP["가속기 · 100 MHz (clk_accel)"]
         direction TB
-        CSR["APB 슬레이브<br/>CSR 블록"]
-        CTRL["샷 루프 FSM<br/>+ 반복 FSM<br/>+ Born 샘플러"]
-        DMA["AHB 마스터<br/>INCR16 버스트"]
-        AMP[("amp_mem<br/>32뱅크 × 1024 × 18b")]
-        DATA[("data_mem<br/>32뱅크 × 1024 × 16b")]
-        MASK[("mask_mem<br/>1024 × 32b")]
-        CSR --> CTRL
-        CTRL --- AMP
-        CTRL --- DATA
-        CTRL --- MASK
-        DMA --> DATA
+        CSR["bbht_grover_mmio<br/>APB 슬레이브 · CSR 38개 · 4바이트 간격"]
+        DMA["bbht_ahb_loader<br/>AHB 마스터 · SINGLE"]
+        MAIN["Main IP (K3/H3-E4-M2)<br/>샷 FSM · 체크포인트 정책 · 연산기 4벌 · 측정 M1·M2 · 결과 FIFO 256"]
+        MEM[("진폭·체크포인트 RAMB36 44<br/>data_mem RAMB18 64 · found_mask 2")]
+        CSR --> MAIN
+        DMA --> MAIN
+        MAIN --- MEM
     end
-
-    HOST <-->|"UART"| UARTIP
-    NOC <-->|"APB — 설정 · 상태"| CSR
-    NOC <-->|"AHB — 배열 적재"| DMA
+    HOST <-->|UART| UARTIP
+    BR <-->|"APB — 설정 · 상태"| CSR
+    BR <-->|"AHB — 배열 적재"| DMA

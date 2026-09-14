@@ -1,31 +1,10 @@
 flowchart TD
-    SPEC["설계 사양<br/>Q2.16 · round-half-to-even · 포화<br/>P=32 누산 트리 · LFSR 규약"]
-
-    subgraph L1["1단 — Python/NumPy float64"]
-        direction LR
-        M1["알고리즘이 맞나?<br/>술어 · 확산 부호 · 반복 수<br/>BBHT 스케줄 · 열거 라운드"]
-        P1["합격 기준<br/>이론값 재현<br/>N=8·M=3 → 84.4% / 100% / 94.5%<br/>n=15·M=1 → 평균 24.5샷"]
-        M1 --> P1
-    end
-
-    subgraph L2["2단 — 비트정확 고정소수점 모델 (정수 연산만)"]
-        direction LR
-        M2["수 표현이 맞나?<br/>반올림 편향 · 포화 · 누산기 폭<br/>시프트 위치 · f=16 충분성"]
-        P2["합격 기준<br/>1단 대비 성공률·샷 수 저하 무시할 수준<br/>포화 발생 0회<br/>이 모델이 곧 골든 모델"]
-        M2 --> P2
-    end
-
-    subgraph L3["3단 — RTL (iverilog · verilator)"]
-        direction LR
-        M3["회로가 맞나?<br/>FSM 전이 · 주소 생성 · 뱅크 인덱싱<br/>파이프라인 정렬 · CSR 핸드셰이크"]
-        P3["합격 기준<br/>2단과 <b>bit-exact</b><br/>매 반복 끝 진폭 N칸 전수 일치<br/>같은 시드 → 같은 후보 인덱스 시퀀스"]
-        M3 --> P3
-    end
-
-    SPEC --> M1
-    P1 -->|"통과해야 다음 칸"| M2
-    P2 -->|"통과해야 다음 칸"| M3
-    P3 --> OUT["원격(RVX 서버)으로<br/>합성 · 타이밍 · 자원 실측"]
-
-    NOTE["한 칸을 건너뛰면<br/>버그의 종류가 섞인다 —<br/>RTL이 float64와 어긋날 때<br/>원인이 반올림인지 FSM인지<br/>구분할 수 없다"]
-    NOTE -.-> L2
+    SPEC["고정한 규약<br/>Q1.22 · round-half-to-even · 대칭 포화 · 두 난수 스트림 · 그룹→행→레인 · 정책 동률 규칙"]
+    L1["1단 · NumPy float64 · Qiskit Aer<br/>알고리즘이 맞나?"] --- P1["합격: 이론값 재현<br/>NumPy ↔ Qiskit 궤적 500/500"]
+    L2["2단 · Q1.22 bit-exact 기준모델 (골든)<br/>수 표현이 맞나?"] --- P2["합격: 전 실행 오차 < 10⁻³<br/>보드와 궤적 · 물리 반복 500/500"]
+    L3["3단 · RTL (verilator · iverilog)<br/>회로가 맞나?"] --- P3["합격: requested-j 256케이스 bit-exact<br/>500 워크로드 궤적 일치"]
+    BD["보드 · Arty A7-100T<br/>실물에서 도는가?"] --- P4["궤적 500/500 · 실경과 7.626배<br/>사이클 값은 RTL 과 다름"]
+    SPEC --> L1
+    L1 --> L2
+    L2 --> L3
+    L3 --> BD

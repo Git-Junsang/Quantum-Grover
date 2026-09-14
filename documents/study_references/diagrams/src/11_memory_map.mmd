@@ -1,35 +1,16 @@
 flowchart TD
-    IDX["인덱스 i · 15비트<br/>상위 10비트 = 뱅크 내 주소 0…1023<br/>하위 5비트 = 뱅크 번호 0…31"]
-
-    subgraph AMP["amp_mem · 진폭 · Q2.16 18비트 · 읽고 쓴다"]
-        direction LR
-        A0["뱅크 0<br/>1024 × 18b"]
-        A1["뱅크 1<br/>1024 × 18b"]
-        AX["…"]
-        A31["뱅크 31<br/>1024 × 18b"]
-    end
-
-    subgraph DAT["data_mem · 탐색 대상 값 · 16비트 signed · 읽기만"]
-        direction LR
-        D0["뱅크 0<br/>1024 × 16b"]
-        D1["뱅크 1<br/>1024 × 16b"]
-        DX["…"]
-        D31["뱅크 31<br/>1024 × 16b"]
-    end
-
-    subgraph MSK["mask_mem · found 비트 · 열거 모드 전용"]
-        direction LR
-        M0["1024 × 32b<br/>한 워드가 32뱅크의 같은 주소를 덮는다"]
-    end
-
+    IDX["인덱스 i · 14비트<br/>상위 9비트 = 행 번호 0…511 · 하위 5비트 = 레인 0…31<br/>행 번호 하위 2비트 = 행 위상 뱅크 0…3"]
+    AMP["진폭 · 체크포인트 메모리<br/>행 = 32레인 × 23비트 = 736비트 · 상태 한 벌 = 512행 = RAMB36 11개<br/>행 위상 뱅크 4 × 물리 슬롯 4 · K3 은 슬롯 3개 사용"]
+    DAT["data_mem · 16비트 signed<br/>사이클당 4행 읽기 · 호스트가 적재"]
+    MSK["found_mask · N × 1비트<br/>열거 모드 전용"]
     IDX --> AMP
     IDX --> DAT
     IDX --> MSK
-
-    AMP --> AS["576 Kb · RAMB18 32개 = BRAM36 16개"]
-    DAT --> DS["512 Kb · RAMB18 32개 = BRAM36 16개"]
-    MSK --> MS["32 Kb · RAMB18 2개 = BRAM36 1개"]
-
-    AS --> TOT["IP 계 BRAM36 33개<br/>RVX SoC 약 15개 → 합계 약 48 / 75 · xc7s50"]
-    DS --> TOT
-    MS --> TOT
+    AMP --> A2["RAMB36 44"]
+    DAT --> D2["RAMB18 64 = 32 tile"]
+    MSK --> M2["RAMB36 2"]
+    ETC["측정 행 가중치 RAMB36 2 · 정책 메모 RAMB36 4"]
+    A2 --> TOT["Main IP 84 tile + RVX SoC 32 tile<br/>= 보드 전체 116 / 135 tile"]
+    D2 --> TOT
+    M2 --> TOT
+    ETC --> TOT

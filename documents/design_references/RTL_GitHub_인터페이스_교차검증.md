@@ -15,7 +15,7 @@
 이 보고서는 다음 세 문서가 실제 구현과 일치하는지 추적했다.
 
 - `Main_IP_포트_규격.md`
-- CSR 주소맵 제안안 (폐기. 지금은 `software/csr/bbht_grover_csr.json` 이 정본)
+- CSR 주소맵 제안안 (폐기. 지금은 [CSR_레지스터_규격.md](CSR_레지스터_규격.md))
 - `데이터_고정소수점_메모리_규격.md`
 
 감사일: 2026-08-22
@@ -158,7 +158,7 @@
 
 | 2026-08-22 미결 | 확정된 값 | 근거 |
 | --- | --- | --- |
-| 최종 CSR offset/field | 4바이트 간격 32비트 38개 | `software/csr/bbht_grover_csr.json` |
+| 최종 CSR offset/field | 4바이트 간격 32비트 38개 | [CSR_레지스터_규격.md](CSR_레지스터_규격.md) |
 | base address | `0xE2020000` (size `0x1000`) | RVX `make syn` 생성물 |
 | interrupt | 넣지 않음. polling | [CSR_레지스터_규격.md](CSR_레지스터_규격.md) |
 | busy 중 write | start 펄스를 조용히 버림. 펌웨어가 `STATUS` 를 먼저 본다 | [블록_인터페이스_다이어그램.md](블록_인터페이스_다이어그램.md) 4절 |
@@ -167,7 +167,7 @@
 | generator 유지 | 보드 위 `GEN` 명령으로 남았다 | [UART_명령_프로토콜.md](UART_명령_프로토콜.md) |
 | enumeration mask/FIFO | **Main IP 안.** FIFO 256칸 | [Main_IP_포트_규격.md](Main_IP_포트_규격.md) 5.2절 |
 | Q16 | **폐기.** Q14 freeze | [전체_내용_보고서.md](전체_내용_보고서.md) 14절 |
-| BRAM primitive 수 | 풀 SoC 99 tile (BRAM36 기준 리포트) | `vivado/vivado_bbht_grover_fpga/reports/route_util.rpt` |
+| BRAM primitive 수 | 풀 SoC 116 tile, 그중 Main IP 84 tile (K3/H3-E4-M2 구현) | `vivado/vivado_bbht_grover_fpga/reports/route_util.rpt` · `route_util_hier.rpt` |
 | clock/CDC | 가속기 100 MHz · SoC 50 MHz. CDC 는 RVX 생성물이 담당 | [블록_인터페이스_다이어그램.md](블록_인터페이스_다이어그램.md) 3절 |
 
 4.3절이 지적한 loader 중복 주소 문제는 지금도 유효하다. RTL loader 는 accepted write

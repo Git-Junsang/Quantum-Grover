@@ -1,8 +1,9 @@
 # CSR 레지스터 규격
 
-> **이 파일은 `software/csr/gen_csr.py` 가 `bbht_grover_csr.json` 에서 생성합니다.**
-> 손으로 고치지 마십시오 — 다음 생성에서 덮어써집니다.
-> 값을 바꾸려면 JSON 을 고치고 `python3 gen_csr.py` 를 돌리십시오.
+> 이 문서는 원래 `software/csr/gen_csr.py` 가 정본 JSON 에서 생성했습니다. 생성기와 JSON 은
+> 2026-09-13 `software/` 재편 때 저장소에서 빠졌고(커밋 `7d5455c` 에 있음), 지금은 **이 문서와
+> `software/models/common/final_hardware_contract.py` 의 `CSR_OFFSETS` 를 손으로 같이**
+> 고칩니다. 2026-09-13 기준 두 곳의 38개 오프셋은 일치합니다.
 >
 > 출처: PJK `팀원_Handoff_SW_통신_v0.9.8` §1.4 / §1.5. 정본 버전 0.9.8 (2026-09-01)
 
@@ -172,17 +173,16 @@
 `checkpoint_auto_enable = burst_enable && auto_shot` 입니다. `auto_shot=0`
 (manual) 에서는 checkpoint 가 걸리지 않습니다.
 
-## 9. 생성물
+## 9. 이 값을 쓰는 곳
 
-이 정본에서 같이 나오는 것들입니다. 손으로 고치면 다음 생성에서 사라집니다.
+| 파일 | 쓰는 곳 | 지금 상태 |
+|---|---|---|
+| `bbht_grover_regs.h` | 펌웨어 C (`bbht_grover_driver.h` 가 include) | 생성물이라 저장소에 없음 |
+| `bbht_grover_csr.vh` | RTL (`bbht_grover_mmio.v` · `bbht_ahb_loader.v` · `bbht_rvx_wrapper.v`) | 생성물이라 저장소에 없음 |
+| `software/models/common/final_hardware_contract.py` | 소프트웨어 기준모델 (`CSR_OFFSETS` · 비트 정의 · `RUN_MODES`) | 있음. 손으로 관리 |
+| 이 문서 | 사람 | 있음. 손으로 관리 |
 
-| 파일 | 쓰는 곳 |
-|---|---|
-| `csr/generated/bbht_grover_regs.h` | 펌웨어 C |
-| `csr/generated/bbht_grover_csr.vh` | RTL (`bbht_grover_mmio.v` 등) |
-| `csr/generated/bbht_grover_csr.py` | 호스트 CLI |
-| `docs/CSR_레지스터_규격.md` | 이 문서 |
-
-`python3 gen_csr.py --check` 는 갱신 없이 최신인지만 확인합니다.
-`hardware_bram/sim/Makefile` 의 모든 타깃이 이것을 먼저 돌리므로, 생성 헤더를
-손으로 고쳐 놓고 회귀만 통과시키는 일이 생기지 않습니다.
+앞의 두 헤더가 없으면 통신 계층 RTL 과 펌웨어가 컴파일되지 않고 `hardware_bram/sim`
+회귀도 멈춥니다 (`CLAUDE.md` 5절 끝). 필요하면 커밋 `7d5455c` 의
+`software/csr/generated/` 에서 꺼내십시오. 값을 바꿀 일이 생기면 그 두 헤더까지 네 곳을
+함께 고쳐야 합니다 — 생성기가 없으니 어긋남을 잡아 줄 검사도 없습니다.

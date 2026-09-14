@@ -17,25 +17,27 @@ Korean documentation is the primary source — see [README.ko.md](README.ko.md).
 | Item | State |
 |---|---|
 | Main IP algorithm (Q14 / P32 / DATA16) | K3/H3-E4-M2, board sign-off complete |
-| Communication layer (CSR, DMA, FIFO, driver, host CLI) | Regression passing. main carries our layer; the board build used PJK's original layer (ours is not on the board yet) |
+| Communication layer (CSR, DMA, FIFO, driver, UART console) | Simulation regression passed before the 2026-09-13 `software/` reorganization; it cannot run now because files it needs were removed (section 5). main carries our layer; the board build used PJK's original layer (ours is not on the board yet) |
 | 100 MHz implementation | Timing closed (WNS +0.126 ns); reports under `hardware_bram/vivado/` |
 | **Main IP RTL source** | `hardware_bram/src/`, one current tree. The sha256-identical board source is tag `board-k3h3-e4-m2` |
 | Performance evidence | Board wall-clock **7.626x**, RTL cycles **6.1401x**, **116,426x** over a single ORCA core |
+| Software reference models | NumPy, Qiskit Aer, Q1.22 bit-exact, and the K3/H3 policy model. On the same 500 workloads as the board, search trajectories and physical iteration counts match 500/500 |
 
-Wiring correctness is enforced by a
-[port contract check](software/contract/check_ports.py) rather than by eye. The port
-tables from the handoff document (19 wrapper + 61 core signals) are frozen into
-`port_contract.tsv`, and the regression diffs them against the RTL every run, across
-three branches (`stub`, `real`, `dram`).
+Wiring correctness used to be enforced by a
+[port contract check](software/contract/check_ports.py) that diffed the handoff
+document's port tables (19 wrapper + 61 core signals) against the RTL across three
+branches (`stub`, `real`, `dram`). Its reference table `port_contract.tsv` was removed in
+the 2026-09-13 `software/` reorganization, so the check is currently stopped (section 5).
 
 ---
 
 ## 2. Frozen numbers
 
-The single source of truth is
-[`software/csr/bbht_grover_csr.json`](software/csr/bbht_grover_csr.json). The C header,
-Verilog header, Python header, and the register specification document are all
-generated from it.
+The CSR numbers are recorded in two places:
+[CSR_레지스터_규격.md](documents/design_references/CSR_레지스터_규격.md) and
+`software/models/common/final_hardware_contract.py`. The JSON source of truth and the
+header generator that produced them were removed on 2026-09-13, so the two are now kept in
+sync by hand.
 
 | Item | Value |
 |---|---|
@@ -95,7 +97,8 @@ on the frozen `hardware_bram` core and checks that the search trajectories match
 now; Enumeration is rejected as a `config_error`.
 
 Both trees share the same shape — `src`, `testbench`, `sim`, `rvx`, `vivado`, `firmware` —
-and share the CSR source of truth, golden model, and verification vectors under `software/`.
+and share the software reference models, verification vectors, and comparison experiments
+under `software/`.
 
 ---
 
@@ -127,12 +130,13 @@ hardware_dram/          Branch 2 - full DRAM storage plus BRAM queue
                         Same layout as hardware_bram, without the bram-only folders
                         (synth, bitstream)
 
-software/
-  csr/                  CSR source of truth and header generator   <- shared by both branches
-  contract/             Port contract and automatic checker        <- shared by both branches
-  golden/               Golden model (Python)
-  bin/                  Verification vectors and data files
-  bbht_cli.py           Host CLI
+software/               Shared by both branches
+  models/               NumPy, Qiskit, Q1.22 bit-exact, and checkpoint-policy reference models
+  experiments/          Common500 comparison (the same 500 workloads as the board)
+  rtl_vectors/          RTL answer vectors (256 requested-j cases, two enumeration methods)
+  results/              Common500 final results, tables, plots, validation report
+  contract/             Port checker check_ports.py (its reference tsv is missing)
+  requirements.txt      Python packages for rerunning Common500
 
 trash_bin/              Superseded docs and bulky artifacts. Not tracked by git
 ```
@@ -141,19 +145,24 @@ trash_bin/              Superseded docs and bulky artifacts. Not tracked by git
 
 ## 5. Quick start
 
-```bash
-# Communication layer regression (seconds). "ports" is the port contract check
-make -C hardware_bram/sim ports lint regress driver
+> **On main, the simulation regression and the RVX install do not run right now.** The
+> 2026-09-13 `software/` reorganization removed the generated CSR headers
+> (`software/csr/generated/`), the port contract table
+> (`software/contract/port_contract.tsv`), and the bench workload generators
+> (`software/golden/tools/`), and the `make` targets and install script below use them.
+> Restore them from commit `7d5455c` if you need them. Everything still runs inside a
+> worktree of tag `board-k3h3-e4-m2`.
 
-# Comms layer + adapter + Main IP / 250-pair trajectory bench
+```bash
+# Comms regression / comms + adapter + Main IP / 250-pair trajectory bench (needs the files above)
+make -C hardware_bram/sim ports lint regress driver
 make -C hardware_bram/sim real
 make -C hardware_bram/sim bench250
 
-# Host CLI without a board
-python3 software/bbht_cli.py --port mock \
-    -c "GEN COUNT=4096 TARGETS=3 VAL=777" -c LOAD -c "SET MODE=EQ A=777" -c RUN
+# Software reference models, Common500 comparison (after installing software/requirements.txt in a venv)
+bash software/experiments/common500_benchmark/run_full_benchmark.sh
 
-# Install into the RVX platform
+# Install into the RVX platform (needs the files above)
 source /opt/rvx/rvx_setup.sh
 hardware_bram/rvx/install_to_platform.sh
 
@@ -161,9 +170,9 @@ hardware_bram/rvx/install_to_platform.sh
 python3 documents/check_docs.py
 ```
 
-If you change the CSR source of truth, regenerate headers with
-`python3 software/csr/gen_csr.py`. The regression runs `--check` first, so hand-edited
-generated files cannot slip through.
+On the board, load the console app (`hardware_bram/firmware/bbht_console/`) and type
+commands in a serial terminal; see
+[호스트_조작_방법.md](documents/design_references/호스트_조작_방법.md).
 
 ---
 
@@ -176,4 +185,5 @@ generated files cannot slip through.
 | Main IP ports | [design_references/Main_IP_포트_규격.md](documents/design_references/Main_IP_포트_규격.md) |
 | Fixed-point format and memory layout | [design_references/데이터_고정소수점_메모리_규격.md](documents/design_references/데이터_고정소수점_메모리_규격.md) |
 | UART commands | [design_references/UART_명령_프로토콜.md](documents/design_references/UART_명령_프로토콜.md) |
+| Software reference models and the comparison experiment | [design_references/소프트웨어_기준모델과_Common500.md](documents/design_references/소프트웨어_기준모델과_Common500.md) |
 | Grover's algorithm itself | [study_references/](documents/study_references/README.md) chapters 0-18 |

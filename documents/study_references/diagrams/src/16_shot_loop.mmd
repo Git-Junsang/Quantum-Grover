@@ -1,23 +1,13 @@
 flowchart TD
-    START([start 펄스]) --> SHOT["샷 시작<br/>LFSR로 j_target 추첨 · 0 ≤ j_target < m"]
-    SHOT --> CACHE{"cache_valid 이고<br/>j_cur ≤ j_target 인가?"}
-    CACHE -->|아니오| INIT["S_INIT<br/>전 칸을 INIT_AMP 로<br/>j_cur ← 0"]
-    CACHE -->|예| SKIP["INIT 생략<br/>Δj = j_target − j_cur 만 전진"]
-    INIT --> ORACLE
-    SKIP --> ORACLE
-    subgraph INNER["안쪽 — 그로버 반복 (13장)"]
-        ORACLE["S_PASS1<br/>술어 판정 → 부호 반전 → 누산"] --> MEANST["S_MEAN<br/>n−1칸 우시프트 → 2·mean"]
-        MEANST --> DIFF["S_PASS2<br/>2·mean − amp"]
-        DIFF --> BUMP["j_cur ← j_cur + 1"]
-        BUMP --> ICHK{"j_cur = j_target?"}
-        ICHK -->|아니오| ORACLE
-    end
-    ICHK -->|예| MEAS["S_MEAS<br/>Born 2단 병렬 샘플링<br/>amp_mem 읽기 전용"]
-    MEAS --> VER["S_VERIFY<br/>data_mem 한 칸을 읽어<br/>술어 재확인"]
-    VER --> OK{"후보가 술어를 만족?"}
-    OK -->|아니오| GROW["m ← min(1.2·m, √N)<br/>iter_rom 다음 항<br/>cache_valid 는 그대로 1"]
-    GROW --> SHOT
+    START([시작 · 두 난수 시드 읽기]) --> SHOT["샷 시작<br/>ROM 에서 m 경계 (28항, 최대 128)<br/>LFSR 기각 샘플링으로 j ∈ [0, m)"]
+    SHOT --> POL["체크포인트 정책 (K3 · H3)<br/>앞으로 올 요청 3개를 보고 출발 슬롯과 남길 상태를 정함"]
+    POL --> INNER["안쪽 그로버 반복 (13장)<br/>슬롯 s ≤ j 에서 j − s 회 · 없으면 INIT 후 j 회"]
+    INNER --> MEAS["측정 (14장) · 진폭은 읽기만"]
+    MEAS --> OK{"검증 · 후보가 술어를 만족?"}
+    OK -->|아니오| LIM{"샷 상한 100 · 논리 예산 576 에 닿았나?"}
+    LIM -->|아니오 · 다음 ROM 항| SHOT
+    LIM -->|예| STOP([종료 · shot_limit / budget_limit])
     OK -->|예| EN{"열거 모드인가?"}
-    EN -->|아니오| DONE([S_DONE · 후보 하나 반환])
-    EN -->|예| MASK["found 비트 세우기<br/>cache_valid ← 0 · m ← 1<br/>다음 열거 라운드"]
-    MASK --> SHOT
+    EN -->|아니오| DONE([종료 · RESULT_INDEX])
+    EN -->|예| NEXT["결과 FIFO 에 넣고 found 비트 세우기<br/>슬롯 무효화 · ROM 첫 항부터 다시 (j 난수는 이어서)"]
+    NEXT --> SHOT

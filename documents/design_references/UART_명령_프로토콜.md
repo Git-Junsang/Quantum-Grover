@@ -1,8 +1,9 @@
 # UART 명령 프로토콜
 
 > 담당: 통신·명령·시스템 (SJS) · 2026-09-02 작성 · 2026-09-09 갱신
-> 보드 쪽 구현 `hardware_bram/firmware/bbht_console/src/main.c` ·
-> 호스트 쪽 구현 `software/bbht_cli.py`
+> 보드 쪽 구현 `hardware_bram/firmware/bbht_console/src/main.c`.
+> 호스트 쪽은 시리얼 터미널이나 이 규약을 따르는 스크립트면 됩니다. 호스트 CLI
+> `software/bbht_cli.py` 는 2026-09-13 저장소에서 빠졌습니다 (커밋 `7d5455c` 에 있음).
 
 ---
 
@@ -33,14 +34,14 @@
 
 **응답을 다 받은 뒤에 다음 명령을 보냅니다.** 흐름 제어가 없는 원시
 스트림이라, 보드가 폴링 루프에 들어가 있는 동안 명령을 밀어 넣으면
-RX FIFO 가 넘칩니다. 호스트 CLI 는 이것을 강제합니다.
+RX FIFO 가 넘칩니다. 호스트 스크립트를 짤 때 이것을 강제하십시오.
 
 **응답 한 덩어리는 반드시 `OK` 또는 `ERR` 로 끝납니다.** 데이터 줄이
 먼저 나오고 마지막 줄이 종결자입니다. 호스트는 그 줄을 보고 다음으로
 넘어갑니다.
 
 콘솔은 받은 글자를 그대로 되비춥니다(에코). 사람이 칠 때 필요한 것이고,
-호스트 CLI 는 명령을 보내기 전에 입력 버퍼를 비우므로 영향이 없습니다.
+스크립트는 명령을 보내기 전에 입력 버퍼를 비우면 영향이 없습니다.
 백스페이스(`BS` / `DEL`)를 받습니다.
 
 ---
@@ -122,11 +123,11 @@ K3/H3-E4-M2 인 2026-09-08 묶음입니다.
 
 | 태그 | 언제 | 예 |
 |---|---|---|
-| `HIT` | `RUN` 이 해를 찾음 | `HIT idx=12045 val=12345 trials=23 l=554 iters=362 cyc=372104 us=3721` |
+| `HIT` | `RUN` 이 해를 찾음 | `HIT idx=507 val=12345 trials=25 l=308 iters=70 cyc=30913 us=309` |
 | `MISS` | `RUN` 이 못 찾음 | `MISS reason=SHOT_CAP trials=100 cyc=1200000 us=12000` |
 | `FOUND` | `ENUM` 이 해 하나를 뱉음 | `FOUND idx=507 val=777` |
 | `END` | `ENUM` 종료 요약 | `END count=3 found=3 cyc=89000 us=890` |
-| `STAT` | `ID`, `PEEK`, `STAT` | `STAT trials=23 l_bbht=554 actual_iter=362 cyc=372104 us=3721` |
+| `STAT` | `ID`, `PEEK`, `STAT` | `STAT trials=25 l_bbht=308 actual_iter=70 cyc=30913 us=309` |
 | `CFG` | `SHOW` | `CFG mode=EQ a=12345 b=0 count=16384 cap=100` |
 | `REG` | `REG` | `REG 0x024 = 0x0000080c` |
 | `#` | 주석·경고 | `# amp_overflow (진단용, 결과는 유효)` |
@@ -150,7 +151,7 @@ K3/H3-E4-M2 인 2026-09-08 묶음입니다.
 | `STATUS_ERROR` | STATUS 에 치명 오류 비트. 뒤에 `status=0x..` |
 | `BAD_ARG` | 드라이버 인자 검증 실패 |
 | `BUSY` | 시작 조건 불충족 |
-| `HOST_TIMEOUT` | **호스트가 붙이는 것.** 보드가 응답 안 함 |
+| `HOST_TIMEOUT` | **보드가 아니라 호스트 쪽 도구가 붙이는 토큰** (옛 CLI 관례). 보드가 응답 안 함 |
 
 ### 4.4 `MISS reason`
 
@@ -172,26 +173,30 @@ STAT accel_clk_hz=100000000 sram_base=0xe0000000 sram_last=0xe001ffff
 STAT dataset_addr=0xe0000abc dataset_count=0 loaded=0
 OK
 
-> GEN COUNT=16384 TARGETS=4 VAL=12345
-OK count=16384 targets=4 val=12345
+> GEN COUNT=16384 TARGETS=1 VAL=12345
+OK count=16384 targets=1 val=12345
 
 > LOAD
 OK loaded=16384 addr=0xe0000abc
 
-> SET MODE=EQ A=12345 AUTO=1 BURST=0
+> SET MODE=EQ A=12345 AUTO=1 BURST=0 SEEDJ=0x7b1dcdaf SEEDM=0x24370df2
 OK
 
 > RUN
-HIT idx=12045 val=12345 trials=23 l=554 iters=554 cyc=1180000 us=11800
+HIT idx=507 val=12345 trials=25 l=308 iters=308 cyc=351394 us=3513
 OK
 
 > SET BURST=1
 OK
 
 > RUN
-HIT idx=12045 val=12345 trials=23 l=554 iters=362 cyc=810000 us=8100
+HIT idx=507 val=12345 trials=25 l=308 iters=70 cyc=30913 us=309
 OK
 ```
+
+두 `HIT` 줄의 수치는 같은 조건(같은 데이터셋 시드 · 같은 탐색 시드)으로 2026-09-08 보드
+벤치 앱이 낸 실측값(M = 1 첫 워크로드, Normal 과 K3/H3-E4-M2)을 옮긴 것입니다. 콘솔 앱
+자체는 아직 보드에서 돌려 보지 않았습니다.
 
 마지막 두 `RUN` 이 이 프로젝트의 주장을 그대로 보여 줍니다. **`idx` 와 `l` 은
 같고 `iters` 와 `cyc` 만 줄었습니다.** 답이 같고 알고리즘이 오라클에 던진
@@ -205,8 +210,8 @@ OK
 **응답 대기.** `OK`/`ERR` 를 받기 전에 다음 명령을 보내지 마십시오.
 
 **타임아웃.** `RUN` 은 최악의 경우 shot 상한까지 돕니다. 호스트 타임아웃은
-`SHOT_CAP` 과 짝을 이뤄야 하고, 임의로 고르는 값이 아닙니다. 기본 30초로
-두었고 긴 실험에서는 `--timeout` 을 키우십시오.
+`SHOT_CAP` 과 짝을 이뤄야 하고, 임의로 고르는 값이 아닙니다. 옛 CLI 는 기본
+30초였습니다.
 
 **로그와 결과가 같은 UART 를 씁니다.** 콘솔은 `#` 로 시작하는 줄에만
 사람용 메시지를 냅니다. 파서는 그 줄을 무시하고, 알 수 없는 태그도
@@ -226,5 +231,5 @@ OK
 2. 이미 있는 `key=` 이름의 뜻 (`l` 과 `iters` 를 뒤바꾸는 것 같은)
 3. `ERR` 토큰 이름
 
-바꿔야 한다면 `ID` 의 `csr_ver` 를 올리고 호스트 CLI 가 그것을 보고
+바꿔야 한다면 `ID` 의 `csr_ver` 를 올리고 호스트 스크립트가 그것을 보고
 갈라지게 하십시오.
