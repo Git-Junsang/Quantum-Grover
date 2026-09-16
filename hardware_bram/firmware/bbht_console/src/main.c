@@ -91,6 +91,56 @@ static int parse_num(const char *s, int *ok)
  * 사람이 직접 칠 수 있어야 하므로 에코를 넣고 백스페이스를 받습니다.
  * CR 과 LF 를 둘 다 줄 끝으로 봅니다 -- 터미널마다 다릅니다.
  *==================================================================*/
+#ifdef BBHT_CONSOLE_SCRIPT
+/*
+ * 스크립트 모드 -- RTL 시뮬 전용입니다. 보드 빌드에는 들어가지 않습니다.
+ *
+ * RVX 의 시뮬 printf 모듈(ncsim_printf.v)은 uart_tx 를 1 로 묶어 둡니다.
+ * 보낼 쪽이 없으니 read_line() 의 rx_data_ready 폴링이 영원히 안 풀리고,
+ * 그래서 SoC RTL 시뮬에서 콘솔 앱이 첫 명령도 못 받고 멈춥니다.
+ *
+ * 그것을 피하려고 명령을 컴파일 시점에 박아 넣습니다. UART 경로 코드는
+ * 그대로 두었습니다 -- 이 매크로를 정의하지 않으면 보드 빌드는 한 바이트도
+ * 달라지지 않습니다.
+ *
+ * 명령 목록은 -DBBHT_CONSOLE_SCRIPT_LINES='"A","B",...' 로 넘기거나,
+ * 안 넘기면 아래 기본 순서를 씁니다. 마지막 QUIT 이 시뮬을 끝냅니다.
+ */
+#ifndef BBHT_CONSOLE_SCRIPT_LINES
+#define BBHT_CONSOLE_SCRIPT_LINES                                             \
+    "ID",                                                                     \
+    "GEN COUNT=16384 TARGETS=4 VAL=12345 SEED=1",                             \
+    "LOAD",                                                                   \
+    "SET MODE=EQ A=12345 AUTO=1 BURST=0 SEEDJ=0x7B1DCDAF SEEDM=0x24370DF2",   \
+    "RUN",                                                                    \
+    "STAT",                                                                   \
+    "SET BURST=1",                                                            \
+    "RUN",                                                                    \
+    "STAT",                                                                   \
+    "QUIT"
+#endif
+
+static const char *const script_lines[] = { BBHT_CONSOLE_SCRIPT_LINES };
+static int script_pos = 0;
+
+/* 한 줄씩 돌려줍니다. 다 쓰면 QUIT 을 계속 냅니다. */
+static void read_line(char *buf, int max)
+{
+    const char *s;
+    int n = 0;
+
+    s = (script_pos < (int)(sizeof(script_lines) / sizeof(script_lines[0])))
+        ? script_lines[script_pos++]
+        : "QUIT";
+
+    while (s[n] && n < max - 1) { buf[n] = s[n]; n++; }
+    buf[n] = '\0';
+
+    /* 호스트가 보낸 것처럼 보이게 에코합니다 -- 트랜스크립트를 그대로
+       bbht_cli.py --port replay 로 먹일 수 있게 하려는 것입니다. */
+    printf("> %s\n", buf);
+}
+#else
 static void read_line(char *buf, int max)
 {
     int n = 0;
@@ -124,6 +174,7 @@ static void read_line(char *buf, int max)
         }
     }
 }
+#endif  /* BBHT_CONSOLE_SCRIPT */
 
 /* 공백으로 자른 토큰을 최대 max 개까지. 원본을 제자리에서 자릅니다. */
 static int split(char *line, char *tok[], int max)
@@ -340,6 +391,15 @@ int main(void)
         if (ntok == 0) { printf("OK\n"); continue; }
 
         /*------------------------------------------------------------*/
+#ifdef BBHT_CONSOLE_SCRIPT
+        if (str_eq(tok[0], "QUIT")) {
+            /* 시뮬을 끝냅니다. 보드 빌드에는 이 분기가 없습니다. */
+            printf("OK\n");
+            printf("# script done\n");
+            return 0;
+        }
+#endif
+
         if (str_eq(tok[0], "HELP")) {
             cmd_help();
 
