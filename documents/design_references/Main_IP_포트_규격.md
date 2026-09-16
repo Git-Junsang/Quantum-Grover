@@ -22,18 +22,19 @@
 
 포트 계약은 인수인계 docx §3.3(wrapper 19개) · §3.4(Main IP 61개)에서
 `extract_contract.py` 가 뽑은 `software/contract/port_contract.tsv` 로 굳혀 두고,
-`check_ports.py` 가 RTL 과 대조해 왔습니다 (`make -C hardware_bram/sim ports` ·
-`ports-real`). 2026-09-13 `software/` 재편 때 tsv · 추출기 · docx 가 저장소에서 빠져서
-**자동 대조는 지금 멈춰 있습니다.** 셋 다 커밋 `7d5455c` 에 있습니다.
+`check_ports.py` 가 RTL 과 대조합니다 (`make -C hardware_bram/sim ports` ·
+`ports-real`, DRAM 갈래는 `check_ports.py dram`). 2026-09-13 `software/` 재편 때
+tsv · 추출기 · docx 가 빠져 자동 대조가 멈췄다가 2026-09-16 에 되살렸습니다.
+세 갈래 모두 **wrapper 19 + core 61** 로 일치합니다.
 
-아래 표는 그 tsv 를 사람이 읽으라고 옮긴 것이고, 지금은 저장소에 남은 유일한 계약
-기록입니다. 표와 실물이 어긋나면 실물 RTL 을 따르고 표를 고치십시오.
+아래 표는 그 tsv 를 사람이 읽으라고 옮긴 것입니다. 표와 실물이 어긋나면 실물 RTL 을
+따르고 표를 고치십시오.
 
 ## 2. 근거
 
 | 항목 | 값 |
 |---|---|
-| 계약 원본 | 인수인계 docx `LPSoC_BBHT_Grover_팀원_Handoff_SW_통신_v0.9.8반영_2026-09-01.docx` (2026-09-13 저장소에서 빠짐. 커밋 `7d5455c` 의 `software/contract/`) |
+| 계약 원본 | 인수인계 docx `LPSoC_BBHT_Grover_팀원_Handoff_SW_통신_v0.9.8반영_2026-09-01.docx` (`software/contract/` 에 있습니다) |
 | docx SHA-256 | `46a5d17805e52caecff4cebbfd1240f9ae7976a54e06b81d2bc391455ba748da` |
 | 실물 RTL | `hardware_bram/src/` (비트스트림과 sha256 동일한 판은 태그 `board-k3h3-e4-m2`) |
 | 소프트웨어 기준모델 | `software/models/rtl_reference_model/` ([안내](소프트웨어_기준모델과_Common500.md)) |

@@ -218,18 +218,26 @@ mask 전후 파일을 비교합니다. mask 워드는 `row = index>>5`, `bit = i
 | DRAM all-j 보드 시간 | 측정 안 함 |
 | Q15/Q16 RTL · 보드 검증 | 없음 (폐기된 확장) |
 
-## 8. 재편 때 빠진 것
+## 8. 재편 때 빠졌다가 되살린 것
 
-2026-09-13 재편에서 아래가 저장소에서 빠졌습니다. 모두 커밋 `7d5455c` 에 남아
-있습니다.
+2026-09-13 재편에서 아래가 저장소에서 빠졌습니다. 파이프라인이 쓰는 것은 2026-09-16 에
+되살렸습니다. 되살릴 때 커밋 `79b7410` 에서 꺼냈습니다 — main 의 정규 조상이라
+`git show 79b7410:<경로>` 로 언제든 볼 수 있습니다.
 
-| 빠진 것 | 하던 일 | 지금 영향 |
+| 빠졌던 것 | 하던 일 | 지금 |
 |---|---|---|
-| `csr/` (정본 JSON · `gen_csr.py` · `generated/`) | CSR 헤더와 [CSR_레지스터_규격.md](CSR_레지스터_규격.md) 생성 | 규격 문서는 손으로 관리합니다. 시뮬 회귀 · RVX 설치 · 펌웨어 빌드가 생성 헤더를 못 찾습니다 |
-| `contract/port_contract.tsv` · `extract_contract.py` · 인수인계 docx | 포트 계약 자동 대조 | `check_ports.py` 가 멈춥니다 |
-| `golden/` (옛 골든 모델과 `tools/`) | 옛 검증 벡터 · 캠페인 · bench 워크로드 생성 | 기준모델은 `models/` 로 바뀌었고, `bench250` · `bench500` 워크로드 생성이 멈춥니다 |
+| `csr/` (정본 JSON · `gen_csr.py` · `generated/`) | CSR 헤더와 [CSR_레지스터_규격.md](CSR_레지스터_규격.md) 생성 | **`software/contract/` 로 합쳐 복구.** 같은 깊이라 생성기 내부 경로를 안 고쳤습니다. `--check` 에 교차대조 셋을 더했습니다 |
+| `contract/port_contract.tsv` · `extract_contract.py` · 인수인계 docx | 포트 계약 자동 대조 | **제자리 복구.** `check_ports.py` 가 세 갈래 모두 wrapper 19 + core 61 로 통과합니다 |
+| `golden/` (옛 골든 모델과 `tools/`) | 옛 검증 벡터 · 캠페인 · bench 워크로드 생성 | **복구하지 않았습니다.** 기준모델은 `models/` 가 승계했고, 워크로드 생성기는 `rtl_vectors/tools/dump_bench_workload.py` 로 새로 썼습니다 |
 | `bin/` | 옛 벡터 | `rtl_vectors/` 로 바뀌었습니다 |
-| `bbht_cli.py` | 호스트 CLI (`--port mock` 포함) | 보드 콘솔은 시리얼 터미널로 부립니다 ([호스트_조작_방법.md](호스트_조작_방법.md)) |
-| `Qiskit_Server/` · `research/` | 서버 캠페인 사본 · 다중 엔진 탐색 원본 | `experiments/` 와 `results/` 로 대체 · 결론은 [PASS2_융합과_다중엔진_탐색_실측.md](PASS2_융합과_다중엔진_탐색_실측.md) |
+| `bbht_cli.py` | 호스트 CLI (`--port mock` 포함) | **`software/host/` 로 복구.** `selftest` 와 `--port replay:<파일>` 을 더했습니다 |
+| `Qiskit_Server/` · `research/` | 서버 캠페인 사본 · 다중 엔진 탐색 원본 | 복구하지 않았습니다. `experiments/` 와 `results/` 로 대체 · 결론은 [PASS2_융합과_다중엔진_탐색_실측.md](PASS2_융합과_다중엔진_탐색_실측.md) |
 
-어느 `make` 타깃이 멈추는지는 `CLAUDE.md` 5절 끝의 표에 모아 두었습니다.
+`golden/` 을 되살리지 않아도 되는 이유는 둘입니다. 보드 벤치가 쓴 데이터셋 다섯 개가
+`experiments/common500_benchmark/inputs/datasets/` 와
+`hardware_bram/firmware/bbht_paper_bench/tools/reference_dataset/` 에 sha256 이 같은
+채로 남아 있어 다시 계산할 이유가 없고, 시드 로스터 100쌍도
+`inputs/official_board_seed_roster.h` 와
+`hardware_bram/results/2026-09-08_publication_6stage/seeds.csv` 두 곳에 같은 값으로
+있습니다. 새 생성기는 그 둘을 서로 대조한 뒤 데이터셋을 복사만 하므로 numpy 도
+필요 없습니다.

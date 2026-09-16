@@ -34,12 +34,20 @@
 **보드에서 검증된 K3/H3-E4-M2 (2026-09-07 빌드) 가 정본입니다.** 그 빌드에 들어간
 RTL 17개는 태그 `board-k3h3-e4-m2` 의 `hardware_bram/src/` 이고, sha256 이
 비트스트림과 바이트 동일합니다
-([`meta/source_sha256.txt`](hardware_bram/vivado/vivado_bbht_grover_fpga/meta/source_sha256.txt)).
+([`sha256_final_rtl.txt`](hardware_bram/results/2026-09-09_repro_package_v1.0/sha256_final_rtl.txt)
+가 17개 전부를 담고 있고, 태그와 17/17 일치합니다. 같은 빌드의
+[`meta/source_sha256.txt`](hardware_bram/vivado/vivado_bbht_grover_fpga/meta/source_sha256.txt)
+는 그중 7개만 적어 둔 부분 기록이라 그쪽만 보고 "전부 대조했다" 고 하면 안 됩니다).
 main 의 [`hardware_bram/src/`](hardware_bram/src/) 는 그 뒤의 **최신판 한 벌**입니다 (이 절 끝).
-CSR 의 숫자는 [`CSR_레지스터_규격.md`](documents/design_references/CSR_레지스터_규격.md) 와
-`software/models/common/final_hardware_contract.py` 두 곳에 있습니다. 둘을 만들던 정본
-JSON 과 생성기(`software/csr/`)는 2026-09-13 `software/` 재편 때 저장소에서 빠졌으므로
-이제 두 곳을 손으로 맞춥니다 (5절 끝).
+
+**CSR 의 정본은 [`software/contract/bbht_grover_csr.json`](software/contract/bbht_grover_csr.json)
+하나입니다.** `gen_csr.py` 가 여기서 Verilog 헤더 · C 헤더 · 파이썬 상수 ·
+[`CSR_레지스터_규격.md`](documents/design_references/CSR_레지스터_규격.md) 넷을 만듭니다 —
+그 넷은 손으로 고치지 마십시오. 같은 숫자를 들고 있으면서 생성 대상이 **아닌** 곳이
+둘 더 있는데(`software/models/common/final_hardware_contract.py` 는 CSR 과 다른 축인
+정책 이름을 같이 담고, `bbht_paper_bench/src/main.c` 는 보드 ELF 소스라 못 고칩니다),
+`gen_csr.py --check` 가 그 둘을 읽어서 정본과 대조합니다. 셋째 검사는 방향이 반대로,
+RTL 안에 CSR 값을 다시 박아 두는 것을 막습니다.
 
 | 항목 | 값 |
 |---|---|
@@ -262,13 +270,22 @@ Main IP 자체가 다른 갈래라 이쪽 `src/` 의 내용은 `hardware_bram/sr
 | `experiments/common500_benchmark/` | 보드와 같은 500 워크로드로 8 backend 를 비교하는 실험 |
 | `rtl_vectors/` | RTL 정답 벡터. requested-j bit-exact 256개(zip) · 열거 두 방식 |
 | `results/common500_final/` | Common500 4,000행 결과·표·그래프·검증 보고서 |
-| `contract/check_ports.py` | tsv ↔ RTL 포트 대조기. 대조 기준 `port_contract.tsv` 가 빠져서 지금은 돌지 않습니다 |
+| `rtl_vectors/tools/dump_bench_workload.py` | `bench250` · `bench500` 자극 생성기. `--seeds 50|100`. 데이터셋을 다시 계산하지 않고 `experiments/.../inputs/` 에서 복사하고, 돌 때마다 해시·로스터·부분집합을 스스로 검사합니다 |
+| `contract/` | **하드웨어-소프트웨어 계약 두 벌과 그 대조기.** CSR 정본 JSON · `gen_csr.py` · `generated/`(Verilog·C·Python 헤더) · 포트 계약 `port_contract.tsv` · `extract_contract.py` · `check_ports.py` · 계약 원본 docx |
+| `host/bbht_cli.py` | 호스트 PC 쪽 CLI. `--port /dev/ttyUSB1` · `mock`(파이썬 모델, 수치 인용 금지) · `replay:<파일>`(RTL 시뮬 트랜스크립트 재생). `selftest` 는 보드가 보고하는 상수를 CSR 정본과 대조합니다 |
 | `requirements.txt` | Common500 재실행용 파이썬 패키지 |
 
-재편 때 빠진 것은 `csr/`(CSR 정본 JSON · 생성기 · 생성 헤더), `contract/` 의 tsv ·
-추출기 · 인수인계 docx, `golden/`(옛 골든 모델과 `tools/`), `bin/`(옛 벡터),
-`bbht_cli.py`(호스트 CLI), `Qiskit_Server/`, `research/` 입니다. 커밋 `7d5455c` 에
-그대로 있습니다.
+2026-09-13 재편 때 빠졌던 것 중 파이프라인이 쓰는 것은 2026-09-16 에 되살렸습니다 —
+CSR 정본 JSON · 생성기 · 생성 헤더는 `software/csr/` 대신 **`software/contract/`** 로
+합쳤고(같은 깊이라 `gen_csr.py` 내부 경로를 안 고쳐도 됩니다), 포트 계약 tsv · 추출기 ·
+docx 는 제자리로, 호스트 CLI 는 `software/host/` 로 갔습니다. 벤치 워크로드 생성기는
+`dump_bench500_workload.py` 가 이력에 한 번도 커밋된 적이 없어서 둘을 하나로 새로
+썼습니다.
+
+되살리지 **않은** 것은 `golden/`(옛 골든 모델과 `tools/`), `bin/`(옛 벡터),
+`Qiskit_Server/`, `research/` 입니다 — 역할을 `models/` · `experiments/` ·
+`rtl_vectors/` 가 승계했고, 마지막으로 남아 있던 의존(데이터셋 재계산 · 시드 로스터)도
+저장소 안 재료로 대체됐습니다. 필요하면 커밋 `79b7410` 에서 꺼내십시오.
 
 ### `trash_bin/` — git 추적 안 함
 
@@ -323,22 +340,26 @@ hardware_bram/rvx/install_to_platform.sh
 cd $RVX_MINI_HOME/platform/bbht_grover_upgrade && make syn && make sim_rtl
 ```
 
-**2026-09-13 `software/` 재편 뒤로 main 에서 돌지 않는 것이 있습니다.** 빠진 파일
-셋 — CSR 생성 헤더(`software/csr/generated/`), 포트 계약표
-(`software/contract/port_contract.tsv`), 벤치 워크로드 생성기
-(`software/golden/tools/dump_bench*_workload.py`) — 을 다음이 씁니다.
+2026-09-13 `software/` 재편 때 빠진 생성물 때문에 한동안 위 명령 대부분이 멈춰
+있었습니다. 2026-09-16 에 되살렸고 **지금은 전부 돕니다** (4절 `software/` 표).
+CSR 헤더가 병목이었습니다 — `sim/Makefile` 의 모든 타깃이 `csr:` 를 선행조건으로
+걸고, RTL 4곳과 TB 3곳이 `bbht_grover_csr.vh` 를 include 하며,
+`bbht_grover_driver.h` 가 `bbht_grover_regs.h` 를 include 하기 때문입니다.
 
-| 멈추는 것 | 빠진 파일 |
-|---|---|
-| `hardware_bram/sim` · `hardware_dram/sim` 의 모든 `make` 타깃 | CSR 헤더 (`--check` 와 include), `ports` 는 tsv, `bench250` · `bench500` 은 워크로드 생성기 |
-| `hardware_bram/sim/run_driver_test.sh` | CSR 헤더 두 개를 복사합니다 |
-| `hardware_bram/rvx/install_to_platform.sh` | `gen_csr.py` 를 부르고 생성 헤더를 옮깁니다 |
-| 펌웨어 빌드 | `bbht_grover_driver.h` 가 `bbht_grover_regs.h` 를 include 합니다 |
-| RTL 통신 계층 합성 | `bbht_grover_mmio.v` · `bbht_ahb_loader.v` · `bbht_rvx_wrapper.v` 가 `bbht_grover_csr.vh` 를 include 합니다 |
+```bash
+# CSR 정본에서 생성물 넷을 만들고, 생성하지 않는 두 곳까지 대조
+python3 software/contract/gen_csr.py          # 갱신
+python3 software/contract/gen_csr.py --check  # 갱신 없이 확인만 (CI 용)
 
-되살리려면 커밋 `7d5455c` 에서 그 파일들을 꺼내십시오. 태그 `board-k3h3-e4-m2`
-워크트리 안에서는 전부 돕니다. 문서 검사(`check_docs.py`)와 Common500 실험은 영향이
-없습니다.
+# 호스트 CLI -- 보드가 없으면 mock 이나 시뮬 트랜스크립트 재생
+python3 software/host/bbht_cli.py --port mock selftest
+python3 software/host/bbht_cli.py --port replay:<트랜스크립트> -c ID -c RUN
+```
+
+RVX SoC 시뮬에서 `bbht_console` 은 그냥 두면 `read_line()` 에서 멈춥니다 —
+RVX 의 `ncsim_printf.v` 가 `uart_tx` 를 1 로 묶어 두어 보낼 쪽이 없기 때문입니다.
+`-DBBHT_CONSOLE_SCRIPT` 로 빌드하면 명령을 컴파일 시점 배열에서 읽습니다. UART
+경로 코드는 그대로라 정의하지 않은 보드 빌드는 달라지지 않습니다.
 
 **이 환경의 툴체인** (2026-09-09 실측): `verilator` 5.020, `vsim`(Questa 2022.1_2),
 `vivado` 2026.1(노드락 라이선스, `xc7a100tcsg324-1` 합성·구현·비트스트림 가능), RISC-V GCC,

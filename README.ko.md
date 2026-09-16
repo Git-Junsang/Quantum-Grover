@@ -22,16 +22,18 @@
 | 소프트웨어 기준모델                                      | NumPy · Qiskit Aer · Q1.22 bit-exact · K3/H3 정책 모델. 보드와 같은 500 워크로드에서 탐색 궤적과 물리 반복이 500/500 일치 |
 
 배선 정합성은 [포트 대조기](software/contract/check_ports.py)가 인수인계 문서의 포트 표
-(wrapper 19 + core 61)와 RTL 을 맞춰 보며 지켜 왔습니다. 대조 기준 `port_contract.tsv` 가
-2026-09-13 `software/` 재편 때 빠져서 지금은 멈춰 있습니다 (5절).
+(wrapper 19 + core 61)와 RTL 을 맞춰 보며 지킵니다. `stub` · `real` · `dram` 세 갈래
+모두 일치합니다.
 
 ---
 
 ## 2. 확정 수치
 
-CSR 수치의 기록은 [CSR_레지스터_규격.md](documents/design_references/CSR_레지스터_규격.md) 와
-`software/models/common/final_hardware_contract.py` 두 곳입니다. 둘을 만들던 정본 JSON 과
-헤더 생성기는 2026-09-13 `software/` 재편 때 빠졌으므로 이제 두 곳을 손으로 맞춥니다.
+CSR 의 정본은 [`software/contract/bbht_grover_csr.json`](software/contract/bbht_grover_csr.json)
+하나이고, `gen_csr.py` 가 거기서 Verilog · C · Python 헤더와
+[CSR_레지스터_규격.md](documents/design_references/CSR_레지스터_규격.md) 를 만듭니다.
+같은 숫자를 들고 있으면서 생성 대상이 아닌 두 곳(소프트웨어 기준모델, 보드 벤치 앱)은
+`--check` 가 읽어서 대조합니다.
 
 | 항목        | 값                                                                                            |
 | ----------- | --------------------------------------------------------------------------------------------- |
@@ -124,8 +126,12 @@ software/               두 갈래가 공유
   models/               NumPy · Qiskit · Q1.22 bit-exact · 체크포인트 정책 기준모델
   experiments/          Common500 비교 실험 (보드와 같은 500 워크로드)
   rtl_vectors/          RTL 정답 벡터 (requested-j 256케이스 · 열거 두 방식)
+                          tools/dump_bench_workload.py -- bench250/500 자극 생성
   results/              Common500 최종 결과 · 표 · 그래프 · 검증 보고서
-  contract/             포트 대조기 check_ports.py (대조 기준 tsv 는 빠져 있음)
+  contract/             하드웨어-소프트웨어 계약 두 벌과 대조기
+                          CSR 정본 JSON · gen_csr.py · generated/
+                          port_contract.tsv · check_ports.py
+  host/bbht_cli.py      호스트 PC CLI (실 UART · mock · 시뮬 트랜스크립트 재생)
   requirements.txt      Common500 재실행용 파이썬 패키지
 
 trash_bin/              구 스펙 문서와 대용량 산출물 보관. git 추적 안 함
@@ -135,14 +141,8 @@ trash_bin/              구 스펙 문서와 대용량 산출물 보관. git 추
 
 ## 5. 빠르게 돌려 보기
 
-> **지금 main 에서는 시뮬 회귀와 RVX 설치가 돌지 않습니다.** 2026-09-13 `software/` 재편 때
-> CSR 생성 헤더(`software/csr/generated/`) · 포트 계약표(`software/contract/port_contract.tsv`) ·
-> 벤치 워크로드 생성기(`software/golden/tools/`)가 빠졌는데, 아래 `make` 타깃과 설치 스크립트가
-> 그 파일들을 씁니다. 되살리려면 커밋 `7d5455c` 에서 꺼내십시오. 태그 `board-k3h3-e4-m2`
-> 워크트리 안에서는 전부 돕니다.
-
 ```bash
-# 통신 계층 회귀 / 통신 계층 + 어댑터 + Main IP / 250쌍 궤적 벤치 (위 파일이 있을 때)
+# 통신 계층 회귀 / 통신 계층 + 어댑터 + Main IP / 250쌍 궤적 벤치
 make -C hardware_bram/sim ports lint regress driver
 make -C hardware_bram/sim real
 make -C hardware_bram/sim bench250

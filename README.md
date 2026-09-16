@@ -23,21 +23,22 @@ Korean documentation is the primary source — see [README.ko.md](README.ko.md).
 | Performance evidence | Board wall-clock **7.626x**, RTL cycles **6.1401x**, **116,426x** over a single ORCA core |
 | Software reference models | NumPy, Qiskit Aer, Q1.22 bit-exact, and the K3/H3 policy model. On the same 500 workloads as the board, search trajectories and physical iteration counts match 500/500 |
 
-Wiring correctness used to be enforced by a
-[port contract check](software/contract/check_ports.py) that diffed the handoff
+Wiring correctness is enforced by a
+[port contract check](software/contract/check_ports.py) that diffs the handoff
 document's port tables (19 wrapper + 61 core signals) against the RTL across three
-branches (`stub`, `real`, `dram`). Its reference table `port_contract.tsv` was removed in
-the 2026-09-13 `software/` reorganization, so the check is currently stopped (section 5).
+branches (`stub`, `real`, `dram`). All three match.
 
 ---
 
 ## 2. Frozen numbers
 
-The CSR numbers are recorded in two places:
-[CSR_레지스터_규격.md](documents/design_references/CSR_레지스터_규격.md) and
-`software/models/common/final_hardware_contract.py`. The JSON source of truth and the
-header generator that produced them were removed on 2026-09-13, so the two are now kept in
-sync by hand.
+The single source of truth for the CSR map is
+[`software/contract/bbht_grover_csr.json`](software/contract/bbht_grover_csr.json).
+`gen_csr.py` generates the Verilog, C, and Python headers plus
+[CSR_레지스터_규격.md](documents/design_references/CSR_레지스터_규격.md) from it. Two
+other places hold the same numbers but are not generated (the software reference model,
+which also carries policy names, and the board bench app, whose ELF hash is frozen);
+`gen_csr.py --check` reads and cross-checks both.
 
 | Item | Value |
 |---|---|
@@ -134,8 +135,12 @@ software/               Shared by both branches
   models/               NumPy, Qiskit, Q1.22 bit-exact, and checkpoint-policy reference models
   experiments/          Common500 comparison (the same 500 workloads as the board)
   rtl_vectors/          RTL answer vectors (256 requested-j cases, two enumeration methods)
+                          tools/dump_bench_workload.py -- bench250/500 stimulus
   results/              Common500 final results, tables, plots, validation report
-  contract/             Port checker check_ports.py (its reference tsv is missing)
+  contract/             Hardware/software contracts and their checkers
+                          CSR source of truth (JSON), gen_csr.py, generated/
+                          port_contract.tsv, check_ports.py
+  host/bbht_cli.py      Host-side CLI (real UART, mock, sim-transcript replay)
   requirements.txt      Python packages for rerunning Common500
 
 trash_bin/              Superseded docs and bulky artifacts. Not tracked by git
@@ -145,16 +150,8 @@ trash_bin/              Superseded docs and bulky artifacts. Not tracked by git
 
 ## 5. Quick start
 
-> **On main, the simulation regression and the RVX install do not run right now.** The
-> 2026-09-13 `software/` reorganization removed the generated CSR headers
-> (`software/csr/generated/`), the port contract table
-> (`software/contract/port_contract.tsv`), and the bench workload generators
-> (`software/golden/tools/`), and the `make` targets and install script below use them.
-> Restore them from commit `7d5455c` if you need them. Everything still runs inside a
-> worktree of tag `board-k3h3-e4-m2`.
-
 ```bash
-# Comms regression / comms + adapter + Main IP / 250-pair trajectory bench (needs the files above)
+# Comms regression / comms + adapter + Main IP / 250-pair trajectory bench
 make -C hardware_bram/sim ports lint regress driver
 make -C hardware_bram/sim real
 make -C hardware_bram/sim bench250

@@ -2,8 +2,9 @@
 
 > 담당: 통신·명령·시스템 (SJS) · 2026-09-02 작성 · 2026-09-09 갱신
 > 보드 쪽 구현 `hardware_bram/firmware/bbht_console/src/main.c`.
-> 호스트 쪽은 시리얼 터미널이나 이 규약을 따르는 스크립트면 됩니다. 호스트 CLI
-> `software/bbht_cli.py` 는 2026-09-13 저장소에서 빠졌습니다 (커밋 `7d5455c` 에 있음).
+> 호스트 쪽은 시리얼 터미널이나 이 규약을 따르는 스크립트면 됩니다. 호스트 CLI 는
+> `software/host/bbht_cli.py` 입니다 — 실제 UART 말고도 `--port mock`(파이썬 모델)과
+> `--port replay:<파일>`(RTL 시뮬 트랜스크립트 재생)을 받습니다.
 
 ---
 
