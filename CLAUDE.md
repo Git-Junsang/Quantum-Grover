@@ -123,12 +123,21 @@ INCR16 버스트, argmax 측정, AXI4-Lite, MicroBlaze, XC7S100.
 | `backup-src_comm` | `src_comm` 을 `src/` 로 합친 직후. Main IP 는 보드 정본 그대로 |
 | `backup-src_ablation` | ablation 코어까지 합친 최신판. 이 정리를 마친 main 과 같은 코드 |
 
-**보드에 구운 것과 main 의 차이 두 가지는 보드에서 아직 확인하지 않았습니다.**
-통신 계층이 우리 판으로 바뀌었고(시뮬에서는 보드 정본 통신 계층과 같은 TB 를 똑같이
-통과했습니다), user region 이 가속기 클럭을 보드 정본의 `clk_accel` 대신 `gclk_accel`
-로 뭅니다. 다시 굽기 전에 이 둘을 먼저 보십시오. 배선 정합성은 `check_ports.py` 가
-wrapper 19 + core 61 신호를 세 갈래(`stub`/`real`/`dram`)로 대조해 지켜 왔는데, 대조
-기준 `port_contract.tsv` 가 2026-09-13 에 빠져서 지금은 돌지 않습니다 (5절 끝).
+**보드에 구운 것과 main 의 차이 두 가지는 보드에서는 아직 확인하지 않았지만, 굽기 직전까지는
+전부 확인했습니다** (2026-09-16). 통신 계층이 우리 판으로 바뀐 것과, user region 이 가속기
+클럭을 보드 정본의 `clk_accel` 대신 `gclk_accel` 로 무는 것입니다.
+
+| 단계 | 결과 | 근거 |
+|---|---|---|
+| verilator | bench500 이 보드 M2 와 5축 500/500, 사이클 합 오차 0 | [`results/2026-09-10_bench500_final_core/`](hardware_bram/results/2026-09-10_bench500_final_core/) (2026-09-16 에 다시 돌려 수치 전부 같음) |
+| SoC RTL 시뮬 | **실제 RISC-V 코어가 NoC 를 거쳐** 구동. 보드 ELF 와 sha256 같은 `bbht_paper_bench` 261쌍이 보드 M2 와 사이클까지 261/261 | [`results/2026-09-16_soc_rtl_paper_bench/`](hardware_bram/results/2026-09-16_soc_rtl_paper_bench/) |
+| 합성·구현 | WNS +0.196 ns (보드 빌드 +0.126), BRAM·DSP 동일, LUT 168 적음 | [`vivado/.../2026-09-16_comm_layer_rebuild/`](hardware_bram/vivado/vivado_bbht_grover_fpga/2026-09-16_comm_layer_rebuild/) |
+| `gclk_accel` | 생성 RTL 이 `assign gclk_accel = clk_accel;` — 게이팅도 BUFG 도 없는 순수 별칭 | 위 구현 묶음 `build_info.txt` |
+
+남은 것은 보드뿐입니다 — 물리 UART(FTDI · 보율 오차 · 핀맵)와 실경과 시간. 그리고
+`bbht_console` 대화형 경로는 SoC 시뮬에서 `OK` 직후에 멈춰서(원인 미확인) 보드에서 처음
+돌게 됩니다. 배선 정합성은 `check_ports.py` 가 wrapper 19 + core 61 신호를 세
+갈래(`stub`/`real`/`dram`)로 대조해 지킵니다.
 
 ---
 
@@ -217,6 +226,8 @@ dram 에 같은 역할의 폴더가 있으면 그리로 보내십시오 (테스�
 | `vivado/vivado_bbht_grover_fpga/2026-09-08_k3h3_e4_m2_board_500run/` | **보드 실측 정본.** 500 워크로드, Normal 대비 7.626x |
 | `vivado/vivado_bbht_grover_fpga/2026-09-08_orca_1core_baseline/` | 같은 보드 ORCA 1코어 순수 SW 기준선 |
 | `vivado/vivado_bbht_grover_fpga/2026-09-01_*` · `2026-09-04_*` | 중간 단계(K4/H8·K4/H4) 보드 실측. 최종 인용처가 아닙니다 |
+| `vivado/vivado_bbht_grover_fpga/2026-09-16_comm_layer_rebuild/` | 우리 통신 계층 판으로 다시 낸 비트스트림의 구현 리포트. **굽지 않았습니다.** Vivado 2026.1 이라 2026-09-07 것과 해시 비교 불가 |
+| `results/2026-09-16_soc_rtl_paper_bench/` | RVX SoC 전체 Questa 시뮬 위의 `bbht_paper_bench` 261쌍. 통신 계층을 실제 CPU 가 구동한 유일한 근거 |
 | `firmware/bbht_grover_driver.{c,h}` | 재사용 드라이버 |
 | `firmware/bbht_console/` | UART 명령 셸. 재빌드 없이 조건을 바꿉니다 |
 | `firmware/bbht_paper_bench/` | 실시간 벤치 앱. 보드 실측 500런을 낸 것 |
