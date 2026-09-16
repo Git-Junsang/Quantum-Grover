@@ -1,0 +1,2 @@
+platform,device,vivado,clock_MHz,WNS,TNS,WHS,THS,WPWS,TPWS,LUT,FF,BRAM_tile,DSP,Slices,power_W
+Full-RVX K3/H3-E4-M2 (comm layer rebuild),xc7a100tcsg324-1,2026.1,100,0.196,0.000,0.017,0.000,3.000,0.000,45116,45210,116,132,14971,0.568
