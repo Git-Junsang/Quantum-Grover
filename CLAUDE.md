@@ -83,6 +83,12 @@ RTL 안에 CSR 값을 다시 박아 두는 것을 막습니다.
 세 근거는 같은 500 워크로드(M = 1/4/16/64/256 × 시드 100)를 씁니다. 궤적
 (`result_index`·`trial_count`·`L_BBHT`)은 보드와 RTL 이 500/500 일치하지만
 **사이클 값 자체는 다릅니다** — M2 는 473/500 이 정확히 3,279 사이클 차이납니다.
+3,279 는 정책 엔진이 리셋 뒤 첫 체크포인트 탐색에서 memo BRAM 을 지우는 길이
+(`H_FUTURE × STATE_RANKS = 3 × 1,093`)입니다. 6단계 캠페인은 워크로드마다 새로 시작해
+매번 치르고 보드는 연달아 돌아 한 번만 치릅니다
+([`2026-09-16_soc_rtl_console`](hardware_bram/results/2026-09-16_soc_rtl_console/evidence.md)
+에서 한 워크로드로 확인). 체크포인트 사이클은 이렇게 직전에 무엇을 돌렸는지에 달려
+있으니, 콘솔로 한 번 돌린 사이클을 500런 표와 맞대지 마십시오.
 그러니 보드 사이클과 RTL 사이클로 배수를 만들지 마십시오.
 
 우리 `bench250` 하네스는 드라이버로 연속 실행해서 보드에 더 가깝습니다 —
@@ -131,12 +137,13 @@ INCR16 버스트, argmax 측정, AXI4-Lite, MicroBlaze, XC7S100.
 |---|---|---|
 | verilator | bench500 이 보드 M2 와 5축 500/500, 사이클 합 오차 0 | [`results/2026-09-10_bench500_final_core/`](hardware_bram/results/2026-09-10_bench500_final_core/) (2026-09-16 에 다시 돌려 수치 전부 같음) |
 | SoC RTL 시뮬 | **실제 RISC-V 코어가 NoC 를 거쳐** 구동. 보드 ELF 와 sha256 같은 `bbht_paper_bench` 261쌍이 보드 M2 와 사이클까지 261/261 | [`results/2026-09-16_soc_rtl_paper_bench/`](hardware_bram/results/2026-09-16_soc_rtl_paper_bench/) |
+| SoC 명령 왕복 | `bbht_console` 스크립트 21줄이 SoC 에서 돌고, 응답을 `bbht_cli.py` 재생으로 파싱해 같은 순서 verilator 와 RUN·STAT·ENUM 전부 일치 | [`results/2026-09-16_soc_rtl_console/`](hardware_bram/results/2026-09-16_soc_rtl_console/) |
 | 합성·구현 | WNS +0.196 ns (보드 빌드 +0.126), BRAM·DSP 동일, LUT 168 적음 | [`vivado/.../2026-09-16_comm_layer_rebuild/`](hardware_bram/vivado/vivado_bbht_grover_fpga/2026-09-16_comm_layer_rebuild/) |
 | `gclk_accel` | 생성 RTL 이 `assign gclk_accel = clk_accel;` — 게이팅도 BUFG 도 없는 순수 별칭 | 위 구현 묶음 `build_info.txt` |
 
-남은 것은 보드뿐입니다 — 물리 UART(FTDI · 보율 오차 · 핀맵)와 실경과 시간. 그리고
-`bbht_console` 대화형 경로는 SoC 시뮬에서 `OK` 직후에 멈춰서(원인 미확인) 보드에서 처음
-돌게 됩니다. 배선 정합성은 `check_ports.py` 가 wrapper 19 + core 61 신호를 세
+남은 것은 보드뿐입니다 — 물리 UART(FTDI · 보율 오차 · 핀맵)와 실경과 시간, 그리고
+콘솔이 UART 로 명령을 받는 쪽(`read_line()` 의 UART 판과 `bbht_cli.py` 의 시리얼
+트랜스포트)입니다. SoC 시뮬은 명령을 컴파일 시점 배열에서 읽습니다. 배선 정합성은 `check_ports.py` 가 wrapper 19 + core 61 신호를 세
 갈래(`stub`/`real`/`dram`)로 대조해 지킵니다.
 
 ---
@@ -227,9 +234,11 @@ dram 에 같은 역할의 폴더가 있으면 그리로 보내십시오 (테스�
 | `vivado/vivado_bbht_grover_fpga/2026-09-08_orca_1core_baseline/` | 같은 보드 ORCA 1코어 순수 SW 기준선 |
 | `vivado/vivado_bbht_grover_fpga/2026-09-01_*` · `2026-09-04_*` | 중간 단계(K4/H8·K4/H4) 보드 실측. 최종 인용처가 아닙니다 |
 | `vivado/vivado_bbht_grover_fpga/2026-09-16_comm_layer_rebuild/` | 우리 통신 계층 판으로 다시 낸 비트스트림의 구현 리포트. **굽지 않았습니다.** Vivado 2026.1 이라 2026-09-07 것과 해시 비교 불가 |
-| `results/2026-09-16_soc_rtl_paper_bench/` | RVX SoC 전체 Questa 시뮬 위의 `bbht_paper_bench` 261쌍. 통신 계층을 실제 CPU 가 구동한 유일한 근거 |
+| `results/2026-09-16_soc_rtl_paper_bench/` | RVX SoC 전체 Questa 시뮬 위의 `bbht_paper_bench` 261쌍. 통신 계층을 실제 CPU 가 구동한 근거 |
+| `results/2026-09-16_soc_rtl_console/` | 같은 SoC 시뮬 위의 `bbht_console` 명령 21줄과 호스트 CLI 재생 대조. 3,279 사이클 차이의 원인도 여기 |
+| `testbench/tb_console_seq.cpp` · `sim/soc_console_check.py` | 콘솔 스크립트와 같은 순서의 verilator 기준(`make console-seq`)과, SoC 트랜스크립트를 그 기준에 맞대는 검사기 |
 | `firmware/bbht_grover_driver.{c,h}` | 재사용 드라이버 |
-| `firmware/bbht_console/` | UART 명령 셸. 재빌드 없이 조건을 바꿉니다 |
+| `firmware/bbht_console/` | UART 명령 셸. 재빌드 없이 조건을 바꿉니다. `rvx_each.mh` 가 RTL 시뮬 빌드에만 스크립트 모드를 켭니다 |
 | `firmware/bbht_paper_bench/` | 실시간 벤치 앱. 보드 실측 500런을 낸 것 |
 | `firmware/orca_sw_baseline/` | 가속기를 안 쓰는 ORCA 1코어 기준선 앱 |
 
@@ -367,10 +376,21 @@ python3 software/host/bbht_cli.py --port mock selftest
 python3 software/host/bbht_cli.py --port replay:<트랜스크립트> -c ID -c RUN
 ```
 
-RVX SoC 시뮬에서 `bbht_console` 은 그냥 두면 `read_line()` 에서 멈춥니다 —
+RVX SoC 시뮬에서 `bbht_console` 의 UART 판은 `read_line()` 에서 입력을 기다리며 멈춥니다 —
 RVX 의 `ncsim_printf.v` 가 `uart_tx` 를 1 로 묶어 두어 보낼 쪽이 없기 때문입니다.
-`-DBBHT_CONSOLE_SCRIPT` 로 빌드하면 명령을 컴파일 시점 배열에서 읽습니다. UART
-경로 코드는 그대로라 정의하지 않은 보드 빌드는 달라지지 않습니다.
+그래서 `firmware/bbht_console/rvx_each.mh` 가 **RTL 시뮬 빌드(`TARGET_IMP_CLASS=rtl`)에만**
+`-DBBHT_CONSOLE_SCRIPT` 를 넣고, 콘솔은 명령을 컴파일 시점 배열에서 읽습니다. 보드 빌드
+ELF 는 바이트 단위로 그대로입니다. **명령줄로 `DEFINE_CFLAGS` 를 넘기지 마십시오** —
+`make bbht_console.sim` 이 시뮬 직전에 앱을 다시 빌드하면서 빠집니다(2026-09-16 에 이것을
+"원인 미확인 멈춤" 으로 잘못 기록했습니다). 시뮬 뒤 `sim_rtl/rvx_app_build.log` 에
+`BBHT_CONSOLE_SCRIPT` 가 있는지 보십시오.
+
+```bash
+(cd $RVX_MINI_HOME/platform/bbht_grover_upgrade/sim_rtl && make bbht_console.sim)   # 3분쯤
+make -C hardware_bram/sim console-seq          # 같은 순서의 verilator 기준값 (30초쯤)
+python3 hardware_bram/sim/soc_console_check.py $RVX_MINI_HOME/platform/bbht_grover_upgrade/sim_rtl/qtsim.log \
+    --ref /tmp/sjs_console_seq/console_seq.csv
+```
 
 **이 환경의 툴체인** (2026-09-09 실측): `verilator` 5.020, `vsim`(Questa 2022.1_2),
 `vivado` 2026.1(노드락 라이선스, `xc7a100tcsg324-1` 합성·구현·비트스트림 가능), RISC-V GCC,

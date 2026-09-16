@@ -103,20 +103,50 @@ static int parse_num(const char *s, int *ok)
  * 그대로 두었습니다 -- 이 매크로를 정의하지 않으면 보드 빌드는 한 바이트도
  * 달라지지 않습니다.
  *
+ * 이 매크로는 앱 폴더의 rvx_each.mh 가 RTL 시뮬 빌드에만 켭니다. 명령줄로
+ * 넘기면 sim_rtl 이 시뮬 직전에 다시 빌드하면서 빠지므로 그쪽을 쓰십시오.
+ *
  * 명령 목록은 -DBBHT_CONSOLE_SCRIPT_LINES='"A","B",...' 로 넘기거나,
  * 안 넘기면 아래 기본 순서를 씁니다. 마지막 QUIT 이 시뮬을 끝냅니다.
+ *
+ * 기본 순서는 보드 실측과 바로 맞댈 수 있게 짰습니다. 보드 500런의
+ * M = 4, 시드 0 워크로드입니다.
+ *   - 데이터셋: software/experiments/common500_benchmark/inputs/datasets/
+ *     dataset_target_4.bin 에서 12345 인 칸은 507 2852 4724 8685 넷뿐입니다.
+ *     GEN TARGETS=0 은 12345 가 한 칸도 없는 배경을 만들고, POKE 넷이 같은
+ *     자리에 목표를 심습니다. EQ 술어는 "12345 와 같은가" 만 보므로 배경
+ *     값이 달라도 오라클 표시는 보드 데이터셋과 칸마다 같습니다.
+ *   - 시드: 공식 로스터 0번 (SEEDJ 0x7B1DCDAF, SEEDM 0x24370DF2).
+ *   - BURST=0 은 bench500 의 normal, BURST=1 은 k4 행이자 보드 M2 행입니다.
+ *   - BURST=1 RUN 을 리셋 없이 두 번 합니다. 체크포인트 사이클은 실행 이력에
+ *     달려 있습니다. 리셋 뒤 첫 탐색은 정책 memo 청소로 3,279 사이클이 더
+ *     붙어 6단계 캠페인(워크로드마다 새로 시작) 값과 같고, 두 번째는 직전
+ *     탐색이 보드 앱과 달라 사이클이 보드 표와 다릅니다. 사이클 기준은 같은
+ *     순서로 두드리는 testbench/tb_console_seq.cpp 입니다.
+ * 적재 전 RUN 과 틀린 SET 은 ERR 종결자 경로를 보려고 일부러 넣었습니다.
  */
 #ifndef BBHT_CONSOLE_SCRIPT_LINES
 #define BBHT_CONSOLE_SCRIPT_LINES                                             \
     "ID",                                                                     \
-    "GEN COUNT=16384 TARGETS=4 VAL=12345 SEED=1",                             \
+    "RUN",                                                                    \
+    "GEN COUNT=16384 TARGETS=0 VAL=12345 SEED=1",                             \
+    "POKE IDX=507 VAL=12345",                                                 \
+    "POKE IDX=2852 VAL=12345",                                                \
+    "POKE IDX=4724 VAL=12345",                                                \
+    "POKE IDX=8685 VAL=12345",                                                \
+    "PEEK IDX=8685",                                                          \
     "LOAD",                                                                   \
     "SET MODE=EQ A=12345 AUTO=1 BURST=0 SEEDJ=0x7B1DCDAF SEEDM=0x24370DF2",   \
+    "SHOW",                                                                   \
     "RUN",                                                                    \
     "STAT",                                                                   \
     "SET BURST=1",                                                            \
     "RUN",                                                                    \
     "STAT",                                                                   \
+    "RUN",                                                                    \
+    "STAT",                                                                   \
+    "SET MODE=NOPE",                                                          \
+    "ENUM",                                                                   \
     "QUIT"
 #endif
 

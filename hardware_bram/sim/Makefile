@@ -7,6 +7,8 @@
 #   make lint   lint 만
 #   make bench250 / bench500
 #               250쌍 / 500 워크로드 궤적 벤치 (20분 / 40분쯤)
+#   make console-seq
+#               SoC 시뮬 bbht_console 스크립트와 같은 순서의 기준값 (30초쯤)
 #   make clean
 #
 # 갈래가 둘인 이유는 코어 자리에 무엇을 끼우느냐입니다. 통신 계층(wrapper·
@@ -278,3 +280,45 @@ bench500: csr bench500-wl
 	@echo "500 워크로드 실행 중 ($(BENCH_CORE)). 40분쯤 걸립니다."
 	@WL_DIR=$(BENCH500_WL) $(BENCH500_BUILD)/obj/bench > $(BENCH500_OUT)
 	@python3 bench500_report.py $(BENCH500_OUT)
+
+#---------------------------------------------------------------------
+# SoC 시뮬 bbht_console 스크립트의 verilator 짝
+#
+#   make console-seq           콘솔 스크립트와 같은 순서(리셋 -> 적재 -> NORMAL ->
+#                              체크포인트 두 번 -> ENUM)로 같은 RTL 을 드라이버로
+#                              두드립니다. 빌드 포함 30초쯤
+#
+# RVX SoC 시뮬에서 bbht_console 을 돌린 트랜스크립트는 soc_console_check.py 가
+# 이 CSV 와 명령 하나하나 맞댑니다.
+#
+#   python3 soc_console_check.py <qtsim.log> --ref $(CONSOLE_SEQ_OUT)
+#
+# 따로 둔 이유는 체크포인트 탐색의 사이클이 실행 이력에 달려 있기 때문입니다.
+# 리셋 뒤 첫 탐색은 정책 memo 를 지우느라 3,279 사이클이 더 들고, 그다음도
+# 직전 탐색에 따라 달라집니다. 그래서 콘솔 스크립트의 사이클은 보드 500런
+# 행과 직접 맞댈 수 없고, 같은 순서로 돈 이 결과와 맞대야 합니다
+# (testbench/tb_console_seq.cpp 머리말).
+#---------------------------------------------------------------------
+CONSOLE_SEQ_BUILD = /tmp/sjs_console_seq
+CONSOLE_SEQ_OUT  ?= $(CONSOLE_SEQ_BUILD)/console_seq.csv
+
+.PHONY: console-seq
+
+console-seq: csr bench500-wl
+	@rm -rf $(CONSOLE_SEQ_BUILD); mkdir -p $(CONSOLE_SEQ_BUILD)/src
+	@cp $(TB_DIR)/tb_console_seq.cpp $(BENCH_COMM) $(CORE_SRCS) $(CONSOLE_SEQ_BUILD)/src/
+	@cp $(SRC_DIR)/grover_param.vh $(CONSOLE_SEQ_BUILD)/src/
+	@cp $(CSR_DIR)/bbht_grover_csr.vh $(CSR_DIR)/bbht_grover_regs.h $(CONSOLE_SEQ_BUILD)/src/
+	@cp ../firmware/bbht_grover_driver.c ../firmware/bbht_grover_driver.h $(CONSOLE_SEQ_BUILD)/src/
+	@gcc -c -O2 $(BENCH_DEFS) -I$(CONSOLE_SEQ_BUILD)/src \
+	     $(CONSOLE_SEQ_BUILD)/src/bbht_grover_driver.c -o $(CONSOLE_SEQ_BUILD)/driver.o
+	@verilator --cc --exe --build -Wno-fatal -Wno-DECLFILENAME \
+	     --Mdir $(CONSOLE_SEQ_BUILD)/obj \
+	     -CFLAGS "$(BENCH_DEFS) -I$(CONSOLE_SEQ_BUILD)/src -O2" \
+	     -LDFLAGS "$(CONSOLE_SEQ_BUILD)/driver.o" -I$(CONSOLE_SEQ_BUILD)/src \
+	     $(foreach f,$(notdir $(BENCH_COMM) $(CORE_SRCS)),$(CONSOLE_SEQ_BUILD)/src/$(f)) \
+	     --top-module bbht_rvx_wrapper $(CONSOLE_SEQ_BUILD)/src/tb_console_seq.cpp \
+	     -o bench > $(CONSOLE_SEQ_BUILD)/build.log 2>&1 \
+	     || { tail -20 $(CONSOLE_SEQ_BUILD)/build.log; exit 1; }
+	@WL_DIR=$(BENCH500_WL) $(CONSOLE_SEQ_BUILD)/obj/bench > $(CONSOLE_SEQ_OUT)
+	@cat $(CONSOLE_SEQ_OUT)

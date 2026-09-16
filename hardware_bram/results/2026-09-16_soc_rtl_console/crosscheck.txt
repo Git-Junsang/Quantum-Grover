@@ -1,0 +1,171 @@
+=== 명령 21 줄 재생 (bbht_cli.py ReplayTransport) ===
+  일치 > ID                                                         OK
+  일치 > RUN                                                        ERR NOT_LOADED
+  일치 > GEN COUNT=16384 TARGETS=0 VAL=12345 SEED=1                 OK count=16384 targets=0 val=12345
+  일치 > POKE IDX=507 VAL=12345                                     OK idx=507 val=12345
+  일치 > POKE IDX=2852 VAL=12345                                    OK idx=2852 val=12345
+  일치 > POKE IDX=4724 VAL=12345                                    OK idx=4724 val=12345
+  일치 > POKE IDX=8685 VAL=12345                                    OK idx=8685 val=12345
+  일치 > PEEK IDX=8685                                              OK
+  일치 > LOAD                                                       OK loaded=16384 addr=0xe0009f40
+  일치 > SET MODE=EQ A=12345 AUTO=1 BURST=0 SEEDJ=0x7B1DCDAF SEEDM=0x24370DF2 OK
+  일치 > SHOW                                                       OK
+  일치 > RUN                                                        OK
+  일치 > STAT                                                       OK
+  일치 > SET BURST=1                                                OK
+  일치 > RUN                                                        OK
+  일치 > STAT                                                       OK
+  일치 > RUN                                                        OK
+  일치 > STAT                                                       OK
+  일치 > SET MODE=NOPE                                              ERR BAD_KV
+  일치 > ENUM                                                       OK
+  일치 > QUIT                                                       OK
+
+=== ID 응답 대 CSR 정본 (bbht_cli.py selftest) ===
+  항목             보드             정본            
+    일치 accel_clk_hz 0x05F5E100     0x05F5E100    
+    일치 csr_base     0xE2020000     0xE2020000    
+    일치 n_entries    16384          16384         
+    일치 q_bits       14             14            
+    일치 sram_base    0xE0000000     0xE0000000    
+    일치 sram_last    0xE001FFFF     0xE001FFFF    
+    일치 fifo_depth   256            256           
+  
+  selftest: 7 항목 중 0 어긋남
+
+=== 워크로드 ===
+  일치 POKE 자리 = dataset_target_4.bin 의 12345 자리 [507, 2852, 4724, 8685] 
+  M = 4, 시드 0 (seed_j 0x7B1DCDAF, seed_meas 0x24370DF2)
+  일치 PEEK 이 돌려준 값                           12345          
+  일치 LOAD 적재 항목 수                           16384          
+
+=== RUN 1: BURST=0 NORMAL ===
+  일치 기준과 BURST 같음                           0              
+HIT 대 같은 순서 verilator (tb_console_seq)  5/5
+  일치 result_index                           8685           
+  일치 trial_count                            21             
+  일치 L_BBHT                                 119            
+  일치 actual_iter                            119            
+  일치 cycle_count                            41310          
+STAT 대 같은 순서 verilator  15/15
+  일치 idx                                    8685           
+  일치 trials                                 21             
+  일치 l_bbht                                 119            
+  일치 actual_iter                            119            
+  일치 cyc                                    41310          
+  일치 policy_cyc                             0              
+  일치 stall                                  0              
+  일치 actions                                0              
+  일치 memo_hit                               0              
+  일치 memo_miss                              0              
+  일치 cold_solve                             0              
+  일치 spec_solve                             0              
+  일치 mismatch                               0              
+  일치 max_latency                            0              
+  일치 empty                                  0              
+HIT 대 bench500 normal 행 (이력 무관)  5/5
+  일치 result_index                           8685           
+  일치 trial_count                            21             
+  일치 L_BBHT                                 119            
+  일치 actual_iter                            119            
+  일치 cycle_count                            41310          
+STAT 대 bench500 normal 행  6/6
+  일치 policy_cycles                          0              
+  일치 policy_stall                           0              
+  일치 policy_actions                         0              
+  일치 cold_solve                             0              
+  일치 spec_solve                             0              
+  일치 plan_mismatch                          0              
+HIT 대 SoC paper_bench mode0 행  5/5
+  일치 result_index                           8685           
+  일치 trial_count                            21             
+  일치 L_BBHT                                 119            
+  일치 actual_iter                            119            
+  일치 cycle_count                            41310          
+
+=== RUN 2: BURST=1 K3/H3-E4-M2, 리셋 뒤 1 번째 체크포인트 탐색 ===
+  일치 기준과 BURST 같음                           1              
+HIT 대 같은 순서 verilator (tb_console_seq)  5/5
+  일치 result_index                           8685           
+  일치 trial_count                            21             
+  일치 L_BBHT                                 119            
+  일치 actual_iter                            38             
+  일치 cycle_count                            20935          
+STAT 대 같은 순서 verilator  15/15
+  일치 idx                                    8685           
+  일치 trials                                 21             
+  일치 l_bbht                                 119            
+  일치 actual_iter                            38             
+  일치 cyc                                    20935          
+  일치 policy_cyc                             7063           
+  일치 stall                                  3560           
+  일치 actions                                594            
+  일치 memo_hit                               123            
+  일치 memo_miss                              196            
+  일치 cold_solve                             1              
+  일치 spec_solve                             21             
+  일치 mismatch                               0              
+  일치 max_latency                            3352           
+  일치 empty                                  3              
+HIT 대 6단계 캠페인 K3/H3-E4-M2 (워크로드마다 새로 시작)  5/5
+  일치 result_index                           8685           
+  일치 trial_count                            21             
+  일치 L_BBHT                                 119            
+  일치 actual_iter                            38             
+  일치 cycle_count                            20935          
+  bench500 k4 (연달아 실행) 대비 cycle +3279, policy_stall +3279
+  일치 cycle 차이 = policy_stall 차이             3279           
+
+=== RUN 3: BURST=1 K3/H3-E4-M2, 리셋 뒤 2 번째 체크포인트 탐색 ===
+  일치 기준과 BURST 같음                           1              
+HIT 대 같은 순서 verilator (tb_console_seq)  5/5
+  일치 result_index                           8685           
+  일치 trial_count                            21             
+  일치 L_BBHT                                 119            
+  일치 actual_iter                            38             
+  일치 cycle_count                            17847          
+STAT 대 같은 순서 verilator  15/15
+  일치 idx                                    8685           
+  일치 trials                                 21             
+  일치 l_bbht                                 119            
+  일치 actual_iter                            38             
+  일치 cyc                                    17847          
+  일치 policy_cyc                             4265           
+  일치 stall                                  472            
+  일치 actions                                681            
+  일치 memo_hit                               146            
+  일치 memo_miss                              227            
+  일치 cold_solve                             1              
+  일치 spec_solve                             21             
+  일치 mismatch                               0              
+  일치 max_latency                            444            
+  일치 empty                                  6              
+논리 4축 대 bench500 k4 행  4/4
+  일치 result_index                           8685           
+  일치 trial_count                            21             
+  일치 L_BBHT                                 119            
+  일치 actual_iter                            38             
+논리 4축 대 보드 M2 실측 행  4/4
+  일치 result_index                           8685           
+  일치 trial_count                            21             
+  일치 L_BBHT                                 119            
+  일치 actual_iter                            38             
+논리 4축 대 SoC paper_bench mode1 행  4/4
+  일치 result_index                           8685           
+  일치 trial_count                            21             
+  일치 L_BBHT                                 119            
+  일치 actual_iter                            38             
+  bench500 k4 (연달아 실행) 대비 cycle +191, policy_stall +191
+  일치 cycle 차이 = policy_stall 차이             191            
+
+=== ENUM ===
+  FOUND [8685, 2852, 507, 4724]
+  일치 FOUND 가 전부 심은 자리                       True           
+  일치 FOUND 값이 전부 12345                      True           
+  일치 FOUND 에 중복 없음                          True           
+  일치 END count = FOUND 줄 수                  4              
+  일치 END found = FOUND 줄 수                  4              
+  일치 FOUND 순서 = 같은 순서 verilator             [8685, 2852, 507, 4724] 
+  일치 END cyc = 같은 순서 verilator              280494         
+
+어긋남 0 건

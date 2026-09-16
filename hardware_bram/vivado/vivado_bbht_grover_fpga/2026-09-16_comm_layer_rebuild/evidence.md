@@ -72,7 +72,9 @@ unconstrained 0 · loops 0 입니다.
 
 비트스트림과 달리 ELF 는 재현됐습니다 — RISC-V 툴체인 · RVX SSW · 메모리맵 ·
 소스가 2026-09-07 빌드 머신(`/home/kyu/rvx_summer26`)과 같다는 뜻입니다.
-`bbht_console` 은 시뮬용 스크립트 모드로 빌드해서 다릅니다.
+`bbht_console` 은 보드 묶음(`bitstream/2026-09-08_k3h3_e4_m2/`)에 ELF 가 없어 대조할 것이
+없습니다. 이 앱의 보드 빌드 ELF 는 시뮬 전용 스크립트 모드를 넣기 전후로 바이트 동일합니다
+([`results/2026-09-16_soc_rtl_console/`](../../../results/2026-09-16_soc_rtl_console/evidence.md)).
 
 ## 파일
 

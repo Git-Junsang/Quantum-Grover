@@ -287,10 +287,17 @@ class ReplayTransport:
     Board / parse_kv_line 경로로 먹입니다. 즉 호스트 파서가 실제 펌웨어 응답을
     정확히 해석하는지를 봅니다.
 
-    트랜스크립트는 명령 에코(`> CMD`) 없이 응답만 있어도 됩니다. 응답 덩어리를
-    `OK` / `ERR` 종결자로 잘라서 보낸 순서대로 하나씩 돌려줍니다 -- 콘솔 앱이
-    한 명령에 정확히 하나의 종결자를 내는 규약(UART_명령_프로토콜.md §2)을
-    그대로 쓴 것입니다.
+    자르는 법은 트랜스크립트에 명령 에코(`> CMD`)가 있느냐로 갈립니다.
+
+    - 에코가 있으면(스크립트 모드 `bbht_console` 이 내는 형태) 에코 줄을 경계로
+      자릅니다. 첫 에코 앞의 시작 배너와 그 `OK` 는 어느 명령의 응답도 아니라서
+      버립니다. 그리고 호스트가 보낸 명령과 펌웨어가 받았다고 에코한 명령을
+      대조해서, 다르면 `ERR REPLAY_MISMATCH` 를 돌려줍니다 -- 순서가 한 칸만
+      밀려도 그 뒤 숫자가 전부 엉뚱한 명령의 것이 되기 때문입니다.
+    - 에코가 없으면 응답 덩어리를 `OK` / `ERR` 종결자로 잘라서 보낸 순서대로
+      하나씩 돌려줍니다. 콘솔 앱이 한 명령에 정확히 하나의 종결자를 내는
+      규약(UART_명령_프로토콜.md §2)을 그대로 쓴 것입니다. 이때는 배너가 없는
+      트랜스크립트여야 합니다.
     """
 
     def __init__(self, path):
@@ -299,35 +306,57 @@ class ReplayTransport:
         self.pending = []
 
     @staticmethod
+    def _norm(cmd):
+        # 콘솔의 split() 이 토큰을 대문자로 바꾸고 공백을 하나로 봅니다.
+        return " ".join(cmd.upper().split())
+
+    @staticmethod
     def _split(path):
-        blocks, cur = [], []
+        """[(에코한 명령 또는 None, 응답 줄 목록), ...]"""
         with open(path, encoding="utf-8", errors="replace") as f:
-            for raw in f:
-                line = raw.rstrip("\r\n")
-                # RVX printf 가 앞에 붙이는 머리말과 호스트 에코는 버립니다.
+            lines = [raw.rstrip("\r\n") for raw in f]
+
+        if any(l.startswith("> ") for l in lines):
+            blocks, cur = [], None
+            for line in lines:
                 if line.startswith("> "):
+                    cur = (line[2:].strip(), [])
+                    blocks.append(cur)
                     continue
                 stripped = line.strip()
-                if not stripped:
+                if cur is None or not stripped:           # 배너, 빈 줄
                     continue
-                cur.append(stripped)
-                # 종결자는 첫 낱말이 OK / ERR 인 줄입니다. OK 는 인자를 달고
-                # 오는 경우가 많아서("OK count=16384 targets=4") 줄 전체를
-                # 맞대면 안 됩니다.
-                head = stripped.split(None, 1)[0]
-                if head in ("OK", "ERR"):
-                    blocks.append(cur)
-                    cur = []
+                cur[1].append(stripped)
+            return blocks
+
+        blocks, cur = [], []
+        for line in lines:
+            stripped = line.strip()
+            if not stripped:
+                continue
+            cur.append(stripped)
+            # 종결자는 첫 낱말이 OK / ERR 인 줄입니다. OK 는 인자를 달고
+            # 오는 경우가 많아서("OK count=16384 targets=4") 줄 전체를
+            # 맞대면 안 됩니다.
+            head = stripped.split(None, 1)[0]
+            if head in ("OK", "ERR"):
+                blocks.append((None, cur))
+                cur = []
         if cur:                                          # 종결자 없이 끝난 꼬리
-            blocks.append(cur)
+            blocks.append((None, cur))
         return blocks
 
     def send(self, line):
         if self.i >= len(self.blocks):
             self.pending = ["ERR REPLAY_EXHAUSTED"]
             return
-        self.pending = self.blocks[self.i]
+        echoed, resp = self.blocks[self.i]
         self.i += 1
+        if echoed is not None and self._norm(echoed) != self._norm(line):
+            self.pending = ["ERR REPLAY_MISMATCH sent=%r transcript=%r"
+                            % (line, echoed)]
+            return
+        self.pending = resp
 
     def read_lines(self):
         out, self.pending = self.pending, []

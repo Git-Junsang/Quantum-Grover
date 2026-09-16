@@ -71,28 +71,20 @@ M = 1 과 M = 4 의 합은 `results/2026-09-10_bench500_final_core/report.txt` �
   안 됩니다. 성능 인용은 `CLAUDE.md` 2절의 세 축을 쓰십시오.
 - **M = 16 나머지 39시드와 M = 64 · 256.** 시간 제한에 걸렸습니다. 같은 구성의 verilator
   bench500 이 500/500 으로 통과했으므로 공백은 좁지만, SoC 경로로는 돌지 않았습니다.
-- **`bbht_console` 대화형 경로.** 아래 곁가지 참조.
+- **`bbht_console` 명령 왕복.** 같은 날 따로 돌렸습니다 —
+  [`2026-09-16_soc_rtl_console`](../2026-09-16_soc_rtl_console/evidence.md).
 
-## 곁가지 — `bbht_console` 은 SoC 시뮬에서 여전히 멈춥니다
+## 곁가지 — `bbht_console` 이 멈췄던 것은 시험 절차의 잘못이었습니다
 
-처음에는 `bbht_console` 을 스크립트 모드(`-DBBHT_CONSOLE_SCRIPT`)로 돌리려 했는데,
-시작 배너와 `OK` 를 낸 **직후** 멈췄습니다. 명령을 `ID`, `QUIT` 둘로 줄여도, 루프 진입
-직후에 표시 printf 를 넣어도 그 표시조차 나오지 않았습니다.
+처음에 이 절에는 "`bbht_console` 을 스크립트 모드로 돌리면 시작 배너 `OK` 직후에 멈추고
+원인을 찾지 못했다" 고 적었습니다. **틀린 기록입니다.** 스크립트 모드 정의를 명령줄로만
+넘겼는데 `make bbht_console.sim` 이 시뮬 직전에 앱을 다시 빌드하면서 그 정의가 빠졌고,
+시뮬에 실린 UART 판이 설계대로 입력을 기다린 것이었습니다(당시 빌드 로그에
+`BBHT_CONSOLE_SCRIPT` 0번). `uart_init()` 가설 시험도 같은 이유로 실제로는 돌지 않았습니다.
 
-펌웨어 논리 결함은 아닙니다 — 같은 `main.c` 를 호스트 gcc 로 빌드해 CSR 모형 위에서
-돌리면 스크립트 아홉 줄이 전부 돌고 `# script done` 으로 끝납니다. 같은 플랫폼의 `hello`
-는 SoC 시뮬에서 5초 만에 끝나고, `bbht_paper_bench` 는 위처럼 50분을 정상으로 돕니다.
-
-`bbht_paper_bench` 와 `bbht_console` 의 눈에 띄는 차이가 `uart_init()` 호출 여부라서
-(paper_bench 는 부르지 않고, `uart_config()` 는 TX FIFO 를 비우고 분주기를 다시 씁니다)
-스크립트 모드에서 그 호출을 빼고 다시 돌려 봤습니다. **똑같이 `OK` 직후에 멈췄습니다 —
-이 가설은 틀렸습니다.** 원인은 찾지 못했고, 시험용 변경은 되돌렸습니다.
-
-그래서 보드 없는 호스트 왕복 증명은 이 묶음의 paper_bench 경로(펌웨어 → 드라이버 없이
-직접 CSR → NoC → 통신 계층 → Main IP → UART 출력)로 대신했습니다. `bbht_console` 의
-명령 파서와 `software/host/bbht_cli.py` 의 응답 파서는 호스트 gcc 빌드와
-`--port replay` 로만 확인됐고, **SoC 경로 위에서 대화형으로 돈 적은 없습니다.** 보드에
-올린 뒤 가장 먼저 볼 곳입니다.
+앱 폴더의 `rvx_each.mh` 로 RTL 시뮬 빌드에만 정의를 넣도록 고친 뒤 콘솔은 명령 21줄을
+끝까지 돌았고, 결과는
+[`2026-09-16_soc_rtl_console`](../2026-09-16_soc_rtl_console/evidence.md) 에 있습니다.
 
 ## 파일
 

@@ -1,0 +1,17 @@
+## bbht_console 의 앱별 RVX 빌드 설정
+##
+## RVX 는 앱을 빌드할 때 이 파일(app/<앱>/rvx_each.mh)을 읽습니다. 앱 빌드
+## 폴더에 생성되는 Makefile 이 `-include ../rvx_each.mh` 로 끌어옵니다.
+##
+## RTL 시뮬 빌드(TARGET_IMP_CLASS=rtl)에만 스크립트 모드를 켭니다.
+##
+## 명령줄에서 `make rtl DEFINE_CFLAGS=-DBBHT_CONSOLE_SCRIPT` 로 넘기면 안 됩니다.
+## sim_rtl 의 `make bbht_console.sim` 이 시뮬 직전에 앱을 스스로 다시 빌드하는데,
+## 그때는 그 명령줄 값이 없어서 시뮬에 실리는 ELF 가 UART 판으로 돌아갑니다.
+## 그러면 read_line() 이 오지 않는 RX 를 기다리며 첫 명령 앞에서 멈춥니다.
+## 2026-09-16 에 실제로 이 함정에 걸렸습니다.
+##
+## 보드 빌드(TARGET_IMP_CLASS=arty-100t)와 가상 플랫폼 빌드(vp)에는 들어가지
+## 않습니다. 이 파일이 읽히는 시점에는 빌드 Makefile 이 TARGET_IMP_CLASS 를
+## 아직 정하지 않았으므로 ifeq 대신 쓰일 때 전개되는 $(if ...) 를 씁니다.
+DEFINE_CFLAGS += $(if $(filter rtl,$(TARGET_IMP_CLASS)),-DBBHT_CONSOLE_SCRIPT)
