@@ -57,8 +57,8 @@ case "$CORE" in
         ;;
 esac
 
-cp "$HERE/../../software/csr/generated/bbht_grover_csr.vh" "$BUILD/src/"
-cp "$HERE/../../software/csr/generated/bbht_grover_regs.h" "$BUILD/src/"
+cp "$HERE/../../software/contract/generated/bbht_grover_csr.vh" "$BUILD/src/"
+cp "$HERE/../../software/contract/generated/bbht_grover_regs.h" "$BUILD/src/"
 cp "$HERE/../firmware/bbht_grover_driver."{c,h}    "$BUILD/src/"
 
 # 실물은 탐색 한 번이 수십만 사이클이라 드라이버 폴링 상한을 크게 잡습니다.

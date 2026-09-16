@@ -1,0 +1,86 @@
+# BBHT/Grover 포트 계약 -- 기계 생성물. 손으로 고치지 마십시오.
+# 출처: LPSoC_BBHT_Grover_팀원_Handoff_SW_통신_v0.9.8반영_2026-09-01.docx
+#   §3.3 bbht_rvx_wrapper 외부 APB/AHB 포트 계약
+#   §3.4 Main IP generic interface
+# docx sha256: 46a5d17805e52caecff4cebbfd1240f9ae7976a54e06b81d2bc391455ba748da
+# scope	group	port	dir	width	signed
+wrapper	APB	psel	IN	1	
+wrapper	APB	penable	IN	1	
+wrapper	APB	pwrite	IN	1	
+wrapper	APB	paddr	IN	32	
+wrapper	APB	pwdata	IN	32	
+wrapper	APB	pready	OUT	1	
+wrapper	APB	prdata	OUT	32	
+wrapper	APB	pslverr	OUT	1	
+wrapper	AHB	shready	IN	1	
+wrapper	AHB	shrdata	IN	32	
+wrapper	AHB	shresp	IN	1	
+wrapper	AHB	shaddr	OUT	32	
+wrapper	AHB	shburst	OUT	3	
+wrapper	AHB	shmasterlock	OUT	1	
+wrapper	AHB	shprot	OUT	4	
+wrapper	AHB	shsize	OUT	3	
+wrapper	AHB	shtrans	OUT	2	
+wrapper	AHB	shwrite	OUT	1	
+wrapper	AHB	shwdata	OUT	32	
+core	Search/Mode	start	IN	1	
+core	Search/Mode	auto_shot	IN	1	
+core	Search/Mode	j_target	IN	7	
+core	Search/Mode	burst_enable	IN	1	
+core	Search/Mode	enum_enable	IN	1	
+core	Search/Mode	fail_repeat_limit	IN	4	
+core	Checkpoint(manual)	checkpoint_manual_enable	IN	1	
+core	Checkpoint(manual)	policy_valid	IN	1	
+core	Checkpoint(manual)	policy_source_j	IN	7	
+core	Checkpoint(manual)	policy_next_count	IN	3	
+core	Checkpoint(manual)	policy_next_j_flat	IN	28	
+core	Checkpoint(auto)	checkpoint_auto_enable	IN	1	
+core	Oracle	predicate_mode	IN	2	
+core	Oracle	threshold_a	IN	16	signed
+core	Oracle	threshold_b	IN	16	signed
+core	Oracle	data_count	IN	15	
+core	BBHT/RNG	shot_cap	IN	16	
+core	BBHT/RNG	seed_j	IN	32	
+core	BBHT/RNG	seed_meas	IN	32	
+core	Loader	load_start	IN	1	
+core	Loader	data_wr_en	IN	1	
+core	Loader	data_wr_addr	IN	14	
+core	Loader	data_wr_data	IN	16	signed
+core	Loader	load_done	IN	1	
+core	Loader	load_busy	OUT	1	
+core	Result FIFO	res_pop	IN	1	
+core	Result FIFO	res_dout	OUT	14	
+core	Result FIFO	res_empty	OUT	1	
+core	Result FIFO	res_count	OUT	9	
+core	Execution	busy	OUT	1	
+core	Execution	done	OUT	1	
+core	Execution	result_valid	OUT	1	
+core	Execution	result_index	OUT	14	
+core	Enumeration	enum_done	OUT	1	
+core	Enumeration	found_count	OUT	15	
+core	Enumeration	consecutive_fail_count	OUT	4	
+core	Enumeration	max_fifo_occupancy	OUT	9	
+core	Enumeration	fifo_stall_cycles	OUT	32	
+core	Status	config_error	OUT	1	
+core	Status	shot_limit	OUT	1	
+core	Status	budget_limit	OUT	1	
+core	Status	amp_overflow	OUT	1	
+core	Status	zero_weight_error	OUT	1	
+core	Status	load_error	OUT	1	
+core	Counters	trial_count	OUT	32	
+core	Counters	L_BBHT	OUT	32	
+core	Counters	actual_grover_iterations	OUT	32	
+core	Counters	cycle_count	OUT	32	
+core	Policy telemetry	policy_cycles_total	OUT	32	
+core	Policy telemetry	policy_stall_cycles	OUT	32	
+core	Policy telemetry	policy_actions_eval	OUT	32	
+core	Policy telemetry	policy_memo_hit	OUT	32	
+core	Policy telemetry	policy_memo_miss	OUT	32	
+core	Policy telemetry	policy_max_latency	OUT	32	
+core	Plan telemetry	plan_fifo_level	OUT	3	
+core	Plan telemetry	plan_fifo_highwater	OUT	3	
+core	Plan telemetry	plan_fifo_empty_demand	OUT	32	
+core	Plan telemetry	plan_fifo_hit_count	OUT	32	
+core	Plan telemetry	plan_fifo_mismatch_count	OUT	32	
+core	Plan telemetry	policy_cold_solve_count	OUT	32	
+core	Plan telemetry	policy_spec_solve_count	OUT	32	

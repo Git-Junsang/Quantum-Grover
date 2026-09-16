@@ -84,7 +84,7 @@
 //     일은 따로 남아 있습니다. 시뮬에서는 testbench/dram_burst_model.v 가
 //     이 자리에 들어갑니다.
 //   - DRAM 관측 CSR. dram_frontier_j 를 포트로만 내고 CSR 에는 올리지
-//     않았습니다. CSR 은 software/csr/bbht_grover_csr.json 한 곳에서
+//     않았습니다. CSR 은 software/contract/bbht_grover_csr.json 한 곳에서
 //     나오고 두 갈래가 공유하므로, 한 갈래 전용 레지스터를 넣으려면
 //     그 정본부터 손봐야 합니다.
 //   - Enumeration. Main IP 가 enum_enable=1 을 config_error 로 거절합니다.

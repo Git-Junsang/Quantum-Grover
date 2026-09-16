@@ -30,7 +30,7 @@ BUILD    ?= /tmp/dram_build
 # 있습니다. 2026-09-11 에 src_v2 를 src 로 합쳤습니다.
 RTL_DIR   = ../src
 TB_DIR    = ../testbench
-CSR_DIR   = ../../software/csr/generated
+CSR_DIR   = ../../software/contract/generated
 BRAM_SRC  = ../../hardware_bram/src
 # AHB SRAM 모델은 hardware_bram 것을 그대로 씁니다. 통신 계층(mmio,
 # loader)이 두 갈래에서 같은 파일이라 모델을 따로 둘 이유가 없습니다.
@@ -201,7 +201,7 @@ BENCH_BRAM_SRC = $(BRAM_CORE)
 
 bench250:
 	@mkdir -p $(WL_DIR)
-	python3 ../../software/golden/tools/dump_bench250_workload.py --out $(WL_DIR)
+	python3 ../../software/rtl_vectors/tools/dump_bench_workload.py --seeds 50 --out $(WL_DIR)
 	python3 bin_to_hex.py $(WL_DIR)
 	@verilator --binary --timing $(VFLAGS) -DGD_DRAM_BRANCH \
 	          -DGD_WL_DIR='"$(WL_DIR)"' -DGD_CSV_OUT='"$(BUILD)/bench250_dram.csv"' \
@@ -301,7 +301,7 @@ endif
 
 bench500:
 	@mkdir -p $(WL500_DIR)
-	python3 ../../software/golden/tools/dump_bench500_workload.py --out $(WL500_DIR)
+	python3 ../../software/rtl_vectors/tools/dump_bench_workload.py --seeds 100 --out $(WL500_DIR)
 	python3 bin_to_hex.py $(WL500_DIR)
 	@verilator --binary --timing $(VFLAGS) -DGD_DRAM_BRANCH $(DRAM_LAT) \
 	          -DGD_WL_DIR='"$(WL500_DIR)"' -DGD_CSV_OUT='"$(BUILD)/bench500_dram_$(DLAT).csv"' \

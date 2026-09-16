@@ -32,7 +32,7 @@ SIM       = $(BUILD)/sim_tb
 
 SRC_DIR   = ../src
 TB_DIR    = ../testbench
-CSR_DIR   = ../../software/csr/generated
+CSR_DIR   = ../../software/contract/generated
 
 # Main IP 중 합성 경로에 들어가는 열입니다. glob 을 쓰면 policy OOC
 # 전용인 grover_policy_ooc_top.v 와 grover_policy_impl_wrapper.v 까지 딸려 와
@@ -75,7 +75,7 @@ real: ports-real lint-real regress-real driver-real
 # CSR 헤더가 정본과 어긋나면 먼저 멈춥니다. 생성 헤더를 손으로 고쳐 놓고
 # 회귀만 통과시키는 일을 막으려는 것입니다.
 csr:
-	@python3 ../../software/csr/gen_csr.py --check
+	@python3 ../../software/contract/gen_csr.py --check
 
 # PJK 인수인계 §3.3/§3.4 포트 계약과 RTL 이 어긋나지 않았는지.
 #   ports        스텁을 대조 (통신 계층만 볼 때)
@@ -207,7 +207,7 @@ BENCH_COMM   = $(SRC_DIR)/bbht_rvx_wrapper.v $(SRC_DIR)/bbht_grover_mmio.v \
 .PHONY: bench250 bench250-wl
 
 bench250-wl:
-	@python3 ../../software/golden/tools/dump_bench250_workload.py --out $(BENCH_WL)
+	@python3 ../../software/rtl_vectors/tools/dump_bench_workload.py --seeds 50 --out $(BENCH_WL)
 
 bench250: csr bench250-wl
 	@rm -rf $(BENCH_BUILD); mkdir -p $(BENCH_BUILD)/src
@@ -257,7 +257,7 @@ BENCH500_OUT  ?= $(BENCH500_BUILD)/bench500_$(BENCH_CORE).csv
 .PHONY: bench500 bench500-wl
 
 bench500-wl:
-	@python3 ../../software/golden/tools/dump_bench500_workload.py --out $(BENCH500_WL)
+	@python3 ../../software/rtl_vectors/tools/dump_bench_workload.py --seeds 100 --out $(BENCH500_WL)
 
 bench500: csr bench500-wl
 	@rm -rf $(BENCH500_BUILD); mkdir -p $(BENCH500_BUILD)/src

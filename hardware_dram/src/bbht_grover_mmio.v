@@ -4,7 +4,7 @@
 // RVX 가 user_slaveif_apb_clkout 으로 뽑아 주는 APB 슬레이브 포트를 받아
 // 레지스터 파일로 만듭니다. 포트 이름은 인수인계 §3.3 계약(psel/penable/...)을
 // 따릅니다 -- RVX 쪽 배선 이름(i_grover_csr_rp*)과의 매핑은 user_region 에서
-// 한 번만 합니다. 주소 맵의 정본은 software/csr/bbht_grover_csr.json
+// 한 번만 합니다. 주소 맵의 정본은 software/contract/bbht_grover_csr.json
 // 이고, 이 파일이 include 하는 bbht_grover_csr.vh 는 거기서 생성됩니다.
 // 오프셋 숫자를 이 파일에 직접 쓰지 마십시오.
 //

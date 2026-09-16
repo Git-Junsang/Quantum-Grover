@@ -36,8 +36,8 @@ echo "설치 대상: $PLATFORM"
 # 1. CSR 정본에서 헤더를 다시 생성합니다. 이 순서를 지켜야 RTL 과 C 가
 #    같은 맵을 봅니다. 정본 mmio 는 이 헤더를 include 하지 않고 같은 값을
 #    직접 적고 있지만, 드라이버와 comm 갈래가 이 헤더를 씁니다.
-python3 "$ROOT/software/csr/gen_csr.py" > /dev/null
-say "software/csr/generated" "재생성"
+python3 "$ROOT/software/contract/gen_csr.py" > /dev/null
+say "software/contract/generated" "재생성"
 
 # 2. 플랫폼 XML. 폴더 이름과 <name> 이 같아야 하므로 필요하면 바꿔 넣습니다.
 mkdir -p "$PLATFORM"
@@ -73,7 +73,7 @@ cp "$HW/src/bbht_rvx_wrapper.v" "$HW/src/bbht_grover_mmio.v" \
 cp "$HW/src/bbht_grover_user_region.vh" \
    "$PLATFORM/user/rtl/include/${PLATFORM_NAME}_user_region.vh"
 say "user/rtl/{src,include}" "통신 계층 3 + 어댑터 + Main IP 10 + 헤더"
-cp "$ROOT/software/csr/generated/bbht_grover_csr.vh" "$PLATFORM/user/rtl/include/"
+cp "$ROOT/software/contract/generated/bbht_grover_csr.vh" "$PLATFORM/user/rtl/include/"
 
 # 3b. 사용자 RTL 등록. imp 쪽 set_fpga_syn_env.tcl 이 이 파일을 source 해서
 #     user/rtl/{src,include} 를 Vivado 프로젝트에 넣습니다. 이게 없으면
@@ -91,7 +91,7 @@ say "user/env/set_rtl_syn_env.tcl" "user/rtl 을 합성 경로에 등록"
 #    '../../user/api' 한 줄로 둘 다 잡습니다.
 mkdir -p "$PLATFORM/user/api"
 cp "$HW/firmware/bbht_grover_driver."{c,h}        "$PLATFORM/user/api/"
-cp "$ROOT/software/csr/generated/bbht_grover_regs.h" "$PLATFORM/user/api/"
+cp "$ROOT/software/contract/generated/bbht_grover_regs.h" "$PLATFORM/user/api/"
 say "user/api" "driver + regs.h"
 
 # 5. 앱

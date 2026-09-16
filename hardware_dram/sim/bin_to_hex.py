@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-dump_bench250_workload.py 가 내놓는 data_m<M>.bin (16비트 little-endian int16)
+dump_bench_workload.py 가 내놓는 data_m<M>.bin (16비트 little-endian int16)
 을 $readmemh 가 읽을 수 있는 4자리 16진 텍스트로 바꿉니다.
 
     python3 bin_to_hex.py <워크로드 디렉터리>

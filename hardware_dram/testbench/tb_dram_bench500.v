@@ -29,7 +29,7 @@
 //
 // 데이터셋은 GD_WL_DIR 에 있는 data_m<M>.hex (bin_to_hex.py 로 변환) 와
 // seeds.txt 를 읽습니다. 원본은
-// software/golden/tools/dump_bench500_workload.py 가 만듭니다.
+// software/rtl_vectors/tools/dump_bench_workload.py --seeds 100 가 만듭니다.
 //=====================================================================
 `timescale 1ns/1ps
 `ifdef GD_DRAM_BRANCH

@@ -138,7 +138,7 @@ static int load_seeds(void)
     fclose(f);
     if (g_nseed != NSEED) {
         printf("FAIL: 시드가 %d쌍입니다. %d쌍이어야 합니다 "
-               "(dump_bench500_workload.py 로 떨궜는지 보십시오)\n",
+               "(dump_bench_workload.py --seeds 100 으로 떨궜는지 보십시오)\n",
                g_nseed, NSEED);
         return -1;
     }
