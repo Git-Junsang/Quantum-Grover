@@ -50,7 +50,16 @@ class SerialTransport:
         except ImportError:
             sys.exit("pyserial 이 필요합니다:  pip install pyserial\n"
                      "보드 없이 시험만 하려면 --port mock 을 쓰십시오.")
-        self.ser = serial.Serial(port, baud, timeout=0.2)
+        # 포트를 열 때 DTR/RTS 가 켜지면 Arty 쪽에서 SoC 가 리셋되어 JTAG 로
+        # 올려 둔 앱이 사라집니다 (2026-09-17 보드에서 확인: 열고 닫기만 해도
+        # 다음 명령에 응답이 없음). 열기 전에 둘 다 내려 두어야 합니다.
+        self.ser = serial.Serial()
+        self.ser.port = port
+        self.ser.baudrate = baud
+        self.ser.timeout = 0.2
+        self.ser.dtr = False
+        self.ser.rts = False
+        self.ser.open()
         self.timeout = timeout
         self.buf = ""
 
@@ -605,7 +614,7 @@ def main():
         transport = SerialTransport(args.port, args.baud, args.timeout)
     board = Board(transport, echo=bool(args.cmd or args.script))
 
-    logf = open(args.log, "w") if args.log else None
+    logf = open(args.log, "w", encoding="utf-8") if args.log else None
     if logf:
         orig = board.cmd
 
@@ -633,7 +642,8 @@ def main():
             targets = [int(x) for x in args.targets.split(",")]
             bench(board, args.seeds, targets, args.value, args.count, args.csv)
         elif args.script:
-            with open(args.script) as f:
+            # Windows 기본 인코딩(cp949)으로 읽으면 한글 주석에서 깨집니다
+            with open(args.script, encoding="utf-8") as f:
                 for raw in f:
                     line = raw.split("#", 1)[0].strip()
                     if line:

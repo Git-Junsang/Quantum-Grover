@@ -1,0 +1,12 @@
+py software\host\bbht_cli.py --port COM6 selftest   (2026-09-17, Windows 11, Arty A7-100T)
+
+항목             보드             정본
+  일치 accel_clk_hz 0x05F5E100     0x05F5E100
+  일치 csr_base     0xE2020000     0xE2020000
+  일치 n_entries    16384          16384
+  일치 q_bits       14             14
+  일치 sram_base    0xE0000000     0xE0000000
+  일치 sram_last    0xE001FFFF     0xE001FFFF
+  일치 fifo_depth   256            256
+
+selftest: 7 항목 중 0 어긋남
