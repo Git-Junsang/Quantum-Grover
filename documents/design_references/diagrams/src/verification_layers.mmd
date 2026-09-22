@@ -1,0 +1,19 @@
+flowchart TD
+    L0["0단 포트 계약<br/>check_ports.py · wrapper 19 + core 61"]
+    L1["1단 통신 계층 회귀<br/>T1~T9 · D1~D11 · 최상단 H1~H15"]
+    L2["2단 궤적 벤치<br/>bench250 / bench500 · verilator"]
+    L3["3단 SoC 전체 RTL 시뮬<br/>실제 RISC-V 코어 + NoC · Questa"]
+    L4["4단 합성·구현<br/>Vivado · 100 MHz 타이밍"]
+    L5["5단 보드<br/>Arty A7-100T · 호스트 UART"]
+
+    SW["소프트웨어 기준모델<br/>rtl_reference_model · Common500"]
+
+    L0 --> L1 --> L2 --> L3 --> L4 --> L5
+    SW -->|"궤적 정답"| L2
+    SW -->|"궤적 정답"| L5
+
+    L1 -.잡는 것.-> N1["CSR · DMA · FIFO 계약 위반"]
+    L2 -.잡는 것.-> N2["탐색 궤적과 사이클 회귀"]
+    L3 -.잡는 것.-> N3["CPU · NoC 를 거친 접점"]
+    L4 -.잡는 것.-> N4["타이밍 · 자원"]
+    L5 -.잡는 것.-> N5["물리 UART 수신 경로 · 전기적 문제"]

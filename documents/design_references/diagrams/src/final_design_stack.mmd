@@ -1,0 +1,27 @@
+flowchart TD
+    H["호스트 PC<br/>bbht_cli.py / 시리얼 터미널"]
+    H -->|"USB-UART 115200 8N1<br/>ASCII 라인 명령"| U["UART0 16550"]
+
+    subgraph SOC["RVX SoC (시스템 50 MHz)"]
+        U --> C["ORCA RV32 코어<br/>bbht_console · bbht_paper_bench"]
+        C --> D["bbht_grover_driver.c"]
+        D -->|"APB 쓰기/읽기"| M["bbht_grover_mmio<br/>CSR 38개 · base 0xE2020000"]
+        D -->|"데이터셋 적재 요청"| M
+        S["system SRAM 128 KiB<br/>0xE0000000~0xE001FFFF"]
+        L["bbht_ahb_loader<br/>AHB 마스터 SINGLE"]
+        L -->|"16비트 워드 읽기"| S
+        M --> L
+    end
+
+    subgraph ACC["가속기 user region (100 MHz)"]
+        M -->|"제어·상태"| A["bbht_grover_core_adapter"]
+        L -->|"data_wr_en / addr / data"| A
+        A --> IP["bbht_grover_main_ip<br/>K3 / H3 / E4 / M2"]
+        IP --> MEM["상태 진폭 · 데이터셋 · 체크포인트 3벌<br/>found_mask · 결과 FIFO 256"]
+    end
+
+    IP -->|"result_index · 카운터"| M
+    M -->|"CSR 읽기"| D
+    D --> C
+    C -->|"응답 줄"| U
+    U --> H

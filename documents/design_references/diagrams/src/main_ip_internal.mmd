@@ -1,0 +1,33 @@
+flowchart TD
+    TOP["bbht_grover_main_ip<br/>CKPT_K=3 POLICY_H_FUTURE=3<br/>INTRA_ENGINES=4 MEAS_M1/M2=1"]
+
+    TOP --> LD["grover_loader_ctrl<br/>데이터셋 적재 · 중복 주소 검출"]
+    TOP --> SHOT["grover_bbht_shot_fsm<br/>바깥 BBHT 샷 제어"]
+    TOP --> POL["grover_ckpt_policy_rolling<br/>지평 3 DP 정책"]
+    TOP --> EXE["grover_ckpt_executor<br/>구간 실행 · 경계 커밋"]
+    TOP --> ITER["grover_ctrl_fsm_ckpt_e4<br/>물리 반복 FSM"]
+    TOP --> MEAS["grover_measure_verify<br/>Born 측정 + 고전 검증"]
+    TOP --> ST["grover_status_counters<br/>sticky 상태 · 카운터"]
+
+    SHOT --> RNG["grover_lfsr32_jump7<br/>grover_j_reject · grover_iter_rom"]
+    SHOT --> CACHE["grover_cache_ctrl<br/>1엔트리 재개 판단"]
+
+    POL --> MEMO["grover_ckpt_policy_memo<br/>2,048x18 뱅크 · 지평 3 x 1,093랭크"]
+    POL --> SHJ["grover_shadow_j<br/>실패 계속 J 예측"]
+    POL --> PFIFO["grover_ckpt_plan_fifo<br/>선행 계획 버퍼"]
+    POL --> PLAN["grover_ckpt_planner_pipe<br/>논리 S' 를 물리 슬롯 계획으로"]
+    PLAN --> EXE
+
+    EXE --> ITER
+    ITER --> DP["grover_iter_datapath_e4<br/>PASS1 / MEAN / PASS2"]
+    DP --> ARI["grover_predicate · grover_oracle_flip<br/>grover_adder_tree · grover_diffusion_sat"]
+
+    ITER --> AMP["grover_amp_mem_packed<br/>512행 x 32레인 x 23비트"]
+    EXE --> CK["grover_ckpt_mem_interleaved_e4<br/>체크포인트 슬롯 3벌"]
+    ITER --> DATA["grover_data_mem_e4<br/>데이터셋 16,384칸"]
+
+    MEAS --> SQ["grover_born_square32<br/>32레인 제곱 + 감산 트리"]
+    MEAS --> RW["grover_row_weight_mem_m1_2w<br/>행 가중치 · 16x32 그룹 CDF"]
+    MEAS --> VF["grover_verify<br/>술어 재검사 + found_mask"]
+    MEAS --> FIFO["grover_result_fifo<br/>깊이 256"]
+    AMP --> SQ
