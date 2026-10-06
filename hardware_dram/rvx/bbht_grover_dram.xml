@@ -1,0 +1,103 @@
+<?xml version="1.0" ?>
+<rvx>
+    <platform>
+        <name>bbht_grover_dram</name>
+        <status>described</status>
+
+        <!-- hardware_bram 의 bbht_grover_upgrade.xml 과 같은 틀에 두 가지를
+             더했습니다.
+               1. include_slow_dram : Arty A7-100T 의 DDR3L 256 MB 를 MIG
+                  (xilinx_ddr3_ctrl_axi32, 32비트 AXI)로 NoC 에 붙입니다.
+                  이 보드에서 RVX 가 제공하는 DRAM 은 이것 하나입니다
+                  (imp_class_info/arty-100t/include/slow_dram_body.vh).
+               2. i_grover_dram : 가속기가 그 DRAM 에 진폭표를 쓰고 읽는
+                  AXI4 마스터. grover_dram_axi_bridge.v 가 추상 burst 포트를
+                  이 인터페이스로 바꿉니다. -->
+
+        <clock_info>
+            <define>
+                <name>clk_accel</name>
+                <value type="dec">100000000</value>
+            </define>
+        </clock_info>
+
+        <spec>
+            <define>
+                <name>sram_size</name>
+                <value>128kB</value>
+            </define>
+            <define>
+                <name>include_slow_dram</name>
+                <value>True</value>
+            </define>
+            <!-- DRAM 을 넣으면 RVX 링커가 코드·데이터를 DRAM 에 둡니다. 그러면
+                 콘솔의 데이터셋 버퍼도 DRAM 에 잡혀 SRAM 만 받는 AHB 적재기가
+                 range_error 로 거절하고, 가속기의 진폭표와 주소가 겹칠 수도
+                 있습니다. 이 키로 DRAM 은 "손으로만 쓰는" 영역이 되고 링커는
+                 bram 플랫폼과 똑같이 SRAM 만 씁니다. DRAM 은 진폭표 전용입니다.
+                 (RVX 2025 판은 이 키를 "will be deprecated" 로 경고하지만 아직
+                 받습니다. RTL 시뮬의 DDR 모델 크기 SIM_LARGE_RAM_SIZE 는 2 MB 로
+                 고정이고 spec 으로 못 바꿉니다. 슬롯 j 43 까지만 들어갑니다.) -->
+            <define>
+                <name>use_large_ram_manually</name>
+                <value>True</value>
+            </define>
+        </spec>
+
+        <ip_instance>
+            <name>i_main_core</name>
+            <library_name>rvc_orca</library_name>
+        </ip_instance>
+
+        <!-- CSR: APB slave (bram 과 같은 base, 같은 38개) -->
+        <ip_instance>
+            <name>i_grover_csr</name>
+            <library_name>user_slaveif_apb_clkout</library_name>
+            <parameter>
+                <id>SIZE_OF_MEMORYMAP</id>
+                <value>0x1000</value>
+            </parameter>
+            <parameter>
+                <id>BW_ADDR</id>
+                <value>32</value>
+            </parameter>
+            <parameter>
+                <id>BW_DATA</id>
+                <value>32</value>
+            </parameter>
+        </ip_instance>
+
+        <!-- 데이터셋 적재: AHB master (bram 과 같음) -->
+        <ip_instance>
+            <name>i_grover_dma</name>
+            <library_name>user_masterif_ahb_clkout</library_name>
+            <parameter>
+                <id>BW_ADDR</id>
+                <value>32</value>
+            </parameter>
+            <parameter>
+                <id>BW_DATA</id>
+                <value>32</value>
+            </parameter>
+        </ip_instance>
+
+        <!-- 진폭표: AXI4 master -> NoC -> slow_dram(MIG) -->
+        <ip_instance>
+            <name>i_grover_dram</name>
+            <library_name>user_masterif_axi4_clkout</library_name>
+            <parameter>
+                <id>BW_ADDR</id>
+                <value>32</value>
+            </parameter>
+            <parameter>
+                <id>BW_DATA</id>
+                <value>32</value>
+            </parameter>
+            <parameter>
+                <id>BW_AXI_TID</id>
+                <value>4</value>
+            </parameter>
+        </ip_instance>
+
+    </platform>
+</rvx>

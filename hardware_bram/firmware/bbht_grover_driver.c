@@ -217,9 +217,27 @@ static void bbht_fifo_flush(void)
 /*--------------------------------------------------------------------*/
 bbht_status_t bbht_search_single(const bbht_config_t *cfg, bbht_result_t *res)
 {
+    return bbht_search_single_timed(cfg, res, 0, 0);
+}
+
+/*--------------------------------------------------------------------
+ * 실행 시간을 같이 재는 단일 탐색.
+ *
+ * 재는 구간은 bbht_paper_bench(보드 500런 정본)와 같습니다 -- COMMAND 를
+ * 쓰기 직전부터 폴링이 DONE 을 본 순간까지. 설정 쓰기, 결과 읽기, UART
+ * 출력은 들어가지 않습니다. 폴링 한 번이 APB 왕복이라 그만큼의 오차는
+ * 있습니다.
+ *------------------------------------------------------------------*/
+bbht_status_t bbht_search_single_timed(const bbht_config_t *cfg, bbht_result_t *res,
+                                       bbht_clock_fn now,
+                                       unsigned long long *elapsed)
+{
     unsigned int timeout = BBHT_TIMEOUT;
     unsigned int st;
     bbht_status_t rc;
+    unsigned long long t0 = 0ull, t1 = 0ull;
+
+    if (elapsed) *elapsed = 0ull;
 
     rc = bbht_wait_ready();
     if (rc != BBHT_OK) return rc;
@@ -229,13 +247,18 @@ bbht_status_t bbht_search_single(const bbht_config_t *cfg, bbht_result_t *res)
     rc = bbht_apply_config(cfg);
     if (rc != BBHT_OK) return rc;
 
+    if (now) t0 = now();
     bbht_wr(BBHT_COMMAND, 1u);
 
     while (timeout--) {
         st = bbht_rd(BBHT_STATUS);
-        if (st & BBHT_ST_DONE_STICKY)
+        if (st & BBHT_ST_DONE_STICKY) {
+            if (now) t1 = now();
             break;
+        }
     }
+    if (now && t1 == 0ull) t1 = now();
+    if (elapsed) *elapsed = t1 - t0;
 
     bbht_read_result(res);
     res->timed_out = (res->status & BBHT_ST_DONE_STICKY) ? 0u : 1u;

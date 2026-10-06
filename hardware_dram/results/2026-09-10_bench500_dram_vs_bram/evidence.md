@@ -24,8 +24,8 @@
 
 | 대조 상대 | 일치 |
 |---|---:|
-| `hardware_bram/results/2026-09-10_bench500_final_core/` (드라이버 하네스) | mode0 500/500, ckpt 500/500 |
-| `hardware_bram/vivado/.../2026-09-08_k3h3_e4_m2_board_500run/per_run_m2.csv` | 500/500 |
+| `hardware_bram/models/hardware_bram_K3H3_E4_M2/results/2026-09-10_bench500_final_core/` (드라이버 하네스) | mode0 500/500, ckpt 500/500 |
+| `hardware_bram/models/hardware_bram_K3H3_E4_M2/vivado/.../2026-09-08_k3h3_e4_m2_board_500run/per_run_m2.csv` | 500/500 |
 
 `CSR_CYCLE_COUNT` 의 계측 구간이 탐색 자체라 통신 계층이 끼든 안 끼든 바뀌지
 않기 때문입니다. 그래서 아래 dram 대 ckpt 비교는 보드 실측과 같은 사이클 축

@@ -50,20 +50,21 @@ import sys
 from contextlib import redirect_stdout
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-HW = os.path.normpath(os.path.join(HERE, os.pardir))          # hardware_bram
+HW = os.path.normpath(os.path.join(HERE, os.pardir))          # hardware_bram (공용)
 ROOT = os.path.normpath(os.path.join(HW, os.pardir))          # 저장소 루트
 
 sys.path.insert(0, os.path.join(ROOT, "software", "host"))
 import bbht_cli                                                 # noqa: E402
 
+M2 = os.path.join(HW, "models", "hardware_bram_K3H3_E4_M2")     # 보드 정본 구성 모델
 MAIN_C = os.path.join(HW, "firmware", "bbht_console", "src", "main.c")
 DATASETS = os.path.join(ROOT, "software", "experiments", "common500_benchmark",
                         "inputs", "datasets")
-BENCH500 = os.path.join(HW, "results", "2026-09-10_bench500_final_core",
+BENCH500 = os.path.join(M2, "results", "2026-09-10_bench500_final_core",
                         "per_workload.csv")
-BOARD_M2 = os.path.join(HW, "vivado", "vivado_bbht_grover_fpga",
+BOARD_M2 = os.path.join(M2, "vivado", "vivado_bbht_grover_fpga",
                         "2026-09-08_k3h3_e4_m2_board_500run", "per_run_m2.csv")
-SOC_BENCH = os.path.join(HW, "results", "2026-09-16_soc_rtl_paper_bench",
+SOC_BENCH = os.path.join(M2, "results", "2026-09-16_soc_rtl_paper_bench",
                          "per_run.csv")
 STAGE6 = os.path.join(HW, "results", "2026-09-08_publication_6stage",
                       "observations.csv")

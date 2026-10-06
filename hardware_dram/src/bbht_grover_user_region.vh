@@ -9,6 +9,9 @@
 // wire clk_system_debug;
 // wire clk_local_access;
 // wire clk_process_000;
+// wire clk_dram_if;
+// wire clk_dram_sys;
+// wire clk_dram_ref;
 // wire clk_noc;
 // wire gclk_accel;
 // wire gclk_system;
@@ -52,34 +55,74 @@
 // wire [(32)-1:0] i_grover_dma_shwdata;
 // wire [(32)-1:0] i_grover_dma_shrdata;
 // wire i_grover_dma_shresp;
+// wire i_grover_dram_clk;
+// wire i_grover_dram_rstnn;
+// wire i_grover_dram_sx4awready;
+// wire i_grover_dram_sx4awvalid;
+// wire [(32)-1:0] i_grover_dram_sx4awaddr;
+// wire [(4)-1:0] i_grover_dram_sx4awid;
+// wire [(8)-1:0] i_grover_dram_sx4awlen;
+// wire [(3)-1:0] i_grover_dram_sx4awsize;
+// wire [(2)-1:0] i_grover_dram_sx4awburst;
+// wire i_grover_dram_sx4wready;
+// wire i_grover_dram_sx4wvalid;
+// wire [(32)-1:0] i_grover_dram_sx4wdata;
+// wire [(32/8)-1:0] i_grover_dram_sx4wstrb;
+// wire i_grover_dram_sx4wlast;
+// wire i_grover_dram_sx4bready;
+// wire i_grover_dram_sx4bvalid;
+// wire [(4)-1:0] i_grover_dram_sx4bid;
+// wire [(2)-1:0] i_grover_dram_sx4bresp;
+// wire i_grover_dram_sx4arready;
+// wire i_grover_dram_sx4arvalid;
+// wire [(32)-1:0] i_grover_dram_sx4araddr;
+// wire [(4)-1:0] i_grover_dram_sx4arid;
+// wire [(8)-1:0] i_grover_dram_sx4arlen;
+// wire [(3)-1:0] i_grover_dram_sx4arsize;
+// wire [(2)-1:0] i_grover_dram_sx4arburst;
+// wire i_grover_dram_sx4rready;
+// wire i_grover_dram_sx4rvalid;
+// wire [(4)-1:0] i_grover_dram_sx4rid;
+// wire [(32)-1:0] i_grover_dram_sx4rdata;
+// wire i_grover_dram_sx4rlast;
+// wire [(2)-1:0] i_grover_dram_sx4rresp;
 
 /* DO NOT MODIFY THE ABOVE */
 /* MUST MODIFY THE BELOW   */
 
 //---------------------------------------------------------------------
-// BBHT/Grover 가속기 결선
+// BBHT/Grover DRAM 갈래 결선 (플랫폼 bbht_grover_dram)
 //
-// 두 인터페이스(APB CSR, AHB DMA)가 같은 clk_accel 도메인에 있습니다.
-// user_slaveif_apb_clkout / user_masterif_ahb_clkout 을 쓰므로 클럭은
-// **유저가 넣어 줍니다** -- 아래 두 assign 이 그것입니다.
+// hardware_bram 의 user region 과 같은 틀에 AXI4 마스터 하나가 더 붙습니다.
 //
-// network 쪽(gclk_noc)과의 CDC 는 RVX 가 sni_apb_asynch / mni_ahbm_asynch
-// 로 이미 만들어 줍니다. wrapper 안에 CDC 를 또 넣으면 안 됩니다.
+//   i_grover_csr   APB 슬레이브   CSR 38개 (두 갈래 공통 정본)
+//   i_grover_dma   AHB 마스터     System SRAM 의 데이터셋 적재
+//   i_grover_dram  AXI4 마스터    진폭표 -> NoC -> slow_dram(MIG DDR3L)
 //
-// 리셋은 두 인터페이스가 같은 reset group(3)에서 나오므로 함께 풀립니다.
-// csr 쪽 하나만 받아 wrapper 전체에 씁니다.
+// 세 인터페이스가 모두 *_clkout 이라 클럭은 유저가 넣어 줍니다(아래 assign
+// 셋). NoC 쪽과의 CDC 는 RVX 가 만듭니다. 리셋은 셋이 같은 reset group(3)
+// 이라 csr 쪽 하나를 씁니다.
 //
-// 모듈 이름은 소문자입니다. RVX 예제(tip_quantized_cnn)는 USER_* 대문자
-// 규약을 쓰지만 Verilog 는 대소문자를 구분하므로, PJK 인수인계가 쓰는 이름
-// (bbht_rvx_wrapper / bbht_grover_mmio / bbht_ahb_loader)에 맞춥니다.
+// 가속기 클럭은 bram 쪽과 같이 gclk_accel 입니다. 2026-09-16 bram 구현에서
+// 생성 RTL 이 assign gclk_accel = clk_accel; 인 순수 별칭임을 확인했습니다.
+//
+// 이 플랫폼은 use_large_ram_manually 로 링커가 DRAM 을 안 쓰므로(코드·데이터는
+// 전부 SRAM) 진폭표를 DDR 맨 앞(AXI 0x0000_0000)부터 둡니다. 5.8 MiB 를 씁니다.
 //---------------------------------------------------------------------
-assign i_grover_csr_clk = gclk_accel;
-assign i_grover_dma_clk = gclk_accel;
+assign i_grover_csr_clk  = gclk_accel;
+assign i_grover_dma_clk  = gclk_accel;
+assign i_grover_dram_clk = gclk_accel;
 
-bbht_rvx_wrapper
+wire [6:0] bbht_dram_frontier_j;
+wire       bbht_dram_bridge_busy;
+wire       bbht_dram_axi_error;
+
+bbht_dram_axi_top
 #(
-	.SRAM_BASE(32'hE0000000),
-	.SRAM_LAST(32'hE001FFFF)
+	.SRAM_BASE     (32'hE0000000),
+	.SRAM_LAST     (32'hE001FFFF),
+	.DRAM_AXI_BASE (32'h00000000),
+	.BW_TID        (4)
 )
 i_bbht
 (
@@ -105,9 +148,44 @@ i_bbht
 	.shsize       (i_grover_dma_shsize),
 	.shtrans      (i_grover_dma_shtrans),
 	.shwrite      (i_grover_dma_shwrite),
-	.shwdata      (i_grover_dma_shwdata)
+	.shwdata      (i_grover_dma_shwdata),
+
+	.sx4awready   (i_grover_dram_sx4awready),
+	.sx4awvalid   (i_grover_dram_sx4awvalid),
+	.sx4awaddr    (i_grover_dram_sx4awaddr),
+	.sx4awid      (i_grover_dram_sx4awid),
+	.sx4awlen     (i_grover_dram_sx4awlen),
+	.sx4awsize    (i_grover_dram_sx4awsize),
+	.sx4awburst   (i_grover_dram_sx4awburst),
+	.sx4wready    (i_grover_dram_sx4wready),
+	.sx4wvalid    (i_grover_dram_sx4wvalid),
+	.sx4wdata     (i_grover_dram_sx4wdata),
+	.sx4wstrb     (i_grover_dram_sx4wstrb),
+	.sx4wlast     (i_grover_dram_sx4wlast),
+	.sx4bready    (i_grover_dram_sx4bready),
+	.sx4bvalid    (i_grover_dram_sx4bvalid),
+	.sx4bid       (i_grover_dram_sx4bid),
+	.sx4bresp     (i_grover_dram_sx4bresp),
+	.sx4arready   (i_grover_dram_sx4arready),
+	.sx4arvalid   (i_grover_dram_sx4arvalid),
+	.sx4araddr    (i_grover_dram_sx4araddr),
+	.sx4arid      (i_grover_dram_sx4arid),
+	.sx4arlen     (i_grover_dram_sx4arlen),
+	.sx4arsize    (i_grover_dram_sx4arsize),
+	.sx4arburst   (i_grover_dram_sx4arburst),
+	.sx4rready    (i_grover_dram_sx4rready),
+	.sx4rvalid    (i_grover_dram_sx4rvalid),
+	.sx4rid       (i_grover_dram_sx4rid),
+	.sx4rdata     (i_grover_dram_sx4rdata),
+	.sx4rlast     (i_grover_dram_sx4rlast),
+	.sx4rresp     (i_grover_dram_sx4rresp),
+
+	.dram_frontier_j  (bbht_dram_frontier_j),
+	.dram_bridge_busy (bbht_dram_bridge_busy),
+	.dram_axi_error   (bbht_dram_axi_error)
 );
 
-// i_grover_dma_rstnn 은 위와 같은 reset group 이라 쓰지 않습니다.
-// 미사용 경고가 뜨면 아래를 살리십시오.
+// 관측점 셋은 지금 밖으로 안 냅니다. 보드에서 볼 일이 생기면 ILA 를 붙이십시오.
+// i_grover_dma_rstnn / i_grover_dram_rstnn 은 csr 과 같은 reset group 이라 쓰지 않습니다.
 //assign `NOT_CONNECT = i_grover_dma_rstnn;
+//assign `NOT_CONNECT = i_grover_dram_rstnn;

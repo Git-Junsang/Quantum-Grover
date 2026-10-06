@@ -1,0 +1,172 @@
+[RVX/START] SIM@RTL
+
+bbht_console -- HELP 를 치면 명령 목록이 나옵니다
+OK
+> ID
+STAT name=bbht_console csr_ver=0.9.8
+STAT platform=bbht_grover_nocheckpoint fw=2026-09-25
+STAT csr_base=0xe2020000 q_bits=14 n_entries=16384 fifo_depth=256
+STAT accel_clk_hz=100000000 sram_base=0xe0000000 sram_last=0xe001ffff
+STAT dataset_addr=0xe000aaa0 dataset_count=0 loaded=0
+OK
+> GEN PRED=LT A=-16384 TARGETS=64 SEED=0x5EED1234 POS=0x17A02026
+OK count=16384 targets=64 pred=LT a=-16384 b=0
+> SUM
+STAT count=16384 fnv=0x8e060871 hits=64 pred=LT a=-16384 b=0 loaded=0
+OK
+> LOAD
+OK loaded=16384 addr=0xe000aaa0
+> SET MODE=LT A=-16384 B=0 COUNT=16384 CAP=100 AUTO=1 J=0
+OK
+> SET BURST=0 SEEDJ=0x7B1DCDAF SEEDM=0x24370DF2
+OK
+> RUN
+HIT idx=1089 val=-17865 trials=7 l=4 iters=4 cyc=7675 us=76 wall_us=81
+OK
+> SET BURST=0 SEEDJ=0x3A85A4DC SEEDM=0xA3B9AA35
+OK
+> RUN
+HIT idx=1951 val=-17282 trials=16 l=35 iters=35 cyc=23573 us=235 wall_us=240
+OK
+> GEN PRED=LT A=-16384 TARGETS=256 SEED=0x5EED1234 POS=0x17A02026
+OK count=16384 targets=256 pred=LT a=-16384 b=0
+> SUM
+STAT count=16384 fnv=0xa569173a hits=256 pred=LT a=-16384 b=0 loaded=0
+OK
+> LOAD
+OK loaded=16384 addr=0xe000aaa0
+> SET MODE=LT A=-16384 B=0 COUNT=16384 CAP=100 AUTO=1 J=0
+OK
+> SET BURST=0 SEEDJ=0x7B1DCDAF SEEDM=0x24370DF2
+OK
+> RUN
+HIT idx=2969 val=-25443 trials=6 l=4 iters=4 cyc=6951 us=69 wall_us=75
+OK
+> SET BURST=0 SEEDJ=0x3A85A4DC SEEDM=0xA3B9AA35
+OK
+> RUN
+HIT idx=2036 val=-24289 trials=10 l=5 iters=5 cyc=10171 us=101 wall_us=107
+OK
+> GEN PRED=GT A=16383 TARGETS=64 SEED=0x5EED1234 POS=0x67A02026
+OK count=16384 targets=64 pred=GT a=16383 b=0
+> SUM
+STAT count=16384 fnv=0x29a01211 hits=64 pred=GT a=16383 b=0 loaded=0
+OK
+> LOAD
+OK loaded=16384 addr=0xe000aaa0
+> SET MODE=GT A=16383 B=0 COUNT=16384 CAP=100 AUTO=1 J=0
+OK
+> SET BURST=0 SEEDJ=0x7B1DCDAF SEEDM=0x24370DF2
+OK
+> RUN
+HIT idx=2932 val=26834 trials=6 l=4 iters=4 cyc=6975 us=69 wall_us=75
+OK
+> SET BURST=0 SEEDJ=0x3A85A4DC SEEDM=0xA3B9AA35
+OK
+> RUN
+HIT idx=9359 val=25296 trials=13 l=14 iters=14 cyc=15674 us=156 wall_us=162
+OK
+> GEN PRED=GT A=16383 TARGETS=256 SEED=0x5EED1234 POS=0x67A02026
+OK count=16384 targets=256 pred=GT a=16383 b=0
+> SUM
+STAT count=16384 fnv=0x13d60bf9 hits=256 pred=GT a=16383 b=0 loaded=0
+OK
+> LOAD
+OK loaded=16384 addr=0xe000aaa0
+> SET MODE=GT A=16383 B=0 COUNT=16384 CAP=100 AUTO=1 J=0
+OK
+> SET BURST=0 SEEDJ=0x7B1DCDAF SEEDM=0x24370DF2
+OK
+> RUN
+HIT idx=6194 val=21743 trials=4 l=2 iters=2 cyc=4771 us=47 wall_us=53
+OK
+> SET BURST=0 SEEDJ=0x3A85A4DC SEEDM=0xA3B9AA35
+OK
+> RUN
+HIT idx=16378 val=30332 trials=2 l=0 iters=0 cyc=2251 us=22 wall_us=28
+OK
+> GEN PRED=EQ A=12345 TARGETS=64 SEED=0x5EED1234 POS=0xA17E2026
+OK count=16384 targets=64 pred=EQ a=12345 b=0
+> SUM
+STAT count=16384 fnv=0xefb2e98e hits=64 pred=EQ a=12345 b=0 loaded=0
+OK
+> LOAD
+OK loaded=16384 addr=0xe000aaa0
+> SET MODE=EQ A=12345 B=0 COUNT=16384 CAP=100 AUTO=1 J=0
+OK
+> SET BURST=0 SEEDJ=0x7B1DCDAF SEEDM=0x24370DF2
+OK
+> RUN
+HIT idx=2852 val=12345 trials=6 l=4 iters=4 cyc=6950 us=69 wall_us=75
+OK
+> SET BURST=0 SEEDJ=0x3A85A4DC SEEDM=0xA3B9AA35
+OK
+> RUN
+HIT idx=8685 val=12345 trials=13 l=14 iters=14 cyc=15637 us=156 wall_us=162
+OK
+> GEN PRED=EQ A=12345 TARGETS=256 SEED=0x5EED1234 POS=0xA17E2026
+OK count=16384 targets=256 pred=EQ a=12345 b=0
+> SUM
+STAT count=16384 fnv=0xdca4f97c hits=256 pred=EQ a=12345 b=0 loaded=0
+OK
+> LOAD
+OK loaded=16384 addr=0xe000aaa0
+> SET MODE=EQ A=12345 B=0 COUNT=16384 CAP=100 AUTO=1 J=0
+OK
+> SET BURST=0 SEEDJ=0x7B1DCDAF SEEDM=0x24370DF2
+OK
+> RUN
+HIT idx=15288 val=12345 trials=8 l=7 iters=7 cyc=9652 us=96 wall_us=102
+OK
+> SET BURST=0 SEEDJ=0x3A85A4DC SEEDM=0xA3B9AA35
+OK
+> RUN
+HIT idx=5849 val=12345 trials=5 l=2 iters=2 cyc=5393 us=53 wall_us=59
+OK
+> GEN PRED=RANGE A=-4096 B=4096 TARGETS=64 SEED=0x5EED1234 POS=0x3A4E2026
+OK count=16384 targets=64 pred=RANGE a=-4096 b=4096
+> SUM
+STAT count=16384 fnv=0x4f2d645d hits=64 pred=RANGE a=-4096 b=4096 loaded=0
+OK
+> LOAD
+OK loaded=16384 addr=0xe000aaa0
+> SET MODE=RANGE A=-4096 B=4096 COUNT=16384 CAP=100 AUTO=1 J=0
+OK
+> SET BURST=0 SEEDJ=0x7B1DCDAF SEEDM=0x24370DF2
+OK
+> RUN
+HIT idx=6171 val=1345 trials=14 l=22 iters=22 cyc=19568 us=195 wall_us=201
+OK
+> SET BURST=0 SEEDJ=0x3A85A4DC SEEDM=0xA3B9AA35
+OK
+> RUN
+HIT idx=13589 val=-734 trials=11 l=9 iters=9 cyc=12368 us=123 wall_us=129
+OK
+> GEN PRED=RANGE A=-4096 B=4096 TARGETS=256 SEED=0x5EED1234 POS=0x3A4E2026
+OK count=16384 targets=256 pred=RANGE a=-4096 b=4096
+> SUM
+STAT count=16384 fnv=0x0d48036a hits=256 pred=RANGE a=-4096 b=4096 loaded=0
+OK
+> LOAD
+OK loaded=16384 addr=0xe000aaa0
+> SET MODE=RANGE A=-4096 B=4096 COUNT=16384 CAP=100 AUTO=1 J=0
+OK
+> SET BURST=0 SEEDJ=0x7B1DCDAF SEEDM=0x24370DF2
+OK
+> RUN
+HIT idx=12101 val=-2751 trials=2 l=1 iters=1 cyc=2472 us=24 wall_us=29
+OK
+> SET BURST=0 SEEDJ=0x3A85A4DC SEEDM=0xA3B9AA35
+OK
+> RUN
+HIT idx=1860 val=-2151 trials=10 l=5 iters=5 cyc=10164 us=101 wall_us=106
+OK
+> QUIT
+OK
+script done
+
+[PROC_STATUS]  1 cores have finished @        462247770000 ns
+** Note: $finish    : /opt/rvx/rvx_hwlib/lib_sim/ncsim/src/ncsim_manager.v(68)
+   Time: 4622623600680 ps  Iteration: 0  Instance: /BBHT_GROVER_NOCHECKPOINT_SIM/i_ncsim_manager
+End time: 16:06:43 on Sep 25,2026, Elapsed time: 0:38:15
+Errors: 0, Warnings: 0

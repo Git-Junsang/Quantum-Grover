@@ -322,6 +322,11 @@ module lpsoc_bbht_grover_main_ip (
     wire term_budget_limit;
     wire term_zero_weight_error;
     wire [`GP_INDEX_W-1:0] success_index;
+    // u_shot 의 포트에 물리므로 인스턴스보다 먼저 선언합니다. 뒤에 두면 앞의
+    // 사용이 암묵 선언이 되어 Questa 가 "already declared" 로 거절합니다
+    // (verilator 와 Vivado 는 넘어갑니다. 2026-09-25 SoC 시뮬에서 발견).
+    wire [31:0] bbht_trial_count;
+    wire [31:0] bbht_L_BBHT;
 
     grover_dram_shot_fsm u_shot (
         .clk                    (clk),
@@ -368,9 +373,6 @@ module lpsoc_bbht_grover_main_ip (
         .j_rnd_state            ()
     );
 
-    wire [31:0] bbht_trial_count;
-    wire [31:0] bbht_L_BBHT;
-
     // A start with enum_enable=1 is a config error, not a silent Single
     // Search fallback: Enumeration is not implemented in this branch (see
     // top comment). The shot FSM never starts for such a request, so this
@@ -392,6 +394,8 @@ module lpsoc_bbht_grover_main_ip (
     wire [`GP_J_W-1:0] prep_store_j, prep_restore_j;
     wire store_done, restore_done;
     wire a_role_grow, a_role_store, a_role_restore;
+    // u_prep 가 먼저 쓰고 아래 grover_ctrl_fsm 이 구동합니다. 선언을 사용 앞에 둡니다.
+    wire iter_done;
 
     grover_dram_prep_seq u_prep (
         .clk             (clk),
@@ -476,7 +480,6 @@ module lpsoc_bbht_grover_main_ip (
     wire [`GP_ROW_W-1:0] ctrl_amp_wr_row;
     wire iter_pass_tick;
     wire iter_busy;
-    wire iter_done;
 
     grover_ctrl_fsm u_iter_ctrl (
         .clk            (clk),

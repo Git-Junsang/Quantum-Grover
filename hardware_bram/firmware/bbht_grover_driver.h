@@ -125,6 +125,17 @@ bbht_status_t bbht_apply_config(const bbht_config_t *cfg);
 /* Single 탐색 한 번. 설정 -> COMMAND -> 폴링 -> 결과 수집까지 합니다. */
 bbht_status_t bbht_search_single(const bbht_config_t *cfg, bbht_result_t *res);
 
+/* 시계 함수. 보드에서는 RVX 의 get_real_clock_tick (TICK_HZ = 1 MHz 라
+ * 한 틱이 1 us) 을 넘깁니다. */
+typedef unsigned long long (*bbht_clock_fn)(void);
+
+/* bbht_search_single 과 같고, now 가 있으면 COMMAND 직전부터 DONE 을 본
+ * 순간까지를 *elapsed 에 (now 의 단위로) 적습니다. now 가 0 이면 재지
+ * 않습니다. 재는 구간은 보드 500런 정본(bbht_paper_bench)과 같습니다. */
+bbht_status_t bbht_search_single_timed(const bbht_config_t *cfg, bbht_result_t *res,
+                                       bbht_clock_fn now,
+                                       unsigned long long *elapsed);
+
 /* 열거. 실행 중에도 FIFO 를 뽑아 out[] 에 채웁니다.
  *   out / max   결과를 받을 버퍼와 그 크기
  *   n_out       실제로 받은 개수

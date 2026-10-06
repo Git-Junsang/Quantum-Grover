@@ -16,6 +16,7 @@ work/
 # iverilog / verilator 가 만드는 중간 산출물 디렉터리
 hardware_*/testbench/build/
 hardware_*/sim/obj_dir/
+hardware_bram/models/*/sim/obj_dir/
 
 # 합성 스크립트 작업 디렉터리. 다시 돌리면 나옵니다 (리포트 포함)
 hardware_*/synth/work/
@@ -39,6 +40,11 @@ vivado_pid*.str
 # /opt/rvx 플랫폼을 가리키는 심링크는 다른 PC 에서 깨집니다
 hardware_*/rvx/platform_link
 hardware_*/rvx/**/output/
+hardware_bram/models/*/rvx/platform_link
+hardware_bram/models/*/rvx/**/output/
+
+# ── mermaid 렌더러가 만드는 임시 설정 ─────────────────
+documents/**/.puppeteer.json
 
 # ── 파이썬 ─────────────────────────────────────────
 __pycache__/

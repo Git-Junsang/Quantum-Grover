@@ -1,0 +1,2 @@
+1b67a0702926d273b52adcaab16f8b5818c7dd5848b87946d66d9b9de52adc61  arty-100t.bit
+fe8c9b1b1b18b3d98ecfd232ec344e6484b98692a06c9e23eb7ef5c7acfad2b2  bbht_console.sram.hex

@@ -1,0 +1,4 @@
+normal: workloads 500, attempts 7403, attempt-trace mismatches 0, workload mismatches vs Python 0, vs FPGA board 0
+k4h4: workloads 500, attempts 7403, attempt-trace mismatches 0, workload mismatches vs Python 0, vs FPGA board 0
+k3h3: workloads 500, attempts 7403, attempt-trace mismatches 0, workload mismatches vs Python 0, vs FPGA board 0
+PASS

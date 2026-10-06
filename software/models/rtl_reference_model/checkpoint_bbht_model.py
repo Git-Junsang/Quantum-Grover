@@ -539,12 +539,28 @@ class V098AutomaticCore:
             raise ValueError("max_results is valid only when enum_enable=True")
         return self.run_single(mode=mode)
 
-    def run_single(self, *, mode: str = "NORMAL") -> V098AutoResult:
+    def run_single(
+        self,
+        *,
+        mode: str = "NORMAL",
+        checkpoint: V098CheckpointReference | V098AllJCheckpointReference | None = None,
+    ) -> V098AutoResult:
+        """Single search.
+
+        ``checkpoint`` lets the caller keep one checkpoint store alive across
+        several searches.  hardware_dram keeps its DRAM amplitude table until the
+        dataset or the oracle changes, so a run of seeds on one loaded dataset
+        reuses slots grown by earlier seeds; pass one persistent
+        ``V098AllJCheckpointReference`` to reproduce that physical-iteration
+        count.  The logical trajectory never depends on it.
+        """
+
         normalized = _normalize_mode(mode)
         target_mask = v098_target_mask(self.dataset.memory_image, self.cfg)
         j_source = V098JRandomSource(self.cfg.seed_j)
         measurement_source = V098MeasurementRandomSource(self.cfg.seed_meas)
-        checkpoint = _checkpoint_for_mode(normalized)
+        if checkpoint is None:
+            checkpoint = _checkpoint_for_mode(normalized)
         attempts, success, reason = self._run_episode(
             target_mask,
             j_source,

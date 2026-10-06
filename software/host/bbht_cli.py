@@ -3,7 +3,7 @@
 bbht_cli.py -- 호스트 PC 에서 BBHT/Grover 보드를 조작하는 CLI
 
 보드의 bbht_console 앱과 UART 로 이야기합니다. 프로토콜 정본은
-documents/design_references/UART_명령_프로토콜.md 입니다.
+documents/design_references/14_호스트_인터페이스와_UART_프로토콜.md 입니다.
 
   대화형   python3 bbht_cli.py --port /dev/ttyUSB1
   일괄     python3 bbht_cli.py --port /dev/ttyUSB1 -c "GEN TARGETS=4" -c LOAD -c RUN
@@ -19,6 +19,7 @@ RTL 시뮬 트랜스크립트가 있으면 --port replay:<파일> 로 같은 파
 """
 
 import argparse
+import codecs
 import csv
 import os
 import sys
@@ -62,6 +63,11 @@ class SerialTransport:
         self.ser.open()
         self.timeout = timeout
         self.buf = ""
+        # 콘솔은 `# amp_overflow (진단용, 결과는 유효)` 처럼 한글 주석 줄을 UTF-8 로
+        # 보냅니다. ascii 로 풀면 그 줄이 U+FFFD 로 깨집니다 (2026-10-04 보드 로그에서
+        # 확인). 256 바이트씩 읽으므로 한 글자(3 바이트)가 두 조각에 걸칠 수 있어,
+        # 남는 바이트를 다음 조각으로 넘기는 증분 디코더를 씁니다.
+        self.decoder = codecs.getincrementaldecoder("utf-8")("replace")
 
     def send(self, line):
         self.ser.reset_input_buffer()
@@ -72,7 +78,7 @@ class SerialTransport:
         """OK 또는 ERR 로 끝나는 응답 한 덩어리를 모아 돌려줍니다."""
         out, deadline = [], time.time() + self.timeout
         while time.time() < deadline:
-            chunk = self.ser.read(256).decode("ascii", "replace")
+            chunk = self.decoder.decode(self.ser.read(256))
             if not chunk:
                 continue
             self.buf += chunk
@@ -305,7 +311,7 @@ class ReplayTransport:
       밀려도 그 뒤 숫자가 전부 엉뚱한 명령의 것이 되기 때문입니다.
     - 에코가 없으면 응답 덩어리를 `OK` / `ERR` 종결자로 잘라서 보낸 순서대로
       하나씩 돌려줍니다. 콘솔 앱이 한 명령에 정확히 하나의 종결자를 내는
-      규약(UART_명령_프로토콜.md §2)을 그대로 쓴 것입니다. 이때는 배너가 없는
+      규약(기술문서 14장 14.2절)을 그대로 쓴 것입니다. 이때는 배너가 없는
       트랜스크립트여야 합니다.
     """
 
@@ -324,6 +330,19 @@ class ReplayTransport:
         """[(에코한 명령 또는 None, 응답 줄 목록), ...]"""
         with open(path, encoding="utf-8", errors="replace") as f:
             lines = [raw.rstrip("\r\n") for raw in f]
+
+        # Questa 의 qtsim.log 를 그대로 받았으면 콘솔 출력 부분만 떼어 줄마다 붙은
+        # '# ' 머리말을 벗깁니다. hardware_bram/sim/soc_console_check.py 의
+        # extract_transcript 와 같은 규칙입니다. 이미 벗긴 파일에는 [RVX/START]
+        # 표시가 없으므로 그대로 지나갑니다.
+        start = next((i for i, l in enumerate(lines) if "[RVX/START]" in l), None)
+        if start is not None:
+            body = []
+            for l in lines[start + 1:]:
+                if "[PROC_STATUS]" in l or l.startswith("# ** Note: $finish"):
+                    break
+                body.append(l[2:] if l.startswith("# ") else l.lstrip("#"))
+            lines = body
 
         if any(l.startswith("> ") for l in lines):
             blocks, cur = [], None

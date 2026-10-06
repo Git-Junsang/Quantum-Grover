@@ -36,11 +36,12 @@ PUB_OBS = os.path.join(HERE, os.pardir, "results",
 PUB_STAGE = "K3/H3-E4-M2"
 
 # 보드 500런의 M2 경로.
-BOARD_M2 = os.path.join(HERE, os.pardir, "vivado", "vivado_bbht_grover_fpga",
+BOARD_M2 = os.path.join(HERE, os.pardir, "models", "hardware_bram_K3H3_E4_M2",
+                        "vivado", "vivado_bbht_grover_fpga",
                         "2026-09-08_k3h3_e4_m2_board_500run", "per_run_m2.csv")
 
 # 250쌍 벤치가 이미 낸 근거. 앞 50 시드가 겹치므로 부분집합 대조를 합니다.
-BENCH250 = os.path.join(HERE, os.pardir, "results",
+BENCH250 = os.path.join(HERE, os.pardir, "models", "hardware_bram_K3H3_E4_M2", "results",
                         "2026-09-10_bench250_final_core", "per_workload.csv")
 
 FIELDS = ("trial", "l_bbht", "iter", "result_index")

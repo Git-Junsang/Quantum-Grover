@@ -1,0 +1,2 @@
+cases 40: mask 40/40, rtl search 80/80, sw search valid 80/80
+PASS

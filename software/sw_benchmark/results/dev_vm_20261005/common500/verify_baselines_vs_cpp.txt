@@ -1,0 +1,12 @@
+NUMPY_NORMAL_F64 vs CPP_SW_BEST_NORMAL_F64: 500/500 workloads identical (result, trials, L, physical); physical iterations 31270 vs 31270
+PASS
+QISKIT_AER_NORMAL_F64 vs CPP_SW_BEST_NORMAL_F64: 10/10 workloads identical (result, trials, L, physical); physical iterations 707 vs 707
+PASS
+NUMPY_ALLJ_F64 vs CPP_SW_BEST_ALLJ_F64: 500/500 workloads identical (result, trials, L, physical); physical iterations 8418 vs 8418
+PASS
+QISKIT_AER_ALLJ_F64 vs CPP_SW_BEST_ALLJ_F64: 10/10 workloads identical (result, trials, L, physical); physical iterations 206 vs 206
+PASS
+NUMPY_K3H3_F64 vs CPP_SW_BEST_K3H3_F64: 500/500 workloads identical (result, trials, L, physical); physical iterations 9389 vs 9389
+PASS
+QISKIT_AER_K3H3_F64 vs CPP_SW_BEST_K3H3_F64: 10/10 workloads identical (result, trials, L, physical); physical iterations 222 vs 222
+PASS

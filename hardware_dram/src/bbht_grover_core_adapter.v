@@ -2,7 +2,7 @@
 // bbht_grover_core_adapter.v -- hardware_dram 갈래, 통신 계층 <-> Main IP
 // 어댑터.
 //
-// hardware_bram/src/bbht_grover_core_adapter.v 와 목적이 같습니다: 통신
+// hardware_bram/models/hardware_bram_K3H3_E4_M2/src/bbht_grover_core_adapter.v 와 목적이 같습니다: 통신
 // 계층(bbht_rvx_wrapper.v)은 인수인계 §3.4 계약 이름 그대로인
 // bbht_grover_core 를 인스턴스하는데, 실제 Main IP 모듈 이름과 리셋
 // 이름이 다르므로 그 차이만 흡수합니다. 신호는 61개 전부 1:1 이고

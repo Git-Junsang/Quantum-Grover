@@ -6,7 +6,7 @@
  * 값들을 UART 명령으로 받습니다. 비트스트림도 앱도 그대로 두고 호스트에서
  * 조건만 바꿔 가며 돌릴 수 있습니다.
  *
- * 프로토콜 정본은 documents/design_references/UART_명령_프로토콜.md 입니다. 요약하면,
+ * 프로토콜 정본은 documents/design_references/14_호스트_인터페이스와_UART_프로토콜.md 입니다. 요약하면,
  *   - 명령은 한 줄. 개행으로 끝납니다
  *   - 응답은 데이터 줄이 먼저 나오고, 마지막이 반드시 OK 또는 ERR 입니다
  *   - 호스트는 그 마지막 줄을 보고 다음 명령을 보냅니다
@@ -17,7 +17,13 @@
 #include "platform_info.h"
 #include "ervp_printf.h"
 #include "ervp_uart.h"
+#include "ervp_real_clock.h"
 #include "bbht_grover_driver.h"
+#include "bbht_dataset_gen.h"
+
+/* ID 가 보고하는 펌웨어 판. 호스트 자동 테스트(bbht_predicate500.py)가 이
+ * 값으로 GEN PRED / SUM / wall_us 를 쓸 수 있는지 판단합니다. */
+#define BBHT_CONSOLE_FW  "2026-09-25"
 
 #define UART_IDX      UART_INDEX_FOR_UART_PRINTF
 #define LINE_MAX      160
@@ -124,7 +130,16 @@ static int parse_num(const char *s, int *ok)
  *     탐색이 보드 앱과 달라 사이클이 보드 표와 다릅니다. 사이클 기준은 같은
  *     순서로 두드리는 testbench/tb_console_seq.cpp 입니다.
  * 적재 전 RUN 과 틀린 SET 은 ERR 종결자 경로를 보려고 일부러 넣었습니다.
+ *
+ * 다른 순서를 돌리려면 명령 목록을 헤더로 만들어 BBHT_CONSOLE_SCRIPT_FILE 로
+ * 넘깁니다 (rvx_each.mh 가 환경변수 BBHT_SCRIPT 를 보고 넣어 줍니다).
+ * software/host/bbht_predicate500.py --emit-script 가 호스트 자동 테스트와
+ * 한 줄도 다르지 않은 순서를 뽑아 주므로, 그 트랜스크립트를 호스트 프로그램에
+ * --port replay:<qtsim.log> 로 그대로 되먹일 수 있습니다.
  */
+#ifdef BBHT_CONSOLE_SCRIPT_FILE
+#include BBHT_CONSOLE_SCRIPT_FILE
+#endif
 #ifndef BBHT_CONSOLE_SCRIPT_LINES
 #define BBHT_CONSOLE_SCRIPT_LINES                                             \
     "ID",                                                                     \
@@ -238,47 +253,32 @@ static int split_kv(char *tok, char **key, char **val)
 /*====================================================================
  * 데이터셋 생성
  *
- * PJK 벤치마크 하니스와 같은 xorshift32 입니다. 같은 시드면 같은 배열이
- * 나오므로, 보드에서 얻은 결과를 골든 모델과 대조할 수 있습니다.
+ * 규칙은 bbht_dataset_gen.h 에 있습니다. PJK 벤치마크 하니스와 같은
+ * xorshift32 이고, 술어를 주면(PRED=) 배경을 그 술어의 비정답 쪽으로 접어
+ * 넣어 TARGETS 개가 정확히 정답이 되게 합니다. 같은 인자면
+ * software/models/common/benchmark_dataset.py 와 바이트 단위로 같은 배열이
+ * 나오므로, 보드에서 얻은 결과를 SW 기준모델과 대조할 수 있습니다.
  *==================================================================*/
-static unsigned int xorshift32(unsigned int *state)
+/* PRED 만 주고 A/B/POS 를 안 주면 Predicate500 의 값을 씁니다
+ * (benchmark_dataset.PREDICATE500_SPECS 와 같음). */
+static void pred500_defaults(unsigned int mode, int *a, int *b, unsigned int *pos)
 {
-    unsigned int x = *state;
-
-    if (x == 0u) x = 0x6D2B79F5u;
-    x ^= x << 13;
-    x ^= x >> 17;
-    x ^= x << 5;
-    *state = x;
-    return x;
+    switch (mode) {
+    case BBHT_PRED_LT:    *a = -16384; *b = 0;    *pos = 0x17A02026u; break;
+    case BBHT_PRED_GT:    *a = 16383;  *b = 0;    *pos = 0x67A02026u; break;
+    case BBHT_PRED_RANGE: *a = -4096;  *b = 4096; *pos = 0x3A4E2026u; break;
+    default:              *a = 12345;  *b = 0;    *pos = 0xA17E2026u; break;
+    }
 }
 
-static void gen_dataset(unsigned int count, unsigned int bg_seed,
-                        unsigned int pos_seed, unsigned int targets, int value)
+static int parse_pred(const char *v, unsigned int *mode)
 {
-    unsigned int state = bg_seed;
-    unsigned int i, placed = 0u, guard = 0u;
-
-    /* 배경. 목표값과 같아지면 한 비트를 뒤집어 피합니다 -- 그래야 심은
-     * 개수가 곧 정답 개수가 됩니다. */
-    for (i = 0u; i < count; i++) {
-        unsigned int v = xorshift32(&state) & 0xFFFFu;
-        if (v == ((unsigned int)value & 0xFFFFu)) v ^= 1u;
-        bbht_pack16(dataset, i, (int)v);
-    }
-
-    /* 목표를 심습니다. 겹치면 다시 뽑습니다. */
-    state = pos_seed;
-    while (placed < targets && guard < 100000u) {
-        unsigned int idx = xorshift32(&state) % count;
-        guard++;
-        if (bbht_unpack16(dataset, idx) == (int)(short)value) continue;
-        bbht_pack16(dataset, idx, value);
-        placed++;
-    }
-
-    dataset_count = count;
-    dataset_ready = 0u;
+    if      (str_eq(v, "LT"))    *mode = BBHT_PRED_LT;
+    else if (str_eq(v, "GT"))    *mode = BBHT_PRED_GT;
+    else if (str_eq(v, "EQ"))    *mode = BBHT_PRED_EQ;
+    else if (str_eq(v, "RANGE")) *mode = BBHT_PRED_RANGE;
+    else return 0;
+    return 1;
 }
 
 /*====================================================================
@@ -300,7 +300,10 @@ static void cmd_help(void)
     printf("# ID                          펌웨어/하드웨어 식별\n");
     printf("# SET K=V ...                 MODE A B COUNT CAP SEEDJ SEEDM AUTO BURST J FAILLIM\n");
     printf("# SHOW                        현재 설정\n");
-    printf("# GEN COUNT=n SEED=x POS=x TARGETS=n VAL=v   데이터셋 생성\n");
+    printf("# GEN COUNT=n SEED=x POS=x TARGETS=n VAL=v   데이터셋 생성 (EQ)\n");
+    printf("# GEN PRED=LT|GT|EQ|RANGE A=a B=b TARGETS=n [SEED POS COUNT]\n");
+    printf("#                             술어별 데이터셋. SET MODE/A/B/COUNT 도 같이 맞춤\n");
+    printf("# SUM                         버퍼 FNV-1a 와 현재 술어의 정답 수\n");
     printf("# POKE IDX=i VAL=v            한 칸 수정 (뒤에 LOAD 필요)\n");
     printf("# PEEK IDX=i                  한 칸 읽기 (보드 버퍼)\n");
     printf("# LOAD                        버퍼를 DMA 로 적재\n");
@@ -314,6 +317,7 @@ static void cmd_help(void)
 static void cmd_id(void)
 {
     printf("STAT name=bbht_console csr_ver=%s\n", "0.9.8");
+    printf("STAT platform=%s fw=%s\n", PLATFORM_NAME, BBHT_CONSOLE_FW);
     printf("STAT csr_base=0x%08x q_bits=%d n_entries=%u fifo_depth=%u\n",
            (unsigned int)BBHT_CSR_BASE, BBHT_Q_BITS,
            BBHT_N_ENTRIES, BBHT_FIFO_DEPTH);
@@ -367,15 +371,20 @@ static int apply_kv(const char *k, const char *v)
     return 1;
 }
 
+/* us= 는 사이클을 100 으로 나눈 환산값이고, wall_us= 는 보드 실시간 클럭
+ * (1 MHz 틱)으로 COMMAND 부터 DONE 을 본 순간까지 잰 실경과 시간입니다.
+ * 재는 구간은 보드 500런 정본(bbht_paper_bench)과 같습니다. */
+static unsigned int last_wall_us = 0u;
+
 static void report_run(bbht_status_t rc)
 {
     if (rc == BBHT_OK) {
         int val = (res.result_index < dataset_count)
                 ? bbht_unpack16(dataset, res.result_index) : 0;
-        printf("HIT idx=%u val=%d trials=%u l=%u iters=%u cyc=%u us=%u\n",
+        printf("HIT idx=%u val=%d trials=%u l=%u iters=%u cyc=%u us=%u wall_us=%u\n",
                res.result_index, val, res.trial_count, res.l_bbht,
                res.actual_iter, res.cycle_count,
-               bbht_cycles_to_us(res.cycle_count));
+               bbht_cycles_to_us(res.cycle_count), last_wall_us);
         if (res.amp_overflow) printf("# amp_overflow (진단용, 결과는 유효)\n");
         printf("OK\n");
         return;
@@ -385,9 +394,9 @@ static void report_run(bbht_status_t rc)
         const char *why = (res.status & BBHT_ST_SHOT_LIMIT)   ? "SHOT_CAP"
                         : (res.status & BBHT_ST_BUDGET_LIMIT) ? "BUDGET"
                         : "NONE";
-        printf("MISS reason=%s trials=%u cyc=%u us=%u\n",
-               why, res.trial_count, res.cycle_count,
-               bbht_cycles_to_us(res.cycle_count));
+        printf("MISS reason=%s trials=%u l=%u iters=%u cyc=%u us=%u wall_us=%u\n",
+               why, res.trial_count, res.l_bbht, res.actual_iter, res.cycle_count,
+               bbht_cycles_to_us(res.cycle_count), last_wall_us);
         printf("OK\n");
         return;
     }
@@ -455,31 +464,83 @@ int main(void)
         /*------------------------------------------------------------*/
         } else if (str_eq(tok[0], "GEN")) {
             unsigned int count = BBHT_N_ENTRIES, seed = 0x5EED1234u;
-            unsigned int pos = 0xA17E2026u, targets = 1u;
-            int value = 12345, bad = 0;
+            unsigned int pos = 0xA17E2026u, targets = 1u, mode = BBHT_PRED_EQ;
+            unsigned int placed = 0u;
+            int value = 12345, a = 0, b = 0, bad = 0, grc;
+            int has_pred = 0, has_a = 0, has_b = 0, has_pos = 0;
 
             for (i = 1; i < ntok; i++) {
                 char *k, *v; int ok, n;
                 if (!split_kv(tok[i], &k, &v)) { bad = 1; break; }
+                if (str_eq(k, "PRED")) {
+                    if (!parse_pred(v, &mode)) { bad = 1; break; }
+                    has_pred = 1;
+                    continue;
+                }
                 n = parse_num(v, &ok);
                 if (!ok) { bad = 1; break; }
                 if      (str_eq(k, "COUNT"))   count   = (unsigned int)n;
                 else if (str_eq(k, "SEED"))    seed    = (unsigned int)n;
-                else if (str_eq(k, "POS"))     pos     = (unsigned int)n;
+                else if (str_eq(k, "POS"))     { pos = (unsigned int)n; has_pos = 1; }
                 else if (str_eq(k, "TARGETS")) targets = (unsigned int)n;
                 else if (str_eq(k, "VAL"))     value   = n;
+                else if (str_eq(k, "A"))       { a = n; has_a = 1; }
+                else if (str_eq(k, "B"))       { b = n; has_b = 1; }
                 else { bad = 1; break; }
             }
 
-            if (bad)                              printf("ERR BAD_KV\n");
-            else if (count == 0u || count > BBHT_N_ENTRIES)
-                                                  printf("ERR BAD_COUNT\n");
-            else if (targets > count)             printf("ERR TOO_MANY_TARGETS\n");
-            else {
-                gen_dataset(count, seed, pos, targets, value);
-                cfg.data_count = count;
+            if (!bad) {
+                if (has_pred) {
+                    /* 술어판. 안 준 값은 Predicate500 기본값. */
+                    int da, db; unsigned int dpos;
+                    pred500_defaults(mode, &da, &db, &dpos);
+                    if (!has_a) a = (mode == BBHT_PRED_EQ) ? value : da;
+                    if (!has_b) b = db;
+                    if (!has_pos) pos = dpos;
+                } else {
+                    /* 2026-09-01 부터의 GEN. EQ 이고 VAL 이 목표값입니다. */
+                    mode = BBHT_PRED_EQ;
+                    a = value;
+                    b = 0;
+                }
+            }
+
+            if (bad) { printf("ERR BAD_KV\n"); continue; }
+            if (count == 0u || count > BBHT_N_ENTRIES) { printf("ERR BAD_COUNT\n"); continue; }
+            if (targets > count) { printf("ERR TOO_MANY_TARGETS\n"); continue; }
+
+            grc = bbht_gen_dataset(dataset, count, mode, a, b, targets, seed, pos, &placed);
+            if (grc == BBHT_GEN_BAD_THRESHOLD) { printf("ERR BAD_THRESHOLD\n"); continue; }
+            dataset_count = count;
+            dataset_ready = 0u;
+            cfg.data_count = count;
+            if (grc != BBHT_GEN_OK) {
+                printf("ERR TARGET_GUARD placed=%u\n", placed);
+                continue;
+            }
+            if (has_pred) {
+                /* 만든 술어로 탐색하도록 SET 도 맞춰 둡니다. */
+                cfg.predicate   = mode;
+                cfg.threshold_a = a;
+                cfg.threshold_b = b;
+                printf("OK count=%u targets=%u pred=%s a=%d b=%d\n",
+                       count, targets, pred_name(mode), a, b);
+            } else {
                 printf("OK count=%u targets=%u val=%d\n", count, targets, value);
             }
+
+        /*------------------------------------------------------------*/
+        } else if (str_eq(tok[0], "SUM")) {
+            /* 호스트가 보드 버퍼를 SW 기준 데이터셋과 맞대는 용도.
+             * hits 는 지금 SET 된 술어로 센 정답 수입니다. */
+            if (dataset_count == 0u) { printf("ERR NO_DATASET\n"); continue; }
+            printf("STAT count=%u fnv=0x%08x hits=%u pred=%s a=%d b=%d loaded=%u\n",
+                   dataset_count, bbht_gen_fnv1a(dataset, dataset_count),
+                   bbht_gen_count_hits(dataset, dataset_count, cfg.predicate,
+                                       cfg.threshold_a, cfg.threshold_b),
+                   pred_name(cfg.predicate), cfg.threshold_a, cfg.threshold_b,
+                   dataset_ready);
+            printf("OK\n");
 
         /*------------------------------------------------------------*/
         } else if (str_eq(tok[0], "POKE")) {
@@ -536,7 +597,13 @@ int main(void)
             bbht_config_t local = cfg;
             if (!dataset_ready) { printf("ERR NOT_LOADED\n"); continue; }
             local.enum_enable = 0u;
-            report_run(bbht_search_single(&local, &res));
+            {
+                unsigned long long wall = 0ull;
+                bbht_status_t rc = bbht_search_single_timed(&local, &res,
+                                                            get_real_clock_tick, &wall);
+                last_wall_us = (unsigned int)wall;
+                report_run(rc);
+            }
 
         /*------------------------------------------------------------*/
         } else if (str_eq(tok[0], "ENUM")) {

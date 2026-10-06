@@ -1,5 +1,5 @@
 //=====================================================================
-// bbht_bram_top.v -- hardware_bram 갈래 최상단 (호스트 통신 + 정본 Main IP)
+// bbht_bram_top.v -- hardware_bram 최상단 (호스트 통신 + 정본 Main IP)
 //
 // hardware_dram/src/bbht_dram_top.v 와 짝입니다. 두 파일은 결선이 한
 // 줄씩 같고 다른 것은 둘뿐입니다.

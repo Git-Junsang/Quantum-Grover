@@ -1709,8 +1709,16 @@ module bbht_grover_main_ip #(
     // Inner Grover physical kernel.
     // INTRA_ENGINES=1 preserves frozen K4/H4; 2 and 4 enable E2/E4.
     // E2/E4 change only the physical Grover state-vector throughput; BBHT,
-    // K4/H4 policy/checkpoint semantics remain unchanged. Multi-engine modes
-    // are enabled only when CHECKPOINT_ENABLE!=0.
+    // K4/H4 policy/checkpoint semantics remain unchanged.
+    //
+    // E2 is enabled only when CHECKPOINT_ENABLE!=0.  E4 is also legal with
+    // CHECKPOINT_ENABLE=0 (2026-09-25, hardware_bram_nocheckpoint): the E4
+    // interleaved amplitude memory is then used as a single slot 0, which is
+    // exactly the slot a NORMAL run already uses in a checkpoint build
+    // (ckpt_exec_mode=0 forces src/dst/endpoint slot to 0 below).  So a
+    // CHECKPOINT_ENABLE=0 E4 build runs NORMAL cycle-for-cycle like NORMAL on
+    // a CHECKPOINT_ENABLE=1 E4 build with the same M1/M2 switches, minus the
+    // checkpoint store, Planner/Executor and policy engine.
     //==========================================================================
     wire [3:0] iter_state;
     wire iter_pass_tick;
@@ -1775,12 +1783,16 @@ module bbht_grover_main_ip #(
     wire [`GP_ROW_W-1:0] meas_selected_row;
 
     grover_measure_verify #(
-        .AMP_READ_LATENCY((CHECKPOINT_ENABLE != 0) ? 2 : 1),
+        // Read latency follows the amplitude memory that is instantiated:
+        // checkpoint memories (E1 ckpt / E2 / E4) answer in two cycles, the
+        // legacy single amp memory (E1 without checkpoint) in one.
+        .AMP_READ_LATENCY(((CHECKPOINT_ENABLE != 0) ||
+                           (INTRA_ENGINES == 4)) ? 2 : 1),
+        // M1/M2 ride on the E4 four-bank quad read port, so they follow E4
+        // and not the checkpoint switch.
         .E4_DUAL_BUILD   (((INTRA_ENGINES == 4) &&
-                           (CHECKPOINT_ENABLE != 0) &&
                            (MEAS_M1_ENABLE != 0)) ? 1 : 0),
         .E4_HIER_SELECT  (((INTRA_ENGINES == 4) &&
-                           (CHECKPOINT_ENABLE != 0) &&
                            (MEAS_M1_ENABLE != 0) &&
                            (MEAS_M2_ENABLE != 0)) ? 1 : 0)
     ) u_measure_verify (
@@ -1819,7 +1831,7 @@ module bbht_grover_main_ip #(
     );
 
     generate
-        if ((INTRA_ENGINES == 4) && (CHECKPOINT_ENABLE != 0)) begin : g_intra_e4
+        if (INTRA_ENGINES == 4) begin : g_intra_e4
             // ---------------------------------------------------------------
             // E4 controller: 128 quads x 4 rows cover the frozen 512 rows.
             // ---------------------------------------------------------------

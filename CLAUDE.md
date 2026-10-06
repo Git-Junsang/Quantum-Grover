@@ -8,6 +8,10 @@
 
 **사용자**: 양자 알고리즘을 처음 접한 학부생. FPGA 경험은 있으나 설정·RTL 은 자세히 답할 것.
 
+이 파일은 **규칙과 길잡이만** 담습니다. 설계 · 수치 · 절차의 정본은 기술문서
+[`documents/design_references/`](documents/design_references/00_문서_지도.md) 이고, 여기에 같은
+내용을 다시 적지 않습니다. 무엇을 찾든 먼저 [문서 지도](documents/design_references/00_문서_지도.md)를 보십시오.
+
 ---
 
 ## 1. 작업 규칙
@@ -18,397 +22,157 @@
     **기존 것만 보존**합니다. 새 콜아웃 박스는 만들지 말고 산문으로 녹이십시오.
 - 수식은 채팅에 쓰지 말 것 (터미널에 LaTeX 가 안 보입니다). `.md` 에 쓰고 링크만 주십시오.
 - GitHub push 허용. 단 **커밋 메시지·PR 에 Claude/Anthropic 을 명시하지 말 것**.
-- `hardware_*/vivado/` 아래에는 **Vivado 프로젝트 폴더만** 두고, 이름은 소문자 `vivado_<프로젝트이름>` 입니다.
-  그 안에는 **리포트와 재현 불가능한 실측만** 남깁니다. 빌드·합성·시뮬 로그처럼 다시 돌리면
-  나오는 것은 두지 않습니다. 실측 묶음 폴더는 `YYYY-MM-DD_<주제>`, 그 안의 파일은
-  소문자 snake_case 로 짧게 (`result.txt` `summary.csv` `evidence.md`) — 폴더가 이미
-  말해 주는 프로젝트명·날짜를 파일명에 되풀이하지 마십시오.
+- `vivado/` 폴더(`hardware_dram/vivado/`, `hardware_bram/models/*/vivado/`) 아래에는 **Vivado
+  프로젝트 폴더만** 두고, 이름은 소문자 `vivado_<프로젝트이름>` 입니다. 그 안에는 **리포트와
+  재현 불가능한 실측만** 남깁니다. 빌드·합성·시뮬 로그처럼 다시 돌리면 나오는 것은 두지
+  않습니다. 실측 묶음 폴더는 `YYYY-MM-DD_<주제>`, 그 안의 파일은 소문자 snake_case 로 짧게
+  (`result.txt` `summary.csv` `evidence.md`) — 폴더가 이미 말해 주는 프로젝트명·날짜를
+  파일명에 되풀이하지 마십시오. `results/` · `bitstream/` 묶음도 같은 이름 규칙입니다.
 - README 는 루트의 `README.md` · `README.ko.md` **둘뿐**입니다. 하위 폴더에 README 를
-  만들지 말고, 설명이 필요하면 `documents/design_references/` 에 별도 문서를 만드십시오.
+  만들지 말고, 설명이 필요하면 기술문서의 해당 장에 쓰십시오 (새 주제면 장을 더하고
+  `00_문서_지도.md` 에 올립니다).
 - `.gitignore` 도 루트에 **하나뿐**입니다.
+- 측정 기록(`*.txt` `*.csv` `*.log` `*.rpt`)은 그 시점의 사실이라, 폴더를 옮겨도 안의 옛 경로를
+  고치지 않습니다. `evidence.md` 와 소스의 경로는 고칩니다.
 
 ---
 
-## 2. 정합성 기준 — 무엇이 정본인가
+## 2. 정본 — 무엇을 믿고 무엇을 인용하나
 
-**보드에서 검증된 K3/H3-E4-M2 (2026-09-07 빌드) 가 정본입니다.** 그 빌드에 들어간
-RTL 17개는 태그 `board-k3h3-e4-m2` 의 `hardware_bram/src/` 이고, sha256 이
-비트스트림과 바이트 동일합니다
-([`sha256_final_rtl.txt`](hardware_bram/results/2026-09-09_repro_package_v1.0/sha256_final_rtl.txt)
-가 17개 전부를 담고 있고, 태그와 17/17 일치합니다. 같은 빌드의
-[`meta/source_sha256.txt`](hardware_bram/vivado/vivado_bbht_grover_fpga/meta/source_sha256.txt)
-는 그중 7개만 적어 둔 부분 기록이라 그쪽만 보고 "전부 대조했다" 고 하면 안 됩니다).
-main 의 [`hardware_bram/src/`](hardware_bram/src/) 는 그 뒤의 **최신판 한 벌**입니다 (이 절 끝).
+- **보드에서 검증된 K3/H3-E4-M2 (2026-09-07 빌드) 가 정본입니다.** 그 빌드의 RTL 17개는 태그
+  `board-k3h3-e4-m2` 의 `hardware_bram/src/` 이고 비트스트림과 바이트 동일합니다. 대조는
+  `sha256_final_rtl.txt`(17개 전부)로 하십시오. 같은 빌드의 `meta/source_sha256.txt` 는 7개만 적은
+  부분 기록이라 그것만 보고 "전부 대조했다" 고 하면 안 됩니다
+  ([20장](documents/design_references/20_합성_구현_비트스트림.md)).
+- main 의 `hardware_bram/src/` 는 그 뒤의 최신판 한 벌입니다. 보드 정본과의 차이(통신 계층 교체,
+  `gclk_accel`, M1/M2 스위치, E4 분리)와 각각을 확인한 근거는
+  [1장 1.6절](documents/design_references/01_프로젝트_개요.md#16-보드-검증-이력)과
+  [18장](documents/design_references/18_보드_확인과_실측.md)에 있습니다.
+- 확정 스펙(Q=14, Q1.22, P=32, CSR 38개 등)은 [1장 1.2절](documents/design_references/01_프로젝트_개요.md#12-확정-스펙).
+- **CSR 의 정본은 [`software/contract/bbht_grover_csr.json`](software/contract/bbht_grover_csr.json)
+  하나입니다.** `gen_csr.py` 가 Verilog · C · 파이썬 헤더와 기술문서 13장을 만듭니다 — 그 넷은
+  손으로 고치지 마십시오(13장 문장은 `gen_csr.py` 의 `gen_doc()` 를 고칩니다). `--check` 가 생성
+  대상이 아닌 두 곳(`final_hardware_contract.py`, `bbht_paper_bench/src/main.c`)을 대조하고, RTL 에
+  CSR 값을 다시 박는 것을 막습니다.
+- **`hardware_bram/firmware/bbht_paper_bench/` 는 한 글자도 고치지 마십시오.** 보드 ELF 를 낸
+  소스와 sha256 이 같아야 합니다. 그 안의 옛 이름 `CONTROL_K4H8_EQ` · `MODE_K4H8` 도 그대로 둡니다.
+  CSR 모드 이름에 K · H 를 넣지 않는 이유는 [13장 13.7절](documents/design_references/13_CSR_레지스터와_실행_모드.md).
 
-**CSR 의 정본은 [`software/contract/bbht_grover_csr.json`](software/contract/bbht_grover_csr.json)
-하나입니다.** `gen_csr.py` 가 여기서 Verilog 헤더 · C 헤더 · 파이썬 상수 ·
-[`CSR_레지스터_규격.md`](documents/design_references/CSR_레지스터_규격.md) 넷을 만듭니다 —
-그 넷은 손으로 고치지 마십시오. 같은 숫자를 들고 있으면서 생성 대상이 **아닌** 곳이
-둘 더 있는데(`software/models/common/final_hardware_contract.py` 는 CSR 과 다른 축인
-정책 이름을 같이 담고, `bbht_paper_bench/src/main.c` 는 보드 ELF 소스라 못 고칩니다),
-`gen_csr.py --check` 가 그 둘을 읽어서 정본과 대조합니다. 셋째 검사는 방향이 반대로,
-RTL 안에 CSR 값을 다시 박아 두는 것을 막습니다.
+### 성능을 인용할 때
 
-| 항목 | 값 |
-|---|---|
-| 큐비트 | Q = 14 (N = 16,384) |
-| 데이터 워드 | 16비트 signed / 진폭 23비트 Q1.22 계열 / P = 32 레인 |
-| 술어 | `LT` `GT` `EQ` `RANGE` |
-| 실행 모드 | `MANUAL_SINGLE` `NORMAL_SINGLE` `CKPT_SINGLE` `NORMAL_ENUM` `CKPT_ENUM` |
-| CSR | APB, base `0xE2020000`, **4바이트 간격**, 32비트, 38개 |
-| 데이터 적재 | AHB 마스터 **SINGLE**, single outstanding. SRAM `0xE0000000`~`0xE001FFFF` |
-| 결과 FIFO | 깊이 256 |
-| 클럭 | 가속기 100 MHz / 시스템 50 MHz |
-| 최종 구성 | **K3/H3-E4-M2** — 체크포인트 3벌 · 정책 지평 3 · 연산기 4벌 · 측정 최적화 2단 |
+- 세 축 — **RTL 사이클 / 보드 실경과 시간 / ORCA 1코어 대비** — 을 섞지 마십시오. 각 축의 정본
+  묶음과 값은 [1장 1.5절](documents/design_references/01_프로젝트_개요.md#15-성능-지표와-인용-기준)
+  하나에만 있습니다. 성능 세 축은 언제나 2026-09-07 빌드의 보드 정본에서 인용합니다.
+- 보드 사이클과 RTL 사이클로 배수를 만들지 마십시오. 궤적은 같아도 체크포인트 사이클은 직전 실행
+  이력에 달려 있습니다(3,279 사이클, [11장 11.5절](documents/design_references/11_체크포인트와_정책_엔진.md#115-memo와-3279-사이클)).
+  콘솔 한 번의 사이클을 500런 표와 맞대지 마십시오. 콘솔의 `us=` 는 사이클 환산값이고 실경과
+  시간은 `wall_us` 입니다.
+- 사이클은 RTL 이나 보드에서 인용합니다. 소프트웨어 기준모델은 궤적까지만 재현하고 사이클은
+  일부러 흉내 내지 않습니다([4장](documents/design_references/04_소프트웨어_기준모델과_정답_벡터.md)).
+- K4/H4 · K4/H8 보드 묶음(2026-09-01 · 09-04)은 중간 단계이고 250쌍이라 500 워크로드와 총합을
+  맞댈 수 없습니다. 2026-10-04 묶음은 같은 보드 위 **판 사이 비교**의 인용처입니다.
+- **고전 선형 스캔과 속도를 비교하지 않습니다.** 비교 대상은 ORCA 1코어 순수 SW 기준선 ·
+  Qiskit AerSimulator · NumPy 셋입니다. ORCA 대비 배수가 십만 단위인 것은 P=32 병렬과 클럭 2배
+  때문이지 알고리즘 우위가 아니라는 단서를 항상 붙이십시오.
 
-실행 모드 이름은 2026-09-10 에 `K4H8_*` 에서 `CKPT_*` 로 바꿨습니다. K·H·E·M 은
-전부 RTL 빌드에 컴파일되는 값이라 CSR 모드 이름에 값을 박아 두면 빌드가 바뀔
-때마다 이름이 틀려집니다 — 실제로 K4/H8 에서 K4/H4 를 거쳐 지금은 K3/H3 입니다.
-`bbht_paper_bench` 의 `CONTROL_K4H8_EQ` · `MODE_K4H8` 은 **그대로 두었습니다** — 그
-파일은 보드 ELF 를 낸 소스와 sha256 이 같아야 합니다.
-
-소프트웨어 기준모델은 CSR 모드 이름 대신 **정책 이름**으로 부릅니다.
-`final_hardware_contract.py` 의 `RUN_MODES` 에 `K3H3_*` · `K3H3_E4_M2_*` · `K4H4_*` ·
-`K4H8_*` 가 있고 `CKPT_*` 는 없습니다. `checkpoint_bbht_model.py` 는 `mode="K4H8"` 을
-옛 K4/H4 정책으로, `"K3H3_E4_M2"` 를 K3/H3 로 옮겨 받습니다.
-
-### 성능을 인용할 때 — 두 축을 섞지 마십시오
-
-| 축 | 정본 | 값 |
-|---|---|---|
-| RTL 사이클 | [`results/2026-09-08_publication_6stage/`](hardware_bram/results/2026-09-08_publication_6stage/) | Normal 42,308,335 → M2 6,890,470 사이클, **6.1401x** |
-| 보드 실경과 시간 | [`vivado/.../2026-09-08_k3h3_e4_m2_board_500run/`](hardware_bram/vivado/vivado_bbht_grover_fpga/2026-09-08_k3h3_e4_m2_board_500run/) | Normal 425,502 us → M2 55,798 us, **7.626x** |
-| 소프트웨어 대비 | [`vivado/.../2026-09-08_orca_1core_baseline/`](hardware_bram/vivado/vivado_bbht_grover_fpga/2026-09-08_orca_1core_baseline/) | ORCA 1코어 대비 **116,426x** (실경과 시간) |
-
-세 근거는 같은 500 워크로드(M = 1/4/16/64/256 × 시드 100)를 씁니다. 궤적
-(`result_index`·`trial_count`·`L_BBHT`)은 보드와 RTL 이 500/500 일치하지만
-**사이클 값 자체는 다릅니다** — M2 는 473/500 이 정확히 3,279 사이클 차이납니다.
-3,279 는 정책 엔진이 리셋 뒤 첫 체크포인트 탐색에서 memo BRAM 을 지우는 길이
-(`H_FUTURE × STATE_RANKS = 3 × 1,093`)입니다. 6단계 캠페인은 워크로드마다 새로 시작해
-매번 치르고 보드는 연달아 돌아 한 번만 치릅니다
-([`2026-09-16_soc_rtl_console`](hardware_bram/results/2026-09-16_soc_rtl_console/evidence.md)
-에서 한 워크로드로 확인). 체크포인트 사이클은 이렇게 직전에 무엇을 돌렸는지에 달려
-있으니, 콘솔로 한 번 돌린 사이클을 500런 표와 맞대지 마십시오.
-그러니 보드 사이클과 RTL 사이클로 배수를 만들지 마십시오.
-
-우리 `bench250` 하네스는 드라이버로 연속 실행해서 보드에 더 가깝습니다 —
-같은 250 워크로드에서 논리 축 250/250, 사이클도 230/250 이 정확히 같습니다
-([`results/2026-09-10_bench250_final_core/`](hardware_bram/results/2026-09-10_bench250_final_core/)).
-
-**소프트웨어 기준모델은 궤적까지 재현합니다.** `software/models/rtl_reference_model/`
-이 측정 난수(xorshift64)와 K3/H3 정책을 RTL 식대로 옮겨서, 같은 500 워크로드에서 보드
-M2 와 `result_index` · `trial_count` · `L_BBHT` 가 500/500, 물리 반복
-`actual_grover_iterations` 도 500/500 맞습니다
-([Common500 검증 보고서](software/results/common500_final/common500_validation_report.md)).
-`cycle_count` 는 모델에 없습니다 — 정책 지연 · plan FIFO · E4/M2 타이밍은 하드웨어
-몫이라 일부러 흉내 내지 않았습니다. 사이클은 RTL 이나 보드에서 인용하십시오.
-
-6단계는 `Normal-E1 → K4/H4-E1 → K4/H4-E4 → K3/H3-E4 → K3/H3-E4-M1 → K3/H3-E4-M2`
-이고, 단계별 기여는 -56.63% / -38.71% / -7.66% / -18.15% / -18.94% 입니다.
-자원은 [`results/2026-09-08_resource_ablation_5config/`](hardware_bram/results/2026-09-08_resource_ablation_5config/)
-에 다섯 구성이 같은 조건으로 있습니다 (Main IP LUT 13,804 → 33,730, DSP 64 → 128).
-
-**폐기된 값 — 보이면 무시하십시오**: n=15·n=16, Q2.16·Q1.17, 8바이트 CSR 간격,
-INCR16 버스트, argmax 측정, AXI4-Lite, MicroBlaze, XC7S100.
-`trash_bin/` 안의 문서는 전부 이 구 스펙 기준이라 인용하면 안 됩니다.
-
-**K4/H4·K4/H8 은 이제 중간 단계입니다.** 2026-09-01(K4/H8)·2026-09-04(K4/H4)
-보드 실측 묶음은 그 시점 근거로 남겨 두었지만, 최종 성능을 인용할 자리가
-아닙니다. 두 묶음은 250쌍(시드 50)이라 500 워크로드 캠페인과 총합을 맞댈 수도
-없습니다.
-
-**main 의 `hardware_bram/src/` 는 최신판 한 벌입니다** (2026-09-13 정리). 통신 계층은
-우리 판(wrapper · mmio · loader · 어댑터. CSR 정본 생성 헤더를 include)이고, Main IP 는
-6단계 ablation 공통소스 판입니다. 보드 정본에 `MEAS_M1_ENABLE` · `MEAS_M2_ENABLE`
-스위치만 더한 것이라 둘 다 1(기본)이면 보드와 동작이 같습니다. 옛 판은 태그로 남아
-있습니다.
-
-| 태그 | 그 시점의 `hardware_bram/` |
-|---|---|
-| `board-k3h3-e4-m2` | `src/` = 보드 비트스트림과 바이트 동일한 17개. `src_comm/` · `src_ablation/` 이 따로 있고 `make final` · `anchor` · `publication` · `kh` · `synth/run_resource.sh` 가 돎 |
-| `backup-src_comm` | `src_comm` 을 `src/` 로 합친 직후. Main IP 는 보드 정본 그대로 |
-| `backup-src_ablation` | ablation 코어까지 합친 최신판. 이 정리를 마친 main 과 같은 코드 |
-
-**보드에 구운 것과 main 의 차이 두 가지는 보드에서는 아직 확인하지 않았지만, 굽기 직전까지는
-전부 확인했습니다** (2026-09-16). 통신 계층이 우리 판으로 바뀐 것과, user region 이 가속기
-클럭을 보드 정본의 `clk_accel` 대신 `gclk_accel` 로 무는 것입니다.
-
-| 단계 | 결과 | 근거 |
-|---|---|---|
-| verilator | bench500 이 보드 M2 와 5축 500/500, 사이클 합 오차 0 | [`results/2026-09-10_bench500_final_core/`](hardware_bram/results/2026-09-10_bench500_final_core/) (2026-09-16 에 다시 돌려 수치 전부 같음) |
-| SoC RTL 시뮬 | **실제 RISC-V 코어가 NoC 를 거쳐** 구동. 보드 ELF 와 sha256 같은 `bbht_paper_bench` 261쌍이 보드 M2 와 사이클까지 261/261 | [`results/2026-09-16_soc_rtl_paper_bench/`](hardware_bram/results/2026-09-16_soc_rtl_paper_bench/) |
-| SoC 명령 왕복 | `bbht_console` 스크립트 21줄이 SoC 에서 돌고, 응답을 `bbht_cli.py` 재생으로 파싱해 같은 순서 verilator 와 RUN·STAT·ENUM 전부 일치 | [`results/2026-09-16_soc_rtl_console/`](hardware_bram/results/2026-09-16_soc_rtl_console/) |
-| 합성·구현 | WNS +0.196 ns (보드 빌드 +0.126), BRAM·DSP 동일, LUT 168 적음 | [`vivado/.../2026-09-16_comm_layer_rebuild/`](hardware_bram/vivado/vivado_bbht_grover_fpga/2026-09-16_comm_layer_rebuild/) |
-| `gclk_accel` | 생성 RTL 이 `assign gclk_accel = clk_accel;` — 게이팅도 BUFG 도 없는 순수 별칭 | 위 구현 묶음 `build_info.txt` |
-
-남은 것은 보드뿐입니다 — 물리 UART(FTDI · 보율 오차 · 핀맵)와 실경과 시간, 그리고
-콘솔이 UART 로 명령을 받는 쪽(`read_line()` 의 UART 판과 `bbht_cli.py` 의 시리얼
-트랜스포트)입니다. SoC 시뮬은 명령을 컴파일 시점 배열에서 읽습니다. 배선 정합성은 `check_ports.py` 가 wrapper 19 + core 61 신호를 세
-갈래(`stub`/`real`/`dram`)로 대조해 지킵니다.
+**폐기된 값 — 보이면 무시하십시오**: n=15·n=16, Q2.16·Q1.17, 8바이트 CSR 간격, INCR16 버스트,
+argmax 측정, AXI4-Lite, MicroBlaze, XC7S100 ([24장](documents/design_references/24_부록_용어집과_폐기된_규격.md)).
+`trash_bin/`(git 추적 안 함) 은 전부 이 구 스펙 기준이라 **인용하면 안 됩니다**.
 
 ---
 
-## 3. 두 갈래 — 아직 어느 쪽도 확정이 아님
+## 3. 하드웨어 트리 — 아직 어느 갈래도 확정이 아님
 
-반복 실패 시 진폭을 어떻게 재활용하느냐에서 구현이 둘로 갈립니다. 나중에 하나를 고릅니다.
+반복 실패 뒤 진폭 재활용 방식으로 갈래가 둘이고, 나중에 하나를 고릅니다. 구조와 모델 목록의
+정본은 [5장 5.2절](documents/design_references/05_하드웨어_아키텍처_개요.md#하드웨어-트리와-bram-모델).
 
-- **`hardware_bram/`** — 체크포인트(K3)로 차이만큼만 이어 돌리고, 반복 한 번에 연산기
-  **네 벌**(E4)이 협력합니다. **BRAM 만** 씁니다. 보드 실물이 이 갈래이고 현재 코드는
-  전부 여기 있습니다.
-- **`hardware_dram/`** — `j` 별 진폭을 DRAM 에 전량 저장하고, 난수 생성기가 뽑은 `j` 는
-  BRAM 큐에도 올립니다. 정답 후보를 검증해 틀리면 큐에서 그 `j` 를 지우고 DRAM 에서
-  다음 `j` 진폭을 큐에 올립니다. 체크포인트 K 도 정책 H 도 쓰지 않습니다 — 모든 `j` 가
-  버스트 한 번 거리에 있어서 계획할 것이 없습니다. **RTL 초안과 회귀, 호스트 통신 경로를
-  묶은 최상단(`src/bbht_dram_top.v`)까지 있고, 물리 DRAM 바인딩(MIG/AXI)과 RVX 설치는
-  아직 없습니다.** 최상단은 DRAM burst 포트를 밖으로 냅니다. 같은 폴더의
-  `bbht_rvx_wrapper.v` + 어댑터는 포트 계약 대조용 판이라 DRAM 을 안쪽에서 묶어 두었고,
-  복원이 필요한 탐색에서 멈춥니다. 검증은 동작 수준 DRAM 모델
-  (`testbench/dram_burst_model.v`) 위에서 하며, `make -C hardware_dram/sim equiv` 가
-  같은 자극을 `hardware_bram` 정본에도 걸어 탐색 궤적이 일치하는지 대조합니다.
-  대조 상대는 2026-09-09 부터 K3/H3-E4-M2 입니다 (그전에는 K4/H4 였습니다).
-  단일탐색 전용이고 `enum_enable=1` 은 `config_error` 로 거절합니다.
+- **`hardware_bram/`** — BRAM 갈래. 보드 실물이 이쪽입니다. 공용 소스(`src` `testbench` `sim`
+  `synth` `firmware` `rvx` `results`)를 바로 아래에 한 벌 두고, 체크포인트 · 연산기 구성마다
+  `models/hardware_bram_<모델>/` 을 둡니다(열 개: `Normal_E1` `K4H8_E1` `K4H4_E1` `K3H4_E1`
+  `K3H3_E1` `K4H4_E4` `K3H3_E4` `K3H3_E4_M1` `K3H3_E4_M2` `nocheckpoint`). 모델 폴더에는 그
+  모델만의 것 — 어댑터 하나(K·H·E·M 기본값) · `rvx/` · `results/` · `vivado/` · `bitstream/` —
+  만 둡니다. 최종 구성은 `K3H3_E4_M2`(RVX 플랫폼 `bbht_grover_upgrade`), 비교 기준 판은
+  `nocheckpoint`([21장](documents/design_references/21_체크포인트_없는_BRAM_판.md)).
+- **`hardware_dram/`** — 모든 `j` 의 진폭을 DDR3 에 저장하는 갈래. 모델 폴더 없이 한 벌입니다
+  ([22장](documents/design_references/22_DRAM_갈래.md)).
+- **`software/`** — 두 트리가 공유하는 기준모델 · 검증 벡터 · 계약 · 호스트 도구
+  ([4장](documents/design_references/04_소프트웨어_기준모델과_정답_벡터.md)). 한쪽 갈래나 한 모델에만
+  해당하는 것을 넣지 마십시오.
 
-두 트리는 하위 구조가 같습니다(`src/` `testbench/` `sim/` `results/` `firmware/` `rvx/` `vivado/`).
-bram 에만 있는 폴더는 dram 에 아직 없는 역할인 `synth/` 와 `bitstream/` 둘입니다. 4절.
-기준모델·검증 벡터·비교 실험은 `software/` 에서 공유합니다.
-한쪽 갈래에만 해당하는 것을 `software/` 에 넣지 마십시오.
+지킬 것:
 
----
-
-## 4. 디렉터리와 파일의 역할
-
-### `documents/`
-
-| 경로 | 역할 |
-|---|---|
-| `design_references/` | **설계 문서.** 해설서와 같은 기술문서체로 씁니다 |
-| `design_references/CSR_레지스터_규격.md` | CSR 38개의 기록. 생성기가 빠져서 이제 손으로 관리합니다. `final_hardware_contract.py` 의 `CSR_OFFSETS` 와 같이 고치십시오 |
-| `design_references/소프트웨어_기준모델과_Common500.md` | `software/` 의 기준모델 · Common500 비교 실험 · RTL 정답 벡터 안내 |
-| `design_references/호스트_조작_방법.md` | 호스트에서 부리는 법. 통신 계층의 주 문서 |
-| `design_references/UART_명령_프로토콜.md` · `블록_인터페이스_다이어그램.md` | 통신 계약 |
-| `design_references/Main_IP_포트_규격.md` · `데이터_고정소수점_메모리_규격.md` | Main IP 계약 |
-| `design_references/다중결과탐색_*.md` · `단일검색_*.md` · `RTL_GitHub_*.md` · `전체_내용_보고서.md` | 골든 모델 분석 보고서 (2026-08 캠페인 기록과 그 뒤 확정된 것) |
-| `design_references/K3H3_E4_M2_정본_반입.md` | 정본이 K4/H4 에서 바뀐 경위와 세 성능 축 |
-| `design_references/PASS2_융합과_다중엔진_탐색_실측.md` | 우리가 시도한 측정 융합·다중 엔진과, 정본이 같은 병목을 어떻게 다르게 푸는지 |
-| `design_references/diagrams/` | **design_references 의 유일한 하위 폴더.** 손그림 SVG · `campaign_*.png` · `src/*.mmd` |
-| `design_references/render_diagrams.py` | `diagrams/src/*.mmd` → `diagrams/*.svg` |
-| `study_references/` | 학습용 해설서 0~18장 + 부록 A. **파일명과 장 번호는 동결** |
-| `papers/` | 원문 논문 PDF. 읽기 전용 |
-| `papers/papers_ko/` | 논문 한국어 해설본. 원문 대조용 보조 자료 |
-| `check_docs.py` | 문서 정합성 검사기. **문서를 고친 뒤 반드시 돌릴 것** |
-| `Main_IP_Final_20260910.pptx` · `LPSoC_BBHT_Grover_최종집약본_v1.0.4_2026-09-09.docx` | 발표 자료와 프로젝트 최종 집약본 원본. 읽기 전용. 집약본은 K4/H8 부터의 이력을 그대로 담고 있어 옛 수치가 섞여 있으니 인용은 2절 정본에서 하십시오 |
-
-### `hardware_bram/` (와 같은 구조의 `hardware_dram/`)
-
-아래 표는 두 갈래가 공유하는 모양에 `hardware_bram/` 에만 있는 폴더를 더한 것입니다.
-`hardware_dram/` 에만 있는 것은 그다음 표에 따로 적었습니다. 파일을 새로 둘 때는
-dram 에 같은 역할의 폴더가 있으면 그리로 보내십시오 (테스트벤치는 C++ 하네스까지
-`testbench/`, 러너와 보고 스크립트는 `sim/`).
-
-| 경로 | 역할 |
-|---|---|
-| `src/` | **최신판 RTL 한 벌 19개.** 통신 계층 4(wrapper·mmio·loader·어댑터) · 최상단 `bbht_bram_top` · user region · Main IP 10 · 헤더 1 · policy OOC 전용 2 |
-| `src/bbht_rvx_wrapper.v` | RVX user region 최상위. 계약 이름 `bbht_grover_core` 를 물고, 어댑터가 Main IP 로 잇습니다 |
-| `src/bbht_grover_core_adapter.v` | 계약 이름·리셋(`rstnn`)과 실물 `bbht_grover_main_ip`(`rstn`) 사이의 얇은 껍데기. K·H·E·M 파라미터 기본값이 여기 있습니다 |
-| `src/bbht_bram_top.v` | 최상단. mmio·loader 에 Main IP 를 어댑터 없이 직접 뭄. 포트는 `bbht_rvx_wrapper` 와 같고 `hardware_dram/src/bbht_dram_top.v` 와 짝. wrapper 와 둘 중 하나만 합성합니다 |
-| `src/bbht_grover_user_region.vh` | RVX 에 넘기는 user region 결선. 가속기 클럭을 `gclk_accel` 로 뭅니다 (보드 정본은 `clk_accel`) |
-| `src/bbht_grover_main_ip.v` | Main IP 최상위. K·H·E·M 이 전부 컴파일 파라미터이고 `MEAS_M1/M2_ENABLE` 이 둘 다 1 이면 보드 정본과 같은 동작입니다 |
-| `src/grover_policy_ooc_top.v` · `grover_policy_impl_wrapper.v` | policy OOC 합성 전용. **합성 경로에 넣지 마십시오** |
-| `testbench/tb_bbht_rvx.v` | 통신 계층 계약 T1~T9. 두 갈래에 같은 TB 를 물립니다 |
-| `testbench/bbht_grover_core_stub.v` | Main IP 자리 채우개. 포트 계약 대조 대상 |
-| `testbench/ahb_sram_model.v` | AHB 슬레이브 모델 |
-| `testbench/tb_bbht_bram_top.v` | 최상단 H1~H15. APB 로 호스트 순서를 흉내 내고 Q14 전체 적재, NORMAL/CKPT 짝 궤적 비교, 열거까지 |
-| `sim/Makefile` | verilator 회귀 진입점. `ports lint regress driver` · `real` · `top` · `bench250` · `bench500` |
-| `testbench/tb_driver.cpp` · `sim/run_driver_test.sh` | 드라이버 + RTL 공동 시뮬 D1~D11 (`CORE=stub\|real`) |
-| `testbench/tb_bench250.cpp` · `sim/bench250_report.py` | 250쌍 워크로드 시뮬. 궤적 불변식 + 보드 M2 실측과 워크로드별 대조 (`bench500` 도 같은 짝) |
-| `synth/` | Main IP 자원 재기. `run_main_ip.sh` 가 `src/` 만으로 OOC 합성합니다 (5구성 `run_resource.sh` 는 태그 `board-k3h3-e4-m2`) |
-| `results/` | **시뮬 캠페인 근거 묶음** (`YYYY-MM-DD_<주제>/`). 재현 소스 없이 결과만 |
-| `bitstream/` | 보드에 구운 비트스트림 묶음 (`YYYY-MM-DD_<주제>`) |
-| `rvx/bbht_grover_upgrade.xml` | RVX 플랫폼 정의 (clk_accel 100 MHz) |
-| `rvx/install_to_platform.sh` | 저장소 → RVX 플랫폼 설치. `src/` 의 통신 계층·어댑터·Main IP 와 user region 을 옮깁니다 |
-| `rvx/bbht_grover_user_region.vh.generated` | RVX `make syn` 이 뽑아 준 user region 빈 템플릿. RVX 가 IP 를 바꿨을 때 우리 user region 과 대조하는 용도 |
-| `vivado/vivado_<프로젝트이름>/` | **Vivado 프로젝트 한 벌.** 폴더 이름 규칙은 소문자 `vivado_` 접두 |
-| `vivado/vivado_bbht_grover_fpga/reports/` | 최종 구현 `route_{util,util_hier,timing_summary,timing_max,power}.rpt` |
-| `vivado/vivado_bbht_grover_fpga/meta/` | 그 구현의 빌드 정보·소스 sha256·비트스트림 sha256 |
-| `vivado/vivado_bbht_grover_fpga/2026-09-08_k3h3_e4_m2_board_500run/` | **보드 실측 정본.** 500 워크로드, Normal 대비 7.626x |
-| `vivado/vivado_bbht_grover_fpga/2026-09-08_orca_1core_baseline/` | 같은 보드 ORCA 1코어 순수 SW 기준선 |
-| `vivado/vivado_bbht_grover_fpga/2026-09-01_*` · `2026-09-04_*` | 중간 단계(K4/H8·K4/H4) 보드 실측. 최종 인용처가 아닙니다 |
-| `vivado/vivado_bbht_grover_fpga/2026-09-16_comm_layer_rebuild/` | 우리 통신 계층 판으로 다시 낸 비트스트림의 구현 리포트. **굽지 않았습니다.** Vivado 2026.1 이라 2026-09-07 것과 해시 비교 불가 |
-| `results/2026-09-16_soc_rtl_paper_bench/` | RVX SoC 전체 Questa 시뮬 위의 `bbht_paper_bench` 261쌍. 통신 계층을 실제 CPU 가 구동한 근거 |
-| `results/2026-09-16_soc_rtl_console/` | 같은 SoC 시뮬 위의 `bbht_console` 명령 21줄과 호스트 CLI 재생 대조. 3,279 사이클 차이의 원인도 여기 |
-| `testbench/tb_console_seq.cpp` · `sim/soc_console_check.py` | 콘솔 스크립트와 같은 순서의 verilator 기준(`make console-seq`)과, SoC 트랜스크립트를 그 기준에 맞대는 검사기 |
-| `firmware/bbht_grover_driver.{c,h}` | 재사용 드라이버 |
-| `firmware/bbht_console/` | UART 명령 셸. 재빌드 없이 조건을 바꿉니다. `rvx_each.mh` 가 RTL 시뮬 빌드에만 스크립트 모드를 켭니다 |
-| `firmware/bbht_paper_bench/` | 실시간 벤치 앱. 보드 실측 500런을 낸 것 |
-| `firmware/orca_sw_baseline/` | 가속기를 안 쓰는 ORCA 1코어 기준선 앱 |
-
-### `hardware_dram/` 에만 있는 것
-
-Main IP 자체가 다른 갈래라 이쪽 `src/` 의 내용은 `hardware_bram/src/` 와 다릅니다.
-두 갈래 모두 **`src/` 한 폴더**에 Main IP 와 통신 계층을 같이 둡니다. 이쪽은 Main IP
-초안(`grover_*` · `lpsoc_*`)과 통신 계층(`bbht_*`, `hardware_bram/src/` 와 mmio·loader
-바이트 동일)입니다
-(2026-09-11 에 옛 `src_v2/` 를 `src/` 로 합쳤습니다). 최상위가 둘이라 `sim/Makefile` 은
-파일을 하나씩 나열합니다 — glob 으로 모으지 마십시오. 재사용 8개
-(`grover_param.vh` `arithmetic` `memories` `iteration` `measurement` `loader` `status`
-`dram_random`) 에 아래 신규 5개가 붙습니다. 체크포인트(`grover_checkpoint.v`)와 정책
-엔진(`grover_policy.v`)은 **일부러 안 가져왔습니다** — 모든 `j` 가 버스트 한 번 거리라
-계획할 것이 없습니다.
-
-| 경로 | 역할 |
-|---|---|
-| `src/grover_dram_amp_store.v` | 반복마다 512행을 DRAM 슬롯에 store / 필요할 때 restore |
-| `src/grover_dram_prep_seq.v` | 버퍼 A 준비 시퀀서. **체크포인트 K/H 를 대신하는 자리** |
-| `src/grover_dram_shot_fsm.v` | 외곽 BBHT 라운드 제어 |
-| `src/grover_dram_queue.v` | 버퍼 A/B 두 벌과 역할별 포트 뮤스 |
-| `src/grover_dram_param.vh` | 슬롯 주소맵. 92바이트/행 × 512행 = 47,104바이트/슬롯 |
-| `src/bbht_dram_top.v` | **이 갈래의 최상단.** mmio + AHB 적재기 + Main IP 를 직접 물고 DRAM burst 포트를 밖으로 냄 |
-| `src/bbht_rvx_wrapper.v` · `bbht_grover_core_adapter.v` | 포트 계약판. `check_ports.py dram` 대조용이고 DRAM 이 묶여 있어 실제로는 못 씀 |
-| `testbench/dram_burst_model.v` | 동작 수준 DRAM 모델. 지연·백프레셔가 전부 파라미터 |
-| `testbench/tb_dram_amp_store.v` | store/restore 왕복 A1~A5 |
-| `testbench/tb_dram_prep_seq.v` | prep 시퀀서 P1~P8. 연산기 자리에 스텁을 넣습니다 |
-| `testbench/tb_dram_core.v` | Main IP 통합 C1~C8. `GD_DRAM_BRANCH` 를 빼면 `hardware_bram` 에도 물립니다 |
-| `testbench/tb_bbht_dram_top.v` | 최상단 H1~H14. APB 로 호스트 순서를 흉내 내고, C1~C7 은 `tb_dram_core` 와 궤적 대조 |
-| `sim/Makefile` | `ports lint store prep core top equiv`. `top` 은 기본 지연과 백프레셔 두 벌 |
-| `sim/equiv_report.py` | 세 갈래(dram / bram Normal / bram 체크포인트) 로그 대조기. `--names` 로 최상단 대조에도 씀 |
-
-**아직 없는 것**: 물리 DRAM 바인딩(MIG native UI 든 AXI4 든), 열거,
-버퍼 B 를 쓰는 라운드 간 프리페치, RVX 설치 스크립트, Vivado 프로젝트.
-
-### `software/` — 두 갈래가 공유
-
-2026-09-13 에 역할 중심으로 다시 짰습니다. 안내 문서는
-[`소프트웨어_기준모델과_Common500.md`](documents/design_references/소프트웨어_기준모델과_Common500.md)
-입니다 (하위 폴더 README 를 두지 않는 규칙 때문에 그리로 옮겼습니다).
-
-| 경로 | 역할 |
-|---|---|
-| `models/common/` | 공통 설정·결과 자료형·데이터셋·BBHT 계약. `final_hardware_contract.py` 가 CSR 오프셋·실행 모드·체크포인트 상수를 담습니다 |
-| `models/numpy_model/` | Float64 상태벡터 기준 |
-| `models/qiskit_model/` | Qiskit Aer 상태벡터, 그리고 같은 J-LFSR·측정 규칙으로 도는 NumPy/Qiskit BBHT 실행기 |
-| `models/rtl_reference_model/` | Q1.22 bit-exact 산술·LFSR·측정(`fixed_point_statevector.py`)과 Normal·K4/H4·K3/H3·DRAM all-j 정책 모델(`checkpoint_bbht_model.py`) |
-| `experiments/common500_benchmark/` | 보드와 같은 500 워크로드로 8 backend 를 비교하는 실험 |
-| `rtl_vectors/` | RTL 정답 벡터. requested-j bit-exact 256개(zip) · 열거 두 방식 |
-| `results/common500_final/` | Common500 4,000행 결과·표·그래프·검증 보고서 |
-| `rtl_vectors/tools/dump_bench_workload.py` | `bench250` · `bench500` 자극 생성기. `--seeds 50|100`. 데이터셋을 다시 계산하지 않고 `experiments/.../inputs/` 에서 복사하고, 돌 때마다 해시·로스터·부분집합을 스스로 검사합니다 |
-| `contract/` | **하드웨어-소프트웨어 계약 두 벌과 그 대조기.** CSR 정본 JSON · `gen_csr.py` · `generated/`(Verilog·C·Python 헤더) · 포트 계약 `port_contract.tsv` · `extract_contract.py` · `check_ports.py` · 계약 원본 docx |
-| `host/bbht_cli.py` | 호스트 PC 쪽 CLI. `--port /dev/ttyUSB1` · `mock`(파이썬 모델, 수치 인용 금지) · `replay:<파일>`(RTL 시뮬 트랜스크립트 재생). `selftest` 는 보드가 보고하는 상수를 CSR 정본과 대조합니다 |
-| `requirements.txt` | Common500 재실행용 파이썬 패키지 |
-
-2026-09-13 재편 때 빠졌던 것 중 파이프라인이 쓰는 것은 2026-09-16 에 되살렸습니다 —
-CSR 정본 JSON · 생성기 · 생성 헤더는 `software/csr/` 대신 **`software/contract/`** 로
-합쳤고(같은 깊이라 `gen_csr.py` 내부 경로를 안 고쳐도 됩니다), 포트 계약 tsv · 추출기 ·
-docx 는 제자리로, 호스트 CLI 는 `software/host/` 로 갔습니다. 벤치 워크로드 생성기는
-`dump_bench500_workload.py` 가 이력에 한 번도 커밋된 적이 없어서 둘을 하나로 새로
-썼습니다.
-
-되살리지 **않은** 것은 `golden/`(옛 골든 모델과 `tools/`), `bin/`(옛 벡터),
-`Qiskit_Server/`, `research/` 입니다 — 역할을 `models/` · `experiments/` ·
-`rtl_vectors/` 가 승계했고, 마지막으로 남아 있던 의존(데이터셋 재계산 · 시드 로스터)도
-저장소 안 재료로 대체됐습니다. 필요하면 커밋 `79b7410` 에서 꺼내십시오.
-
-### `trash_bin/` — git 추적 안 함
-
-구 스펙 문서와 대용량 산출물 보관소입니다. **여기서 인용하지 마십시오.**
-`documents_design/` 구 설계 문서 11편 · `KJE/` 구 펌웨어와 71M 분석 결과 ·
-`PJK/` 비트스트림과 136M 아카이브 · `PJK_handoff/` K4/H8 시절 인수인계 요약본 2편 ·
-`SJS/` 구 README · `presentation/` 세미나·스펙결정 발표자료 · `old_tools/` 폐기된 Vivado 스텁 ·
-`SERVER_repro_package_v1.0/` 재현 패키지 zip 에서 저장소에 들이지 않은 81개 (standalone 판 전체, 구 17장 판본, 옛 스크립트, DSE 원본 18 MB 등).
+- **Main IP 를 모델 폴더로 복사하지 마십시오.** 모든 모델이 같은 RTL 을 파라미터만 달리 컴파일해야
+  모델 사이 비교가 공정합니다. 새 모델은 기존 모델의 `src/` · `rvx/` 를 복사해 어댑터 기본값과
+  xml 의 첫 `<name>` 만 바꿉니다. RVX 설치는 공용 `hardware_bram/rvx/install_model.sh` 가 합니다.
+- 결과 묶음은 한 모델 것이면 그 모델의 `results/`, 여러 모델을 맞대면 `hardware_bram/results/`.
+- 파일을 새로 둘 때 dram 에 같은 역할의 폴더가 있으면 그리로 맞춥니다. 테스트벤치는 C++ 하네스까지
+  `testbench/`, 러너와 보고 스크립트는 `sim/` 입니다. `hardware_*/testbench/` 에 Makefile 을 두지
+  않습니다.
+- `hardware_dram/sim/Makefile` 은 최상위가 둘이라 파일을 하나씩 나열합니다 — glob 으로 모으지
+  마십시오. `grover_policy_ooc_top.v` · `grover_policy_impl_wrapper.v` 는 OOC 전용이라 합성 경로에
+  넣지 않습니다. `bbht_bram_top` 과 `bbht_rvx_wrapper` 는 둘 중 하나만 합성합니다.
+- 태그 안에서는 BRAM 갈래 폴더가 그 시점 배치의 `hardware_bram/` 입니다. 태그 안 경로를 말할 때는
+  옛 배치를 그대로 씁니다(태그 표는 5장 5.2절). 6단계 ablation · K/H 단독 실험의 재현 소스도 태그에만
+  있습니다.
 
 ---
 
-## 5. 명령어
+## 4. 명령어
+
+절차 전체와 증상별 대처는 [2장](documents/design_references/02_개발_환경과_툴체인.md),
+보드는 [17장](documents/design_references/17_보드_운용.md), 검증 순서는
+[16장](documents/design_references/16_검증_체계.md).
 
 ```bash
-# 통신 계층 회귀 (몇 초)
-make -C hardware_bram/sim ports lint regress driver
+# BRAM 갈래. 어댑터가 들어가는 타깃은 MODEL=<모델> (기본 K3H3_E4_M2)
+make -C hardware_bram/sim ports lint regress driver      # 통신 계층 (몇 초)
+make -C hardware_bram/sim real [MODEL=K4H4_E4]           # + 모델 어댑터 + Main IP (몇 분)
+make -C hardware_bram/sim ports-models lint-models       # 모델 열 개 전부
+make -C hardware_bram/sim top                            # 최상단 bbht_bram_top (1분 30초쯤)
+make -C hardware_bram/sim bench250                       # 250쌍 궤적 벤치 (20분쯤)
+make -C hardware_bram/sim predicate500 console-gen       # 네 술어 x 500
+make -C hardware_bram/models/hardware_bram_nocheckpoint/sim [predicate500 predicate500-ref equiv]
+hardware_bram/synth/run_main_ip.sh                       # Main IP 자원 (Vivado, 2분쯤)
 
-# 통신 계층 + 어댑터 + Main IP (몇 분)
-make -C hardware_bram/sim real
+# DRAM 갈래
+make -C hardware_dram/sim && make -C hardware_dram/sim equiv
+make -C hardware_dram/sim predicate500 [AXI_STALL=1]
 
-# 최상단 bbht_bram_top 회귀 (1분 30초쯤)
-make -C hardware_bram/sim top
-
-# 250쌍 궤적 벤치 (20분쯤)
-make -C hardware_bram/sim bench250
-
-# 6단계 ablation · K/H 단독 실험 재현은 태그에서 (standalone top 틀이라 main 에 없음)
-git worktree add /tmp/board board-k3h3-e4-m2
-make -C /tmp/board/hardware_bram/sim anchor      # publication · kh 도 같은 자리
-
-# 최종 Main IP 자원 재기 (Vivado, 2분쯤)
-hardware_bram/synth/run_main_ip.sh
-
-# DRAM 갈래 회귀 (1분 30초쯤, 최상단 bbht_dram_top 의 top 까지). equiv 는
-# hardware_bram 정본과 궤적 대조까지 (40초 더)
-make -C hardware_dram/sim
-make -C hardware_dram/sim equiv
-
-# 소프트웨어 기준모델 Common500 비교 (가상환경에 software/requirements.txt 를 설치한 뒤.
-# NumPy·Qiskit 까지 전부 돌리면 수 시간. 끊겨도 같은 명령이 이어서 돕니다)
-bash software/experiments/common500_benchmark/run_full_benchmark.sh
-
-# 문서를 고쳤으면 (오류 0건이어야 합니다)
+# 계약 · 문서 (문서를 고쳤으면 check_docs 오류 0건이어야 합니다)
+python3 software/contract/gen_csr.py [--check]
 python3 documents/check_docs.py
 
-# 해설서 다이어그램
-python3 documents/study_references/render_diagrams.py
-
-# RVX
+# RVX: 모델마다 rvx/install_to_platform.sh 가 자기 플랫폼에 설치
 source /opt/rvx/rvx_setup.sh
-hardware_bram/rvx/install_to_platform.sh
+hardware_bram/models/hardware_bram_K3H3_E4_M2/rvx/install_to_platform.sh
 cd $RVX_MINI_HOME/platform/bbht_grover_upgrade && make syn && make sim_rtl
-```
 
-2026-09-13 `software/` 재편 때 빠진 생성물 때문에 한동안 위 명령 대부분이 멈춰
-있었습니다. 2026-09-16 에 되살렸고 **지금은 전부 돕니다** (4절 `software/` 표).
-CSR 헤더가 병목이었습니다 — `sim/Makefile` 의 모든 타깃이 `csr:` 를 선행조건으로
-걸고, RTL 4곳과 TB 3곳이 `bbht_grover_csr.vh` 를 include 하며,
-`bbht_grover_driver.h` 가 `bbht_grover_regs.h` 를 include 하기 때문입니다.
-
-```bash
-# CSR 정본에서 생성물 넷을 만들고, 생성하지 않는 두 곳까지 대조
-python3 software/contract/gen_csr.py          # 갱신
-python3 software/contract/gen_csr.py --check  # 갱신 없이 확인만 (CI 용)
-
-# 호스트 CLI -- 보드가 없으면 mock 이나 시뮬 트랜스크립트 재생
+# 보드 · 호스트
+python3 software/host/bbht_predicate500.py --port /dev/ttyUSB1
 python3 software/host/bbht_cli.py --port mock selftest
-python3 software/host/bbht_cli.py --port replay:<트랜스크립트> -c ID -c RUN
 ```
 
-RVX SoC 시뮬에서 `bbht_console` 의 UART 판은 `read_line()` 에서 입력을 기다리며 멈춥니다 —
-RVX 의 `ncsim_printf.v` 가 `uart_tx` 를 1 로 묶어 두어 보낼 쪽이 없기 때문입니다.
-그래서 `firmware/bbht_console/rvx_each.mh` 가 **RTL 시뮬 빌드(`TARGET_IMP_CLASS=rtl`)에만**
-`-DBBHT_CONSOLE_SCRIPT` 를 넣고, 콘솔은 명령을 컴파일 시점 배열에서 읽습니다. 보드 빌드
-ELF 는 바이트 단위로 그대로입니다. **명령줄로 `DEFINE_CFLAGS` 를 넘기지 마십시오** —
-`make bbht_console.sim` 이 시뮬 직전에 앱을 다시 빌드하면서 빠집니다(2026-09-16 에 이것을
-"원인 미확인 멈춤" 으로 잘못 기록했습니다). 시뮬 뒤 `sim_rtl/rvx_app_build.log` 에
-`BBHT_CONSOLE_SCRIPT` 가 있는지 보십시오.
+함정 셋 (자세한 이유는 2장):
 
-```bash
-(cd $RVX_MINI_HOME/platform/bbht_grover_upgrade/sim_rtl && make bbht_console.sim)   # 3분쯤
-make -C hardware_bram/sim console-seq          # 같은 순서의 verilator 기준값 (30초쯤)
-python3 hardware_bram/sim/soc_console_check.py $RVX_MINI_HOME/platform/bbht_grover_upgrade/sim_rtl/qtsim.log \
-    --ref /tmp/sjs_console_seq/console_seq.csv
-```
-
-**이 환경의 툴체인** (2026-09-09 실측): `verilator` 5.020, `vsim`(Questa 2022.1_2),
-`vivado` 2026.1(노드락 라이선스, `xc7a100tcsg324-1` 합성·구현·비트스트림 가능), RISC-V GCC,
-`iverilog`/`vvp` 12.0. 회귀는 **전부 verilator** 로 돌아갑니다 — `hardware_*/testbench/` 에는
-테스트벤치 소스만 있고 Makefile 이 없으며, `sim/Makefile` 이 그것들을 물어 갑니다.
-**헤드리스라 `gtkwave` 와 Vivado GUI 는 설치돼 있어도 못 띄웁니다** — `-mode batch` 전용.
-RVX 는 `/opt/rvx` 에 로컬 전체 설치되어 있어 원격 접속이 필요 없습니다.
-따를 예제는 `platform/tip_quantized_cnn/`(커스텀 IP + `user/rtl`·`user/api`).
-
-경로에 공백("중앙대학교 학부인턴")이 있어서 verilator 생성 Makefile 을 제자리에서 못 돌립니다.
-`sim/Makefile` 이 `--Mdir /tmp/...` 로 빼는 이유가 이것이니 건드리지 마십시오.
+- 저장소 경로에 공백이 있을 수 있어 `sim/Makefile` 이 verilator 빌드를 `--Mdir /tmp/...` 로
+  뺍니다. 건드리지 마십시오.
+- RVX SoC 시뮬에서 `bbht_console` 은 `rvx_each.mh` 가 RTL 시뮬 빌드에만 스크립트 모드를 켭니다.
+  **명령줄로 `DEFINE_CFLAGS` 를 넘기지 마십시오.** 시뮬 뒤 `sim_rtl/rvx_app_build.log` 에
+  `BBHT_CONSOLE_SCRIPT` 가 있는지 보십시오.
+- 헤드리스라 `gtkwave` 와 Vivado GUI 는 못 띄웁니다. Vivado 는 `-mode batch` 전용입니다.
 
 ---
 
-## 6. 문서를 고쳤을 때 같이 확인할 곳
+## 5. 문서를 고쳤을 때 같이 확인할 곳
 
-`check_docs.py` 는 죽은 링크 · 없는 앵커 · 없는 그림 · 고아 그림 · 렌더 안 된 `.mmd` ·
-되살아난 폐기 스펙 · 본문 mermaid fence 를 잡습니다. 다음은 **기계가 못 잡으니 사람이** 봅니다.
+기술문서 작성 규칙: 한 수치는 한 장에만 적고 다른 장은 링크합니다. 장 머리에
+`← 이전 · 문서 지도 · 다음 →` 줄. 본문에 LaTeX · mermaid fence 를 쓰지 않습니다(그림은
+`diagrams/` 의 SVG, `design_references/diagrams/` 가 유일한 하위 폴더). 장을 더하거나 번호를 바꾸면
+모든 장의 머리 줄과 `00_문서_지도.md` 를 같이 고칩니다. 해설서(`study_references/`)는 **파일명과
+장 번호가 동결**입니다. `papers/` 와 `*.pptx` 는 읽기 전용입니다.
+
+`check_docs.py` 는 죽은 링크 · 없는 앵커 · 없는 그림 · 고아 그림 · 렌더 안 된 `.mmd` · 되살아난
+폐기 스펙 · 본문 mermaid fence 를 잡습니다. 다음은 **기계가 못 잡으니 사람이** 봅니다.
 
 - 인용한 주장이 대상 절에 실제로 있는가
 - 뒤 장에서 정의되는 용어를 앞 장이 설명 없이 쓰지 않는가
@@ -418,20 +182,10 @@ RVX 는 `/opt/rvx` 에 로컬 전체 설치되어 있어 원격 접속이 필요
 
 | 무엇을 고쳤나 | 같이 볼 곳 |
 |---|---|
-| 설계 수치 | `CSR_레지스터_규격.md` 와 `software/models/common/final_hardware_contract.py` 를 같이 → `CLAUDE.md` 2절 → `README*.md` 2절 → 해설서 [15.4절](documents/study_references/15_논문지도와_설계결정표.md#154-우리-프로젝트의-좌표--확정-설계-결정표) |
-| 성능·자원 수치 | 어느 축인지부터 (RTL 사이클 / 보드 실경과 시간 / 소프트웨어 대비) → 해당 근거 묶음의 `evidence.md` → `CLAUDE.md` 2절 → `README*.md` |
-| 포트 | `Main_IP_포트_규격.md` 와 RTL 을 같이. 포트 계약 tsv 와 추출기가 빠져서 자동 대조(`make ports`)는 지금 없습니다 |
+| 설계 수치 | CSR 이면 JSON 을 고치고 `gen_csr.py` → 1장 1.2절 → `README*.md` 2절 → 해설서 [15.4절](documents/study_references/15_논문지도와_설계결정표.md#154-우리-프로젝트의-좌표--확정-설계-결정표) |
+| 성능·자원 수치 | 어느 축인지부터 → 해당 근거 묶음의 `evidence.md` → 1장 1.5절 → `README*.md` |
+| 포트 | 기술문서 12장과 RTL 을 같이. `make -C hardware_bram/sim ports ports-real ports-models` |
+| 모델 추가·파라미터 | 5장 5.2절 모델 표 → `README*.md` 3절 |
 | 절 제목·절 번호 | 그 장으로 들어오는 모든 링크. 앵커가 밀립니다 |
-| 해설서 파일명 | **동결입니다.** 13·14장이 제목만 바뀌고 파일명을 둔 이유가 이것입니다 |
-| 디렉터리 구조 | `CLAUDE.md` 4절 · `README.md`/`README.ko.md` 4절 |
+| 디렉터리 구조 | 이 파일 3절 · `README.md`/`README.ko.md` 4절 · 기술문서 5장 5.2절과 17장 |
 | 다이어그램 | `.mmd` 를 고쳤으면 `render_diagrams.py` 실행 |
-
-해설서 본문은 다이어그램을 `<img src="diagrams/<name>.svg">` 로 참조합니다.
-**본문에 mermaid fence 를 직접 쓰지 않습니다** — 어느 뷰어에서든 보이게 하려는 의도입니다.
-mermaid 로 안 되는 그림(진폭 막대, 기하 회전, 타임라인)은 손으로 쓴 SVG 를 `diagrams/` 에 직접 둡니다.
-
-**고전 선형 스캔과 속도를 비교하지 않습니다.** 에뮬레이션은 고전 스캔보다 느립니다.
-비교 대상은 셋입니다 — 같은 보드 위의 ORCA 1코어 순수 소프트웨어 기준선(가장 정당한
-대조군. 같은 칩·같은 워크로드·같은 시드), Qiskit AerSimulator, NumPy 상태벡터
-시뮬레이터. ORCA 대비 배수가 십만 단위인 것은 P=32 병렬과 클럭 2배 때문이지
-알고리즘 우위가 아니라는 단서를 항상 붙이십시오.

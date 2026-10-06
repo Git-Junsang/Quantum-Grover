@@ -9,7 +9,7 @@
 //   APB 마스터       이 테스트벤치의 태스크. RVX 위 펌웨어가 CSR 을 읽고
 //                    쓰는 순서를 그대로 흉내 냅니다. 호스트 PC 의 UART
 //                    명령(SET / LOAD / RUN)은 펌웨어 안에서 결국 이 순서가
-//                    됩니다 (documents/design_references/호스트_조작_방법.md)
+//                    됩니다 (documents/design_references/17_보드_운용.md)
 //   ahb_sram_model   RVX System SRAM 흉내. hardware_bram/testbench 것을
 //                    그대로 물립니다 (두 갈래 통신 계층이 같으므로)
 //   dram_burst_model DRAM 흉내. 저장한 슬롯이 복원 때 비트 하나 안 틀리고

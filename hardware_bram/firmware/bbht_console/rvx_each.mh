@@ -14,4 +14,10 @@
 ## 보드 빌드(TARGET_IMP_CLASS=arty-100t)와 가상 플랫폼 빌드(vp)에는 들어가지
 ## 않습니다. 이 파일이 읽히는 시점에는 빌드 Makefile 이 TARGET_IMP_CLASS 를
 ## 아직 정하지 않았으므로 ifeq 대신 쓰일 때 전개되는 $(if ...) 를 씁니다.
-DEFINE_CFLAGS += $(if $(filter rtl,$(TARGET_IMP_CLASS)),-DBBHT_CONSOLE_SCRIPT)
+##
+## 기본 스크립트 대신 다른 명령 목록을 돌리려면 환경변수 BBHT_SCRIPT 에 헤더
+## 파일 이름(src/ 안)을 주고 시뮬을 부르십시오. 환경변수라서 sim_rtl 이 시뮬
+## 직전에 앱을 다시 빌드할 때도 살아 있습니다 (명령줄 DEFINE_CFLAGS 와 다른 점).
+##   BBHT_SCRIPT=script_predicate500.h make bbht_console.sim
+## 보드 빌드에는 여전히 아무것도 들어가지 않습니다.
+DEFINE_CFLAGS += $(if $(filter rtl,$(TARGET_IMP_CLASS)),-DBBHT_CONSOLE_SCRIPT $(if $(BBHT_SCRIPT),-DBBHT_CONSOLE_SCRIPT_FILE=\"$(BBHT_SCRIPT)\"))

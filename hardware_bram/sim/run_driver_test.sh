@@ -18,8 +18,10 @@ rm -rf "$BUILD"
 mkdir -p "$BUILD/src"
 
 # CORE=stub   통신 계층 + 자리 채우개 (기본). 통신 계약만 몇 초에 확인합니다
-# CORE=real   통신 계층 + 어댑터 + Main IP
+# CORE=real   통신 계층 + 모델 어댑터 + Main IP. 어댑터는 ADAPTER 로 받고,
+#             안 주면 보드 정본 구성(K3H3_E4_M2) 모델의 것을 씁니다
 CORE=${CORE:-stub}
+ADAPTER=${ADAPTER:-$HERE/../models/hardware_bram_K3H3_E4_M2/src/bbht_grover_core_adapter.v}
 
 # 정본 Main IP 중 합성 경로에 들어가는 열입니다. glob 을 쓰면 policy OOC
 # 전용 파일까지 딸려 와서 최상위가 둘이 됩니다.
@@ -39,7 +41,7 @@ done
 case "$CORE" in
     real)
         # 어댑터 + Main IP. 어댑터가 계약 이름 bbht_grover_core 로 감쌉니다.
-        cp "$HERE/../src/bbht_grover_core_adapter.v" "$BUILD/src/"
+        cp "$ADAPTER"                                "$BUILD/src/bbht_grover_core_adapter.v"
         cp "$HERE/../src/grover_param.vh"            "$BUILD/src/"
         CORE_SRC="$BUILD/src/bbht_grover_core_adapter.v"
         for f in $CORE_FILES; do

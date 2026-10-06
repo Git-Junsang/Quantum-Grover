@@ -62,7 +62,7 @@ OOC 단독 합성과 standalone top 안의 계층 추출이라는 조건 차이 
 ## 이 숫자를 쓸 때의 경계
 
 - **합성 결과이지 구현 결과가 아닙니다.** 배치배선을 거친 최종 수치는
-  `hardware_bram/vivado/vivado_bbht_grover_fpga/reports/` 에 있고, 그쪽은
+  `hardware_bram/models/hardware_bram_K3H3_E4_M2/vivado/vivado_bbht_grover_fpga/reports/` 에 있고, 그쪽은
   RVX SoC 까지 포함한 전체라 LUT 45,284 / FF 45,223 / BRAM 116 / DSP 132 입니다.
 - Vivado 버전과 합성 전략이 바뀌면 값이 달라집니다. 같은 조건으로 다섯을
   나란히 재는 것이 이 표의 목적이지 절대값을 못박는 것이 아닙니다.

@@ -318,3 +318,73 @@ bench500:
 	          || { tail -30 $(BUILD)/bench500_bram_build.log; exit 1; }
 	$(BUILD)/bench500_bram/sim
 	python3 bench500_report.py $(BUILD)/bench500_dram_$(DLAT).csv $(BUILD)/bench500_bram.csv
+
+#---------------------------------------------------------------------
+# AXI4 브리지를 낀 보드용 최상단 -- bbht_dram_axi_top
+#
+#   make lint-axi      bbht_dram_axi_top(통신 계층 + Main IP + AXI 브리지) lint
+#   make predicate500  네 술어 x 500 워크로드를 실제 드라이버로 돌려 SW 기준
+#                      모델(DRAM_ALL_J)과 맞댑니다. 보드에 들어가는 RTL 을 그대로
+#                      쓰고 AXI 뒤쪽만 axi4_mem_model 입니다
+#                      (hardware_bram 의 같은 이름 타깃과 짝. 술어 넷 동시)
+#   AXI_STALL=1        axi4_mem_model 에 불규칙한 백프레셔를 겁니다
+#
+# 자극과 기댓값은 hardware_bram 과 같은 파일입니다.
+#   software/rtl_vectors/tools/dump_predicate500_workload.py
+#   software/experiments/predicate500_benchmark/expected/predicate500_expected.csv
+#---------------------------------------------------------------------
+AXI_RTL  = $(RTL_DIR)/bbht_dram_axi_top.v $(RTL_DIR)/grover_dram_axi_bridge.v $(TOP_RTL)
+
+.PHONY: lint-axi predicate500 predicate500-build predicate500-wl
+
+lint-axi:
+	@verilator --lint-only -Wno-DECLFILENAME \
+	          -Wno-WIDTHEXPAND -Wno-WIDTHTRUNC -Wno-LATCH -Wno-UNOPTFLAT \
+	          -Wno-CMPCONST \
+	          -I$(CSR_DIR) -I$(RTL_DIR) \
+	          $(AXI_RTL) --top-module bbht_dram_axi_top
+	@echo "lint 통과 (bbht_dram_axi_top)"
+
+AXI_STALL     ?= 0
+PRED500_BUILD  = /tmp/dram_pred500_stall$(AXI_STALL)
+PRED500_WL     = /tmp/sjs_pred500_wl
+PRED500_PREDS ?= LT GT EQ RANGE
+PRED500_DEFS   = -DBBHT_HOST_TEST -DBBHT_NO_PRINTF -DBBHT_TIMEOUT=200000000
+FW_DIR         = ../../hardware_bram/firmware
+
+predicate500-wl:
+	@python3 ../../software/rtl_vectors/tools/dump_predicate500_workload.py --out $(PRED500_WL)
+
+predicate500-build: lint-axi
+	@python3 ../../software/contract/gen_csr.py > /dev/null
+	@rm -rf $(PRED500_BUILD); mkdir -p $(PRED500_BUILD)/src
+	@cp $(TB_DIR)/tb_dram_predicate500.cpp $(TB_DIR)/tb_dram_axi_sys.v \
+	    $(TB_DIR)/axi4_mem_model.v $(AXI_RTL) $(PRED500_BUILD)/src/
+	@cp $(RTL_DIR)/grover_param.vh $(RTL_DIR)/grover_dram_param.vh $(PRED500_BUILD)/src/
+	@cp $(CSR_DIR)/bbht_grover_csr.vh $(CSR_DIR)/bbht_grover_regs.h $(PRED500_BUILD)/src/
+	@cp $(FW_DIR)/bbht_grover_driver.c $(FW_DIR)/bbht_grover_driver.h $(PRED500_BUILD)/src/
+	@gcc -c -O2 $(PRED500_DEFS) -I$(PRED500_BUILD)/src \
+	     $(PRED500_BUILD)/src/bbht_grover_driver.c -o $(PRED500_BUILD)/driver.o
+	@verilator --cc --exe --build -j 4 -Wno-fatal -Wno-DECLFILENAME \
+	     -GSTALL_EN=$(AXI_STALL) \
+	     --Mdir $(PRED500_BUILD)/obj \
+	     -CFLAGS "$(PRED500_DEFS) -I$(PRED500_BUILD)/src -O2" \
+	     -LDFLAGS "$(PRED500_BUILD)/driver.o" -I$(PRED500_BUILD)/src \
+	     $(PRED500_BUILD)/src/tb_dram_axi_sys.v $(PRED500_BUILD)/src/axi4_mem_model.v \
+	     $(foreach f,$(notdir $(AXI_RTL)),$(PRED500_BUILD)/src/$(f)) \
+	     --top-module tb_dram_axi_sys $(PRED500_BUILD)/src/tb_dram_predicate500.cpp \
+	     -o bench > $(PRED500_BUILD)/build.log 2>&1 \
+	     || { tail -20 $(PRED500_BUILD)/build.log; exit 1; }
+
+predicate500: predicate500-build predicate500-wl
+	@echo "DRAM Predicate500 실행 중 ($(PRED500_PREDS) 동시, AXI_STALL=$(AXI_STALL))"
+	@pids=""; for p in $(PRED500_PREDS); do \
+	     WL_DIR=$(PRED500_WL) WL_LIST=$(PRED500_WL)/workloads_$$p.txt \
+	         $(PRED500_BUILD)/obj/bench > $(PRED500_BUILD)/pred_$$p.csv \
+	         2> $(PRED500_BUILD)/pred_$$p.log & pids="$$pids $$!"; \
+	 done; rc=0; for pid in $$pids; do wait $$pid || rc=1; done; exit $$rc
+	@grep -h "^# AXI\|^FAIL" $(foreach p,$(PRED500_PREDS),$(PRED500_BUILD)/pred_$(p).csv) || true
+	@python3 ../../hardware_bram/sim/predicate500_report.py --branch dram \
+	     $(foreach p,$(PRED500_PREDS),$(PRED500_BUILD)/pred_$(p).csv) \
+	     | tee $(PRED500_BUILD)/report.txt
+	@! grep -q "^FAIL" $(foreach p,$(PRED500_PREDS),$(PRED500_BUILD)/pred_$(p).csv)

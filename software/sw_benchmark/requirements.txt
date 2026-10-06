@@ -1,0 +1,5 @@
+# Python side of grover_sw_bench (C++ needs only g++ with OpenMP)
+numpy>=2.0,<3          # numpy_baseline, golden model, tools
+scipy>=1.11            # summarize_results (Mann-Whitney / KS tests)
+qiskit>=2.1,<3         # qiskit_baseline
+qiskit-aer>=0.17,<1    # qiskit_baseline

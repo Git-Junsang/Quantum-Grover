@@ -22,8 +22,8 @@ import sys
 # 시드 100개(500 워크로드)이고 이 벤치는 앞 50개(250 워크로드)이므로, 겹치는
 # 250개만 워크로드별로 맞대 봅니다. 합계가 아니라 한 건씩 보는 것이 핵심입니다.
 BOARD_M2 = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), os.pardir, "vivado",
-    "vivado_bbht_grover_fpga", "2026-09-08_k3h3_e4_m2_board_500run",
+    os.path.dirname(os.path.abspath(__file__)), os.pardir, "models",
+    "hardware_bram_K3H3_E4_M2", "vivado", "vivado_bbht_grover_fpga", "2026-09-08_k3h3_e4_m2_board_500run",
     "per_run_m2.csv")
 
 # 앞선 K4/H4-E1 보드 실측(2026-09-04)의 250쌍 합계입니다. 코어가 다르므로

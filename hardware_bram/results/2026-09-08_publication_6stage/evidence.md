@@ -56,7 +56,7 @@ K3/H3 이 K4/H4 보다 반복을 조금 더 쓰면서도(9,058 → 9,582) 총 �
 ## 이 숫자를 쓸 때의 경계
 
 **`6.1401x` 는 RTL 사이클 축입니다.** 보드 실경과 시간이 아닙니다. 보드 쪽
-근거는 `hardware_bram/vivado/vivado_bbht_grover_fpga/2026-09-08_k3h3_e4_m2_board_500run/`
+근거는 `hardware_bram/models/hardware_bram_K3H3_E4_M2/vivado/vivado_bbht_grover_fpga/2026-09-08_k3h3_e4_m2_board_500run/`
 이고, 같은 궤적을 따르지만 사이클 값 자체는 다릅니다 (그쪽 evidence.md 참조).
 
 **재현 소스는 태그 `board-k3h3-e4-m2` 에 있습니다.** ablation 용 공통소스와 top

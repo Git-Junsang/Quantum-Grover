@@ -16,7 +16,7 @@ mode=1 이 최적화 경로입니다. 시간은 RVX 실시간 클럭 틱(마이�
 `timer_hi`·`timer_lo` 두 워드로 나옵니다. 측정 구간은 명령을 넣은 순간부터
 DONE 을 본 순간까지이며, 설정·DMA·결과 읽기·printf 는 빠져 있습니다.
 
-비교 대상은 `hardware_bram/vivado/vivado_bbht_grover_fpga/2026-09-08_k3h3_e4_m2_board_500run/`
+비교 대상은 `hardware_bram/models/hardware_bram_K3H3_E4_M2/vivado/vivado_bbht_grover_fpga/2026-09-08_k3h3_e4_m2_board_500run/`
 입니다. 같은 펌웨어가 낸 로그라 열이 그대로 맞습니다.
 """
 import csv

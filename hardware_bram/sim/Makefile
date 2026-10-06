@@ -7,9 +7,33 @@
 #   make lint   lint 만
 #   make bench250 / bench500
 #               250쌍 / 500 워크로드 궤적 벤치 (20분 / 40분쯤)
+#   make predicate500
+#               네 술어 x 500 워크로드를 SW 기준모델과 대조 (40분~1시간)
+#   make console-gen
+#               콘솔 GEN 생성기가 SW 생성기와 같은 배열을 내는지 (몇 초)
 #   make console-seq
 #               SoC 시뮬 bbht_console 스크립트와 같은 순서의 기준값 (30초쯤)
+#   make ports-models / lint-models
+#               모델 열 개의 어댑터 전부를 포트 계약 · lint 로 확인 (lint 는 몇 분)
 #   make clean
+#
+# 어느 모델을 물리는가 -- MODEL
+#
+#   hardware_bram/ 의 src · testbench · firmware 는 모든 모델이 같이 씁니다.
+#   모델마다 다른 것은 models/hardware_bram_<모델>/src/bbht_grover_core_adapter.v
+#   하나(K·H·E·M 파라미터 기본값)라서, 어댑터가 들어가는 타깃(real · bench250 ·
+#   bench500 · predicate500 · console-seq)은 MODEL 로 고릅니다. 기본값은 보드
+#   정본 구성 K3H3_E4_M2 입니다.
+#
+#     make real MODEL=K4H4_E4
+#
+#   보고 스크립트(bench250/500_report.py, predicate500_report.py --branch bram)의
+#   비교 상대는 K3H3_E4_M2 의 보드 실측과 K3/H3 기준모델이라, 다른 모델로 돌린
+#   bench · predicate500 은 논리 궤적만 맞고 물리 반복 · 사이클은 어긋나는 것이
+#   정상입니다. 체크포인트를 끈 모델(Normal_E1 · nocheckpoint)의 Predicate500 은
+#   models/hardware_bram_nocheckpoint/sim/Makefile 을 쓰십시오.
+#   bbht_bram_top(make top)은 어댑터 없이 Main IP 를 직접 물어 MODEL 과 무관하게
+#   K3/H3-E4-M2 입니다.
 #
 # 갈래가 둘인 이유는 코어 자리에 무엇을 끼우느냐입니다. 통신 계층(wrapper·
 # mmio·loader)은 두 갈래 모두 src/ 의 같은 파일이고, 계약 이름
@@ -17,7 +41,7 @@
 #
 #   stub   자리 채우개(testbench/bbht_grover_core_stub.v). 탐색 없이 몇 초 만에
 #          통신 계약만 봅니다
-#   real   어댑터(src/bbht_grover_core_adapter.v) + Main IP. 실제 탐색까지 돕니다
+#   real   모델 어댑터(models/hardware_bram_<MODEL>/src/) + Main IP. 실제 탐색까지 돕니다
 #
 # 2026-09-13 전에는 보드에 구운 정본 통신 계층을 따로 두고 make final 로
 # 돌렸습니다. 그 판은 태그 board-k3h3-e4-m2 에 있습니다.
@@ -35,6 +59,13 @@ SIM       = $(BUILD)/sim_tb
 SRC_DIR   = ../src
 TB_DIR    = ../testbench
 CSR_DIR   = ../../software/contract/generated
+
+MODEL    ?= K3H3_E4_M2
+MODEL_DIR = ../models/hardware_bram_$(MODEL)
+ADAPTER   = $(MODEL_DIR)/src/bbht_grover_core_adapter.v
+# 모델 열 개. 폴더 이름에서 hardware_bram_ 을 뗀 것입니다.
+MODELS    = $(patsubst ../models/hardware_bram_%/src/bbht_grover_core_adapter.v,%,\
+              $(sort $(wildcard ../models/hardware_bram_*/src/bbht_grover_core_adapter.v)))
 
 # Main IP 중 합성 경로에 들어가는 열입니다. glob 을 쓰면 policy OOC
 # 전용인 grover_policy_ooc_top.v 와 grover_policy_impl_wrapper.v 까지 딸려 와
@@ -67,7 +98,7 @@ FROZEN_WNO = -Wno-DECLFILENAME -Wno-WIDTHEXPAND -Wno-WIDTHTRUNC \
 
 .PHONY: all regress driver lint csr ports clean \
         ports-real lint-real regress-real driver-real real \
-        top lint-top
+        top lint-top model-check ports-models lint-models
 
 all: ports regress driver
 
@@ -85,8 +116,26 @@ csr:
 ports:
 	@python3 ../../software/contract/check_ports.py stub
 
-ports-real:
-	@python3 ../../software/contract/check_ports.py real
+ports-real: model-check
+	@python3 ../../software/contract/check_ports.py real $(MODEL)
+
+# MODEL 철자가 틀리면 verilator 가 "파일 없음" 으로 길게 죽기 전에 멈춥니다.
+model-check:
+	@test -f $(ADAPTER) || { echo "모델이 없습니다: $(MODEL) (있는 것: $(MODELS))"; exit 1; }
+
+# 모델 열 개 전부. 어댑터를 새로 만들거나 고친 뒤 돌립니다.
+ports-models:
+	@for m in $(MODELS); do printf '%-14s ' $$m; \
+	     python3 ../../software/contract/check_ports.py real $$m > /tmp/sjs_ports_$$m.log 2>&1 \
+	     && tail -1 /tmp/sjs_ports_$$m.log \
+	     || { echo "포트 계약 실패"; cat /tmp/sjs_ports_$$m.log; exit 1; }; done
+
+lint-models: csr
+	@for m in $(MODELS); do printf '%-14s ' $$m; \
+	     verilator --lint-only $(FROZEN_WNO) -I$(CSR_DIR) -I$(SRC_DIR) \
+	          $(COMM_LAYER) ../models/hardware_bram_$$m/src/bbht_grover_core_adapter.v \
+	          $(CORE_SRCS) --top-module bbht_rvx_wrapper > /tmp/sjs_lint_$$m.log 2>&1 \
+	     && echo "lint 통과" || { echo "lint 실패 (/tmp/sjs_lint_$$m.log)"; exit 1; }; done
 
 regress: csr ports
 	@mkdir -p $(BUILD)
@@ -108,24 +157,24 @@ lint: csr ports
 	@echo "lint 통과"
 
 clean:
-	rm -rf $(BUILD) $(REAL_BUILD) $(TOP_BUILD) \
-	       /tmp/sjs_drv /tmp/sjs_drv_real
+	rm -rf $(BUILD) /tmp/sjs_build_real_* $(TOP_BUILD) \
+	       /tmp/sjs_drv /tmp/sjs_drv_real_* /tmp/sjs_lint_*.log /tmp/sjs_ports_*.log
 
 #---------------------------------------------------------------------
 # 통신 계층 + 어댑터 + Main IP
 #
-# src/bbht_grover_core_adapter.v
+# 모델 어댑터(models/hardware_bram_<모델>/src/bbht_grover_core_adapter.v)
 # 가 모듈 이름(bbht_grover_main_ip -> bbht_grover_core)과 리셋 이름(rstn ->
 # rstnn)만 맞춰 주고, 나머지 61신호는 1:1 입니다.
 #---------------------------------------------------------------------
 REAL_SRCS  = $(TB_DIR)/tb_bbht_rvx.v $(COMM_LAYER) \
-             $(SRC_DIR)/bbht_grover_core_adapter.v \
+             $(ADAPTER) \
              $(CORE_SRCS) $(TB_DIR)/ahb_sram_model.v
 
 REAL_FLAGS = -Wno-fatal -Wno-DECLFILENAME -I$(CSR_DIR) -I$(SRC_DIR) \
-             -I$(SRC_DIR) -I$(TB_DIR) $(CORE_DEFS)
+             -I$(TB_DIR) $(CORE_DEFS)
 
-REAL_BUILD = /tmp/sjs_build_real
+REAL_BUILD = /tmp/sjs_build_real_$(MODEL)
 
 regress-real: csr ports-real
 	@mkdir -p $(REAL_BUILD)
@@ -134,14 +183,14 @@ regress-real: csr ports-real
 	@$(REAL_BUILD)/sim_real
 
 driver-real: csr ports-real
-	@CORE=real BUILD=/tmp/sjs_drv_real ./run_driver_test.sh
+	@CORE=real ADAPTER=$(ADAPTER) BUILD=/tmp/sjs_drv_real_$(MODEL) ./run_driver_test.sh
 
 lint-real: csr ports-real
 	verilator --lint-only $(FROZEN_WNO) \
 	          -I$(CSR_DIR) -I$(SRC_DIR) -I$(TB_DIR) \
-	          $(COMM_LAYER) $(SRC_DIR)/bbht_grover_core_adapter.v \
+	          $(COMM_LAYER) $(ADAPTER) \
 	          $(CORE_SRCS) --top-module bbht_rvx_wrapper
-	@echo "lint 통과 (통신 계층 + 어댑터 + Main IP)"
+	@echo "lint 통과 (통신 계층 + $(MODEL) 어댑터 + Main IP)"
 
 #---------------------------------------------------------------------
 # 최상단 회귀
@@ -196,7 +245,7 @@ top: lint-top
 # 시드 100 (500워크로드) 입니다. 시드 로스터가 다르므로 총합은 직접 비교
 # 대상이 아닙니다 (results/2026-09-08_publication_6stage/ 참조).
 #---------------------------------------------------------------------
-BENCH_CORE   = real
+BENCH_CORE   = real_$(MODEL)
 BENCH_BUILD  = /tmp/sjs_bench_$(BENCH_CORE)
 BENCH_WL     = /tmp/sjs_bench_wl
 BENCH_OUT   ?= $(BENCH_BUILD)/bench250_$(BENCH_CORE).csv
@@ -204,14 +253,14 @@ BENCH_DEFS   = -DBBHT_HOST_TEST -DBBHT_NO_PRINTF -DBBHT_TIMEOUT=200000000
 
 BENCH_COMM   = $(SRC_DIR)/bbht_rvx_wrapper.v $(SRC_DIR)/bbht_grover_mmio.v \
                $(SRC_DIR)/bbht_ahb_loader.v \
-               $(SRC_DIR)/bbht_grover_core_adapter.v
+               $(ADAPTER)
 
 .PHONY: bench250 bench250-wl
 
 bench250-wl:
 	@python3 ../../software/rtl_vectors/tools/dump_bench_workload.py --seeds 50 --out $(BENCH_WL)
 
-bench250: csr bench250-wl
+bench250: csr model-check bench250-wl
 	@rm -rf $(BENCH_BUILD); mkdir -p $(BENCH_BUILD)/src
 	@cp $(TB_DIR)/tb_bench250.cpp $(BENCH_COMM) $(CORE_SRCS) $(BENCH_BUILD)/src/
 	@cp $(SRC_DIR)/grover_param.vh $(BENCH_BUILD)/src/
@@ -247,8 +296,9 @@ bench250: csr bench250-wl
 # 이 벤치의 비교 상대는 둘입니다. 둘 다 같은 500 워크로드입니다.
 #
 #   results/2026-09-08_publication_6stage/          RTL 사이클 축 (iverilog)
-#     의 K3/H3-E4-M2 단계 -- 우리 src/ 와 같은 구성
-#   vivado/.../2026-09-08_k3h3_e4_m2_board_500run/  보드 실경과 시간 축
+#     의 K3/H3-E4-M2 단계 -- MODEL 기본값과 같은 구성
+#   models/hardware_bram_K3H3_E4_M2/vivado/.../2026-09-08_k3h3_e4_m2_board_500run/
+#                                                   보드 실경과 시간 축
 #
 # 250쌍보다 두 배 걸립니다. 40분쯤 잡으십시오.
 #---------------------------------------------------------------------
@@ -261,7 +311,7 @@ BENCH500_OUT  ?= $(BENCH500_BUILD)/bench500_$(BENCH_CORE).csv
 bench500-wl:
 	@python3 ../../software/rtl_vectors/tools/dump_bench_workload.py --seeds 100 --out $(BENCH500_WL)
 
-bench500: csr bench500-wl
+bench500: csr model-check bench500-wl
 	@rm -rf $(BENCH500_BUILD); mkdir -p $(BENCH500_BUILD)/src
 	@cp $(TB_DIR)/tb_bench500.cpp $(BENCH_COMM) $(CORE_SRCS) $(BENCH500_BUILD)/src/
 	@cp $(SRC_DIR)/grover_param.vh $(BENCH500_BUILD)/src/
@@ -280,6 +330,82 @@ bench500: csr bench500-wl
 	@echo "500 워크로드 실행 중 ($(BENCH_CORE)). 40분쯤 걸립니다."
 	@WL_DIR=$(BENCH500_WL) $(BENCH500_BUILD)/obj/bench > $(BENCH500_OUT)
 	@python3 bench500_report.py $(BENCH500_OUT)
+
+#---------------------------------------------------------------------
+# 네 술어 x 500 워크로드 -- Predicate500
+#
+#   make predicate500          LT / GT / EQ / RANGE 각각 M 다섯 개 x 시드 100쌍을
+#                              Normal 과 체크포인트로 돌려 SW 기준모델과 맞댑니다
+#
+# bench500 은 EQ 하나뿐이라 나머지 세 술어의 비교기 경로가 실측 규모로 검증된
+# 적이 없어서 둡니다. 자극과 기댓값은 software/ 쪽에서 만듭니다.
+#
+#   software/experiments/predicate500_benchmark/run_predicate500_golden.py
+#       -> expected/predicate500_expected.csv (기준모델 기댓값 2,000행)
+#   software/rtl_vectors/tools/dump_predicate500_workload.py
+#       -> $(PRED500_WL)/ (데이터셋 20개와 술어별 목록)
+#
+# 술어 넷을 프로세스 넷으로 나눠 동시에 돌립니다. 논리 궤적과 물리 반복은
+# 실행 이력과 무관하므로 나눠 돌려도 대조 결과는 같습니다. 체크포인트
+# 사이클만 목록마다 memo 청소를 한 번씩 더 냅니다 (3,279 사이클, 기술문서 11장 11.5절).
+# 한 목록에 40분쯤, 넷을 동시에 돌리면 전체도 40분~1시간입니다.
+#---------------------------------------------------------------------
+PRED500_BUILD = /tmp/sjs_pred500_$(BENCH_CORE)
+PRED500_WL    = /tmp/sjs_pred500_wl
+PRED500_PREDS ?= LT GT EQ RANGE
+
+.PHONY: predicate500 predicate500-wl predicate500-build
+
+predicate500-wl:
+	@python3 ../../software/rtl_vectors/tools/dump_predicate500_workload.py --out $(PRED500_WL)
+
+predicate500-build: csr model-check
+	@rm -rf $(PRED500_BUILD); mkdir -p $(PRED500_BUILD)/src
+	@cp $(TB_DIR)/tb_predicate500.cpp $(BENCH_COMM) $(CORE_SRCS) $(PRED500_BUILD)/src/
+	@cp $(SRC_DIR)/grover_param.vh $(PRED500_BUILD)/src/
+	@cp $(CSR_DIR)/bbht_grover_csr.vh $(CSR_DIR)/bbht_grover_regs.h $(PRED500_BUILD)/src/
+	@cp ../firmware/bbht_grover_driver.c ../firmware/bbht_grover_driver.h $(PRED500_BUILD)/src/
+	@gcc -c -O2 $(BENCH_DEFS) -I$(PRED500_BUILD)/src \
+	     $(PRED500_BUILD)/src/bbht_grover_driver.c -o $(PRED500_BUILD)/driver.o
+	@verilator --cc --exe --build -j 4 -Wno-fatal -Wno-DECLFILENAME \
+	     --Mdir $(PRED500_BUILD)/obj \
+	     -CFLAGS "$(BENCH_DEFS) -I$(PRED500_BUILD)/src -O2" \
+	     -LDFLAGS "$(PRED500_BUILD)/driver.o" -I$(PRED500_BUILD)/src \
+	     $(foreach f,$(notdir $(BENCH_COMM) $(CORE_SRCS)),$(PRED500_BUILD)/src/$(f)) \
+	     --top-module bbht_rvx_wrapper $(PRED500_BUILD)/src/tb_predicate500.cpp \
+	     -o bench > $(PRED500_BUILD)/build.log 2>&1 \
+	     || { tail -20 $(PRED500_BUILD)/build.log; exit 1; }
+
+predicate500: predicate500-build predicate500-wl
+	@echo "Predicate500 실행 중 ($(PRED500_PREDS) 동시). 40분~1시간 걸립니다."
+	@pids=""; for p in $(PRED500_PREDS); do \
+	     WL_DIR=$(PRED500_WL) WL_LIST=$(PRED500_WL)/workloads_$$p.txt \
+	         $(PRED500_BUILD)/obj/bench > $(PRED500_BUILD)/pred_$$p.csv \
+	         2> $(PRED500_BUILD)/pred_$$p.log & pids="$$pids $$!"; \
+	 done; rc=0; for pid in $$pids; do wait $$pid || rc=1; done; exit $$rc
+	@python3 predicate500_report.py --branch bram \
+	     $(foreach p,$(PRED500_PREDS),$(PRED500_BUILD)/pred_$(p).csv) \
+	     | tee $(PRED500_BUILD)/report.txt
+
+#---------------------------------------------------------------------
+# 콘솔 GEN 생성기 대 SW 생성기
+#
+#   make console-gen           firmware/bbht_console/src/bbht_dataset_gen.h 를
+#                              호스트 gcc 로 컴파일해 Predicate500 데이터셋 20개의
+#                              FNV-1a 와 정답 수를 기댓값 CSV 와 맞댑니다 (몇 초)
+#---------------------------------------------------------------------
+CONSOLE_GEN_BUILD = /tmp/sjs_console_gen
+PRED500_DATASETS  = ../../software/experiments/predicate500_benchmark/expected/predicate500_datasets.csv
+
+.PHONY: console-gen
+
+console-gen: csr
+	@mkdir -p $(CONSOLE_GEN_BUILD)
+	@gcc -O2 -Wall -Wno-unused-function -DBBHT_HOST_TEST -DBBHT_NO_PRINTF \
+	     -I$(CSR_DIR) -I../firmware -I../firmware/bbht_console/src \
+	     $(TB_DIR)/tb_console_gen.c ../firmware/bbht_grover_driver.c \
+	     -o $(CONSOLE_GEN_BUILD)/gen
+	@$(CONSOLE_GEN_BUILD)/gen "$(PRED500_DATASETS)"
 
 #---------------------------------------------------------------------
 # SoC 시뮬 bbht_console 스크립트의 verilator 짝
@@ -304,7 +430,7 @@ CONSOLE_SEQ_OUT  ?= $(CONSOLE_SEQ_BUILD)/console_seq.csv
 
 .PHONY: console-seq
 
-console-seq: csr bench500-wl
+console-seq: csr model-check bench500-wl
 	@rm -rf $(CONSOLE_SEQ_BUILD); mkdir -p $(CONSOLE_SEQ_BUILD)/src
 	@cp $(TB_DIR)/tb_console_seq.cpp $(BENCH_COMM) $(CORE_SRCS) $(CONSOLE_SEQ_BUILD)/src/
 	@cp $(SRC_DIR)/grover_param.vh $(CONSOLE_SEQ_BUILD)/src/
