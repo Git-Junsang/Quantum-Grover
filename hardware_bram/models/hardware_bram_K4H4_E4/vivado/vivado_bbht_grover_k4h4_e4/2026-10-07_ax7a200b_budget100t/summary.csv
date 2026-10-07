@@ -1,0 +1,2 @@
+model,config,build,device,vivado,clock_MHz,WNS,TNS,WHS,THS,timing_met,LUT,FF,BRAM_tile,DSP,Slices,LUT_avail,FF_avail,BRAM_avail,DSP_avail,mainip_LUT,mainip_FF,mainip_RAMB36,mainip_RAMB18,mainip_DSP,power_W
+K4H4_E4,K4/H4-E4,ax7a200b_budget100t,xc7a200tfbg484-2,2026.1,100,0.121,0.0,0.051,0.0,1,42759,42812,115,68,15014,63400,126800,135,240,29205,25823,51.0,64.0,64,0.547

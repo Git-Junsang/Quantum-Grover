@@ -1,0 +1,12 @@
+빌드 일시   2026-10-07 21:15~21:50 (KST)
+플랫폼      bbht_grover_k3h3_e4_m1
+타깃        ax7a200b / xc7a200tfbg484-2 (100T 예산)
+구조        K3/H3-E4-M1 (어댑터 기본값. CHECKPOINT_ENABLE=1 CKPT_K=3 POLICY_H_FUTURE=3 INTRA_ENGINES=4 MEAS_M1_ENABLE=1 MEAS_M2_ENABLE=0)
+클럭 목표   가속기 100 MHz / 시스템 50 MHz
+Vivado      v2026.1
+RVX         /opt/rvx (로컬 전체 설치)
+작업방      $RVX_MINI_HOME/platform/bbht_grover_k3h3_e4_m1/imp_ax7a200b_2026-10-07
+소스        저장소 hardware_bram/src/ (커밋 6db279e 시점. f1d3767 은 설치 스크립트만 바꿔 src 가 같음)
+            user/rtl 파일 중 저장소 원본과 대조한 15개 일치
+절차        .claude/skills/fpga-syn-rvx/scripts/fpga_syn_rvx.sh start bbht_grover_k3h3_e4_m1 --budget-100t --threads=2 --app=<앱>
+예산        기준 xc7a100tcsg324-1: SLICEL 11100 SLICEM 4750 RAMB36 135 DSP 240 -> LUT 63400 LUTRAM 19000 FF 126800 (배치 뒤 · 배선 뒤 모두 일치)
