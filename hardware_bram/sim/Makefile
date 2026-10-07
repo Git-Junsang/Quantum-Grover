@@ -329,7 +329,7 @@ bench500: csr model-check bench500-wl
 	     || { tail -20 $(BENCH500_BUILD)/build.log; exit 1; }
 	@echo "500 워크로드 실행 중 ($(BENCH_CORE)). 40분쯤 걸립니다."
 	@WL_DIR=$(BENCH500_WL) $(BENCH500_BUILD)/obj/bench > $(BENCH500_OUT)
-	@python3 bench500_report.py $(BENCH500_OUT)
+	@BENCH500_MODEL=$(MODEL) python3 bench500_report.py $(BENCH500_OUT)
 
 #---------------------------------------------------------------------
 # 네 술어 x 500 워크로드 -- Predicate500

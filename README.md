@@ -103,7 +103,7 @@ model's implementation reports, board measurements, and bitstreams -- lives in
 | `K3H3_E1` | 3/3 | 1 | - | K/H isolation study | RTL simulation, 100T implementation, 200T bitstream (2026-10-07) |
 | `K4H8_E1` | 4/8 | 1 | - | First checkpoint board run | Board run on older RTL (2026-09-01) |
 | `nocheckpoint` | none | 4 | - | Normal-E4 baseline (below) | Board run (2026-10-04) |
-| `Normal_E1` | none | 1 | - | Same configuration as 6-stage ablation step 1 | None |
+| `Normal_E1` | none | 1 | - | Same configuration as 6-stage ablation step 1 | 100T implementation (2026-10-08) |
 
 The 6-stage ablation and K/H isolation numbers were measured with standalone tops inside
 the tag; each model adapter carries over the parameters those tops passed. The campaign
