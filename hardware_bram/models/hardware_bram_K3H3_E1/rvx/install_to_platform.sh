@@ -7,7 +7,12 @@
 # 인자를 안 주면 $RVX_MINI_HOME/platform/bbht_grover_k3h3_e1 로 갑니다. 하는 일은 전부
 # 공용 설치기 hardware_bram/rvx/install_model.sh 에 있고, 이 모델에서 다른 것은
 # ../src/bbht_grover_core_adapter.v 의 파라미터 기본값과 ../rvx/bbht_grover_k3h3_e1.xml 의
-# 플랫폼 이름뿐입니다. 앱은 bbht_console 하나만 올립니다.
+# 플랫폼 이름뿐입니다. 앱은 둘을 올립니다.
+#   bbht_console        UART 명령 셸
+#   bbht_paper_bench    500런 실시간 벤치. 최종 모델(K3H3_E4_M2)의 보드 실측을 낸 앱을
+#                       그대로 써서 모델 사이 보드 측정을 같은 앱으로 맞춥니다. 앱은
+#                       CONTROL 의 체크포인트 비트만 켜고 끄므로 K · H · E · M 이 달라도
+#                       코드를 바꿀 필요가 없습니다 (소스는 한 글자도 고치지 않습니다)
 set -e
 HERE=$(cd "$(dirname "$0")" && pwd)
-APPS="bbht_console" exec "$HERE/../../../rvx/install_model.sh" "$HERE/.." "$@"
+APPS="bbht_console bbht_paper_bench" exec "$HERE/../../../rvx/install_model.sh" "$HERE/.." "$@"
