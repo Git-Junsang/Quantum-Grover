@@ -23,7 +23,7 @@
 ## 인용할 때
 
 - 보드 실경과 시간 축, 200T 보드입니다. 성능 세 축의 정본(100T, EQ 500)과 섞지 마십시오.
-- 나머지 다섯 모델의 보드 Predicate500 은 아직입니다. RTL 은 [여섯 모델 모두](../../../../../results/2026-10-08_predicate500_rtl_6models/evidence.md) 통과했습니다.
+- 여섯 모델을 맞댄 표는 [2026-10-08_board_predicate500_6models](../../../../../results/2026-10-08_board_predicate500_6models/evidence.md) 에 있습니다.
 
 ## 파일
 

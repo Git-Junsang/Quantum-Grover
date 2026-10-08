@@ -1,0 +1,3 @@
+보드 Predicate500 대 RTL Predicate500 (results/2026-10-08_predicate500_rtl_6models/k3h3_e4_m1.csv)
+normal: cycle_count 2000/2000 같음, 합 보드 53,587,798 대 RTL 53,587,798 (+0), 실경과 합 545,998 us
+ckpt: cycle_count 1832/2000 같음, 합 보드 27,628,742 대 RTL 27,637,369 (-8,627), 실경과 합 286,397 us
