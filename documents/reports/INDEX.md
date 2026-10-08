@@ -157,4 +157,4 @@ IEEE 번호식 `[1]` `[2]` … 인용 순서대로.
 - B. Glossary
 
 근거: [13장](../design_references/13_CSR_레지스터와_실행_모드.md),
-[24장](../design_references/24_부록_용어집과_폐기된_규격.md)
+[25장](../design_references/25_부록_용어집과_폐기된_규격.md)

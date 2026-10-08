@@ -76,7 +76,7 @@
   때문이지 알고리즘 우위가 아니라는 단서를 항상 붙이십시오.
 
 **폐기된 값 — 보이면 무시하십시오**: n=15·n=16, Q2.16·Q1.17, 8바이트 CSR 간격, INCR16 버스트,
-argmax 측정, AXI4-Lite, MicroBlaze, XC7S100 ([24장](documents/design_references/24_부록_용어집과_폐기된_규격.md)).
+argmax 측정, AXI4-Lite, MicroBlaze, XC7S100 ([25장](documents/design_references/25_부록_용어집과_폐기된_규격.md)).
 `trash_bin/`(git 추적 안 함) 은 전부 이 구 스펙 기준이라 **인용하면 안 됩니다**.
 
 ---
