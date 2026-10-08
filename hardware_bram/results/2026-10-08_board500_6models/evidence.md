@@ -33,7 +33,8 @@ AX7A200B 한 장에 2026-10-08 18:28~18:49 KST 에 차례로 굽고, 같은 앱 
 | K3/H3-E4-M2 | `K3H3_E4_M2` mode1 | 55,529 | 7.659x | -22.39% |
 
 Normal-E1 은 6단계 ablation 과 같게 `K4H4_E1` 빌드의 mode0 입니다. 체크포인트 하드웨어를 뺀 `Normal_E1` 빌드는
-자원 근거로만 썼고 보드에서 돌리지 않았습니다.
+자원 근거로만 썼고 보드에서 돌리지 않았습니다. 그 빌드는 bench500 에서 물리 반복 · 샷마다 2사이클씩,
+합계 0.18% 빠릅니다([Normal_E1 bench500](../../models/hardware_bram_Normal_E1/results/2026-10-08_bench500/evidence.md)).
 
 ## 읽는 법
 
