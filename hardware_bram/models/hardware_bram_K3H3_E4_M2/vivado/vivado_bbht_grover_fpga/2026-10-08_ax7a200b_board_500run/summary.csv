@@ -1,0 +1,3 @@
+model,config,mode,n,total_actual_iter,total_cycles,total_elapsed_us,bench500_logic_match,bench500_cycle_match
+K3H3_E4_M2,K3/H3-E4-M2,normal,500,31424,11785382,120077,500/500,500/500
+K3H3_E4_M2,K3/H3-E4-M2,checkpoint,500,9582,5328877,55529,500/500,500/500

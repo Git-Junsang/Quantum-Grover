@@ -94,13 +94,13 @@ model's implementation reports, board measurements, and bitstreams -- lives in
 
 | Model | K/H | E | M | Origin | Hardware |
 |---|---|---|---|---|---|
-| `K3H3_E4_M2` | 3/3 | 4 | M2 | **Final configuration** (last 6-stage ablation step) | Reference board run (2026-09-08), 200T bitstream (2026-10-07) |
-| `K3H3_E4_M1` | 3/3 | 4 | M1 | 6-stage ablation, step 5 | RTL simulation, 100T implementation, 200T bitstream (2026-10-07) |
-| `K3H3_E4` | 3/3 | 4 | - | 6-stage ablation, step 4 | RTL simulation, 100T implementation, 200T bitstream (2026-10-07) |
-| `K4H4_E4` | 4/4 | 4 | - | 6-stage ablation, step 3 | RTL simulation, 100T implementation, 200T bitstream (2026-10-07) |
-| `K4H4_E1` | 4/4 | 1 | - | 6-stage ablation step 2, control of the K/H isolation study | Board run on older RTL (2026-09-04); current RTL: RTL simulation, 100T implementation, 200T bitstream (2026-10-07) |
+| `K3H3_E4_M2` | 3/3 | 4 | M2 | **Final configuration** (last 6-stage ablation step) | Reference board run (2026-09-08), 200T bitstream (2026-10-07), 200T board 500-run (2026-10-08) |
+| `K3H3_E4_M1` | 3/3 | 4 | M1 | 6-stage ablation, step 5 | RTL simulation, 100T implementation, 200T bitstream (2026-10-07), 200T board 500-run (2026-10-08) |
+| `K3H3_E4` | 3/3 | 4 | - | 6-stage ablation, step 4 | RTL simulation, 100T implementation, 200T bitstream (2026-10-07), 200T board 500-run (2026-10-08) |
+| `K4H4_E4` | 4/4 | 4 | - | 6-stage ablation, step 3 | RTL simulation, 100T implementation, 200T bitstream (2026-10-07), 200T board 500-run (2026-10-08) |
+| `K4H4_E1` | 4/4 | 1 | - | 6-stage ablation step 2, control of the K/H isolation study | Board run on older RTL (2026-09-04); current RTL: RTL simulation, 100T implementation, 200T bitstream (2026-10-07), 200T board 500-run (2026-10-08) |
 | `K3H4_E1` | 3/4 | 1 | - | K/H isolation study | RTL simulation only |
-| `K3H3_E1` | 3/3 | 1 | - | K/H isolation study | RTL simulation, 100T implementation, 200T bitstream (2026-10-07) |
+| `K3H3_E1` | 3/3 | 1 | - | K/H isolation study | RTL simulation, 100T implementation, 200T bitstream (2026-10-07), 200T board 500-run (2026-10-08) |
 | `K4H8_E1` | 4/8 | 1 | - | First checkpoint board run | Board run on older RTL (2026-09-01) |
 | `nocheckpoint` | none | 4 | - | Normal-E4 baseline (below) | Board run (2026-10-04) |
 | `Normal_E1` | none | 1 | - | Same configuration as 6-stage ablation step 1 | 100T implementation (2026-10-08) |

@@ -1,0 +1,21 @@
+모델 K3H3_E4_M2
+  보드   hardware_bram/models/hardware_bram_K3H3_E4_M2/vivado/vivado_bbht_grover_fpga/2026-10-08_ax7a200b_board_500run/per_run.csv  (1000행)
+  벤치   hardware_bram/results/2026-10-07_bench500_6models/k3h3_e4_m2.csv
+
+=== mode0 NORMAL (500쌍) ===
+  ok   result_index   500/500
+  ok   trial_count    500/500
+  ok   L_BBHT         500/500
+  ok   actual_iter    500/500
+  ok   cycle_count    500/500  합계 보드 11,785,382 대 벤치 11,785,382 (+0.00%)
+       실경과 합 120,077 us (보드 축)
+
+=== mode1 체크포인트 (500쌍) ===
+  ok   result_index   500/500
+  ok   trial_count    500/500
+  ok   L_BBHT         500/500
+  ok   actual_iter    500/500
+  ok   cycle_count    500/500  합계 보드 5,328,877 대 벤치 5,328,877 (+0.00%)
+       실경과 합 55,529 us (보드 축)
+
+통과

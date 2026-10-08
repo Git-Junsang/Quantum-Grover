@@ -1,0 +1,21 @@
+모델 K4H4_E1
+  보드   hardware_bram/models/hardware_bram_K4H4_E1/vivado/vivado_bbht_grover_k4h4_e1/2026-10-08_ax7a200b_board_500run/per_run.csv  (1000행)
+  벤치   hardware_bram/results/2026-10-07_bench500_6models/k4h4_e1.csv
+
+=== mode0 NORMAL (500쌍) ===
+  ok   result_index   500/500
+  ok   trial_count    500/500
+  ok   L_BBHT         500/500
+  ok   actual_iter    500/500
+  ok   cycle_count    500/500  합계 보드 42,308,335 대 벤치 42,308,335 (+0.00%)
+       실경과 합 425,322 us (보드 축)
+
+=== mode1 체크포인트 (500쌍) ===
+  ok   result_index   500/500
+  ok   trial_count    500/500
+  ok   L_BBHT         500/500
+  ok   actual_iter    500/500
+  ok   cycle_count    500/500  합계 보드 16,249,048 대 벤치 16,249,048 (+0.00%)
+       실경과 합 164,725 us (보드 축)
+
+통과
