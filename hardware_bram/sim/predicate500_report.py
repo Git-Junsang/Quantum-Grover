@@ -30,7 +30,7 @@ predicate500_expected.csv 입니다 (run_predicate500_golden.py 가 만듦).
 사이클은 기준모델에 없으므로 맞대지 않고 모드별 합만 보고합니다.
 
 사용법:
-    python3 predicate500_report.py [--branch bram|dram|nocheckpoint] CSV [CSV ...]
+    python3 predicate500_report.py [--branch bram|bram_k4h4|dram|nocheckpoint] CSV [CSV ...]
 종료 코드는 불일치가 하나라도 있으면 1 입니다.
 """
 import argparse
@@ -50,6 +50,9 @@ ITER_COLUMN = {
     ("bram", "ckpt"):   "actual_iter_k3h3",
     ("dram", "normal"): "actual_iter_dram_session",
     ("nocheckpoint", "normal"): "actual_iter_normal",
+    # K4/H4 정책 모델(K4H4_E1 · K4H4_E4). sim/Makefile 이 MODEL 로 고릅니다(2026-10-08)
+    ("bram_k4h4", "normal"): "actual_iter_normal",
+    ("bram_k4h4", "ckpt"):   "actual_iter_k4h4",
 }
 
 
@@ -65,7 +68,7 @@ def pred_ok(p, v, a, b):
 
 def main():
     ap = argparse.ArgumentParser(description="Predicate500 RTL 대 SW 기댓값")
-    ap.add_argument("--branch", choices=("bram", "dram", "nocheckpoint"), default="bram")
+    ap.add_argument("--branch", choices=("bram", "bram_k4h4", "dram", "nocheckpoint"), default="bram")
     ap.add_argument("--expected", default=EXPECTED)
     ap.add_argument("--partial", action="store_true",
                     help="일부 워크로드만 돌린 시험 실행. 빠진 실행을 실패로 보지 않습니다")

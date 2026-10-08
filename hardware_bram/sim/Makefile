@@ -353,6 +353,8 @@ bench500: csr model-check bench500-wl
 PRED500_BUILD = /tmp/sjs_pred500_$(BENCH_CORE)
 PRED500_WL    = /tmp/sjs_pred500_wl
 PRED500_PREDS ?= LT GT EQ RANGE
+# 체크포인트 물리 반복을 맞댈 기댓값 열. K4/H4 정책 모델만 K4/H4 열을 씁니다(2026-10-08).
+PRED500_BRANCH = $(if $(filter K4H4_%,$(MODEL)),bram_k4h4,bram)
 
 .PHONY: predicate500 predicate500-wl predicate500-build
 
@@ -383,7 +385,7 @@ predicate500: predicate500-build predicate500-wl
 	         $(PRED500_BUILD)/obj/bench > $(PRED500_BUILD)/pred_$$p.csv \
 	         2> $(PRED500_BUILD)/pred_$$p.log & pids="$$pids $$!"; \
 	 done; rc=0; for pid in $$pids; do wait $$pid || rc=1; done; exit $$rc
-	@python3 predicate500_report.py --branch bram \
+	@python3 predicate500_report.py --branch $(PRED500_BRANCH) \
 	     $(foreach p,$(PRED500_PREDS),$(PRED500_BUILD)/pred_$(p).csv) \
 	     | tee $(PRED500_BUILD)/report.txt
 

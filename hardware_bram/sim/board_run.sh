@@ -6,6 +6,8 @@
 #
 #   모델   models/ 아래 폴더 이름에서 hardware_bram_ 을 뗀 것 (예 K3H3_E4_M2)
 #   앱     기본 bbht_paper_bench. orca_sw_baseline 은 K3H3_E4_M2 에만 설치돼 있습니다
+#          predicate500 을 주면 bbht_console 을 올리고 원격에서 software/host/bbht_predicate500.py
+#          (네 술어 x 500 x 두 모드)를 돌립니다. 이때 제한초는 호스트 도구 전체 시간 상한입니다
 #   제한초 UART 캡처 시간 제한. 기본 600 (paper_bench 는 15초 안팎, ORCA 기준선은 2시간쯤)
 #
 # 먼저 되어 있어야 하는 것
@@ -49,8 +51,10 @@ P="$RVX_MINI_HOME/platform/$PLAT"
 [[ -f "$P/.fpga_syn_rvx_last" ]] || { echo "200T 구현 기록이 없습니다: $P (/fpga-syn-rvx 먼저)"; exit 1; }
 I="$(cat "$P/.fpga_syn_rvx_last")"
 BIT="$(ls "$I"/imp_result/*.ax7a200b.bit)"
-HEX="$I/$APP.sram.hex"
-[[ -f "$HEX" ]] || { echo "앱 hex 가 없습니다: $HEX (구현 폴더에서 make $APP)"; exit 1; }
+# predicate500 은 앱이 아니라 "콘솔 + 원격 호스트 도구" 측정 방식입니다.
+LOAD_APP="$APP"; [[ "$APP" == "predicate500" ]] && LOAD_APP=bbht_console
+HEX="$I/$LOAD_APP.sram.hex"
+[[ -f "$HEX" ]] || { echo "앱 hex 가 없습니다: $HEX (구현 폴더에서 make $LOAD_APP)"; exit 1; }
 
 TS="$(date +%Y-%m-%d_%H%M%S)"
 WORK="${BOARD_WORK:-/tmp/bbht_board}/${TS}_${MODEL}_${APP}"
@@ -59,7 +63,7 @@ REMOTE="sdsl_fpga_runs/${TS}_${PLAT}_${APP}"
 
 # ---------------------------------------------------------------- 1) OCD 묶음
 mkdir -p "$PKG/rvx_env" "$PKG/arch"
-cp "$I/ax7a200b.cfg" "$I/run_$APP.tcl" "$HEX" "$PKG/"
+cp "$I/ax7a200b.cfg" "$I/run_$LOAD_APP.tcl" "$HEX" "$PKG/"
 cp /opt/rvx/local_setup/ocd/openocd_rvp "$PKG/"
 for f in ervp_jtag_memorymap_offset ervp_platform_controller_memorymap_offset \
          ervp_external_peri_group_memorymap_offset munoc_memorymap_offset \
@@ -85,7 +89,17 @@ print_platform_info
 EOF
 cp "$HERE/uart_capture.py" "$PKG/"
 (cd "$(dirname "$BIT")" && sha256sum "$(basename "$BIT")") > "$PKG/sha256.txt"
-(cd "$I" && sha256sum "$APP.sram.hex") >> "$PKG/sha256.txt"
+(cd "$I" && sha256sum "$LOAD_APP.sram.hex") >> "$PKG/sha256.txt"
+if [[ "$APP" == "predicate500" ]]; then
+    # 호스트 도구가 저장소 상대경로(_REPO)로 기댓값과 생성 헤더를 찾으므로 그 모양을 그대로 만듭니다.
+    mkdir -p "$PKG/repo/software/host" "$PKG/repo/software/contract/generated" \
+             "$PKG/repo/software/experiments/predicate500_benchmark/expected"
+    cp "$REPO"/software/host/{bbht_cli.py,bbht_predicate500.py} "$PKG/repo/software/host/"
+    # 폴더(__pycache__ 등)는 빼고 파일만 옮깁니다.
+    find "$REPO"/software/contract/generated -maxdepth 1 -type f -exec cp {} "$PKG/repo/software/contract/generated/" \;
+    cp "$REPO"/software/experiments/predicate500_benchmark/expected/*.csv \
+       "$PKG/repo/software/experiments/predicate500_benchmark/expected/"
+fi
 
 echo "[1] 묶음 전송 -> sdsl-fpga:~/$REMOTE"
 ssh sdsl-fpga "mkdir -p ~/$REMOTE"
@@ -100,6 +114,23 @@ UART="${BOARD_UART:-}"
 if [[ -z "$UART" ]]; then
     UART="$(ssh sdsl-fpga 'ls /dev/serial/by-id/*CP2102N* 2>/dev/null | head -1')"
     [[ -n "$UART" ]] || { echo "원격에 CP2102N UART 가 없습니다. BOARD_UART 로 지정하십시오"; exit 1; }
+fi
+if [[ "$APP" == "predicate500" ]]; then
+echo "[3] 콘솔 적재 + 네 술어 측정 ($UART)"
+# OpenOCD 로 콘솔을 올려 붙여 둔 채, 같은 원격에서 호스트 도구가 UART 로 명령을 보냅니다.
+# 도구가 끝나면(또는 제한초) OpenOCD 를 내립니다. 결과 CSV 는 실행마다 바로 써져 끊겨도 남습니다.
+ssh sdsl-fpga "cd ~/$REMOTE || exit 1; chmod +x openocd_rvp; \
+  sudo ./openocd_rvp -f ax7a200b.cfg -c 'source run_bbht_console.tcl' > ocd.log 2>&1 & \
+  sleep 8; \
+  sudo timeout $LIMIT python3 repo/software/host/bbht_predicate500.py --port '$UART' \
+       --out predicate500.xlsx --log uart.log --quiet > host.out 2>&1; echo \$? > host.rc; \
+  sudo pkill -f '^\./openocd_rvp ' 2>/dev/null; sleep 1; \
+  echo \"  host_rc=\$(cat host.rc) (0 = 전부 일치)\"; tail -16 host.out"
+scp -q "sdsl-fpga:$REMOTE/predicate500.csv" "sdsl-fpga:$REMOTE/host.out" "sdsl-fpga:$REMOTE/uart.log" \
+    "sdsl-fpga:$REMOTE/ocd.log" "sdsl-fpga:$REMOTE/sha256.txt" "$WORK/"
+echo "[4] 결과 $WORK"
+echo "측정을 다 마쳤으면: $FLASH restore --pcie"
+exit 0
 fi
 echo "[3] UART 캡처($UART) + 앱 적재 ($APP)"
 # cd 는 따로 끝냅니다. "cd && ... &" 로 묶으면 cd 가 백그라운드 서브셸에만 걸려 OpenOCD 가

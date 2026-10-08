@@ -17,6 +17,9 @@ SW Common500 은 EQ 술어로 M = 1/4/16/64/256 x 공식 시드 100쌍 = 500 워
   bbht_grover_nocheckpoint (hardware_bram/models/hardware_bram_nocheckpoint)
                                        NORMAL 하나 -> 2,000 실행. 체크포인트 없이
                                        연산기 네 벌(E4)만 켠 비교 기준
+  6단계 ablation 모델 (2026-10-08 추가)  NORMAL 과 CKPT 를 짝지어 4,000 실행
+      bbht_grover_k3h3_e1 · _k3h3_e4 · _k3h3_e4_m1   CKPT 물리 반복을 K3/H3 열과 맞댐
+      bbht_grover_k4h4_e1 · _k4h4_e4                 CKPT 물리 반복을 K4/H4 열과 맞댐
 
 어느 쪽인지는 ID 응답의 platform= 으로 스스로 알아냅니다.
 
@@ -69,6 +72,13 @@ PLATFORMS = {
     "bbht_grover_upgrade": ("bram", ("normal", "ckpt")),
     "bbht_grover_dram":    ("dram", ("normal",)),
     "bbht_grover_nocheckpoint": ("nocheckpoint", ("normal",)),
+    # 6단계 ablation 모델. 연산기 수(E)와 측정 최적화(M)는 물리 반복을 바꾸지 않으므로
+    # 체크포인트 정책(K/H)만 갈래로 나눕니다.
+    "bbht_grover_k3h3_e1":    ("bram", ("normal", "ckpt")),
+    "bbht_grover_k3h3_e4":    ("bram", ("normal", "ckpt")),
+    "bbht_grover_k3h3_e4_m1": ("bram", ("normal", "ckpt")),
+    "bbht_grover_k4h4_e1":    ("bram_k4h4", ("normal", "ckpt")),
+    "bbht_grover_k4h4_e4":    ("bram_k4h4", ("normal", "ckpt")),
 }
 # (갈래, 모드) -> 기댓값의 물리 반복 열
 ITER_COLUMN = {
@@ -76,6 +86,8 @@ ITER_COLUMN = {
     ("bram", "ckpt"):   "actual_iter_k3h3",
     ("dram", "normal"): "actual_iter_dram_session",
     ("nocheckpoint", "normal"): "actual_iter_normal",
+    ("bram_k4h4", "normal"): "actual_iter_normal",
+    ("bram_k4h4", "ckpt"):   "actual_iter_k4h4",
 }
 
 ROW_FIELDS = (

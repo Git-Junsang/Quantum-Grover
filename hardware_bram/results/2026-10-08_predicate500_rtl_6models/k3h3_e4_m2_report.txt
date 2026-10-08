@@ -1,0 +1,18 @@
+Predicate500 bram RTL 대 SW 기준모델 (software/experiments/predicate500_benchmark/expected/predicate500_expected.csv)
+술어     모드         실행  rc            result_index  predicate     trial_count   L_BBHT        actual_iter 
+LT     normal    500  500/500       500/500       500/500       500/500       500/500       500/500     
+LT     ckpt      500  500/500       500/500       500/500       500/500       500/500       500/500     
+GT     normal    500  500/500       500/500       500/500       500/500       500/500       500/500     
+GT     ckpt      500  500/500       500/500       500/500       500/500       500/500       500/500     
+EQ     normal    500  500/500       500/500       500/500       500/500       500/500       500/500     
+EQ     ckpt      500  500/500       500/500       500/500       500/500       500/500       500/500     
+RANGE  normal    500  500/500       500/500       500/500       500/500       500/500       500/500     
+RANGE  ckpt      500  500/500       500/500       500/500       500/500       500/500       500/500     
+
+사이클 합 (clk_accel 100 MHz)
+  LT     normal 11625100 cyc / iter 30875  |  ckpt 5274562 cyc / iter 9355  |  normal/ckpt 2.2040x
+  GT     normal 12241889 cyc / iter 33131  |  ckpt 5456355 cyc / iter 10008  |  normal/ckpt 2.2436x
+  EQ     normal 11785382 cyc / iter 31424  |  ckpt 5328877 cyc / iter 9582  |  normal/ckpt 2.2116x
+  RANGE  normal 11234306 cyc / iter 29676  |  ckpt 5033332 cyc / iter 8714  |  normal/ckpt 2.2320x
+
+판정: PASS

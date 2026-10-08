@@ -11,10 +11,13 @@ Common500 에서 보드 M2 와 result_index · trial_count · L_BBHT ·
 actual_grover_iterations 가 500/500 맞았습니다. NumPy 부동소수 모델은 측정
 난수 규칙이 달라 궤적이 다르므로 기댓값으로 쓰지 않습니다.
 
-모드 셋을 모두 돌립니다.
+모드 넷을 모두 돌립니다.
   NORMAL      bram NORMAL_SINGLE (burst_enable=0) 과 dram 단일 탐색
   K3H3        bram CKPT_SINGLE (K3/H3-E4-M2) 의 물리 반복
   DRAM_ALL_J  dram 갈래의 물리 반복 (모든 j 를 DRAM 에서 복원)
+  K4H4        bram 의 K4/H4 정책 모델(K4H4_E1 · K4H4_E4)의 물리 반복. 6단계 ablation 의
+              K4/H4 단계를 네 술어로 보드에서 잴 때 씁니다(2026-10-08 추가. 열은 맨 뒤에
+              붙여 기존 열과 값은 바뀌지 않음)
 논리 궤적(result_index · trial_count · L_BBHT)은 모드와 무관해야 하므로 셋이
 같은지 여기서 확인하고, 물리 반복만 모드별 열로 남깁니다.
 
@@ -67,7 +70,7 @@ from checkpoint_bbht_model import V098AllJCheckpointReference, V098AutomaticCore
 
 TARGET_COUNTS = (1, 4, 16, 64, 256)
 ROSTER_H = SOFTWARE / "experiments" / "common500_benchmark" / "inputs" / "official_board_seed_roster.h"
-MODES = ("NORMAL", "K3H3", "DRAM_ALL_J")
+MODES = ("NORMAL", "K3H3", "DRAM_ALL_J", "K4H4")
 
 EXPECTED_FIELDS = (
     "predicate", "threshold_a", "threshold_b", "target_count", "seed_index",
@@ -75,7 +78,7 @@ EXPECTED_FIELDS = (
     "success", "termination_reason", "result_index", "result_value",
     "trial_count", "L_BBHT",
     "actual_iter_normal", "actual_iter_k3h3", "actual_iter_dram_all_j",
-    "actual_iter_dram_session",
+    "actual_iter_dram_session", "actual_iter_k4h4",
 )
 DATASET_FIELDS = (
     "predicate", "threshold_a", "threshold_b", "target_count",
@@ -180,6 +183,7 @@ def main() -> int:
                     "actual_iter_k3h3": results["K3H3"].actual_grover_iterations,
                     "actual_iter_dram_all_j": results["DRAM_ALL_J"].actual_grover_iterations,
                     "actual_iter_dram_session": results["DRAM_SESSION"].actual_grover_iterations,
+                    "actual_iter_k4h4": results["K4H4"].actual_grover_iterations,
                 })
             print(f"{mode:5s} M={m:3d}  {len(roster)} seeds  fnv=0x{fnv:08x}  "
                   f"{time.perf_counter() - started:6.1f}s", flush=True)
