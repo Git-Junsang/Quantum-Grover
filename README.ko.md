@@ -60,6 +60,11 @@ CSR 의 정본은 [`software/contract/bbht_grover_csr.json`](software/contract/b
 셋 다 같은 500 워크로드(M = 1/4/16/64/256 × 시드 100)입니다. 궤적은 보드와 RTL 이
 500/500 일치하지만 사이클 값 자체는 다르므로, 두 축을 섞어 배수를 만들면 안 됩니다.
 
+2026-10-11 에는 새 SW 기준선(`software/orca_sw/`)을 200T 보드의 ORCA 와 서버 x86 코어 하나에서 네 술어
+2,000개로 재어 같은 보드의 FPGA 와 같은 모드끼리 맞댔습니다. ORCA 는 FPGA 보다 실경과 시간으로 15,889~19,861배
+느리지만, 서버 한 코어는 FPGA 의 1.15~1.34배 시간에 끝납니다. 위 표와는 보드 · 워크로드 · 기준선이 달라 섞지
+않습니다(기술문서 25장).
+
 ---
 
 ## 3. 두 갈래와 BRAM 모델들
@@ -194,6 +199,8 @@ software/               두 트리가 공유
                           port_contract.tsv · check_ports.py
   host/bbht_cli.py      호스트 PC CLI (실 UART · mock · 시뮬 트랜스크립트 재생)
   host/bbht_predicate500.py  네 술어 x 500 워크로드 보드 자동 테스트 -> 엑셀
+  orca_sw/              가속기 없는 SW 기준선 C 세 모델 (naive · 최적화 Normal · 최적화 K3H3)
+                          ORCA 보드 · 서버 빌드와 측정 도구. 기술문서 25장
   requirements.txt      Common500 재실행용 파이썬 패키지
 
 trash_bin/              구 스펙 문서와 대용량 산출물 보관. git 추적 안 함

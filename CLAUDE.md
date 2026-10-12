@@ -74,9 +74,13 @@
 - **고전 선형 스캔과 속도를 비교하지 않습니다.** 비교 대상은 ORCA 1코어 순수 SW 기준선 ·
   Qiskit AerSimulator · NumPy 셋입니다. ORCA 대비 배수가 십만 단위인 것은 P=32 병렬과 클럭 2배
   때문이지 알고리즘 우위가 아니라는 단서를 항상 붙이십시오.
+- 새 SW 기준선(`software/orca_sw/`, 200T 보드 ORCA · 서버 x86, 네 술어 2,000개, 2026-10-11)은
+  [25장](documents/design_references/25_SW_기준선과_FPGA_비교.md)이 인용처이고 위 세 축과 섞지 않습니다.
+  **서버 한 코어가 FPGA 와 비슷한 시간에 끝난다**는 결과가 있으니 가속 효과를 말할 때 같이 밝히십시오.
+  ORCA ① naive 의 전체 시간은 추정값입니다.
 
 **폐기된 값 — 보이면 무시하십시오**: n=15·n=16, Q2.16·Q1.17, 8바이트 CSR 간격, INCR16 버스트,
-argmax 측정, AXI4-Lite, MicroBlaze, XC7S100 ([25장](documents/design_references/25_부록_용어집과_폐기된_규격.md)).
+argmax 측정, AXI4-Lite, MicroBlaze, XC7S100 ([26장](documents/design_references/26_부록_용어집과_폐기된_규격.md)).
 `trash_bin/`(git 추적 안 함) 은 전부 이 구 스펙 기준이라 **인용하면 안 됩니다**.
 
 ---
@@ -97,7 +101,9 @@ argmax 측정, AXI4-Lite, MicroBlaze, XC7S100 ([25장](documents/design_referenc
   ([22장](documents/design_references/22_DRAM_갈래.md)).
 - **`software/`** — 두 트리가 공유하는 기준모델 · 검증 벡터 · 계약 · 호스트 도구
   ([4장](documents/design_references/04_소프트웨어_기준모델과_정답_벡터.md)). 한쪽 갈래나 한 모델에만
-  해당하는 것을 넣지 마십시오.
+  해당하는 것을 넣지 마십시오. `software/orca_sw/` 는 가속기 없는 SW 기준선 C 세 모델과 그 ORCA 보드 ·
+  서버 측정 도구입니다([25장](documents/design_references/25_SW_기준선과_FPGA_비교.md)). 세 앱 폴더의
+  `src/` 는 측정한 소스와 sha256 이 같아야 하니 고치지 마십시오(해시는 결과 묶음의 `sha256.txt`).
 
 지킬 것:
 

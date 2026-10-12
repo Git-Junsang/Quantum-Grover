@@ -66,6 +66,12 @@ All three use the same 500 workloads (M = 1/4/16/64/256 x 100 seeds). Board and 
 on the search trajectory 500/500, but the cycle counts themselves differ, so never build a
 ratio that mixes the two axes.
 
+On 2026-10-11 a new software baseline (`software/orca_sw/`) was measured on the ORCA core of the 200T
+board and on one x86 core of the host, over the four-predicate 2,000 workloads, and compared mode for mode
+with the FPGA on the same board. ORCA is 15,889-19,861x slower than the FPGA in wall-clock time, but one
+host core finishes in 1.15-1.34x the FPGA time. Board, workloads, and baseline differ from the table above,
+so do not mix them (design reference chapter 25).
+
 ---
 
 ## 3. Two competing implementations and the BRAM models
@@ -206,6 +212,9 @@ software/               Shared by both trees
                           port_contract.tsv, check_ports.py
   host/bbht_cli.py      Host-side CLI (real UART, mock, sim-transcript replay)
   host/bbht_predicate500.py  Automated board test, four predicates x 500 workloads -> Excel
+  orca_sw/              Accelerator-free software baseline in C, three models (naive, optimized
+                          Normal, optimized K3H3), builds for the ORCA board and the host, and
+                          measurement tools. Design reference chapter 25
   requirements.txt      Python packages for rerunning Common500
 
 trash_bin/              Superseded docs and bulky artifacts. Not tracked by git

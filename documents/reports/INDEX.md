@@ -114,7 +114,7 @@ checkpointing, RISC-V SoC, hardware accelerator
 - A. Experimental Setup — 보드, 클럭, 500 워크로드(M = 1/4/16/64/256 × 시드 100)
 - B. RTL Cycle Performance and Six-Stage Ablation
 - C. Board Wall-Clock Performance
-- D. Comparison with Software Baselines (ORCA 1-core, Qiskit Aer, NumPy)
+- D. Comparison with Software Baselines (ORCA 1-core, the same C on one host x86 core, Qiskit Aer, NumPy)
 - E. Resource Utilization and Timing
 - F. Comparison with Alternative Implementations
   - 1) Non-Checkpointed BRAM Baseline (Normal-E4)
@@ -124,6 +124,7 @@ checkpointing, RISC-V SoC, hardware accelerator
 [`2026-09-08_publication_6stage`](../../hardware_bram/results/2026-09-08_publication_6stage/) (RTL 사이클),
 [`2026-09-08_k3h3_e4_m2_board_500run`](../../hardware_bram/models/hardware_bram_K3H3_E4_M2/vivado/vivado_bbht_grover_fpga/2026-09-08_k3h3_e4_m2_board_500run/) (보드 실경과),
 [`2026-09-08_orca_1core_baseline`](../../hardware_bram/models/hardware_bram_K3H3_E4_M2/vivado/vivado_bbht_grover_fpga/2026-09-08_orca_1core_baseline/) (소프트웨어 대비),
+[`2026-10-11_sw_baseline_predicate500`](../../hardware_bram/results/2026-10-11_sw_baseline_predicate500/evidence.md) (새 SW 기준선, ORCA 보드 · 서버 · FPGA, [25장](../design_references/25_SW_기준선과_FPGA_비교.md)),
 [`2026-09-08_resource_ablation_5config`](../../hardware_bram/results/2026-09-08_resource_ablation_5config/) (자원),
 [`common500_final`](../../software/results/common500_final/common500_validation_report.md),
 [20장](../design_references/20_합성_구현_비트스트림.md),
@@ -133,10 +134,12 @@ checkpointing, RISC-V SoC, hardware accelerator
 ## VIII. DISCUSSION
 
 - A. Design Rationale — 정밀도 · H 선택 · 채택하지 않은 시도
-- B. Interpreting the Speedup — ORCA 대비 배수는 P = 32 병렬과 클럭 2배에서 오며 알고리즘 우위가 아님
+- B. Interpreting the Speedup — ORCA 대비 배수는 P = 32 병렬과 클럭 2배에서 오며 알고리즘 우위가 아님.
+  같은 C 를 서버 x86 코어 하나에서 돌리면 FPGA 와 시간이 비슷하다는 점을 함께 다룸
 - C. Limitations — Q = 14 상한, 고전 선형 스캔보다 느림, DRAM 갈래의 열거 · 프리페치 부재
 
-근거: [23장](../design_references/23_설계_근거_실험.md)
+근거: [23장](../design_references/23_설계_근거_실험.md),
+[25장](../design_references/25_SW_기준선과_FPGA_비교.md)
 
 ## IX. CONCLUSION
 
@@ -157,4 +160,4 @@ IEEE 번호식 `[1]` `[2]` … 인용 순서대로.
 - B. Glossary
 
 근거: [13장](../design_references/13_CSR_레지스터와_실행_모드.md),
-[25장](../design_references/25_부록_용어집과_폐기된_규격.md)
+[26장](../design_references/26_부록_용어집과_폐기된_규격.md)
