@@ -18,7 +18,7 @@
   자극·드라이버 호출·CSV 형식이 같습니다. 모드는 NORMAL 하나입니다 — 이 갈래에는
   체크포인트가 없고 `burst_enable` 은 계약 호환용으로 무시됩니다
 - 자극과 기댓값은 hardware_bram 과 같은 파일입니다
-  (`software/experiments/predicate500_benchmark/expected/`)
+  (`software/golden_data/2026-09-25_predicate500/`)
 - AXI 모델은 두 벌로 돌렸습니다. 기본(AR 지연 20, B 지연 8, 백프레셔 없음)과
   `AXI_STALL=1`(awready · wready · arready · rvalid 에 LFSR 로 불규칙한 빈틈)
 
@@ -74,7 +74,7 @@ EQ 의 세션 물리 반복 합은 **245** 로, 추상 포트 위에서 잰
 같고, W 쪽에서 길이 계산이 빠져 판 2 의 빈 사이클도 없습니다. AXI 모델은 이제 16 beat 를
 넘는 버스트를 오류로 세고(`MAX_BEATS`), 두 벌 모두 오류 0 입니다. 세 판 모두 궤적
 여섯 축은 2,000/2,000 이었습니다. 경위는
-[기술문서 22장](../../../documents/design_references/22_DRAM_갈래.md)
+[기술문서 21장](../../../documents/design_references/21_DRAM_갈래.md)
 3절에 있습니다.
 
 추상 포트에 한 사이클 한 행(736비트)짜리 모델을 물렸던 2026-09-10 묶음은 EQ 가
@@ -95,7 +95,7 @@ RVX 가 Arty A7-100T 에 주는 DRAM 은 32비트 `slow_dram` 하나뿐이어서
 ## 재현
 
 ```bash
-python3 software/experiments/predicate500_benchmark/run_predicate500_golden.py
+python3 software/golden_develop/predicate500/run_predicate500_golden.py
 make -C hardware_dram/sim predicate500              # 기본 지연
 make -C hardware_dram/sim predicate500 AXI_STALL=1  # 백프레셔
 ```

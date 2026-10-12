@@ -21,7 +21,7 @@
 | 성능 근거                                                | 보드 실경과 시간 **7.626x**, RTL 사이클 **6.1401x**, ORCA 1코어 대비 **116,426x** |
 | 소프트웨어 기준모델                                      | NumPy · Qiskit Aer · Q1.22 bit-exact · K3/H3 정책 모델. 보드와 같은 500 워크로드에서 탐색 궤적과 물리 반복이 500/500 일치 |
 
-배선 정합성은 [포트 대조기](software/contract/check_ports.py)가 인수인계 문서의 포트 표
+배선 정합성은 [포트 대조기](spec/check_ports.py)가 인수인계 문서의 포트 표
 (wrapper 19 + core 61)와 RTL 을 맞춰 보며 지킵니다. `stub` · `real` · `dram` 세 갈래
 모두 일치합니다.
 
@@ -29,7 +29,7 @@
 
 ## 2. 확정 수치
 
-CSR 의 정본은 [`software/contract/bbht_grover_csr.json`](software/contract/bbht_grover_csr.json)
+CSR 의 정본은 [`spec/bbht_grover_csr.json`](spec/bbht_grover_csr.json)
 하나이고, `gen_csr.py` 가 거기서 Verilog · C · Python 헤더와
 기술문서 [13장](documents/design_references/13_CSR_레지스터와_실행_모드.md)을 만듭니다.
 같은 숫자를 들고 있으면서 생성 대상이 아닌 두 곳(소프트웨어 기준모델, 보드 벤치 앱)은
@@ -60,10 +60,10 @@ CSR 의 정본은 [`software/contract/bbht_grover_csr.json`](software/contract/b
 셋 다 같은 500 워크로드(M = 1/4/16/64/256 × 시드 100)입니다. 궤적은 보드와 RTL 이
 500/500 일치하지만 사이클 값 자체는 다르므로, 두 축을 섞어 배수를 만들면 안 됩니다.
 
-2026-10-11 에는 새 SW 기준선(`software/orca_sw/`)을 200T 보드의 ORCA 와 서버 x86 코어 하나에서 네 술어
+2026-10-11 에는 새 SW 기준선(`software/orca_grover_develop/`)을 200T 보드의 ORCA 와 서버 x86 코어 하나에서 네 술어
 2,000개로 재어 같은 보드의 FPGA 와 같은 모드끼리 맞댔습니다. ORCA 는 FPGA 보다 실경과 시간으로 15,889~19,861배
 느리지만, 서버 한 코어는 FPGA 의 1.15~1.34배 시간에 끝납니다. 위 표와는 보드 · 워크로드 · 기준선이 달라 섞지
-않습니다(기술문서 25장).
+않습니다([실험 19](documents/reports/19_ORCA_서버_SW_기준선.md)).
 
 ---
 
@@ -124,7 +124,7 @@ DRAM 에서 다음 `j` 의 진폭을 가져와 큐에 올립니다. 어떤 `j` �
 2,000/2,000 맞았습니다. 실제 NoC 와 DDR 모델이 들어간 SoC RTL 시뮬에서도 콘솔 16실행이
 16/16 맞았고, 2026-10-04 에 보드(DDR3 실물)에서도 2,000/2,000 맞았습니다. 같은 보드에서
 체크포인트 판보다 실경과 시간으로 약 15.6배 느립니다
-([기술문서 22장](documents/design_references/22_DRAM_갈래.md)).
+([기술문서 21장](documents/design_references/21_DRAM_갈래.md)).
 회귀는 동작 수준 DRAM 모델 위에서 합니다 (`make -C hardware_dram/sim`,
 최상단은 `top` 타깃). 같은 자극을
 `hardware_bram` 의 Main IP(K3/H3-E4-M2)에도 걸어 탐색 궤적이 일치하는지 보는 대조는 `make -C hardware_dram/sim equiv`
@@ -141,7 +141,7 @@ Normal 2,000 실행이 SW 기준모델과 맞습니다. `K3H3_E4` 모델(체크�
 Normal 로 돌린 것과는 **사이클까지** 2,000/2,000 같습니다. RTL 사이클로는 K3/H3-E4-M2 가 이 판보다
 2.897배 빠릅니다. 2026-10-04 에 보드에서 Normal 2,000 이 기준모델과 맞았고, 같은 보드에서
 체크포인트 판이 실경과 시간으로 **2.810배** 빠릅니다
-([기술문서 21장](documents/design_references/21_체크포인트_없는_BRAM_판.md)).
+([기술문서 20장](documents/design_references/20_체크포인트_없는_BRAM_판.md)).
 
 `hardware_bram/` 과 `hardware_dram/` 은 `src` · `testbench` · `sim` · `rvx` · `firmware` 로
 같은 모양을 하고, bram 쪽은 모델마다 다른 `vivado` · `bitstream` 과 모델 전용 `results` 가
@@ -154,12 +154,12 @@ Normal 로 돌린 것과는 **사이클까지** 2,000/2,000 같습니다. RTL �
 
 ```
 documents/
-  design_references/    기술문서. 번호 장 24개, 입구는 00_문서_지도.md
-    diagrams/           그 장들이 참조하는 그림 (유일한 하위 폴더)
-  study_references/     학습용 해설서 0~18장 + 부록 A
-  papers/               원문 논문 PDF (papers_ko/ 에 한국어 해설본)
+  study_references/     공부용 해설서. 입구는 index.md, 1~18장 + 부록 A
+  design_references/    확정된 설계. 번호 장 22개, 입구는 index.md
+    diagrams/           기술문서 · 실험 보고서가 참조하는 그림 (유일한 하위 폴더)
+  reports/              설계를 정하거나 확인한 실험. <번호>_<실험명>.md, 입구는 index.md
+  papers/               원문 논문 PDF (papers_ko/ 에 한국어 해설본), 우리 논문 목차 논문_목차.md
   check_docs.py         문서 정합성 검사기
-  *.pptx                최종 Main IP 발표 자료 (읽기 전용)
 
 hardware_bram/          갈래 1 — BRAM 전용. 아래는 모든 모델이 같이 쓰는 것
   src/                  RTL 한 벌 (통신 계층 + 최상단 + Main IP). 어댑터는 모델 폴더에.
@@ -188,20 +188,19 @@ hardware_dram/          갈래 2 — DRAM 전량 저장 + BRAM 큐
                         모델 폴더 없이 한 벌이고, 하위 구조는 hardware_bram 에 vivado ·
                         bitstream 을 더한 모양입니다 (synth 만 없음)
 
-software/               두 트리가 공유
-  models/               NumPy · Qiskit · Q1.22 bit-exact · 체크포인트 정책 기준모델
-  experiments/          Common500 비교 실험 (보드와 같은 500 워크로드)
-  rtl_vectors/          RTL 정답 벡터 (requested-j 256케이스 · 열거 두 방식)
-                          tools/dump_bench_workload.py -- bench250/500 자극 생성
-  results/              Common500 최종 결과 · 표 · 그래프 · 검증 보고서
-  contract/             하드웨어-소프트웨어 계약 두 벌과 대조기
-                          CSR 정본 JSON · gen_csr.py · generated/
-                          port_contract.tsv · check_ports.py
-  host/bbht_cli.py      호스트 PC CLI (실 UART · mock · 시뮬 트랜스크립트 재생)
-  host/bbht_predicate500.py  네 술어 x 500 워크로드 보드 자동 테스트 -> 엑셀
-  orca_sw/              가속기 없는 SW 기준선 C 세 모델 (naive · 최적화 Normal · 최적화 K3H3)
-                          ORCA 보드 · 서버 빌드와 측정 도구. 기술문서 25장
-  requirements.txt      Common500 재실행용 파이썬 패키지
+spec/                   레지스터 · 포트 규격. RTL · 펌웨어 · 호스트가 함께 씀
+                          CSR 원본 JSON · gen_csr.py · generated/ · port_contract.tsv · check_ports.py
+
+software/               분류 / 하위 폴더 / 내용물. 데이터 · 결과 폴더 이름은 날짜_내용, 대표 문서는 같은 이름 .md
+  golden_develop/       골든 모델 (models/) · RTL 벤치 자극 생성기 (tb_stimulus/) · Common500 비교 · Predicate500 기댓값 생성기
+  golden_data/          골든이 낸 정답과 비교 결과: 요청 j 벡터 · 열거 벡터 · Common500 결과 · Predicate500 기댓값
+  testbench_data/       테스트벤치 · 실험이 읽는 입력: Common500 데이터셋 · 시드 로스터, Predicate500 데이터셋
+  pc_grover_develop/    PC 용 그로버 구현 (C++ · NumPy · Qiskit). 실험 17
+  pc_grover_result/       그 측정 결과
+  orca_grover_develop/  가속기 없는 C 세 모델, ORCA 와 서버 x86 공용. 실험 19
+  orca_grover_result/     그 측정 결과
+  host_fpga_develop/    PC 에서 보드를 부리는 도구
+                          bbht_cli.py (실 UART · mock · 재생) · bbht_predicate500.py (네 술어 자동 테스트)
 
 trash_bin/              구 스펙 문서와 대용량 산출물 보관. git 추적 안 함
 ```
@@ -220,10 +219,10 @@ make -C hardware_bram/sim bench250
 make -C hardware_bram/sim predicate500
 make -C hardware_bram/models/hardware_bram_nocheckpoint/sim predicate500 predicate500-ref equiv
 make -C hardware_dram/sim predicate500
-python3 software/host/bbht_predicate500.py --port /dev/ttyUSB1
+python3 software/host_fpga_develop/bbht_predicate500.py --port /dev/ttyUSB1
 
-# 소프트웨어 기준모델 Common500 비교 (가상환경에 software/requirements.txt 를 설치한 뒤)
-bash software/experiments/common500_benchmark/run_full_benchmark.sh
+# 소프트웨어 기준모델 Common500 비교 (가상환경에 software/golden_develop/common500/requirements.txt 를 설치한 뒤)
+bash software/golden_develop/common500/run_full_benchmark.sh
 
 # RVX 플랫폼에 설치 (위 파일이 있을 때)
 source /opt/rvx/rvx_setup.sh
@@ -243,14 +242,14 @@ python3 documents/check_docs.py
 
 | 무엇이 궁금한가            | 어디를 보는가                                                                                                     |
 | -------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| 전체를 장별로 (24장) | [00_문서_지도.md](documents/design_references/00_문서_지도.md) |
+| 전체를 장별로 (22장) | [index.md](documents/design_references/index.md) |
 | 호스트에서 어떻게 부리는가 | [17장 보드 운용](documents/design_references/17_보드_운용.md) |
 | CSR 레지스터 하나하나 | [13장 CSR 레지스터와 실행 모드](documents/design_references/13_CSR_레지스터와_실행_모드.md) |
 | Main IP 포트 | [12장 Main IP 포트 계약](documents/design_references/12_Main_IP_포트_계약.md) |
 | 고정소수점과 메모리 배치 | [6장 데이터 표현과 메모리 맵](documents/design_references/06_데이터_표현과_메모리_맵.md) |
 | UART 명령 | [14장 호스트 인터페이스와 UART 프로토콜](documents/design_references/14_호스트_인터페이스와_UART_프로토콜.md) |
 | 소프트웨어 기준모델과 비교 실험 | [4장 소프트웨어 기준모델과 정답 벡터](documents/design_references/04_소프트웨어_기준모델과_정답_벡터.md) |
-| 설계를 왜 이렇게 정했나 | [23장 설계 근거 실험](documents/design_references/23_설계_근거_실험.md) |
-| Grover 알고리즘 자체       | [study_references/](documents/study_references/README.md) 0~18장                                                   |
+| 설계를 왜 이렇게 정했나 · 실측과 기준선 비교 | [실험 보고서 index](documents/reports/index.md) |
+| Grover 알고리즘 자체       | [study_references/](documents/study_references/index.md) index · 1~18장                                                   |
 
 영문 요약은 [README.md](README.md) 에 있습니다.

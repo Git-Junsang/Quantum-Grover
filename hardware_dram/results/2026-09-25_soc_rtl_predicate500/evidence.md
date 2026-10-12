@@ -21,7 +21,7 @@ AXI 규칙대로만 움직이는 이상적인 상대였습니다. 여기서는 R
 
 첫 시도에서는 가속기가 멈췄습니다. NoC 가 16 beat 보다 긴 쓰기를 쪼개고 조각마다 B 를
 돌려준 것이 원인이었습니다. 이 묶음은 브리지를 16 beat 버스트로 고친 뒤의 결과입니다.
-경위는 [기술문서 22장 22.5절](../../../documents/design_references/22_DRAM_갈래.md#225-브리지-grover_dram_axi_bridgev)에 있습니다.
+경위는 [기술문서 21장 21.5절](../../../documents/design_references/21_DRAM_갈래.md#215-브리지-grover_dram_axi_bridgev)에 있습니다.
 
 ## 워크로드
 
@@ -87,7 +87,7 @@ hardware_dram/rvx/install_to_platform.sh
 rm -rf $RVX_MINI_HOME/platform/bbht_grover_dram/app/bbht_console/rtl.debug
 cd $RVX_MINI_HOME/platform/bbht_grover_dram/sim_rtl
 BBHT_SCRIPT=script_predicate500_dram.h make bbht_console.sim          # 46분쯤
-python3 software/host/bbht_predicate500.py --port replay:qtsim.log --targets 64,256 --seeds 2
+python3 software/host_fpga_develop/bbht_predicate500.py --port replay:qtsim.log --targets 64,256 --seeds 2
 ```
 
 이번에는 세션과 떼어 `setsid nohup` 으로 돌렸습니다. 시뮬이 길어서, 그렇게 하지 않으면

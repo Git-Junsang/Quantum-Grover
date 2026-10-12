@@ -3,7 +3,7 @@
 ## 결론
 
 2026-09-17 에 보드에서 확인한 통신 계층 교체판 비트스트림에 2026-09-25 판 콘솔을 올리고,
-호스트 자동 테스트(`software/host/bbht_predicate500.py`)로 **LT · GT · EQ · RANGE 각 500
+호스트 자동 테스트(`software/host_fpga_develop/bbht_predicate500.py`)로 **LT · GT · EQ · RANGE 각 500
 워크로드 × NORMAL · 체크포인트 = 4,000 실행**을 돌렸습니다.
 
 - **4,000/4,000 HIT, SW 기준모델과 네 축(`result_index` · `trial_count` · `L_BBHT` ·
@@ -64,7 +64,7 @@
 
 - 콘솔이 내는 `# amp_overflow (진단용, 결과는 유효)` 줄 34개가 로그에서 `# amp_overflow (���…)`
   로 깨져 있습니다. 호스트가 시리얼을 ascii 로 풀었기 때문이고 결과 값과는 무관합니다.
-  `software/host/bbht_cli.py` 의 `SerialTransport` 를 UTF-8 증분 디코더로 고쳤습니다.
+  `software/host_fpga_develop/bbht_cli.py` 의 `SerialTransport` 를 UTF-8 증분 디코더로 고쳤습니다.
   이 묶음의 로그는 고치기 전에 받은 원본 그대로입니다.
 
 ## 인용할 때

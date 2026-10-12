@@ -58,7 +58,7 @@ SIM       = $(BUILD)/sim_tb
 
 SRC_DIR   = ../src
 TB_DIR    = ../testbench
-CSR_DIR   = ../../software/contract/generated
+CSR_DIR   = ../../spec/generated
 
 MODEL    ?= K3H3_E4_M2
 MODEL_DIR = ../models/hardware_bram_$(MODEL)
@@ -108,16 +108,16 @@ real: ports-real lint-real regress-real driver-real
 # CSR 헤더가 정본과 어긋나면 먼저 멈춥니다. 생성 헤더를 손으로 고쳐 놓고
 # 회귀만 통과시키는 일을 막으려는 것입니다.
 csr:
-	@python3 ../../software/contract/gen_csr.py --check
+	@python3 ../../spec/gen_csr.py --check
 
 # PJK 인수인계 §3.3/§3.4 포트 계약과 RTL 이 어긋나지 않았는지.
 #   ports        스텁을 대조 (통신 계층만 볼 때)
 #   ports-real   어댑터를 대조 (통신 계층에 Main IP 가 물린 상태)
 ports:
-	@python3 ../../software/contract/check_ports.py stub
+	@python3 ../../spec/check_ports.py stub
 
 ports-real: model-check
-	@python3 ../../software/contract/check_ports.py real $(MODEL)
+	@python3 ../../spec/check_ports.py real $(MODEL)
 
 # MODEL 철자가 틀리면 verilator 가 "파일 없음" 으로 길게 죽기 전에 멈춥니다.
 model-check:
@@ -126,7 +126,7 @@ model-check:
 # 모델 열 개 전부. 어댑터를 새로 만들거나 고친 뒤 돌립니다.
 ports-models:
 	@for m in $(MODELS); do printf '%-14s ' $$m; \
-	     python3 ../../software/contract/check_ports.py real $$m > /tmp/sjs_ports_$$m.log 2>&1 \
+	     python3 ../../spec/check_ports.py real $$m > /tmp/sjs_ports_$$m.log 2>&1 \
 	     && tail -1 /tmp/sjs_ports_$$m.log \
 	     || { echo "포트 계약 실패"; cat /tmp/sjs_ports_$$m.log; exit 1; }; done
 
@@ -258,7 +258,7 @@ BENCH_COMM   = $(SRC_DIR)/bbht_rvx_wrapper.v $(SRC_DIR)/bbht_grover_mmio.v \
 .PHONY: bench250 bench250-wl
 
 bench250-wl:
-	@python3 ../../software/rtl_vectors/tools/dump_bench_workload.py --seeds 50 --out $(BENCH_WL)
+	@python3 ../../software/golden_develop/tb_stimulus/dump_bench_workload.py --seeds 50 --out $(BENCH_WL)
 
 bench250: csr model-check bench250-wl
 	@rm -rf $(BENCH_BUILD); mkdir -p $(BENCH_BUILD)/src
@@ -309,7 +309,7 @@ BENCH500_OUT  ?= $(BENCH500_BUILD)/bench500_$(BENCH_CORE).csv
 .PHONY: bench500 bench500-wl
 
 bench500-wl:
-	@python3 ../../software/rtl_vectors/tools/dump_bench_workload.py --seeds 100 --out $(BENCH500_WL)
+	@python3 ../../software/golden_develop/tb_stimulus/dump_bench_workload.py --seeds 100 --out $(BENCH500_WL)
 
 bench500: csr model-check bench500-wl
 	@rm -rf $(BENCH500_BUILD); mkdir -p $(BENCH500_BUILD)/src
@@ -340,9 +340,9 @@ bench500: csr model-check bench500-wl
 # bench500 은 EQ 하나뿐이라 나머지 세 술어의 비교기 경로가 실측 규모로 검증된
 # 적이 없어서 둡니다. 자극과 기댓값은 software/ 쪽에서 만듭니다.
 #
-#   software/experiments/predicate500_benchmark/run_predicate500_golden.py
+#   software/golden_develop/predicate500/run_predicate500_golden.py
 #       -> expected/predicate500_expected.csv (기준모델 기댓값 2,000행)
-#   software/rtl_vectors/tools/dump_predicate500_workload.py
+#   software/golden_develop/tb_stimulus/dump_predicate500_workload.py
 #       -> $(PRED500_WL)/ (데이터셋 20개와 술어별 목록)
 #
 # 술어 넷을 프로세스 넷으로 나눠 동시에 돌립니다. 논리 궤적과 물리 반복은
@@ -359,7 +359,7 @@ PRED500_BRANCH = $(if $(filter K4H4_%,$(MODEL)),bram_k4h4,bram)
 .PHONY: predicate500 predicate500-wl predicate500-build
 
 predicate500-wl:
-	@python3 ../../software/rtl_vectors/tools/dump_predicate500_workload.py --out $(PRED500_WL)
+	@python3 ../../software/golden_develop/tb_stimulus/dump_predicate500_workload.py --out $(PRED500_WL)
 
 predicate500-build: csr model-check
 	@rm -rf $(PRED500_BUILD); mkdir -p $(PRED500_BUILD)/src
@@ -397,7 +397,7 @@ predicate500: predicate500-build predicate500-wl
 #                              FNV-1a 와 정답 수를 기댓값 CSV 와 맞댑니다 (몇 초)
 #---------------------------------------------------------------------
 CONSOLE_GEN_BUILD = /tmp/sjs_console_gen
-PRED500_DATASETS  = ../../software/experiments/predicate500_benchmark/expected/predicate500_datasets.csv
+PRED500_DATASETS  = ../../software/golden_data/2026-09-25_predicate500/predicate500_datasets.csv
 
 .PHONY: console-gen
 

@@ -31,7 +31,7 @@ REPO_DIR  = $(BRAM_DIR)/..
 SRC_DIR   = $(BRAM_DIR)/src
 TB_DIR    = $(BRAM_DIR)/testbench
 FW_DIR    = $(BRAM_DIR)/firmware
-CSR_DIR   = $(REPO_DIR)/software/contract/generated
+CSR_DIR   = $(REPO_DIR)/spec/generated
 ADAPTER   = ../src/bbht_grover_core_adapter.v
 # predicate500-ref 의 기준. 체크포인트 판(K3/H3-E4-M2)에서 M1/M2 만 끈 모델입니다.
 REF_ADAPTER = ../../hardware_bram_K3H3_E4/src/bbht_grover_core_adapter.v
@@ -54,10 +54,10 @@ CORE_DEFS  = -DGUARD_POLLS=3000000 -DSIM_TIMEOUT_NS=4000_000_000
 all: ports lint real
 
 csr:
-	@python3 $(REPO_DIR)/software/contract/gen_csr.py > /dev/null
+	@python3 $(REPO_DIR)/spec/gen_csr.py > /dev/null
 
 ports:
-	@python3 $(REPO_DIR)/software/contract/check_ports.py real nocheckpoint
+	@python3 $(REPO_DIR)/spec/check_ports.py real nocheckpoint
 
 # 어댑터를 /tmp 로 복사해 절대경로로 넘깁니다. verilator 는 상대경로 파일을
 # -I 디렉터리 기준으로 먼저 찾아서, ../src/bbht_grover_core_adapter.v 를 넘기면
@@ -139,7 +139,7 @@ define pred500_run
 endef
 
 predicate500-wl:
-	@python3 $(REPO_DIR)/software/rtl_vectors/tools/dump_predicate500_workload.py --out $(PRED500_WL)
+	@python3 $(REPO_DIR)/software/golden_develop/tb_stimulus/dump_predicate500_workload.py --out $(PRED500_WL)
 
 predicate500: csr predicate500-wl
 	$(call pred500_prep,$(NOCKPT_BUILD))

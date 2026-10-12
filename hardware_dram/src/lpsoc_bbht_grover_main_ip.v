@@ -10,7 +10,7 @@
 // direct burst restore, never a replay. See grover_dram_prep_seq.v for the
 // decision logic and grover_dram_param.vh for why this needs no policy
 // engine at all. The external CSR/port contract is kept byte-identical to
-// hardware_bram's bbht_grover_core (software/contract/port_contract.tsv
+// hardware_bram's bbht_grover_core (spec/port_contract.tsv
 // §3.4) so the shared communication layer and CSR map do not change.
 //
 // v1 scope -- Single Search only (MANUAL_SINGLE / NORMAL_SINGLE)

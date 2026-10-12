@@ -5,7 +5,7 @@
 RVX 플랫폼 `bbht_grover_upgrade` 전체(ORCA RISC-V 코어 · micro NoC · APB/AHB NI ·
 통신 계층 · K3/H3-E4-M2 Main IP)를 Questa 로 RTL 시뮬하면서, 2026-09-25 판
 `bbht_console` 을 스크립트 모드로 돌린 결과입니다. 스크립트는 보드 자동 테스트
-`software/host/bbht_predicate500.py` 가 보드에 보낼 명령을 **그 러너가 직접 뽑은 것**
+`software/host_fpga_develop/bbht_predicate500.py` 가 보드에 보낼 명령을 **그 러너가 직접 뽑은 것**
 (`--emit-script`)이고, 트랜스크립트는 같은 러너의 재생 트랜스포트로 다시 먹여 채점했습니다.
 
 ```
@@ -75,7 +75,7 @@ source /opt/rvx/rvx_setup.sh
 hardware_bram/models/hardware_bram_K3H3_E4_M2/rvx/install_to_platform.sh
 cd $RVX_MINI_HOME/platform/bbht_grover_upgrade/sim_rtl
 BBHT_SCRIPT=script_predicate500.h make bbht_console.sim          # 22분쯤
-python3 software/host/bbht_predicate500.py --port replay:qtsim.log --targets 256 --seeds 2
+python3 software/host_fpga_develop/bbht_predicate500.py --port replay:qtsim.log --targets 256 --seeds 2
 ```
 
 ## 파일

@@ -3,7 +3,7 @@
  *
  * bbht_console 의 GEN PRED=... 은 firmware/bbht_console/src/bbht_dataset_gen.h
  * 를 씁니다. 그 헤더를 호스트 gcc 로 그대로 컴파일해서, Predicate500 기댓값
- * (software/experiments/predicate500_benchmark/expected/predicate500_datasets.csv)
+ * (software/golden_data/2026-09-25_predicate500/predicate500_datasets.csv)
  * 의 20개 데이터셋을 만들고 FNV-1a 와 정답 수를 맞댑니다. 보드나 SoC 시뮬
  * 없이 "보드가 만든 배열 = 기준모델이 쓴 배열" 을 확인하는 첫 관문입니다.
  * 보드에서는 호스트 프로그램이 SUM 명령으로 같은 비교를 한 번 더 합니다.

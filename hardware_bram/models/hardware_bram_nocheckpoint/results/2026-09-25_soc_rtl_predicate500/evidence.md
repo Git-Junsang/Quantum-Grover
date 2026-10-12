@@ -63,7 +63,7 @@ hardware_bram/models/hardware_bram_nocheckpoint/rvx/install_to_platform.sh
 cd $RVX_MINI_HOME/platform/bbht_grover_nocheckpoint && make sim_rtl
 rm -rf app/bbht_console/rtl.debug
 cd sim_rtl && BBHT_SCRIPT=script_predicate500_dram.h make bbht_console.sim     # 40분쯤
-python3 software/host/bbht_predicate500.py --port replay:qtsim.log --targets 64,256 --seeds 2
+python3 software/host_fpga_develop/bbht_predicate500.py --port replay:qtsim.log --targets 64,256 --seeds 2
 ```
 
 ## 파일

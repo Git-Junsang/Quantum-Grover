@@ -87,12 +87,12 @@ M 별 (네 술어 합):
   끈 것** 하나만 말합니다.
 - 보드 실측은 아직입니다. 비트스트림은
   [`bitstream/2026-09-25_nocheckpoint/`](../../bitstream/2026-09-25_nocheckpoint/evidence.md),
-  보드에서는 `software/host/bbht_predicate500.py` 가 이 판을 알아보고 Normal 2,000 을 돕니다.
+  보드에서는 `software/host_fpga_develop/bbht_predicate500.py` 가 이 판을 알아보고 Normal 2,000 을 돕니다.
 
 ## 재현
 
 ```bash
-python3 software/experiments/predicate500_benchmark/run_predicate500_golden.py   # 기댓값 (30초)
+python3 software/golden_develop/predicate500/run_predicate500_golden.py   # 기댓값 (30초)
 make -C hardware_bram/models/hardware_bram_nocheckpoint/sim predicate500        # 이 판 (술어 넷 동시, 2분쯤)
 make -C hardware_bram/models/hardware_bram_nocheckpoint/sim predicate500-ref    # 기준 (2분쯤)
 make -C hardware_bram/models/hardware_bram_nocheckpoint/sim equiv

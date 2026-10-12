@@ -3,7 +3,7 @@
 ## 무엇인가
 
 원격 보드 AX7A200B 에 이 모델의 100T 예산 비트스트림을 굽고 `bbht_console` 을 올린 뒤, 같은 원격 호스트에서
-`software/host/bbht_predicate500.py` 로 네 술어 × 500 워크로드를 Normal · 체크포인트로 돌렸습니다
+`software/host_fpga_develop/bbht_predicate500.py` 로 네 술어 × 500 워크로드를 Normal · 체크포인트로 돌렸습니다
 (2026-10-08 23:02~23:30 KST, `hardware_bram/sim/board_run.sh K3H3_E4_M1 predicate500`). 다섯 모델을 차례로 잰 뒤 보드는 원래 설계로 되돌렸습니다.
 
 ## 확정 수치

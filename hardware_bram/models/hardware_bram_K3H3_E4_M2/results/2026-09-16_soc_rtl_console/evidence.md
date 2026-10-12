@@ -4,7 +4,7 @@
 
 RVX 플랫폼 `bbht_grover_upgrade` 전체(ORCA RISC-V 코어 · micro NoC · APB/AHB NI ·
 우리 통신 계층 · Main IP)를 Questa 로 RTL 시뮬하면서 `bbht_console` 을 스크립트 모드로
-돌린 결과입니다. 명령 21줄의 응답을 호스트 CLI `software/host/bbht_cli.py` 의 재생
+돌린 결과입니다. 명령 21줄의 응답을 호스트 CLI `software/host_fpga_develop/bbht_cli.py` 의 재생
 트랜스포트에 그대로 먹여 파싱하고, 파싱한 숫자를 기준과 대조했습니다.
 
 같은 날의 [`2026-09-16_soc_rtl_paper_bench`](../2026-09-16_soc_rtl_paper_bench/evidence.md)

@@ -1,6 +1,6 @@
 # 12장. Main IP 포트 계약
 
-> [← 11장 체크포인트와 정책 엔진](11_체크포인트와_정책_엔진.md) · [문서 지도](00_문서_지도.md) · [13장 CSR 레지스터와 실행 모드 →](13_CSR_레지스터와_실행_모드.md)
+> [← 11장 체크포인트와 정책 엔진](11_체크포인트와_정책_엔진.md) · [index](index.md) · [13장 CSR 레지스터와 실행 모드 →](13_CSR_레지스터와_실행_모드.md)
 
 ---
 
@@ -29,11 +29,11 @@
 
 | 항목 | 값 |
 |---|---|
-| 계약 원본 | 인수인계 docx `LPSoC_BBHT_Grover_팀원_Handoff_SW_통신_v0.9.8반영_2026-09-01.docx` (`software/contract/`) |
+| 계약 원본 | 인수인계 docx `LPSoC_BBHT_Grover_팀원_Handoff_SW_통신_v0.9.8반영_2026-09-01.docx`. 내용을 이 장과 7 · 13 · 14장으로 옮긴 뒤 지웠고, 커밋 `495eed0` 까지의 git 기록에 있습니다 |
 | docx SHA-256 | `46a5d17805e52caecff4cebbfd1240f9ae7976a54e06b81d2bc391455ba748da` |
-| 기계 판독 계약 | [`software/contract/port_contract.tsv`](../../software/contract/port_contract.tsv) (docx §3.3 wrapper 19개 · §3.4 Main IP 61개를 `extract_contract.py` 가 뽑음) |
+| 기계 판독 계약 | [`spec/port_contract.tsv`](../../spec/port_contract.tsv) (docx §3.3 wrapper 19개 · §3.4 Main IP 61개를 뽑아 굳힌 것. 추출기 `extract_contract.py` 도 docx 와 함께 지웠습니다) |
 | 실물 RTL | `hardware_bram/src/` |
-| 소프트웨어 기준모델 | `software/models/rtl_reference_model/` ([4장](04_소프트웨어_기준모델과_정답_벡터.md)) |
+| 소프트웨어 기준모델 | `software/golden_develop/models/rtl_reference_model/` ([4장](04_소프트웨어_기준모델과_정답_벡터.md)) |
 
 `check_ports.py` 가 tsv 와 RTL 을 대조합니다(`make -C hardware_bram/sim ports ports-real`,
 DRAM 갈래는 `check_ports.py dram`, 체크포인트 없는 판은 `check_ports.py nocheckpoint`). 네 갈래
@@ -217,7 +217,7 @@ FIFO 가 256칸이므로 해가 그보다 많으면 full stall 이 납니다. �
 
 `plan_fifo_mismatch_count == 0` 은 sign-off 조건입니다. 0이 아니면 정책이 예측한 다음 요청이
 실제와 달랐다는 직접 증거입니다. `policy_stall_cycles` 는 정책 지평을 고를 때의 판단 근거였고,
-그 실험은 [23장 23.7절](23_설계_근거_실험.md#237-지평-h-를-줄인-이유-h8--h6--h4--h3)에 있습니다.
+그 실험은 [실험 07](../reports/07_정책_지평_축소.md)에 있습니다.
 
 ---
 

@@ -1,13 +1,13 @@
 # 14장. 호스트 인터페이스와 UART 프로토콜
 
-> [← 13장 CSR 레지스터와 실행 모드](13_CSR_레지스터와_실행_모드.md) · [문서 지도](00_문서_지도.md) · [15장 동작 과정과 사이클 구성 →](15_동작_과정과_사이클_구성.md)
+> [← 13장 CSR 레지스터와 실행 모드](13_CSR_레지스터와_실행_모드.md) · [index](index.md) · [15장 동작 과정과 사이클 구성 →](15_동작_과정과_사이클_구성.md)
 
 ---
 
 이 장은 호스트 PC 와 보드 사이의 명령 규약의 정본입니다. 보드 쪽 구현은
 [`bbht_console/src/main.c`](../../hardware_bram/firmware/bbht_console/src/main.c),
 호스트 쪽은 시리얼 터미널이나 이 규약을 따르는 스크립트면 되고, 저장소의 호스트 CLI 는
-[`software/host/bbht_cli.py`](../../software/host/bbht_cli.py)입니다. 같은 콘솔 소스가 세
+[`software/host_fpga_develop/bbht_cli.py`](../../software/host_fpga_develop/bbht_cli.py)입니다. 같은 콘솔 소스가 세
 비트스트림에 올라갑니다. 보드에 연결해 실제로 부리는 절차는 [17장](17_보드_운용.md)에 있습니다.
 
 ---
@@ -120,7 +120,7 @@
 | `EQ` | 12345 | — | `0xA17E2026` | 12345 |
 | `RANGE` | −4096 | 4096 | `0x3A4E2026` | [−4095, 4095] |
 
-규칙의 정본은 `software/models/common/benchmark_dataset.py` 의 `generate_predicate_image` 이고,
+규칙의 정본은 `software/golden_develop/models/common/benchmark_dataset.py` 의 `generate_predicate_image` 이고,
 펌웨어의 `bbht_console/src/bbht_dataset_gen.h` 가 같은 정수 연산을 합니다. 같은 인자면 바이트
 단위로 같은 배열이 나옵니다(`make -C hardware_bram/sim console-gen` 이 20개
 데이터셋으로 확인). `PRED=EQ` 는 옛 형식과 규칙이 같습니다.
@@ -251,7 +251,7 @@ OK
 
 두 `HIT` 줄의 수치는 같은 조건(같은 데이터셋 시드 · 같은 탐색 시드)으로 2026-09-08 보드 벤치
 앱이 낸 실측값(M = 1 첫 워크로드, Normal 과 K3/H3-E4-M2)을 옮긴 것이라 `wall_us` 는 뺐습니다.
-콘솔 앱 자체가 보드에서 낸 응답은 [18장 18.3절](18_보드_확인과_실측.md)에 있습니다.
+콘솔 앱 자체가 보드에서 낸 응답은 [실험 15](../reports/15_교체판_보드_콘솔.md)에 있습니다.
 
 마지막 두 `RUN` 이 이 프로젝트의 주장을 그대로 보여 줍니다. `idx` 와 `l` 은 같고 `iters` 와
 `cyc` 만 줄었습니다. 답이 같고 알고리즘이 오라클에 던진 질의 수도 같은데 에뮬레이션 시간만
@@ -260,7 +260,7 @@ OK
 
 술어별로 돌리려면 `GEN PRED=LT TARGETS=16` 처럼 `PRED` 를 줍니다. `SET MODE/A/B` 가 같이
 맞춰지므로 곧바로 `LOAD` 와 `RUN` 을 하면 됩니다. 네 술어 × 500 워크로드를 통째로 돌리는 것은
-[19장](19_Predicate500_자동_테스트.md)입니다.
+[18장](18_Predicate500_자동_테스트.md)입니다.
 
 ---
 
@@ -275,9 +275,9 @@ OK
 | `replay:<파일>` | RTL 시뮬이 낸 트랜스크립트 | 실제 펌웨어 응답을 같은 파서로 검증 |
 
 ```bash
-python3 software/host/bbht_cli.py --port /dev/ttyUSB1 --script exp.txt --log run.log
-python3 software/host/bbht_cli.py --port /dev/ttyUSB1 selftest
-python3 software/host/bbht_cli.py --port replay:<트랜스크립트> -c ID -c RUN
+python3 software/host_fpga_develop/bbht_cli.py --port /dev/ttyUSB1 --script exp.txt --log run.log
+python3 software/host_fpga_develop/bbht_cli.py --port /dev/ttyUSB1 selftest
+python3 software/host_fpga_develop/bbht_cli.py --port replay:<트랜스크립트> -c ID -c RUN
 ```
 
 `selftest` 는 보드가 `ID` 로 보고하는 상수 일곱 개를 CSR 정본에서 생성한 값과 맞댑니다.
@@ -288,7 +288,7 @@ python3 software/host/bbht_cli.py --port replay:<트랜스크립트> -c ID -c RU
 순서로 보내야 합니다.
 
 CLI 를 안 쓰고 직접 짤 때는 이 규약대로 한 줄 보내고 `OK` / `ERR` 을 받을 때까지 기다리는
-루프면 됩니다. 파이썬이면 `software/requirements.txt` 에 있는 `pyserial` 을 씁니다.
+루프면 됩니다. 파이썬이면 `software/golden_develop/common500/requirements.txt` 에 있는 `pyserial` 을 씁니다.
 
 ---
 

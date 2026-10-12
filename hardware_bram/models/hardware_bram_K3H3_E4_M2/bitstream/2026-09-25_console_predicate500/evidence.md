@@ -2,7 +2,7 @@
 
 ## 무엇인가
 
-보드에서 네 술어 × 500 워크로드 자동 테스트(`software/host/bbht_predicate500.py`)를
+보드에서 네 술어 × 500 워크로드 자동 테스트(`software/host_fpga_develop/bbht_predicate500.py`)를
 돌릴 때 굽고 올릴 파일 묶음입니다. **비트스트림은 새로 내지 않았습니다.** 하드웨어는
 2026-09-17 에 보드에서 확인한 것 그대로이고, 바뀐 것은 SRAM 에 올리는 콘솔 앱뿐입니다.
 
@@ -20,7 +20,7 @@
 에 있습니다.
 
 - `GEN PRED= A= B=` — 네 술어 데이터셋을 보드 안에서 만듭니다. 생성 규칙은 SW 생성기
-  `software/models/common/benchmark_dataset.py` 의 `generate_predicate_image` 를 C 로 옮긴
+  `software/golden_develop/models/common/benchmark_dataset.py` 의 `generate_predicate_image` 를 C 로 옮긴
   `firmware/bbht_console/src/bbht_dataset_gen.h` 입니다. 호스트가 16,384 워드를 UART 로
   보내지 않아도 되고, 둘이 같은지는 `SUM` 의 FNV-1a 해시로 매번 확인합니다
 - `SUM` — 데이터셋 해시 · 정답 수 · 술어 · 적재 여부
@@ -51,9 +51,9 @@ cp bbht_console.sram.hex ocd/
 ocd/ocd_keep.sh &
 
 # 3. 자동 테스트 (저장소 루트에서. 2,000 데이터셋-시드 쌍 x Normal·체크포인트)
-python3 software/host/bbht_predicate500.py --port /dev/ttyUSB1
+python3 software/host_fpga_develop/bbht_predicate500.py --port /dev/ttyUSB1
 ```
 
 3번의 옵션과 결과 엑셀 형식은
-[기술문서 19장](../../../../../documents/design_references/19_Predicate500_자동_테스트.md)
+[기술문서 18장](../../../../../documents/design_references/18_Predicate500_자동_테스트.md)
 에 있습니다.

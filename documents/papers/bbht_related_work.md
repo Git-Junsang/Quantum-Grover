@@ -35,8 +35,8 @@ BRAM 판과 DRAM 판)를 발표나 보고서에서 **어느 논문과 맞대고,
 [1장](../design_references/01_프로젝트_개요.md), 체크포인트는
 [11장](../design_references/11_체크포인트와_정책_엔진.md), 측정은
 [10장](../design_references/10_측정_경로와_M1_M2.md), DRAM 갈래는
-[22장](../design_references/22_DRAM_갈래.md), 정밀도 선택 근거는
-[23장 23.2절](../design_references/23_설계_근거_실험.md#232-진폭-정밀도-q14-와-소수부-22비트) 을 보십시오.
+[21장](../design_references/21_DRAM_갈래.md), 정밀도 선택 근거는
+[실험 02](../reports/02_진폭_정밀도.md)를 보십시오.
 
 ---
 

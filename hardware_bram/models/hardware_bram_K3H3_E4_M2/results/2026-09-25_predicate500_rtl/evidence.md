@@ -13,8 +13,8 @@ Normal(`burst_enable=0`)과 체크포인트(`burst_enable=1`)를 같은 시드�
 
 - 하네스: `testbench/tb_predicate500.cpp`. 통신 계층 + 어댑터 + Main IP 를 **실제 펌웨어
   드라이버**(`firmware/bbht_grover_driver.c`)로 APB/AHB 를 거쳐 두드립니다
-- 자극: `software/rtl_vectors/tools/dump_predicate500_workload.py`
-- 기댓값: `software/experiments/predicate500_benchmark/expected/predicate500_expected.csv`
+- 자극: `software/golden_develop/tb_stimulus/dump_predicate500_workload.py`
+- 기댓값: `software/golden_data/2026-09-25_predicate500/predicate500_expected.csv`
   (Q1.22 bit-exact 기준모델 `V098AutomaticCore`)
 - 순서: 술어마다 프로세스 하나. 데이터셋을 적재하고 시드 0~99 를 차례로, 시드마다
   Normal 다음 체크포인트. 보드 앱과 같은 순서입니다
@@ -33,7 +33,7 @@ M = 1 / 4 / 16 / 64 / 256 × 공식 시드 100쌍 = 500 을 술어마다 씁니�
 
 배경은 공식 벤치와 같은 xorshift32(0x5EED1234) 이고, 술어를 만족하는 배경 값은 비정답
 쪽으로 접어 넣어서 심은 M 개가 정확히 정답입니다(규칙은
-`software/models/common/benchmark_dataset.py` 의 `generate_predicate_image`). **EQ 는 공식
+`software/golden_develop/models/common/benchmark_dataset.py` 의 `generate_predicate_image`). **EQ 는 공식
 Common500 데이터셋과 바이트 단위로 같습니다** — 생성기가 스스로 확인하고, sha256 도
 `dump_bench_workload.py` 가 못박은 값과 같습니다.
 
@@ -79,12 +79,12 @@ EQ 기댓값 500행도 보드 실측(`fpga_normal_per_run.csv` · `fpga_final_k3
   배수를 만들지 마십시오(CLAUDE.md 2절).
 - 체크포인트 사이클은 실행 이력에 달려 있습니다. 술어마다 프로세스를 새로 띄웠으므로
   리셋 뒤 첫 체크포인트 탐색의 memo 청소(3,279 사이클)가 술어마다 한 번씩 들어 있습니다.
-- 보드에서 같은 워크로드를 돌리는 길은 `software/host/bbht_predicate500.py` 입니다.
+- 보드에서 같은 워크로드를 돌리는 길은 `software/host_fpga_develop/bbht_predicate500.py` 입니다.
 
 ## 재현
 
 ```bash
-python3 software/experiments/predicate500_benchmark/run_predicate500_golden.py   # 기댓값 (30초)
+python3 software/golden_develop/predicate500/run_predicate500_golden.py   # 기댓값 (30초)
 make -C hardware_bram/sim predicate500                                           # 술어 넷 동시 (수 분)
 ```
 

@@ -1,10 +1,10 @@
 # 13장. CSR 레지스터와 실행 모드
 
-> [← 12장 Main IP 포트 계약](12_Main_IP_포트_계약.md) · [문서 지도](00_문서_지도.md) · [14장 호스트 인터페이스와 UART 프로토콜 →](14_호스트_인터페이스와_UART_프로토콜.md)
+> [← 12장 Main IP 포트 계약](12_Main_IP_포트_계약.md) · [index](index.md) · [14장 호스트 인터페이스와 UART 프로토콜 →](14_호스트_인터페이스와_UART_프로토콜.md)
 
-> 이 장은 `software/contract/gen_csr.py` 가 CSR 정본 [`bbht_grover_csr.json`](../../software/contract/bbht_grover_csr.json) 에서 생성합니다.
+> 이 장은 `spec/gen_csr.py` 가 CSR 정본 [`bbht_grover_csr.json`](../../spec/bbht_grover_csr.json) 에서 생성합니다.
 > 손으로 고치면 다음 생성에서 덮어써집니다. 값은 JSON 을, 문장은 `gen_csr.py` 의
-> `gen_doc()` 를 고친 뒤 `python3 software/contract/gen_csr.py` 를 돌리십시오.
+> `gen_doc()` 를 고친 뒤 `python3 spec/gen_csr.py` 를 돌리십시오.
 >
 > 출처: PJK `팀원_Handoff_SW_통신_v0.9.8` §1.4 / §1.5. 정본 버전 0.9.8 (2026-09-01)
 
@@ -236,16 +236,16 @@ ELF 를 낸 소스와 sha256 이 같아야 합니다. 소프트웨어 기준모�
 
 | 생성물 | 쓰는 곳 |
 |---|---|
-| `software/contract/generated/bbht_grover_csr.vh` | RTL (`bbht_grover_mmio.v` 등 네 곳) |
-| `software/contract/generated/bbht_grover_regs.h` | 펌웨어 C |
-| `software/contract/generated/bbht_grover_csr.py` | 호스트 CLI |
+| `spec/generated/bbht_grover_csr.vh` | RTL (`bbht_grover_mmio.v` 등 네 곳) |
+| `spec/generated/bbht_grover_regs.h` | 펌웨어 C |
+| `spec/generated/bbht_grover_csr.py` | 호스트 CLI |
 | `documents/design_references/13_CSR_레지스터와_실행_모드.md` | 이 장 |
 
 같은 숫자를 들고 있으면서 생성 대상이 아닌 곳이 둘 더 있습니다.
 
 | 곳 | 생성 대상이 아닌 이유 |
 |---|---|
-| `software/models/common/final_hardware_contract.py` | CSR 과 다른 축인 정책 이름을 같이 담습니다 |
+| `software/golden_develop/models/common/final_hardware_contract.py` | CSR 과 다른 축인 정책 이름을 같이 담습니다 |
 | `hardware_bram/firmware/bbht_paper_bench/src/main.c` | 보드 ELF 소스라 한 글자도 못 고칩니다 |
 
 `gen_csr.py --check` 가 그 둘을 읽기만 하고 정본과 대조합니다(main.c 는 이름을 줄여 쓴
@@ -253,8 +253,8 @@ ELF 를 낸 소스와 sha256 이 같아야 합니다. 소프트웨어 기준모�
 CSR 값을 다시 박는 것을 막습니다.
 
 ```bash
-python3 software/contract/gen_csr.py          # 갱신
-python3 software/contract/gen_csr.py --check  # 갱신 없이 확인만 (CI 용)
+python3 spec/gen_csr.py          # 갱신
+python3 spec/gen_csr.py --check  # 갱신 없이 확인만 (CI 용)
 ```
 
 체크포인트 판 `sim/Makefile` 은 모든 타깃에서 `--check` 를, 체크포인트 없는 판은 생성을 먼저

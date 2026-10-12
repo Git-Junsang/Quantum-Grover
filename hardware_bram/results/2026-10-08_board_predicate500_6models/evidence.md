@@ -3,7 +3,7 @@
 ## 무엇인가
 
 6단계 ablation 의 여섯 빌드를 원격 보드 AX7A200B 한 장에 차례로 굽고, `bbht_console` 과 호스트 도구
-`software/host/bbht_predicate500.py` 로 네 술어(LT · GT · EQ · RANGE) × 500 워크로드를 Normal · 체크포인트로
+`software/host_fpga_develop/bbht_predicate500.py` 로 네 술어(LT · GT · EQ · RANGE) × 500 워크로드를 Normal · 체크포인트로
 돌렸습니다(2026-10-08, 최종 모델 19:16~19:45, 나머지 다섯 21:10~23:30 KST). EQ 만 잰
 [2026-10-08_board500_6models](../2026-10-08_board500_6models/evidence.md) 를 네 술어로 넓힌 것입니다.
 

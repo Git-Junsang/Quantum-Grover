@@ -24,7 +24,7 @@ Korean documentation is the primary source — see [README.ko.md](README.ko.md).
 | Software reference models | NumPy, Qiskit Aer, Q1.22 bit-exact, and the K3/H3 policy model. On the same 500 workloads as the board, search trajectories and physical iteration counts match 500/500 |
 
 Wiring correctness is enforced by a
-[port contract check](software/contract/check_ports.py) that diffs the handoff
+[port contract check](spec/check_ports.py) that diffs the handoff
 document's port tables (19 wrapper + 61 core signals) against the RTL across three
 branches (`stub`, `real`, `dram`). All three match.
 
@@ -33,7 +33,7 @@ branches (`stub`, `real`, `dram`). All three match.
 ## 2. Frozen numbers
 
 The single source of truth for the CSR map is
-[`software/contract/bbht_grover_csr.json`](software/contract/bbht_grover_csr.json).
+[`spec/bbht_grover_csr.json`](spec/bbht_grover_csr.json).
 `gen_csr.py` generates the Verilog, C, and Python headers plus
 [chapter 13 of the technical docs](documents/design_references/13_CSR_레지스터와_실행_모드.md) from it. Two
 other places hold the same numbers but are not generated (the software reference model,
@@ -66,11 +66,11 @@ All three use the same 500 workloads (M = 1/4/16/64/256 x 100 seeds). Board and 
 on the search trajectory 500/500, but the cycle counts themselves differ, so never build a
 ratio that mixes the two axes.
 
-On 2026-10-11 a new software baseline (`software/orca_sw/`) was measured on the ORCA core of the 200T
+On 2026-10-11 a new software baseline (`software/orca_grover_develop/`) was measured on the ORCA core of the 200T
 board and on one x86 core of the host, over the four-predicate 2,000 workloads, and compared mode for mode
 with the FPGA on the same board. ORCA is 15,889-19,861x slower than the FPGA in wall-clock time, but one
 host core finishes in 1.15-1.34x the FPGA time. Board, workloads, and baseline differ from the table above,
-so do not mix them (design reference chapter 25).
+so do not mix them ([experiment 19](documents/reports/19_ORCA_서버_SW_기준선.md), Korean).
 
 ---
 
@@ -136,7 +136,7 @@ model 2,000/2,000 on an AXI memory model, and a 16-run console script matches 16
 full-SoC RTL simulation with the real NoC and DDR model. On 2026-10-04 it also matched
 2,000/2,000 on the board (first run on real DDR3); on the same board it is about 15.6x slower
 in wall-clock time than the checkpoint build
-([technical docs ch. 22, Korean](documents/design_references/22_DRAM_갈래.md)).
+([technical docs ch. 21, Korean](documents/design_references/21_DRAM_갈래.md)).
 Regression runs against a behavioral DRAM model
 (`make -C hardware_dram/sim`; the `top` target covers the top level). `make -C hardware_dram/sim equiv` replays the same stimulus
 on the `hardware_bram` Main IP (K3/H3-E4-M2) and checks that the search trajectories match. Single Search only for
@@ -154,7 +154,7 @@ checkpoint build with M1/M2 off, run in Normal mode) **cycle for cycle** on all 
 In RTL cycles, K3/H3-E4-M2 is 2.897x faster than this baseline. The 100 MHz bitstream closes
 timing (WNS +0.193 ns). On 2026-10-04 its 2,000 Normal runs matched the reference model on the
 board, and on the same board the checkpoint build is **2.810x** faster in wall-clock time
-([technical docs ch. 21, Korean](documents/design_references/21_체크포인트_없는_BRAM_판.md)).
+([technical docs ch. 20, Korean](documents/design_references/20_체크포인트_없는_BRAM_판.md)).
 
 `hardware_bram/` and `hardware_dram/` share the same shape -- `src`, `testbench`, `sim`,
 `rvx`, `firmware` -- except that on the bram side the per-model `vivado`, `bitstream`, and
@@ -167,12 +167,13 @@ models, verification vectors, and comparison experiments under `software/`.
 
 ```
 documents/
-  design_references/    Technical docs: 24 numbered chapters, entry point 00_문서_지도.md (Korean)
-    diagrams/           Figures those chapters reference (the only subfolder)
-  study_references/     Tutorial chapters 0-18 plus appendix A (Korean)
-  papers/               Source paper PDFs (papers_ko/ holds Korean commentaries)
+  study_references/     Study material: entry point index.md, chapters 1-18 plus appendix A (Korean)
+  design_references/    The settled design: 22 numbered chapters, entry point index.md (Korean)
+    diagrams/           Figures the docs and reports reference (the only subfolder)
+  reports/              Experiments run to settle or confirm the design, <number>_<name>.md,
+                          entry point index.md (Korean)
+  papers/               Source paper PDFs (papers_ko/ holds Korean commentaries), our paper outline 논문_목차.md
   check_docs.py         Documentation consistency checker
-  *.pptx                Final Main IP slides (read-only)
 
 hardware_bram/          Branch 1 - BRAM only. Everything below is shared by all models
   src/                  One RTL tree (comms layer, top level, Main IP). Adapters live per model.
@@ -201,21 +202,22 @@ hardware_dram/          Branch 2 - full DRAM storage plus BRAM queue
                         A single tree without model folders: the hardware_bram layout plus
                         vivado and bitstream, without synth
 
-software/               Shared by both trees
-  models/               NumPy, Qiskit, Q1.22 bit-exact, and checkpoint-policy reference models
-  experiments/          Common500 comparison (the same 500 workloads as the board)
-  rtl_vectors/          RTL answer vectors (256 requested-j cases, two enumeration methods)
-                          tools/dump_bench_workload.py -- bench250/500 stimulus
-  results/              Common500 final results, tables, plots, validation report
-  contract/             Hardware/software contracts and their checkers
-                          CSR source of truth (JSON), gen_csr.py, generated/
-                          port_contract.tsv, check_ports.py
-  host/bbht_cli.py      Host-side CLI (real UART, mock, sim-transcript replay)
-  host/bbht_predicate500.py  Automated board test, four predicates x 500 workloads -> Excel
-  orca_sw/              Accelerator-free software baseline in C, three models (naive, optimized
-                          Normal, optimized K3H3), builds for the ORCA board and the host, and
-                          measurement tools. Design reference chapter 25
-  requirements.txt      Python packages for rerunning Common500
+spec/                   Register and port specification shared by RTL, firmware, and host tools
+                          CSR source JSON, gen_csr.py, generated/, port_contract.tsv, check_ports.py
+
+software/               category / subfolder / contents; data and result folders are date_topic with a same-name .md
+  golden_develop/       golden models (models/), RTL bench stimulus generators (tb_stimulus/),
+                          Common500 comparison, Predicate500 expectation generator
+  golden_data/          what the golden model produced: requested-j vectors, enumeration vectors,
+                          Common500 results, Predicate500 expectations
+  testbench_data/       inputs read by testbenches and experiments: Common500 datasets and seed roster,
+                          Predicate500 datasets
+  pc_grover_develop/    Grover on a PC (C++, NumPy, Qiskit). Experiment report 17
+  pc_grover_result/       its measurements
+  orca_grover_develop/  accelerator-free C, three models, built for ORCA and for x86. Experiment report 19
+  orca_grover_result/     its measurements
+  host_fpga_develop/    PC-side tools that drive the board
+                          bbht_cli.py (real UART, mock, replay), bbht_predicate500.py (four-predicate test)
 
 trash_bin/              Superseded docs and bulky artifacts. Not tracked by git
 ```
@@ -234,10 +236,10 @@ make -C hardware_bram/sim bench250
 make -C hardware_bram/sim predicate500
 make -C hardware_bram/models/hardware_bram_nocheckpoint/sim predicate500 predicate500-ref equiv
 make -C hardware_dram/sim predicate500
-python3 software/host/bbht_predicate500.py --port /dev/ttyUSB1
+python3 software/host_fpga_develop/bbht_predicate500.py --port /dev/ttyUSB1
 
-# Software reference models, Common500 comparison (after installing software/requirements.txt in a venv)
-bash software/experiments/common500_benchmark/run_full_benchmark.sh
+# Software reference models, Common500 comparison (after installing software/golden_develop/common500/requirements.txt in a venv)
+bash software/golden_develop/common500/run_full_benchmark.sh
 
 # Install into the RVX platform (needs the files above)
 source /opt/rvx/rvx_setup.sh
@@ -257,12 +259,12 @@ commands in a serial terminal; see
 
 | Question | Where |
 |---|---|
-| The whole system, chapter by chapter (24 chapters, Korean) | [00_문서_지도.md](documents/design_references/00_문서_지도.md) |
+| The whole system, chapter by chapter (22 chapters, Korean) | [index.md](documents/design_references/index.md) |
 | How do I drive it from the host? | [ch. 17 board operation](documents/design_references/17_보드_운용.md) |
 | What does each CSR register do? | [ch. 13 CSR registers](documents/design_references/13_CSR_레지스터와_실행_모드.md) |
 | Main IP ports | [ch. 12 Main IP port contract](documents/design_references/12_Main_IP_포트_계약.md) |
 | Fixed-point format and memory layout | [ch. 6 data and memory map](documents/design_references/06_데이터_표현과_메모리_맵.md) |
 | UART commands | [ch. 14 UART protocol](documents/design_references/14_호스트_인터페이스와_UART_프로토콜.md) |
 | Software reference models and the comparison experiment | [ch. 4 reference models](documents/design_references/04_소프트웨어_기준모델과_정답_벡터.md) |
-| Why each design decision was made | [ch. 23 design-rationale experiments](documents/design_references/23_설계_근거_실험.md) |
-| Grover's algorithm itself | [study_references/](documents/study_references/README.md) chapters 0-18 |
+| Why each design decision was made, board runs, baseline comparisons | [experiment index](documents/reports/index.md) (Korean) |
+| Grover's algorithm itself | [study_references/](documents/study_references/index.md) index and chapters 1-18 |

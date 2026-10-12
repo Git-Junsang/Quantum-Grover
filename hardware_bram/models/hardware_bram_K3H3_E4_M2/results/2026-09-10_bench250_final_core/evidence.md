@@ -67,7 +67,7 @@ ablation 의 `Normal-E1` 과 다른 물건입니다. `Normal-E1` 은 `INTRA_ENGI
 
 ## 골든 모델과는 일치하지 않습니다
 
-같은 250 워크로드를 `software/golden` 의 골든 모델로 돌리면 답은 250/250 모두
+같은 250 워크로드를 `software/golden_develop/models/` 의 골든 모델로 돌리면 답은 250/250 모두
 유효한 정답이지만 궤적은 다릅니다 (`result_index` 66/250, `trial_count` 36/250).
 골든 모델이 측정 난수 확장과 체크포인트 플래너를 **가정**으로 두고 있기
 때문입니다 (`MEASUREMENT_ASSUMPTION` · `CHECKPOINT_ASSUMPTION`). 골든 모델은

@@ -59,8 +59,8 @@ echo "설치 대상: $PLATFORM"
 
 # 1. CSR 정본에서 헤더를 다시 생성합니다. 이 순서를 지켜야 RTL 과 C 가
 #    같은 맵을 봅니다.
-python3 "$ROOT/software/contract/gen_csr.py" > /dev/null
-say "software/contract/generated" "재생성"
+python3 "$ROOT/spec/gen_csr.py" > /dev/null
+say "spec/generated" "재생성"
 
 # 2. 플랫폼 XML. 첫 <name> 이 플랫폼 이름입니다 (뒤의 <name> 들은 IP 이름).
 sed "0,/<name>${XML_NAME}<\/name>/s||<name>${PLATFORM_NAME}</name>|" \
@@ -94,7 +94,7 @@ cp "$BRAM/src/bbht_rvx_wrapper.v" "$BRAM/src/bbht_grover_mmio.v" \
 cp "$MODEL/src/bbht_grover_core_adapter.v"         "$PLATFORM/user/rtl/src/"
 cp "$BRAM/src/bbht_grover_user_region.vh" \
    "$PLATFORM/user/rtl/include/${PLATFORM_NAME}_user_region.vh"
-cp "$ROOT/software/contract/generated/bbht_grover_csr.vh" "$PLATFORM/user/rtl/include/"
+cp "$ROOT/spec/generated/bbht_grover_csr.vh" "$PLATFORM/user/rtl/include/"
 say "user/rtl/{src,include}" "통신 계층 3 + 모델 어댑터 + Main IP 10 + 헤더"
 # 어떤 구성이 들어갔는지 눈으로 확인할 수 있게 어댑터 기본값을 찍습니다.
 grep -E '^\s*parameter integer' "$MODEL/src/bbht_grover_core_adapter.v" \
@@ -132,7 +132,7 @@ say "user/env · user/sim" "RVX 뼈대 중 빠진 것만 채움"
 #    '../../user/api' 한 줄로 둘 다 잡습니다.
 mkdir -p "$PLATFORM/user/api"
 cp "$BRAM/firmware/bbht_grover_driver."{c,h}       "$PLATFORM/user/api/"
-cp "$ROOT/software/contract/generated/bbht_grover_regs.h" "$PLATFORM/user/api/"
+cp "$ROOT/spec/generated/bbht_grover_regs.h" "$PLATFORM/user/api/"
 say "user/api" "driver + regs.h"
 
 # 5. 앱. 앱 폴더를 지우고 다시 복사해 이전 빌드(rtl.debug 등)가 남지 않게 합니다.

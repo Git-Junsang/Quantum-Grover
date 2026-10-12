@@ -6,7 +6,7 @@
 #
 #   모델   models/ 아래 폴더 이름에서 hardware_bram_ 을 뗀 것 (예 K3H3_E4_M2)
 #   앱     기본 bbht_paper_bench. orca_sw_baseline 은 K3H3_E4_M2 에만 설치돼 있습니다
-#          predicate500 을 주면 bbht_console 을 올리고 원격에서 software/host/bbht_predicate500.py
+#          predicate500 을 주면 bbht_console 을 올리고 원격에서 software/host_fpga_develop/bbht_predicate500.py
 #          (네 술어 x 500 x 두 모드)를 돌립니다. 이때 제한초는 호스트 도구 전체 시간 상한입니다
 #   제한초 UART 캡처 시간 제한. 기본 600 (paper_bench 는 15초 안팎, ORCA 기준선은 2시간쯤)
 #
@@ -92,13 +92,13 @@ cp "$HERE/uart_capture.py" "$PKG/"
 (cd "$I" && sha256sum "$LOAD_APP.sram.hex") >> "$PKG/sha256.txt"
 if [[ "$APP" == "predicate500" ]]; then
     # 호스트 도구가 저장소 상대경로(_REPO)로 기댓값과 생성 헤더를 찾으므로 그 모양을 그대로 만듭니다.
-    mkdir -p "$PKG/repo/software/host" "$PKG/repo/software/contract/generated" \
-             "$PKG/repo/software/experiments/predicate500_benchmark/expected"
-    cp "$REPO"/software/host/{bbht_cli.py,bbht_predicate500.py} "$PKG/repo/software/host/"
+    mkdir -p "$PKG/repo/software/host_fpga_develop" "$PKG/repo/spec/generated" \
+             "$PKG/repo/software/golden_data/2026-09-25_predicate500"
+    cp "$REPO"/software/host_fpga_develop/{bbht_cli.py,bbht_predicate500.py} "$PKG/repo/software/host_fpga_develop/"
     # 폴더(__pycache__ 등)는 빼고 파일만 옮깁니다.
-    find "$REPO"/software/contract/generated -maxdepth 1 -type f -exec cp {} "$PKG/repo/software/contract/generated/" \;
-    cp "$REPO"/software/experiments/predicate500_benchmark/expected/*.csv \
-       "$PKG/repo/software/experiments/predicate500_benchmark/expected/"
+    find "$REPO"/spec/generated -maxdepth 1 -type f -exec cp {} "$PKG/repo/spec/generated/" \;
+    cp "$REPO"/software/golden_data/2026-09-25_predicate500/*.csv \
+       "$PKG/repo/software/golden_data/2026-09-25_predicate500/"
 fi
 
 echo "[1] 묶음 전송 -> sdsl-fpga:~/$REMOTE"
@@ -122,7 +122,7 @@ echo "[3] 콘솔 적재 + 네 술어 측정 ($UART)"
 ssh sdsl-fpga "cd ~/$REMOTE || exit 1; chmod +x openocd_rvp; \
   sudo ./openocd_rvp -f ax7a200b.cfg -c 'source run_bbht_console.tcl' > ocd.log 2>&1 & \
   sleep 8; \
-  sudo timeout $LIMIT python3 repo/software/host/bbht_predicate500.py --port '$UART' \
+  sudo timeout $LIMIT python3 repo/software/host_fpga_develop/bbht_predicate500.py --port '$UART' \
        --out predicate500.xlsx --log uart.log --quiet > host.out 2>&1; echo \$? > host.rc; \
   sudo pkill -f '^\./openocd_rvp ' 2>/dev/null; sleep 1; \
   echo \"  host_rc=\$(cat host.rc) (0 = 전부 일치)\"; tail -16 host.out"

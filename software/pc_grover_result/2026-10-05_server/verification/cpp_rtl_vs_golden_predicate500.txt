@@ -1,0 +1,10 @@
+vs golden (predicate500_expected.csv):
+  LT    normal 500/500, k3h3 500/500, allj 500/500, session 500/500
+  GT    normal 500/500, k3h3 500/500, allj 500/500, session 500/500
+  EQ    normal 500/500, k3h3 500/500, allj 500/500, session 500/500
+  RANGE normal 500/500, k3h3 500/500, allj 500/500, session 500/500
+vs board bram/normal: 2000/2000
+vs board bram/ckpt: 2000/2000
+vs board nocheckpoint/normal: 2000/2000
+vs board dram/normal: 2000/2000
+PASS

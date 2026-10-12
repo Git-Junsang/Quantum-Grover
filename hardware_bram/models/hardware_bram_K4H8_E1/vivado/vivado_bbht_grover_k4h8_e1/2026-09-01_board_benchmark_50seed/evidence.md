@@ -33,7 +33,7 @@
 - `sha256sums.txt`: checksums of the files above
 
 The v0.9.8 communication-contract handoff document that accompanied this bundle now
-lives in `software/contract/`, next to the extractor that reads it. The two K4/H8-era
+lives in `spec/`, next to the extractor that reads it. The two K4/H8-era
 summary documents were retired to `trash_bin/PJK_handoff/`.
 
 > Renamed on 2026-09-03 to follow the repository naming rule. The measurement files

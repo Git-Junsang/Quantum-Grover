@@ -3,7 +3,7 @@
 soc_console_check.py -- SoC RTL 시뮬에서 돈 bbht_console 트랜스크립트 검사기
 
 RVX 플랫폼 전체를 Questa 로 돌리면 bbht_console 이 스크립트 모드로 명령을 받고
-응답을 UART 로 냅니다. 이 스크립트는 그 출력을 호스트 CLI(software/host/bbht_cli.py)
+응답을 UART 로 냅니다. 이 스크립트는 그 출력을 호스트 CLI(software/host_fpga_develop/bbht_cli.py)
 의 재생 트랜스포트에 그대로 먹이고, 파싱한 숫자를 기준과 맞댑니다.
 
   make -C hardware_bram/sim console-seq          # 기준 CSV (30초쯤)
@@ -58,8 +58,8 @@ import bbht_cli                                                 # noqa: E402
 
 M2 = os.path.join(HW, "models", "hardware_bram_K3H3_E4_M2")     # 보드 정본 구성 모델
 MAIN_C = os.path.join(HW, "firmware", "bbht_console", "src", "main.c")
-DATASETS = os.path.join(ROOT, "software", "experiments", "common500_benchmark",
-                        "inputs", "datasets")
+DATASETS = os.path.join(ROOT, "software", "testbench_data", "2026-09-08_common500",
+                        "datasets")
 BENCH500 = os.path.join(M2, "results", "2026-09-10_bench500_final_core",
                         "per_workload.csv")
 BOARD_M2 = os.path.join(M2, "vivado", "vivado_bbht_grover_fpga",

@@ -9,8 +9,19 @@
 **사용자**: 양자 알고리즘을 처음 접한 학부생. FPGA 경험은 있으나 설정·RTL 은 자세히 답할 것.
 
 이 파일은 **규칙과 길잡이만** 담습니다. 설계 · 수치 · 절차의 정본은 기술문서
-[`documents/design_references/`](documents/design_references/00_문서_지도.md) 이고, 여기에 같은
-내용을 다시 적지 않습니다. 무엇을 찾든 먼저 [문서 지도](documents/design_references/00_문서_지도.md)를 보십시오.
+[`documents/design_references/`](documents/design_references/index.md) 이고, 여기에 같은
+내용을 다시 적지 않습니다. 무엇을 찾든 먼저 [기술문서 index](documents/design_references/index.md)를 보십시오.
+
+`documents/` 의 문서는 세 폴더로 나눕니다. 같은 내용을 두 곳에 쓰지 말고 한 곳에 쓴 뒤 링크하십시오.
+
+| 폴더 | 무엇 | 입구 |
+|---|---|---|
+| `study_references/` | 공부용 해설서 | [해설서 index](documents/study_references/index.md) |
+| `design_references/` | 확정된 설계와 그 정본 수치 | [기술문서 index](documents/design_references/index.md) |
+| `reports/` | 설계를 정하거나 확인하려고 돌린 실험. 파일명 `<번호>_<실험명>.md`, 번호는 01 부터 | [실험 보고서 index](documents/reports/index.md) |
+
+실험 보고서는 원자료를 옮겨 적지 않고 근거 묶음(`evidence.md`)을 링크합니다. 설계 문서가 "왜 이렇게
+정했나" 를 말할 때는 실험 보고서로 링크합니다. 논문 뼈대는 `documents/papers/논문_목차.md` 입니다.
 
 ---
 
@@ -30,7 +41,7 @@
   파일명에 되풀이하지 마십시오. `results/` · `bitstream/` 묶음도 같은 이름 규칙입니다.
 - README 는 루트의 `README.md` · `README.ko.md` **둘뿐**입니다. 하위 폴더에 README 를
   만들지 말고, 설명이 필요하면 기술문서의 해당 장에 쓰십시오 (새 주제면 장을 더하고
-  `00_문서_지도.md` 에 올립니다).
+  `index.md` 에 올립니다). 실험 도구의 쓰는 법 · 결과는 그 실험 보고서에 씁니다.
 - `.gitignore` 도 루트에 **하나뿐**입니다.
 - 측정 기록(`*.txt` `*.csv` `*.log` `*.rpt`)은 그 시점의 사실이라, 폴더를 옮겨도 안의 옛 경로를
   고치지 않습니다. `evidence.md` 와 소스의 경로는 고칩니다.
@@ -43,13 +54,13 @@
   `board-k3h3-e4-m2` 의 `hardware_bram/src/` 이고 비트스트림과 바이트 동일합니다. 대조는
   `sha256_final_rtl.txt`(17개 전부)로 하십시오. 같은 빌드의 `meta/source_sha256.txt` 는 7개만 적은
   부분 기록이라 그것만 보고 "전부 대조했다" 고 하면 안 됩니다
-  ([20장](documents/design_references/20_합성_구현_비트스트림.md)).
+  ([19장](documents/design_references/19_합성_구현_비트스트림.md)).
 - main 의 `hardware_bram/src/` 는 그 뒤의 최신판 한 벌입니다. 보드 정본과의 차이(통신 계층 교체,
   `gclk_accel`, M1/M2 스위치, E4 분리)와 각각을 확인한 근거는
   [1장 1.6절](documents/design_references/01_프로젝트_개요.md#16-보드-검증-이력)과
-  [18장](documents/design_references/18_보드_확인과_실측.md)에 있습니다.
+  [실험 보고서 index 「보드 실측 묶음」](documents/reports/index.md#보드-실측-묶음)에 있습니다.
 - 확정 스펙(Q=14, Q1.22, P=32, CSR 38개 등)은 [1장 1.2절](documents/design_references/01_프로젝트_개요.md#12-확정-스펙).
-- **CSR 의 정본은 [`software/contract/bbht_grover_csr.json`](software/contract/bbht_grover_csr.json)
+- **CSR 의 정본은 [`spec/bbht_grover_csr.json`](spec/bbht_grover_csr.json)
   하나입니다.** `gen_csr.py` 가 Verilog · C · 파이썬 헤더와 기술문서 13장을 만듭니다 — 그 넷은
   손으로 고치지 마십시오(13장 문장은 `gen_csr.py` 의 `gen_doc()` 를 고칩니다). `--check` 가 생성
   대상이 아닌 두 곳(`final_hardware_contract.py`, `bbht_paper_bench/src/main.c`)을 대조하고, RTL 에
@@ -74,13 +85,13 @@
 - **고전 선형 스캔과 속도를 비교하지 않습니다.** 비교 대상은 ORCA 1코어 순수 SW 기준선 ·
   Qiskit AerSimulator · NumPy 셋입니다. ORCA 대비 배수가 십만 단위인 것은 P=32 병렬과 클럭 2배
   때문이지 알고리즘 우위가 아니라는 단서를 항상 붙이십시오.
-- 새 SW 기준선(`software/orca_sw/`, 200T 보드 ORCA · 서버 x86, 네 술어 2,000개, 2026-10-11)은
-  [25장](documents/design_references/25_SW_기준선과_FPGA_비교.md)이 인용처이고 위 세 축과 섞지 않습니다.
+- 새 SW 기준선(`software/orca_grover_develop/`, 200T 보드 ORCA · 서버 x86, 네 술어 2,000개, 2026-10-11)은
+  [실험 19](documents/reports/19_ORCA_서버_SW_기준선.md)이 인용처이고 위 세 축과 섞지 않습니다.
   **서버 한 코어가 FPGA 와 비슷한 시간에 끝난다**는 결과가 있으니 가속 효과를 말할 때 같이 밝히십시오.
   ORCA ① naive 의 전체 시간은 추정값입니다.
 
 **폐기된 값 — 보이면 무시하십시오**: n=15·n=16, Q2.16·Q1.17, 8바이트 CSR 간격, INCR16 버스트,
-argmax 측정, AXI4-Lite, MicroBlaze, XC7S100 ([26장](documents/design_references/26_부록_용어집과_폐기된_규격.md)).
+argmax 측정, AXI4-Lite, MicroBlaze, XC7S100 ([22장](documents/design_references/22_부록_용어집과_폐기된_규격.md)).
 `trash_bin/`(git 추적 안 함) 은 전부 이 구 스펙 기준이라 **인용하면 안 됩니다**.
 
 ---
@@ -96,13 +107,20 @@ argmax 측정, AXI4-Lite, MicroBlaze, XC7S100 ([26장](documents/design_referenc
   `K3H3_E1` `K4H4_E4` `K3H3_E4` `K3H3_E4_M1` `K3H3_E4_M2` `nocheckpoint`). 모델 폴더에는 그
   모델만의 것 — 어댑터 하나(K·H·E·M 기본값) · `rvx/` · `results/` · `vivado/` · `bitstream/` —
   만 둡니다. 최종 구성은 `K3H3_E4_M2`(RVX 플랫폼 `bbht_grover_upgrade`), 비교 기준 판은
-  `nocheckpoint`([21장](documents/design_references/21_체크포인트_없는_BRAM_판.md)).
+  `nocheckpoint`([20장](documents/design_references/20_체크포인트_없는_BRAM_판.md)).
 - **`hardware_dram/`** — 모든 `j` 의 진폭을 DDR3 에 저장하는 갈래. 모델 폴더 없이 한 벌입니다
-  ([22장](documents/design_references/22_DRAM_갈래.md)).
-- **`software/`** — 두 트리가 공유하는 기준모델 · 검증 벡터 · 계약 · 호스트 도구
+  ([21장](documents/design_references/21_DRAM_갈래.md)).
+- **`spec/`** — 레지스터 · 포트 규격(CSR 원본 JSON · `gen_csr.py` · 생성 헤더 · 포트 표 · 검사기). 두 하드웨어
+  트리의 RTL, 펌웨어, 호스트 도구가 함께 쓰므로 어느 트리에도 넣지 않고 루트에 둡니다.
+- **`software/`** — 두 트리가 공유하는 소프트웨어
   ([4장](documents/design_references/04_소프트웨어_기준모델과_정답_벡터.md)). 한쪽 갈래나 한 모델에만
-  해당하는 것을 넣지 마십시오. `software/orca_sw/` 는 가속기 없는 SW 기준선 C 세 모델과 그 ORCA 보드 ·
-  서버 측정 도구입니다([25장](documents/design_references/25_SW_기준선과_FPGA_비교.md)). 세 앱 폴더의
+  해당하는 것을 넣지 마십시오. 분류는 여덟이고 번호 접두사를 붙이지 않습니다: `golden_develop/`(골든 모델 ·
+  RTL 벤치 자극 생성기 · 비교 실험 · 기댓값 생성기), `golden_data/`(골든이 낸 정답과 비교 결과),
+  `testbench_data/`(테스트벤치 · 실험이 읽는 입력), `pc_grover_develop/` · `pc_grover_result/`(C++ · NumPy ·
+  Qiskit 과 그 결과), `orca_grover_develop/` · `orca_grover_result/`(가속기 없는 C, ORCA · x86 공용, 과 그 결과),
+  `host_fpga_develop/`(PC 에서 보드를 부리는 도구). `_data` · `_result` 안의 묶음은 `YYYY-MM-DD_<내용>` 이고 대표
+  문서는 폴더와 같은 이름의 `.md` 입니다. 사본을 두지 말고 원본 위치를 읽게 하십시오. `software/orca_grover_develop/` 는 가속기 없는 SW 기준선 C 세 모델과 그 ORCA 보드 ·
+  서버 측정 도구입니다([실험 19](documents/reports/19_ORCA_서버_SW_기준선.md)). 세 앱 폴더의
   `src/` 는 측정한 소스와 sha256 이 같아야 하니 고치지 마십시오(해시는 결과 묶음의 `sha256.txt`).
 
 지킬 것:
@@ -145,7 +163,7 @@ make -C hardware_dram/sim && make -C hardware_dram/sim equiv
 make -C hardware_dram/sim predicate500 [AXI_STALL=1]
 
 # 계약 · 문서 (문서를 고쳤으면 check_docs 오류 0건이어야 합니다)
-python3 software/contract/gen_csr.py [--check]
+python3 spec/gen_csr.py [--check]
 python3 documents/check_docs.py
 
 # RVX: 모델마다 rvx/install_to_platform.sh 가 자기 플랫폼에 설치
@@ -154,8 +172,8 @@ hardware_bram/models/hardware_bram_K3H3_E4_M2/rvx/install_to_platform.sh
 cd $RVX_MINI_HOME/platform/bbht_grover_upgrade && make syn && make sim_rtl
 
 # 보드 · 호스트
-python3 software/host/bbht_predicate500.py --port /dev/ttyUSB1
-python3 software/host/bbht_cli.py --port mock selftest
+python3 software/host_fpga_develop/bbht_predicate500.py --port /dev/ttyUSB1
+python3 software/host_fpga_develop/bbht_cli.py --port mock selftest
 ```
 
 함정 셋 (자세한 이유는 2장):
@@ -172,10 +190,12 @@ python3 software/host/bbht_cli.py --port mock selftest
 ## 5. 문서를 고쳤을 때 같이 확인할 곳
 
 기술문서 작성 규칙: 한 수치는 한 장에만 적고 다른 장은 링크합니다. 장 머리에
-`← 이전 · 문서 지도 · 다음 →` 줄. 본문에 LaTeX · mermaid fence 를 쓰지 않습니다(그림은
+`← 이전 · index · 다음 →` 줄. 본문에 LaTeX · mermaid fence 를 쓰지 않습니다(그림은
 `diagrams/` 의 SVG, `design_references/diagrams/` 가 유일한 하위 폴더). 장을 더하거나 번호를 바꾸면
-모든 장의 머리 줄과 `00_문서_지도.md` 를 같이 고칩니다. 해설서(`study_references/`)는 **파일명과
-장 번호가 동결**입니다. `papers/` 와 `*.pptx` 는 읽기 전용입니다.
+모든 장의 머리 줄과 `index.md` 를 같이 고칩니다. 세 폴더 모두 입구는 번호 없는 `index.md` 이고 번호 붙은
+파일은 01 부터입니다. 해설서(`study_references/`)는 **파일명과 장 번호가 동결**입니다(옛 0장은 `index.md`). `papers/` 의 원문 · 해설본은 읽기 전용입니다(`논문_목차.md` 는
+우리 논문 뼈대라 고칩니다). 실험 보고서(`reports/`)도 같은 규칙이고, 머리 줄은
+`← 이전 실험 · index · 다음 실험 →`, 맨 앞에 정한 것(확인한 것)과 근거의 축을 적는 표를 둡니다.
 
 `check_docs.py` 는 죽은 링크 · 없는 앵커 · 없는 그림 · 고아 그림 · 렌더 안 된 `.mmd` · 되살아난
 폐기 스펙 · 본문 mermaid fence 를 잡습니다. 다음은 **기계가 못 잡으니 사람이** 봅니다.
@@ -193,5 +213,6 @@ python3 software/host/bbht_cli.py --port mock selftest
 | 포트 | 기술문서 12장과 RTL 을 같이. `make -C hardware_bram/sim ports ports-real ports-models` |
 | 모델 추가·파라미터 | 5장 5.2절 모델 표 → `README*.md` 3절 |
 | 절 제목·절 번호 | 그 장으로 들어오는 모든 링크. 앵커가 밀립니다 |
+| 실험 추가 | `reports/` 에 다음 번호로 `<번호>_<실험명>.md` → `index.md` 목록 → 앞뒤 실험의 머리 줄 → 그 실험으로 정한 설계 장에서 링크 |
 | 디렉터리 구조 | 이 파일 3절 · `README.md`/`README.ko.md` 4절 · 기술문서 5장 5.2절과 17장 |
 | 다이어그램 | `.mmd` 를 고쳤으면 `render_diagrams.py` 실행 |

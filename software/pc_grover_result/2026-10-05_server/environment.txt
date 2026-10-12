@@ -1,0 +1,33 @@
+host: Intern-Ubuntu
+cpu:  Intel(R) Core(TM) i5-14600K
+nproc (logical CPUs): 8
+physical cores: 8
+kernel: 7.0.14-8-pve
+compiler: g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+python: Python 3.12.3
+numpy 2.4.6 qiskit 2.5.2 aer 0.17.2
+governor: performance
+allowed CPUs: 12 13 14 15 16 17 18 19
+single-core runs pinned to CPU 13 (max MHz 4000.0000); C++ reps 5
+virtualization: lxc
+CPU CORE ONLINE    MAXMHZ
+  0    0     no 5300.0000
+  1    0     no 5300.0000
+  2    1     no 5300.0000
+  3    1     no 5300.0000
+  4    2     no 5300.0000
+  5    2     no 5300.0000
+  6    3     no 5300.0000
+  7    3     no 5300.0000
+  8    4     no 5300.0000
+  9    4     no 5300.0000
+ 10    5     no 5300.0000
+ 11    5     no 5300.0000
+ 12    6    yes 4000.0000
+ 13    7    yes 4000.0000
+ 14    8    yes 4000.0000
+ 15    9    yes 4000.0000
+ 16   10    yes 4000.0000
+ 17   11    yes 4000.0000
+ 18   12    yes 4000.0000
+ 19   13    yes 4000.0000

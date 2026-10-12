@@ -30,7 +30,7 @@ BUILD    ?= /tmp/dram_build
 # 있습니다. 2026-09-11 에 src_v2 를 src 로 합쳤습니다.
 RTL_DIR   = ../src
 TB_DIR    = ../testbench
-CSR_DIR   = ../../software/contract/generated
+CSR_DIR   = ../../spec/generated
 BRAM_SRC  = ../../hardware_bram/src
 # AHB SRAM 모델은 hardware_bram 것을 그대로 씁니다. 통신 계층(mmio,
 # loader)이 두 갈래에서 같은 파일이라 모델을 따로 둘 이유가 없습니다.
@@ -79,7 +79,7 @@ regress: ports lint store prep core top
 # 포트 계약. hardware_bram 과 같은 wrapper 19 + core 61 을 지켜야 합니다.
 #---------------------------------------------------------------------
 ports:
-	@python3 ../../software/contract/check_ports.py dram
+	@python3 ../../spec/check_ports.py dram
 
 #---------------------------------------------------------------------
 # 합성 대상만 lint. 테스트벤치와 DRAM 모델은 뺍니다.
@@ -201,7 +201,7 @@ BENCH_BRAM_SRC = $(BRAM_CORE)
 
 bench250:
 	@mkdir -p $(WL_DIR)
-	python3 ../../software/rtl_vectors/tools/dump_bench_workload.py --seeds 50 --out $(WL_DIR)
+	python3 ../../software/golden_develop/tb_stimulus/dump_bench_workload.py --seeds 50 --out $(WL_DIR)
 	python3 bin_to_hex.py $(WL_DIR)
 	@verilator --binary --timing $(VFLAGS) -DGD_DRAM_BRANCH \
 	          -DGD_WL_DIR='"$(WL_DIR)"' -DGD_CSV_OUT='"$(BUILD)/bench250_dram.csv"' \
@@ -301,7 +301,7 @@ endif
 
 bench500:
 	@mkdir -p $(WL500_DIR)
-	python3 ../../software/rtl_vectors/tools/dump_bench_workload.py --seeds 100 --out $(WL500_DIR)
+	python3 ../../software/golden_develop/tb_stimulus/dump_bench_workload.py --seeds 100 --out $(WL500_DIR)
 	python3 bin_to_hex.py $(WL500_DIR)
 	@verilator --binary --timing $(VFLAGS) -DGD_DRAM_BRANCH $(DRAM_LAT) \
 	          -DGD_WL_DIR='"$(WL500_DIR)"' -DGD_CSV_OUT='"$(BUILD)/bench500_dram_$(DLAT).csv"' \
@@ -330,8 +330,8 @@ bench500:
 #   AXI_STALL=1        axi4_mem_model 에 불규칙한 백프레셔를 겁니다
 #
 # 자극과 기댓값은 hardware_bram 과 같은 파일입니다.
-#   software/rtl_vectors/tools/dump_predicate500_workload.py
-#   software/experiments/predicate500_benchmark/expected/predicate500_expected.csv
+#   software/golden_develop/tb_stimulus/dump_predicate500_workload.py
+#   software/golden_data/2026-09-25_predicate500/predicate500_expected.csv
 #---------------------------------------------------------------------
 AXI_RTL  = $(RTL_DIR)/bbht_dram_axi_top.v $(RTL_DIR)/grover_dram_axi_bridge.v $(TOP_RTL)
 
@@ -353,10 +353,10 @@ PRED500_DEFS   = -DBBHT_HOST_TEST -DBBHT_NO_PRINTF -DBBHT_TIMEOUT=200000000
 FW_DIR         = ../../hardware_bram/firmware
 
 predicate500-wl:
-	@python3 ../../software/rtl_vectors/tools/dump_predicate500_workload.py --out $(PRED500_WL)
+	@python3 ../../software/golden_develop/tb_stimulus/dump_predicate500_workload.py --out $(PRED500_WL)
 
 predicate500-build: lint-axi
-	@python3 ../../software/contract/gen_csr.py > /dev/null
+	@python3 ../../spec/gen_csr.py > /dev/null
 	@rm -rf $(PRED500_BUILD); mkdir -p $(PRED500_BUILD)/src
 	@cp $(TB_DIR)/tb_dram_predicate500.cpp $(TB_DIR)/tb_dram_axi_sys.v \
 	    $(TB_DIR)/axi4_mem_model.v $(AXI_RTL) $(PRED500_BUILD)/src/

@@ -1,0 +1,30 @@
+{
+  "backend": "CPP_SW_BEST_NORMAL_F64",
+  "engine": "sw",
+  "policy": "normal",
+  "precision": "f64",
+  "threads": 1,
+  "workers": 1,
+  "reps": 5,
+  "workloads": 500,
+  "success": 500,
+  "trials": 7487,
+  "L_BBHT": 32947,
+  "physical_iterations": 32947,
+  "campaign_wall_ns": 1508833832,
+  "campaign_wall_note": "warm-up + reps + prep for all workloads",
+  "throughput_searches_per_s": 1988.29,
+  "per_target": {
+    "1": {"search_ns_sum": 127077587, "compute_ns_sum": 113008699, "e2e_ns_sum": 129198687},
+    "4": {"search_ns_sum": 65468456, "compute_ns_sum": 53995774, "e2e_ns_sum": 72339456},
+    "16": {"search_ns_sum": 32771159, "compute_ns_sum": 23799452, "e2e_ns_sum": 40691459},
+    "64": {"search_ns_sum": 17102783, "compute_ns_sum": 10285426, "e2e_ns_sum": 25752983},
+    "256": {"search_ns_sum": 8284589, "compute_ns_sum": 3834786, "e2e_ns_sum": 15503689}
+  },
+  "search_ns_sum": 250704574,
+  "compute_ns_sum": 204924137,
+  "e2e_ns_sum_per_workload_load": 283486274,
+  "e2e_ns_sum_load_once_per_dataset": 251032391,
+  "rapl_package_energy_j": null,
+  "environment": {"cpu": "Intel(R) Core(TM) i5-14600K", "hardware_threads": 8, "compiler": "13.3.0", "flags": "g++ -O3 -march=native -std=c++17 -fopenmp-simd -pthread -Wall -Wextra", "process_cpus": 1}
+}

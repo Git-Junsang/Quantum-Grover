@@ -36,7 +36,7 @@ BANNED = [
     (r'XC7S100',
      '폐기된 목표 FPGA (현행 Arty A7-100T / xc7a100tcsg324-1)',
      ['15_논문지도와_설계결정표.md', 'CLAUDE.md', '블록도.md', '반복횟수_결정.md',
-      '개발계획.md', '26_부록_용어집과_폐기된_규격.md']),
+      '개발계획.md', '22_부록_용어집과_폐기된_규격.md']),
 
     (r'BRAM(36)?\s*(120|66)\s*개|BRAM\s*120\b',
      '폐기된 자원 수치 (XC7S100 기준). 현행 IP 33개 / 보드 135개',
@@ -49,28 +49,28 @@ BANNED = [
     (r'xc7s50|Arty-?S7-?50',
      '폐기된 목표 보드 (2026-08-28 Arty A7-100T / xc7a100tcsg324-1 로 변경)',
      ['15_논문지도와_설계결정표.md', 'CLAUDE.md', '블록도.md', '반복횟수_결정.md',
-      '개발계획.md', '26_부록_용어집과_폐기된_규격.md',
+      '개발계획.md', '22_부록_용어집과_폐기된_규격.md',
       '2026-07-10_세미나_양자컴퓨팅-입문.md', '체크포인트_일반화_문헌조사.md',
       '체크포인트_K최적화_2차분석.md']),
 
     (r'AXI4-Lite|AXI-?Stream',
      '폐기된 버스 (현행 APB 슬레이브 + AHB 마스터). RVX 에 AXI-Stream 심이 없음',
      ['17_RVX_SoC_통합.md', '15_논문지도와_설계결정표.md', 'CLAUDE.md',
-      '블록도.md', '반복횟수_결정.md', '개발계획.md', '26_부록_용어집과_폐기된_규격.md']),
+      '블록도.md', '반복횟수_결정.md', '개발계획.md', '22_부록_용어집과_폐기된_규격.md']),
 
     (r'MicroBlaze',
      '폐기된 SoC (현행 RVX rvc_orca)',
      ['15_논문지도와_설계결정표.md', 'CLAUDE.md', '블록도.md',
-      'README.md', '26_부록_용어집과_폐기된_규격.md']),
+      'README.md', '22_부록_용어집과_폐기된_규격.md']),
 
     (r'\$?n\s*=\s*15\$?(?![0-9])',
      '폐기된 큐비트 수 (현행 n=14). n=15 는 "예산 밖"·"미충족" 같은 기각 문맥에서만',
      ['CLAUDE.md', '11_상태벡터_에뮬레이터.md', '12_고정소수점과_정밀도.md',
-      '26_부록_용어집과_폐기된_규격.md', '23_설계_근거_실험.md']),
+      '22_부록_용어집과_폐기된_규격.md', '11_채택하지_않은_확장.md']),
 
     (r'Q2\.16',
      '폐기된 진폭 형식 (현행 Q1.22, 23비트)',
-     ['CLAUDE.md', '26_부록_용어집과_폐기된_규격.md', '23_설계_근거_실험.md']),
+     ['CLAUDE.md', '22_부록_용어집과_폐기된_규격.md', '11_채택하지_않은_확장.md']),
 
     (r'DSP가?\s*잡히면',
      '"DSP가 잡히면 잘못 짠 것"은 폐기됨 — 측정 경로는 제곱기 32개를 정상적으로 씁니다',
@@ -146,8 +146,7 @@ def md_files():
         rel = os.path.relpath(p, ROOT)
         # trash_bin 은 구 스펙 보관소라 검사 대상이 아닙니다.
         # papers_ko 는 논문 번역본이라 우리 설계 수치를 따르지 않습니다.
-        if (rel.startswith('trash_bin/') or '/facts/' in rel
-                or 'papers_ko/' in rel):
+        if rel.startswith('trash_bin/') or 'papers_ko/' in rel:
             continue
         out.append(rel)
     return sorted(out)
@@ -228,10 +227,10 @@ def main():
 
     # 8. 장 구조 (해설서 본편만)
     SR = 'documents/study_references'
-    REF_ONLY = {'10_용어정리와_치트시트.md', 'A_수학_빠른복습.md', 'README.md',
-                '00_양자컴퓨팅_시작하기.md'}
+    REF_ONLY = {'10_용어정리와_치트시트.md', 'A_수학_빠른복습.md',
+                'index.md'}
     for f in files:
-        if not f.startswith(SR) or '_wip' in f:
+        if not f.startswith(SR):
             continue
         name = os.path.basename(f)
         if name in REF_ONLY:

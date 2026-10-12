@@ -1,5 +1,39 @@
 # 양자 에뮬레이터 레퍼런스 논문 목록
 
+## 보유 원문과 한국어 해설본
+
+`papers_ko/` 의 해설본은 문장 단위 번역이 아니라 해설 · 정리본입니다. 원문의 절 순서를 따라가되 설명은
+우리말로 새로 썼고, 수식 · 표 · 수치 결과는 원문 그대로 재현했습니다. 각 절 첫머리의 `> 원문 p.12-15` 앵커로
+원문 PDF 의 해당 쪽을 바로 펼칠 수 있습니다. Markdown 이 원본이고 PDF 는 파생본입니다. 이론은
+[해설서](../study_references/index.md)가 주교재이고, 해설본은 원문을 옆에 두고 읽는 보조 자료입니다.
+
+| # | 해설본 | 원문 | 원문 정보 |
+|:-:|--------|------|-----------|
+| 03 | [Quantum Computing for the Very Curious](papers_ko/03_quantum_computing_for_the_very_curious_ko.md) | [원문](<1. 양자컴퓨터 기초이론/양자컴퓨터 기초이론 3. Quantum computing for the very curious.pdf>) | Nielsen & Matuschak, quantum.country, 64쪽 |
+| 04 | [Developing a Grover's Emulator on Standalone FPGAs](papers_ko/04_developing_grover_emulator_standalone_fpga_ko.md) · [PDF](papers_ko/04_developing_grover_emulator_standalone_fpga_ko.pdf) | [원문](<2. Grover 논문 (LPSoC)/Developing a Grover’s quantum algorithm emulator on standalone FPGAs.pdf>) | **Choi & W. Lee (중앙대)**, AIMS Math. 9(11) 30939–30971, 2024 · `10.3934/math.20241493` |
+| 05 | [Precision-aware Fixed-point Emulation of Grover's](papers_ko/05_precision_aware_fixed_point_grover_ko.md) · [PDF](papers_ko/05_precision_aware_fixed_point_grover_ko.pdf) | [원문](<2. Grover 논문 (LPSoC)/Precision-aware fixed-point emulation of Grover’s algorith.pdf>) | **Choi 외, W. Lee 교신 (중앙대)**, Quantum Inf. Process. 25:214, 2026 · `10.1007/s11128-026-05235-9` |
+| 06 | [Standalone FPGA-Based QAOA Emulator for Weighted-MaxCut](papers_ko/06_standalone_fpga_qaoa_emulator_ko.md) · [PDF](papers_ko/06_standalone_fpga_qaoa_emulator_ko.pdf) | [원문](<3. QCE-FPGA 논문/Standalone FPGA-Based QAOA Emulator for.pdf>) | **Choi 외, W. Lee (중앙대)**, arXiv:2502.11316v2, 2025 |
+| 07 | [Towards Complete and Scalable Emulation (HPRC)](papers_ko/07_towards_complete_scalable_emulation_hprc_ko.md) · [PDF](papers_ko/07_towards_complete_scalable_emulation_hprc_ko.pdf) | [원문](<3. QCE-FPGA 논문/Towards_Complete_and_Scalable_Emulation_of_Quantum_Algorithms_on_High-Performance_Reconfigurable_Computers.pdf>) | El-Araby 외 (U. Kansas), IEEE Trans. Comput. 72(8) 2350–2364, 2023 · `10.1109/TC.2023.3248276` |
+| 08 | [Generalized Grover's Algorithm for Multiple Phase Inversion States](papers_ko/08_generalized_grover_multiple_phase_inversion_ko.md) · [PDF](papers_ko/08_generalized_grover_multiple_phase_inversion_ko.pdf) | [원문](<4. Grover 응용 논문/Generalized Grover's Algorithm for Multiple Phase Inversion States.pdf>) | Byrnes, Forster, Tessler, **PRL 120**, 060501, 2018 · `10.1103/PhysRevLett.120.060501` |
+| 09 | [Quantum Minimum Searching for AUD in Wireless IoT](papers_ko/09_quantum_minimum_searching_aud_iot_ko.md) · [PDF](papers_ko/09_quantum_minimum_searching_aud_iot_ko.pdf) | [원문](<4. Grover 응용 논문/Quantum_Minimum_Searching_Algorithms_for_Active_User_Detection_in_Wireless_IoT_Networks.pdf>) | Habibie, Goursaud, Hamie (INSA Lyon), IEEE IoT J. 11(12) 22603–22615, 2024 · `10.1109/JIOT.2024.3382337` |
+
+[`1. 양자컴퓨터 기초이론/`](<1. 양자컴퓨터 기초이론/>) 의 아래 두 편은 **이미 한국어**입니다 (블로그 글을 브라우저에서 PDF로 인쇄한 것). 번역이 필요 없어 그대로 두었습니다.
+
+- `양자컴퓨터 기초이론 1. 그로버 알고리즘과 도이치 알고리즘.pdf` — [hgmin1159.github.io](https://hgmin1159.github.io/quantum/quantum_algorithm/)
+- `양자컴퓨터 기초이론 2. 그로버 알고리즘.pdf` — [infossm.github.io](https://infossm.github.io/blog/2020/06/18/quantum-computing-grover/)
+
+여섯 편이 서로 인용하는 계보는 [해설서 15장](../study_references/15_논문지도와_설계결정표.md)에 있습니다. 읽는 순서는
+이렇게 권합니다.
+
+**하드웨어를 짜는 게 목적이라면** — [04] → [05] → [06] → [07]
+[04]가 설계도, [05]가 비트 폭 결정 근거, [06]이 같은 골격의 다른 알고리즘, [07]이 확장의 천장입니다.
+
+**이론을 먼저 다지고 싶다면** — [03] → [08]
+단, [03]은 [해설서](../study_references/index.md) 1~9장과 내용이 겹칩니다. 해설서를 이미 읽었다면 [03]은 건너뛰고 [08]로 가도 됩니다.
+
+원문 자체의 오류 · 오타(그대로 옮기면 동작하지 않는 것 포함)는 각 해설본에 표시해 두었고, 인용 전에 볼 정오표는
+[해설서 15.6절](../study_references/15_논문지도와_설계결정표.md#156-인용-시-주의--논문의-오류와-모호점)에 모았습니다.
+
 ## 수집 방법
 
 OpenAlex API로 보유 논문 15편을 시드 삼아 인용 그래프를 2-hop 양방향(시드가 인용한 논문 + 시드를 인용한 논문)으로 확장하고, FPGA·양자 에뮬레이션 키워드 14개로 추가 스윕했습니다. 후보 **2,824편**을 모아 제목 기준 관련도 필터로 **137편**을 남겼고, 그중 **26편**의 PDF를 `5. 추가 수집 (OpenAlex)/`에 받아뒀습니다.

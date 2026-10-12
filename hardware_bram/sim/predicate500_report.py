@@ -7,7 +7,7 @@ predicate500_report.py -- Predicate500 RTL 벤치 CSV 를 SW 기준모델 기댓
     predicate,m,seed_idx,mode,rc,result_index,result_value,trial,l_bbht,iter,cycles,status
 입니다.
 
-기댓값은 software/experiments/predicate500_benchmark/expected/
+기댓값은 software/golden_data/2026-09-25_predicate500/
 predicate500_expected.csv 입니다 (run_predicate500_golden.py 가 만듦).
 
 실행 하나마다 여섯 축을 봅니다.
@@ -41,8 +41,8 @@ from collections import defaultdict
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.normpath(os.path.join(HERE, os.pardir, os.pardir))
-EXPECTED = os.path.join(REPO, "software", "experiments", "predicate500_benchmark",
-                        "expected", "predicate500_expected.csv")
+EXPECTED = os.path.join(REPO, "software", "golden_data", "2026-09-25_predicate500",
+                        "predicate500_expected.csv")
 
 ORDER = ("LT", "GT", "EQ", "RANGE")
 ITER_COLUMN = {

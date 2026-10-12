@@ -42,7 +42,7 @@ memo 청소를 치름), 두 값 모두 시뮬과 같습니다.
    (`ERR HOST_TIMEOUT`) 앱을 다시 적재해야 돌아옵니다. 한 핸들로 열어 둔 채로는
    OpenOCD 종료 뒤에도 계속 응답하고, 닫았다 다시 열면 멈추는 것으로 좁혔습니다.
    DTR/RTS 를 내린 채 열면 여러 번 열고 닫아도 응답합니다.
-   `software/host/bbht_cli.py` 의 `SerialTransport` 가 열기 전에 둘을 내리도록 고쳤습니다.
+   `software/host_fpga_develop/bbht_cli.py` 의 `SerialTransport` 가 열기 전에 둘을 내리도록 고쳤습니다.
 2. Windows 에서 `--script` · `--log` 파일을 cp949 로 열어 한글 주석에서 죽던 것을
    UTF-8 로 고쳤습니다.
 

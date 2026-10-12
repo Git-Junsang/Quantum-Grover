@@ -6,10 +6,10 @@
 // 한 번도 검증되지 않습니다. 이 하네스는 같은 M 다섯 개 x 공식 시드 100쌍을
 // 술어마다 따로 돌려 SW 기준모델의 기댓값과 맞댑니다.
 //
-//   자극   software/rtl_vectors/tools/dump_predicate500_workload.py 가 떨군
+//   자극   software/golden_develop/tb_stimulus/dump_predicate500_workload.py 가 떨군
 //          WL_DIR/workloads_<P>.txt 목록 (환경변수 WL_LIST 로 파일 하나를 지정)
 //          한 줄 = "<P> <술어코드> <A> <B> <M> <bin 경로>"
-//   기댓값 software/experiments/predicate500_benchmark/expected/
+//   기댓값 software/golden_data/2026-09-25_predicate500/
 //          predicate500_expected.csv (predicate500_report.py 가 대조)
 //
 // 실행 순서는 보드 앱과 같습니다. 데이터셋 하나를 적재하고, 시드마다 Normal 다음

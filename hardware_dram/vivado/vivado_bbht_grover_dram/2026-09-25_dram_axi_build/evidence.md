@@ -5,7 +5,7 @@
 `hardware_dram/` 갈래를 RVX 플랫폼 `bbht_grover_dram` 으로 Arty A7-100T 에 구현한
 빌드의 리포트입니다. 가속기는 DRAM 갈래 Main IP + 통신 계층 + 32비트 AXI4 브리지이고,
 진폭표는 RVX 의 `slow_dram`(MIG DDR3)에 둡니다. 설계는
-[기술문서 22장](../../../../documents/design_references/22_DRAM_갈래.md),
+[기술문서 21장](../../../../documents/design_references/21_DRAM_갈래.md),
 구운 실물은 [`../../../bitstream/2026-09-25_dram_axi/`](../../../bitstream/2026-09-25_dram_axi/evidence.md) 에 있습니다.
 
 같은 날 세 번 구현했고 이 폴더의 리포트는 **세 번째(최종)** 입니다. 앞의 둘은 아래
@@ -66,7 +66,7 @@ DSP 70 이고, 그중 브리지가 LUT 292 · FF 1,744 · DSP 4 입니다. FF �
 읽기를 시작하지 못했습니다. AXI 모델은 AXI 규칙대로 B 를 하나만 주므로 verilator 에서는
 드러나지 않았습니다. 3차 브리지는 버스트를 16 beat 이하로 자르고, AXI 모델은 16 beat 를
 넘는 버스트를 오류로 셉니다. 경위와 파형 대신 찍은 핸드셰이크 수는
-[기술문서 22장 22.5절](../../../../documents/design_references/22_DRAM_갈래.md#225-브리지-grover_dram_axi_bridgev)에 있습니다.
+[기술문서 21장 21.5절](../../../../documents/design_references/21_DRAM_갈래.md#215-브리지-grover_dram_axi_bridgev)에 있습니다.
 
 3차 단계별 셋업 WNS (`[BBHT_PNR]` 로그):
 

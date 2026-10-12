@@ -46,6 +46,12 @@ hardware_bram/models/*/rvx/**/output/
 # ── mermaid 렌더러가 만드는 임시 설정 ─────────────────
 documents/**/.puppeteer.json
 
+# ── PC 용 그로버 구현 (software/pc_grover_develop) ─────────────
+# make 가 만드는 실행 파일. 측정 결과(results/)는 재현 불가능한 실측이라 커밋합니다.
+software/pc_grover_develop/cpp/build/
+# 팀 생성기로 다시 만든 데이터셋 사본. 해시 대조에만 쓰고 다시 돌리면 나옵니다
+software/pc_grover_result/*/verification/predicate500_datasets_regenerated/
+
 # ── 파이썬 ─────────────────────────────────────────
 __pycache__/
 *.pyc

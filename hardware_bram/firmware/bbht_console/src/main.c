@@ -117,7 +117,7 @@ static int parse_num(const char *s, int *ok)
  *
  * 기본 순서는 보드 실측과 바로 맞댈 수 있게 짰습니다. 보드 500런의
  * M = 4, 시드 0 워크로드입니다.
- *   - 데이터셋: software/experiments/common500_benchmark/inputs/datasets/
+ *   - 데이터셋: software/testbench_data/2026-09-08_common500/datasets/
  *     dataset_target_4.bin 에서 12345 인 칸은 507 2852 4724 8685 넷뿐입니다.
  *     GEN TARGETS=0 은 12345 가 한 칸도 없는 배경을 만들고, POKE 넷이 같은
  *     자리에 목표를 심습니다. EQ 술어는 "12345 와 같은가" 만 보므로 배경
@@ -133,7 +133,7 @@ static int parse_num(const char *s, int *ok)
  *
  * 다른 순서를 돌리려면 명령 목록을 헤더로 만들어 BBHT_CONSOLE_SCRIPT_FILE 로
  * 넘깁니다 (rvx_each.mh 가 환경변수 BBHT_SCRIPT 를 보고 넣어 줍니다).
- * software/host/bbht_predicate500.py --emit-script 가 호스트 자동 테스트와
+ * software/host_fpga_develop/bbht_predicate500.py --emit-script 가 호스트 자동 테스트와
  * 한 줄도 다르지 않은 순서를 뽑아 주므로, 그 트랜스크립트를 호스트 프로그램에
  * --port replay:<qtsim.log> 로 그대로 되먹일 수 있습니다.
  */
@@ -256,7 +256,7 @@ static int split_kv(char *tok, char **key, char **val)
  * 규칙은 bbht_dataset_gen.h 에 있습니다. PJK 벤치마크 하니스와 같은
  * xorshift32 이고, 술어를 주면(PRED=) 배경을 그 술어의 비정답 쪽으로 접어
  * 넣어 TARGETS 개가 정확히 정답이 되게 합니다. 같은 인자면
- * software/models/common/benchmark_dataset.py 와 바이트 단위로 같은 배열이
+ * software/golden_develop/models/common/benchmark_dataset.py 와 바이트 단위로 같은 배열이
  * 나오므로, 보드에서 얻은 결과를 SW 기준모델과 대조할 수 있습니다.
  *==================================================================*/
 /* PRED 만 주고 A/B/POS 를 안 주면 Predicate500 의 값을 씁니다

@@ -52,12 +52,12 @@ cp bbht_console.sram.hex ocd/
 ocd/ocd_keep.sh &
 
 # 3. 확인과 자동 테스트 (저장소 루트에서)
-python3 software/host/bbht_cli.py --port /dev/ttyUSB1 selftest
-python3 software/host/bbht_predicate500.py --port /dev/ttyUSB1      # Normal 2,000 실행
+python3 software/host_fpga_develop/bbht_cli.py --port /dev/ttyUSB1 selftest
+python3 software/host_fpga_develop/bbht_predicate500.py --port /dev/ttyUSB1      # Normal 2,000 실행
 ```
 
 3번 자동 테스트의 결과 엑셀은 다른 두 판과 같은 형식이고, 물리 반복은 기댓값의
 `actual_iter_normal` 열과 맞댑니다
-([기술문서 19장](../../../../../documents/design_references/19_Predicate500_자동_테스트.md)).
+([기술문서 18장](../../../../../documents/design_references/18_Predicate500_자동_테스트.md)).
 체크포인트 판 결과 엑셀의 `wall_us` 와 나란히 놓으면 보드 실경과 시간으로 본 최적화
 효과가 됩니다.

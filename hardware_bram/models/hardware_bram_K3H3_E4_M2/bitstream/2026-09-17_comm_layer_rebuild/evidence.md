@@ -66,7 +66,7 @@ cp bbht_console.sram.hex ocd/
 ocd/ocd_keep.sh &          # 붙여 둔 채 유지. load_app.sh 는 올리고 빠져나옵니다
 
 # 3. 호스트에서 명령 (COM 포트 번호는 환경에 맞게)
-python3 software/host/bbht_cli.py --port /dev/ttyUSB1 selftest
+python3 software/host_fpga_develop/bbht_cli.py --port /dev/ttyUSB1 selftest
 ```
 
 보드 RESET 버튼을 누르거나 OpenOCD 를 놓으면 앱이 날아가므로 2번부터 다시 합니다

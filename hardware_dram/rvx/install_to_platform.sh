@@ -39,8 +39,8 @@ say() { printf '  %-52s %s\n' "$1" "$2"; }
 echo "설치 대상: $PLATFORM"
 
 # 1. CSR 정본 헤더 재생성
-python3 "$ROOT/software/contract/gen_csr.py" > /dev/null
-say "software/contract/generated" "재생성"
+python3 "$ROOT/spec/gen_csr.py" > /dev/null
+say "spec/generated" "재생성"
 
 # 2. 플랫폼 XML
 sed "s|<name>bbht_grover_dram</name>|<name>${PLATFORM_NAME}</name>|" \
@@ -64,7 +64,7 @@ for f in $RTL; do
     cp "$HW/src/$f"                                   "$PLATFORM/user/rtl/src/"
 done
 cp "$HW/src/grover_param.vh" "$HW/src/grover_dram_param.vh" "$PLATFORM/user/rtl/include/"
-cp "$ROOT/software/contract/generated/bbht_grover_csr.vh"  "$PLATFORM/user/rtl/include/"
+cp "$ROOT/spec/generated/bbht_grover_csr.vh"  "$PLATFORM/user/rtl/include/"
 cp "$HW/src/bbht_grover_user_region.vh" \
    "$PLATFORM/user/rtl/include/${PLATFORM_NAME}_user_region.vh"
 say "user/rtl/{src,include}" "DRAM Main IP 12 + 통신 계층 3 + 브리지 + 최상단"
@@ -87,7 +87,7 @@ say "user/fpga/arty-100t/pnr_manually.tcl" "타이밍 우선 배치/배선"
 # 4. 드라이버
 mkdir -p "$PLATFORM/user/api"
 cp "$FW/bbht_grover_driver."{c,h}                          "$PLATFORM/user/api/"
-cp "$ROOT/software/contract/generated/bbht_grover_regs.h"  "$PLATFORM/user/api/"
+cp "$ROOT/spec/generated/bbht_grover_regs.h"  "$PLATFORM/user/api/"
 say "user/api" "driver + regs.h (hardware_bram/firmware)"
 
 # 5. 앱. 콘솔만 옮깁니다. bbht_paper_bench 와 orca_sw_baseline 은 보드
