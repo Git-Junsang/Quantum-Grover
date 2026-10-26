@@ -26,6 +26,10 @@ module bbht_grover_main_ip #(
     // Rolling-policy lookahead.  Default 4 preserves frozen K4/H4.
     // E4 K3/H3 branch sets POLICY_H_FUTURE=3.
     parameter integer POLICY_H_FUTURE    = 4,
+    // Exact two-request lower-bound pruning at the pre-memo action boundary.
+    // This changes search work only; policy action space/objective/tie-break
+    // and the selected checkpoint tuple remain bit-exact.
+    parameter integer POLICY_EXACT_PRUNE = 4,
     // 1 keeps the Phase-4B manual checkpoint-policy injection path.
     // 0 compile-time removes that verification-only path and its wide
     // manual/auto select cone from the production autonomous K4/H6 build.
@@ -39,8 +43,10 @@ module bbht_grover_main_ip #(
     // Paper-ablation measurement controls.
     // M1: E4 two-row/cycle Born BUILD.
     // M2: M1 + hierarchical 16x32 row selection.
+    // M3: M2 + three-row/cycle Born BUILD (third square32 engine).
     parameter integer MEAS_M1_ENABLE    = 1,
-    parameter integer MEAS_M2_ENABLE    = 1
+    parameter integer MEAS_M2_ENABLE    = 1,
+    parameter integer MEAS_M3_ENABLE    = 0
 ) (
     input  wire                                  clk,
     input  wire                                  rstn,
@@ -1426,7 +1432,8 @@ module bbht_grover_main_ip #(
 
                 grover_ckpt_policy_rolling #(
                     .CKPT_K      (CKPT_K),
-                    .H_FUTURE    (POLICY_H_FUTURE)
+                    .H_FUTURE    (POLICY_H_FUTURE),
+                    .EXACT_PRUNE (POLICY_EXACT_PRUNE)
                 ) u_auto_policy (
                     .clk                  (clk),
                     .rstn                 (rstn),
@@ -1792,6 +1799,9 @@ module bbht_grover_main_ip #(
         // and not the checkpoint switch.
         .E4_DUAL_BUILD   (((INTRA_ENGINES == 4) &&
                            (MEAS_M1_ENABLE != 0)) ? 1 : 0),
+        .E4_TRIPLE_BUILD (((INTRA_ENGINES == 4) &&
+                           (MEAS_M1_ENABLE != 0) &&
+                           (MEAS_M3_ENABLE != 0)) ? 1 : 0),
         .E4_HIER_SELECT  (((INTRA_ENGINES == 4) &&
                            (MEAS_M1_ENABLE != 0) &&
                            (MEAS_M2_ENABLE != 0)) ? 1 : 0)

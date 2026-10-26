@@ -250,6 +250,9 @@ BENCH_BUILD  = /tmp/sjs_bench_$(BENCH_CORE)
 BENCH_WL     = /tmp/sjs_bench_wl
 BENCH_OUT   ?= $(BENCH_BUILD)/bench250_$(BENCH_CORE).csv
 BENCH_DEFS   = -DBBHT_HOST_TEST -DBBHT_NO_PRINTF -DBBHT_TIMEOUT=200000000
+# Optional Verilog preprocessor overrides for controlled A/B measurements.
+# Keep these separate from BENCH_DEFS, which is passed only to the C/C++ compiler.
+BENCH_VDEFS  ?=
 
 BENCH_COMM   = $(SRC_DIR)/bbht_rvx_wrapper.v $(SRC_DIR)/bbht_grover_mmio.v \
                $(SRC_DIR)/bbht_ahb_loader.v \
@@ -320,6 +323,7 @@ bench500: csr model-check bench500-wl
 	@gcc -c -O2 $(BENCH_DEFS) -I$(BENCH500_BUILD)/src \
 	     $(BENCH500_BUILD)/src/bbht_grover_driver.c -o $(BENCH500_BUILD)/driver.o
 	@verilator --cc --exe --build -Wno-fatal -Wno-DECLFILENAME \
+	     $(BENCH_VDEFS) \
 	     --Mdir $(BENCH500_BUILD)/obj \
 	     -CFLAGS "$(BENCH_DEFS) -I$(BENCH500_BUILD)/src -O2" \
 	     -LDFLAGS "$(BENCH500_BUILD)/driver.o" -I$(BENCH500_BUILD)/src \

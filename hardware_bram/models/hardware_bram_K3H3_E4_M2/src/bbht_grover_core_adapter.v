@@ -49,15 +49,25 @@
 //=====================================================================
 `timescale 1ns/1ps
 
+`ifndef GP_MEAS_M3_DEFAULT
+`define GP_MEAS_M3_DEFAULT 0
+`endif
+
+`ifndef GP_POLICY_EXACT_PRUNE_DEFAULT
+`define GP_POLICY_EXACT_PRUNE_DEFAULT 4
+`endif
+
 module bbht_grover_core #(
     parameter integer CHECKPOINT_ENABLE  = 1,
     parameter integer CKPT_K             = 3,
     parameter integer POLICY_H_FUTURE    = 3,
+    parameter integer POLICY_EXACT_PRUNE = `GP_POLICY_EXACT_PRUNE_DEFAULT,
     parameter integer CKPT_MANUAL_ENABLE = 0,
     parameter integer AUTO_SPEC_ENABLE   = 1,
     parameter integer INTRA_ENGINES      = 4,
     parameter integer MEAS_M1_ENABLE     = 1,
-    parameter integer MEAS_M2_ENABLE     = 1
+    parameter integer MEAS_M2_ENABLE     = 1,
+    parameter integer MEAS_M3_ENABLE     = `GP_MEAS_M3_DEFAULT
 ) (
     input  wire        clk,
     input  wire        rstnn,
@@ -154,11 +164,13 @@ module bbht_grover_core #(
         .CHECKPOINT_ENABLE  (CHECKPOINT_ENABLE),
         .CKPT_K             (CKPT_K),
         .POLICY_H_FUTURE    (POLICY_H_FUTURE),
+        .POLICY_EXACT_PRUNE (POLICY_EXACT_PRUNE),
         .CKPT_MANUAL_ENABLE (CKPT_MANUAL_ENABLE),
         .AUTO_SPEC_ENABLE   (AUTO_SPEC_ENABLE),
         .INTRA_ENGINES      (INTRA_ENGINES),
         .MEAS_M1_ENABLE     (MEAS_M1_ENABLE),
-        .MEAS_M2_ENABLE     (MEAS_M2_ENABLE)
+        .MEAS_M2_ENABLE     (MEAS_M2_ENABLE),
+        .MEAS_M3_ENABLE     (MEAS_M3_ENABLE)
     ) u_main_ip (
         .clk                        (clk),
         .rstn                       (rstnn),

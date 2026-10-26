@@ -1,10 +1,14 @@
 `timescale 1ns/1ps
 `include "grover_param.vh"
 
-// OOC/resource wrapper for the K4/H6 exact Rolling policy.
+// Parameterized OOC/resource wrapper for the exact Rolling policy.
 // All functional inputs/outputs are kept as top-level ports so synthesis cannot
 // constant-fold the policy away.  Main-IP integration is intentionally absent.
-module grover_policy_ooc_top (
+module grover_policy_ooc_top #(
+    parameter integer CKPT_K = 4,
+    parameter integer H_FUTURE = 4,
+    parameter integer EXACT_PRUNE = 4
+) (
     input  wire                         clk,
     input  wire                         rstn,
     input  wire                         start,
@@ -29,7 +33,12 @@ module grover_policy_ooc_top (
     output wire [7:0]                   policy_epoch
 );
     (* keep_hierarchy = "yes" *)
-    grover_ckpt_policy_rolling #(.ACTION_LIMIT(0)) u_policy (
+    grover_ckpt_policy_rolling #(
+        .ACTION_LIMIT(0),
+        .CKPT_K(CKPT_K),
+        .H_FUTURE(H_FUTURE),
+        .EXACT_PRUNE(EXACT_PRUNE)
+    ) u_policy (
         .clk(clk), .rstn(rstn), .start(start),
         .slot_valid(slot_valid), .slot_j_flat(slot_j_flat), .j_window_flat(j_window_flat),
         .busy(busy), .done(done), .policy_error(policy_error),

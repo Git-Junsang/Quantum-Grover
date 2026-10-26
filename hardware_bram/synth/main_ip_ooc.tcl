@@ -7,6 +7,8 @@
 set PART   xc7a100tcsg324-1
 set SRC    $::env(SRC_DIR)
 set OUTDIR $::env(OUTDIR)
+set MEAS_M3 $::env(MEAS_M3_ENABLE)
+set POLICY_PRUNE $::env(POLICY_EXACT_PRUNE)
 
 file mkdir $OUTDIR
 
@@ -26,9 +28,13 @@ synth_design -top bbht_grover_main_ip -part $PART -mode out_of_context \
              -generic CHECKPOINT_ENABLE=1 \
              -generic CKPT_K=3 \
              -generic POLICY_H_FUTURE=3 \
+             -generic POLICY_EXACT_PRUNE=$POLICY_PRUNE \
              -generic CKPT_MANUAL_ENABLE=0 \
              -generic AUTO_SPEC_ENABLE=1 \
-             -generic INTRA_ENGINES=4
+             -generic INTRA_ENGINES=4 \
+             -generic MEAS_M1_ENABLE=1 \
+             -generic MEAS_M2_ENABLE=1 \
+             -generic MEAS_M3_ENABLE=$MEAS_M3
 
 report_utilization             -file $OUTDIR/util.rpt
 report_utilization -hierarchical -file $OUTDIR/util_hier.rpt

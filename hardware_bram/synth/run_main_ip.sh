@@ -13,7 +13,9 @@
 # 헤드리스 환경이라 -mode batch 로만 돕니다.
 set -e
 HERE="$(cd "$(dirname "$0")" && pwd)"
-OUT="$HERE/work_main_ip"
+OUT="${MAIN_IP_OUTDIR:-$HERE/work_main_ip}"
+MEAS_M3="${MEAS_M3_ENABLE:-0}"
+POLICY_PRUNE="${POLICY_EXACT_PRUNE:-4}"
 
 if [ -n "$VIVADO_BIN" ] && [ -x "$VIVADO_BIN" ]; then
   VIV="$VIVADO_BIN"
@@ -25,7 +27,8 @@ else
 fi
 
 mkdir -p "$OUT"
-SRC_DIR="$HERE/../src" OUTDIR="$OUT" \
+SRC_DIR="$HERE/../src" OUTDIR="$OUT" MEAS_M3_ENABLE="$MEAS_M3" \
+  POLICY_EXACT_PRUNE="$POLICY_PRUNE" \
   "$VIV" -mode batch -source "$HERE/main_ip_ooc.tcl" \
          -log "$OUT/vivado.log" -journal "$OUT/vivado.jou"
 
