@@ -1,0 +1,4 @@
+place_directive,route_directive,wns_ns,target_wns_ns,target_met,route_errors
+Explore,AggressiveExplore,0.082,0.150,0,0
+ExtraPostPlacementOpt,AggressiveExplore,0.123,0.150,0,0
+ExtraNetDelay_high,AggressiveExplore,0.182,0.150,1,0
