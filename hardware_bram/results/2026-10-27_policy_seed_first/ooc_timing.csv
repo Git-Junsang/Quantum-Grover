@@ -1,0 +1,5 @@
+run,what,wns_ns,tns_ns,failing_endpoints,whs_ns,synth_lut,synth_ff
+pol_k3h3_p0,policy only K3H3 EXACT_PRUNE=0,0.361,0.000,0,0.124,2950,3015
+pol_k3h3_p6,policy only K3H3 EXACT_PRUNE=6,0.081,0.000,0,0.098,3929,3598
+pol_k4h8_p6,policy only K4H8 EXACT_PRUNE=6,0.262,0.000,0,0.124,5331,4459
+mainip_m3_p6,Main IP K3H3 E4 M3 EXACT_PRUNE=6,0.068,0.000,0,0.071,40940,30626

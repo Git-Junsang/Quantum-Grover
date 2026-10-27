@@ -2713,6 +2713,132 @@ module grover_ckpt_policy_rolling #(
                             mreq_pre_gen_valid <= actionq_pre_gen_valid;
                         end
 
+                        // EXACT_PRUNE=5/6 search control.  Deliberately placed
+                        // before, not inside, the memo hit/miss branch below: none
+                        // of these enables may depend on the memo BRAM output
+                        // (post-route timing, Arty 100T).  When a memo miss
+                        // happens in the same cycle, the miss branch's later
+                        // nonblocking writes (actionq_valid, mreq_valid,
+                        // f_*[sp] generator restore) override these, which
+                        // reproduces the in-branch behavior exactly.  SCAN never
+                        // overlaps memo traffic, so its writes cannot conflict.
+                        if (SEED_MODE) begin
+                            // ---- bound-pipeline output ----
+                            // Evaluation packets: prune or forward to the memo
+                            // pipeline.  SCAN packets update the running seed;
+                            // the last SCAN packet is consumed by the phase
+                            // control below in the same cycle.
+                            if (bo_v && !bo_kind) begin
+                                if (((sp != 0) && f_best_valid[sp] &&
+                                     (bo_total >= f_best_cost[sp])) ||
+                                    ((sp == 0) && root_best_valid &&
+                                     (bo_total > root_best_cost))) begin
+                                    // The child's exact value is at least
+                                    // bo_total, so it cannot strictly beat the
+                                    // incumbent.  The root keeps equal-cost
+                                    // children for the segment/tuple tie-break.
+                                    // A stale (not yet reduced) incumbent is
+                                    // only larger, which prunes less: still exact.
+                                    // Not counted when an older packet misses in
+                                    // this cycle: this one is then flushed and
+                                    // regenerated after the child returns.
+                                    if (!(mresp_valid && !memo_pipe_hit))
+                                        prune_ctr <= prune_ctr + 1'b1;
+                                end else begin
+                                    route_bout_to_mreq(1'b0);
+                                end
+                            end else if (bo_v && !scan_last) begin
+                                // SCAN: keep the first child with the
+                                // smallest bound as the seed.
+                                if (!scan_valid || (bo_total < scan_total)) begin
+                                    scan_valid <= 1'b1;
+                                    scan_total <= bo_total;
+                                    scan_cnt   <= bo_cnt;
+                                    scan_ids   <= bo_ids;
+                                end
+                            end
+
+                            // ---- frame phase control ----
+                            case (a_phase)
+                                PH_SCAN: begin
+                                    if (a_gen_valid) begin
+                                        capture_current_action_to_actionq;
+                                        scan_issued <= 1'b1;
+                                        if (scan_issued)
+                                            scan_multi <= 1'b1;
+                                    end else if (scan_last) begin
+                                        // The last SCAN packet is at the output
+                                        // now; scan_fin_* already includes it.
+                                        if ((sp != 0) && ({1'b0,a_req_idx} == (H_FUTURE-1))) begin
+                                            // Every child of this frame has a
+                                            // one-request window, so the bounds
+                                            // are exact and the SCAN minimum is
+                                            // the frame value.  Skip SEED/CANON.
+                                            f_best_valid[sp] <= 1'b1;
+                                            f_best_cost[sp]  <= scan_fin_total;
+                                            fsm_state <= ST_FINISH;
+                                        end else if (!scan_multi) begin
+                                            // Single legal child: the SCAN packet
+                                            // is the seed and the whole frame.
+                                            // Forward it now instead of
+                                            // re-injecting it through the bound
+                                            // pipeline; no canonical walk follows.
+                                            // EXACT_PRUNE=6 also resolves a forced
+                                            // root decision without searching
+                                            // below it (see ROOT_FORCED).
+                                            route_bout_to_mreq(ROOT_FORCED && (sp == 0));
+                                            a_phase <= PH_CANON;
+                                            f_phase[sp] <= PH_CANON;
+                                            f_multi[sp] <= 1'b0;
+                                        end else begin
+                                            inject_seed_to_actionq(scan_fin_cnt, scan_fin_ids);
+                                            a_phase <= PH_SEED;
+                                            f_phase[sp] <= PH_SEED;
+                                            f_multi[sp] <= 1'b1;
+                                            // Seed injected at cycle I reaches
+                                            // the incumbent at I+8+D (future
+                                            // frame) or I+10+D (root, via the
+                                            // E0..E3 tie-break pipeline), where
+                                            // D=H-a_req_idx is the bound depth.
+                                            // A canonical action captured at C
+                                            // is routed at C+3+D, so C>=I+5 /
+                                            // I+7.  The walk is re-armed when
+                                            // seed_gap reaches 0 and captures
+                                            // on the next cycle.
+                                            seed_gap <= (sp == 0) ? 3'd5 : 3'd3;
+                                        end
+                                    end
+                                end
+                                PH_SEED: begin
+                                    // Overlap the seed's evaluation with the
+                                    // canonical walk's bound latency.  If the
+                                    // seed misses in the memo, its descent
+                                    // flushes every younger packet and the
+                                    // return path re-arms the walk.  Starting
+                                    // early is never wrong: a stale incumbent
+                                    // only prunes less.
+                                    if (seed_gap != 3'd0) begin
+                                        seed_gap <= seed_gap - 1'b1;
+                                    end else begin
+                                        if (f_multi[sp])
+                                            reset_generator_to_first;
+                                        a_phase <= PH_CANON;
+                                        f_phase[sp] <= PH_CANON;
+                                    end
+                                end
+                                default: begin
+                                    if (a_gen_valid) begin
+                                        capture_current_action_to_actionq;
+                                    end else if (!bp_busy && !mreq_valid && !areq_valid &&
+                                                 !mresp_valid && !pvalq_valid &&
+                                                 !pmeta_valid && !fvalq_valid) begin
+                                        if (sp == 0) fsm_state <= ST_ROOT_DRAIN;
+                                        else         fsm_state <= ST_FINISH;
+                                    end
+                                end
+                            endcase
+                        end
+
                         if (exact_prune_miss) begin
                             // The one-step admissible bound proves that this
                             // memo-miss child cannot improve the incumbent.
@@ -2786,123 +2912,14 @@ module grover_ckpt_policy_rolling #(
                                 eval_pending(memo_child_cost);
                             end
 
-                            if (SEED_MODE) begin
-                                // ---- bound-pipeline output ----
-                                // Evaluation packets: prune or forward to the memo
-                                // pipeline.  SCAN packets update the running seed;
-                                // the last SCAN packet is consumed by the phase
-                                // control below in the same cycle.
-                                if (bo_v && !bo_kind) begin
-                                    if (((sp != 0) && f_best_valid[sp] &&
-                                         (bo_total >= f_best_cost[sp])) ||
-                                        ((sp == 0) && root_best_valid &&
-                                         (bo_total > root_best_cost))) begin
-                                        // The child's exact value is at least
-                                        // bo_total, so it cannot strictly beat the
-                                        // incumbent.  The root keeps equal-cost
-                                        // children for the segment/tuple tie-break.
-                                        // A stale (not yet reduced) incumbent is
-                                        // only larger, which prunes less: still exact.
-                                        prune_ctr <= prune_ctr + 1'b1;
-                                    end else begin
-                                        route_bout_to_mreq(1'b0);
-                                    end
-                                end else if (bo_v && !scan_last) begin
-                                    // SCAN: keep the first child with the
-                                    // smallest bound as the seed.
-                                    if (!scan_valid || (bo_total < scan_total)) begin
-                                        scan_valid <= 1'b1;
-                                        scan_total <= bo_total;
-                                        scan_cnt   <= bo_cnt;
-                                        scan_ids   <= bo_ids;
-                                    end
+                            if (!SEED_MODE) begin
+                                if (can_issue_memo_action) begin
+                                    capture_current_action_to_actionq;
+                                end else if (!a_gen_valid && !actionq_valid && !mreq_valid && !areq_valid && !mresp_valid &&
+                                             !pvalq_valid && !pmeta_valid && !fvalq_valid) begin
+                                    if (sp == 0) fsm_state <= ST_ROOT_DRAIN;
+                                    else         fsm_state <= ST_FINISH;
                                 end
-
-                                // ---- frame phase control ----
-                                case (a_phase)
-                                    PH_SCAN: begin
-                                        if (a_gen_valid) begin
-                                            capture_current_action_to_actionq;
-                                            scan_issued <= 1'b1;
-                                            if (scan_issued)
-                                                scan_multi <= 1'b1;
-                                        end else if (scan_last) begin
-                                            // The last SCAN packet is at the output
-                                            // now; scan_fin_* already includes it.
-                                            if ((sp != 0) && ({1'b0,a_req_idx} == (H_FUTURE-1))) begin
-                                                // Every child of this frame has a
-                                                // one-request window, so the bounds
-                                                // are exact and the SCAN minimum is
-                                                // the frame value.  Skip SEED/CANON.
-                                                f_best_valid[sp] <= 1'b1;
-                                                f_best_cost[sp]  <= scan_fin_total;
-                                                fsm_state <= ST_FINISH;
-                                            end else if (!scan_multi) begin
-                                                // Single legal child: the SCAN packet
-                                                // is the seed and the whole frame.
-                                                // Forward it now instead of
-                                                // re-injecting it through the bound
-                                                // pipeline; no canonical walk follows.
-                                                // EXACT_PRUNE=6 also resolves a forced
-                                                // root decision without searching
-                                                // below it (see ROOT_FORCED).
-                                                route_bout_to_mreq(ROOT_FORCED && (sp == 0));
-                                                a_phase <= PH_CANON;
-                                                f_phase[sp] <= PH_CANON;
-                                                f_multi[sp] <= 1'b0;
-                                            end else begin
-                                                inject_seed_to_actionq(scan_fin_cnt, scan_fin_ids);
-                                                a_phase <= PH_SEED;
-                                                f_phase[sp] <= PH_SEED;
-                                                f_multi[sp] <= 1'b1;
-                                                // Seed injected at cycle I reaches
-                                                // the incumbent at I+8+D (future
-                                                // frame) or I+10+D (root, via the
-                                                // E0..E3 tie-break pipeline), where
-                                                // D=H-a_req_idx is the bound depth.
-                                                // A canonical action captured at C
-                                                // is routed at C+3+D, so C>=I+5 /
-                                                // I+7.  The walk is re-armed when
-                                                // seed_gap reaches 0 and captures
-                                                // on the next cycle.
-                                                seed_gap <= (sp == 0) ? 3'd5 : 3'd3;
-                                            end
-                                        end
-                                    end
-                                    PH_SEED: begin
-                                        // Overlap the seed's evaluation with the
-                                        // canonical walk's bound latency.  If the
-                                        // seed misses in the memo, its descent
-                                        // flushes every younger packet and the
-                                        // return path re-arms the walk.  Starting
-                                        // early is never wrong: a stale incumbent
-                                        // only prunes less.
-                                        if (seed_gap != 3'd0) begin
-                                            seed_gap <= seed_gap - 1'b1;
-                                        end else begin
-                                            if (f_multi[sp])
-                                                reset_generator_to_first;
-                                            a_phase <= PH_CANON;
-                                            f_phase[sp] <= PH_CANON;
-                                        end
-                                    end
-                                    default: begin
-                                        if (a_gen_valid) begin
-                                            capture_current_action_to_actionq;
-                                        end else if (!bp_busy && !mreq_valid && !areq_valid &&
-                                                     !mresp_valid && !pvalq_valid &&
-                                                     !pmeta_valid && !fvalq_valid) begin
-                                            if (sp == 0) fsm_state <= ST_ROOT_DRAIN;
-                                            else         fsm_state <= ST_FINISH;
-                                        end
-                                    end
-                                endcase
-                            end else if (can_issue_memo_action) begin
-                                capture_current_action_to_actionq;
-                            end else if (!a_gen_valid && !actionq_valid && !mreq_valid && !areq_valid && !mresp_valid &&
-                                         !pvalq_valid && !pmeta_valid && !fvalq_valid) begin
-                                if (sp == 0) fsm_state <= ST_ROOT_DRAIN;
-                                else         fsm_state <= ST_FINISH;
                             end
                         end
                     end
