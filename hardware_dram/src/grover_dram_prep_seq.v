@@ -33,7 +33,7 @@
 // failed, so a candidate for round r+1 cannot be legally drawn before round
 // r's measurement result is known -- prefetching across that boundary is
 // exactly the speculate-then-maybe-roll-back problem hardware_bram's
-// AUTO_SPEC_ENABLE speculative epoch machinery exists to solve, and that
+// SPECULATIVE_PLANNING_ENABLE speculative epoch machinery exists to solve, and that
 // machinery is nontrivial (grover_policy.v, ~2200 lines). Getting the
 // within-round DRAM store/restore mechanism itself correct and simple is
 // this draft's whole scope; cross-round speculation is future work.

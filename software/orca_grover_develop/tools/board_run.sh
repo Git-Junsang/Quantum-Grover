@@ -10,7 +10,7 @@
 #
 # 먼저 되어 있어야 하는 것
 #   - 앱을 플랫폼에 복사하고 200T 구현 폴더에서 release 로 빌드: tools/build_app.sh
-#     (③ 은 bbht_grover_upgrade 플랫폼(SRAM 128 KB)에도 들어가고, ② · ① 은 rvx/orca_sw.xml
+#     (③ 은 bbht_grover_final 플랫폼(SRAM 128 KB)에도 들어가고, ② · ① 은 rvx/orca_sw.xml
 #      플랫폼(SRAM 256 KB)이 필요합니다)
 #   - 원격 접속: /fpga-flash 스킬의 check 가 통과하는 상태
 # start 는 매번 비트스트림을 새로 굽고 앱을 올립니다. 측정을 다 마치면

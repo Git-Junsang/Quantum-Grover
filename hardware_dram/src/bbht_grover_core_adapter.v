@@ -2,7 +2,7 @@
 // bbht_grover_core_adapter.v -- hardware_dram 갈래, 통신 계층 <-> Main IP
 // 어댑터.
 //
-// hardware_bram/models/hardware_bram_K3H3_E4_M2/src/bbht_grover_core_adapter.v 와 목적이 같습니다: 통신
+// hardware_bram/configurations/final/src/bbht_grover_core_adapter.v 와 목적이 같습니다: 통신
 // 계층(bbht_rvx_wrapper.v)은 인수인계 §3.4 계약 이름 그대로인
 // bbht_grover_core 를 인스턴스하는데, 실제 Main IP 모듈 이름과 리셋
 // 이름이 다르므로 그 차이만 흡수합니다. 신호는 61개 전부 1:1 이고
@@ -10,8 +10,8 @@
 //
 // hardware_bram 판과의 차이는 실체뿐입니다: 이쪽은
 // 같은 폴더의 lpsoc_bbht_grover_main_ip.v (DRAM 전량저장 초안, 단일탐색
-// 범위)를 감쌉니다. CHECKPOINT_ENABLE/CKPT_K/CKPT_MANUAL_ENABLE/
-// AUTO_SPEC_ENABLE 파라미터는 이 갈래에 없는 개념이라 아예 선언하지
+// 범위)를 감쌉니다. CHECKPOINT_ENABLE/CHECKPOINT_CAPACITY/CHECKPOINT_MANUAL_ENABLE/
+// SPECULATIVE_PLANNING_ENABLE 파라미터는 이 갈래에 없는 개념이라 아예 선언하지
 // 않습니다 -- checkpoint_manual_enable/policy_*/checkpoint_auto_enable
 // 입력은 계약 호환을 위해 그대로 받아 Main IP 쪽에서 미사용으로 둡니다.
 //
@@ -102,9 +102,9 @@ module bbht_grover_core (
     output wire        load_error,
 
     // Counters
-    output wire [31:0] trial_count,
-    output wire [31:0] L_BBHT,
-    output wire [31:0] actual_grover_iterations,
+    output wire [31:0] shot_count,
+    output wire [31:0] requested_iterations,
+    output wire [31:0] executed_iterations,
     output wire [31:0] cycle_count,
 
     // Policy telemetry -- 이 갈래에는 정책 엔진이 없어 항상 0.
@@ -116,11 +116,11 @@ module bbht_grover_core (
     output wire [31:0] policy_max_latency,
 
     // Plan telemetry -- 이 갈래에는 speculative plan FIFO 가 없어 항상 0.
-    output wire [2:0]  plan_fifo_level,
-    output wire [2:0]  plan_fifo_highwater,
-    output wire [31:0] plan_fifo_empty_demand,
-    output wire [31:0] plan_fifo_hit_count,
-    output wire [31:0] plan_fifo_mismatch_count,
+    output wire [2:0]  plan_queue_level,
+    output wire [2:0]  plan_queue_highwater,
+    output wire [31:0] plan_queue_empty_demand,
+    output wire [31:0] plan_queue_hit_count,
+    output wire [31:0] plan_queue_miss_count,
     output wire [31:0] policy_cold_solve_count,
     output wire [31:0] policy_spec_solve_count
 );
@@ -201,9 +201,9 @@ module bbht_grover_core (
         .zero_weight_error          (zero_weight_error),
         .load_error                 (load_error),
 
-        .trial_count                (trial_count),
-        .L_BBHT                     (L_BBHT),
-        .actual_grover_iterations   (actual_grover_iterations),
+        .shot_count                (shot_count),
+        .requested_iterations                     (requested_iterations),
+        .executed_iterations   (executed_iterations),
         .cycle_count                (cycle_count),
 
         .policy_cycles_total        (policy_cycles_total),
@@ -213,11 +213,11 @@ module bbht_grover_core (
         .policy_memo_miss           (policy_memo_miss),
         .policy_max_latency         (policy_max_latency),
 
-        .plan_fifo_level            (plan_fifo_level),
-        .plan_fifo_highwater        (plan_fifo_highwater),
-        .plan_fifo_empty_demand     (plan_fifo_empty_demand),
-        .plan_fifo_hit_count        (plan_fifo_hit_count),
-        .plan_fifo_mismatch_count   (plan_fifo_mismatch_count),
+        .plan_queue_level            (plan_queue_level),
+        .plan_queue_highwater        (plan_queue_highwater),
+        .plan_queue_empty_demand     (plan_queue_empty_demand),
+        .plan_queue_hit_count        (plan_queue_hit_count),
+        .plan_queue_miss_count   (plan_queue_miss_count),
         .policy_cold_solve_count    (policy_cold_solve_count),
         .policy_spec_solve_count    (policy_spec_solve_count),
 

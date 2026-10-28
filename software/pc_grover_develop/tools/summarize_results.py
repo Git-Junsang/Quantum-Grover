@@ -2,7 +2,7 @@
 
 Two workload sets:
   --workload common500   (default) EQ 12345, 500 workloads. FPGA rows come from
-                         hardware_bram/models/hardware_bram_K3H3_E4_M2/vivado/vivado_bbht_grover_fpga/2026-09-08_k3h3_e4_m2_board_500run/*.csv (2026-09-08 board 500-run).
+                         hardware_bram/configurations/final/vivado/vivado_bbht_grover_fpga/2026-09-08_k3h3_e4_m2_board_500run/*.csv (2026-09-08 board 500-run).
   --workload predicate500  LT/GT/EQ/RANGE x 500 = 2,000 workloads. FPGA rows come
                          from the 2026-10-04 board result.csv files (--board).
 
@@ -41,7 +41,7 @@ COMMON500_FPGA = {
 BOARD_NAMES = {   # (branch, mode) in the 10/04 board result.csv
     ("bram", "ckpt"): "FPGA_K3H3_E4_M2",
     ("bram", "normal"): "FPGA_NORMAL_E4_M2",
-    ("nocheckpoint", "normal"): "FPGA_NOCKPT_NORMAL_E4",
+    ("no_checkpoint_baseline", "normal"): "FPGA_NOCKPT_NORMAL_E4",
     ("dram", "normal"): "FPGA_DRAM_ALLJ_SESSION",
 }
 

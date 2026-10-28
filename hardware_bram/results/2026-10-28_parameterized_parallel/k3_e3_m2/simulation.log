@@ -1,0 +1,2 @@
+SUMMARY parallel capacity=3 iteration_engines=3 square_engines=2 memory_rows=1536 square_rows=512 pass1_rows=2048 diffusion_rows=2048 errors=0
+/workspace/hardware_bram/testbench/tb_parallel_generalized.sv:181: $finish called at 29446000 (1ps)

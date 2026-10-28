@@ -1,84 +1,84 @@
-# 6단계 ablation — RTL 사이클 캠페인 (500 워크로드)
+# Six-Stage Ablation — RTL cycle campaign (500 workloads)
 
 ## 무엇인가
 
-같은 소스를 컴파일 타임 파라미터만 바꿔 다섯 벌 만들고, 각각을 500 워크로드에
-걸어 `CSR_CYCLE_COUNT` 를 잰 사이클 정확 RTL 시뮬레이션입니다. 우리 설계가
+같은 source를 compile-time parameter만 바꿔 다섯 벌 만들고, 각각을 500 workloads에
+걸어 `CSR_CYCLE_COUNT` 를 잰 cycle-accurate RTL simulation입니다. 우리 설계가
 단계마다 무엇을 얼마나 벌었는지를 분리해 보여 주는 것이 목적입니다.
 
-- 워크로드: 타겟 수 M = 1/4/16/64/256 × 시드 100 = **500**
-- 구성: 5벌. `k4h4_e1` 한 벌이 런타임 mode0/mode1 로 Normal 과 K4/H4 두 단계를
-  다 내주므로 **5구성 × 500 = 2,500회 시뮬레이션 → 6단계 3,000 관측**
-- 시뮬레이터: iverilog + vvp
+- workload: 1 · 4 · 16 · 64 · 256 solutions × 100 seeds = **500**
+- configuration: 5벌. `k4h4_e1` 한 벌이 runtime mode0/mode1로 Stage 1과 Stage 2 두 단계를
+  다 내주므로 **5 configurations × 500 = 2,500회 simulation → 여섯 단계 3,000 관측**
+- simulator: iverilog + vvp
 
-파라미터는 넷뿐입니다.
+parameter는 넷뿐입니다.
 
-| 파라미터 | 뜻 |
+| parameter | 뜻 |
 |---|---|
-| `CKPT_K` | 체크포인트 몇 벌을 들고 있는가 (4 → 3) |
-| `POLICY_H_FUTURE` | 정책이 몇 단계 앞을 보는가 (4 → 3) |
-| `INTRA_ENGINES` | 반복 한 번에 협력하는 P=32 연산기 수 (E1 → E4) |
-| `MEAS_M1_ENABLE` · `MEAS_M2_ENABLE` | 측정 경로 최적화 2단 |
+| `CKPT_K` | checkpoint 몇 벌을 들고 있는가 (4 → 3) |
+| `POLICY_H_FUTURE` | Policy Engine이 몇 shot 앞을 보는가 (4 → 3) |
+| `INTRA_ENGINES` | Grover iteration 한 번에 협력하는 32-lane PE의 수 (1 PE → 4 PEs) |
+| `MEAS_M1_ENABLE` · `MEAS_M2_ENABLE` | Measurement Unit 최적화 두 단계 (Dual-Row Build, Two-Level Select) |
 
 ## 확정 수치
 
-| 단계 | 총 사이클 | Normal 대비 | 직전 단계 대비 |
+| 단계 | 총 cycle | Stage 1 대비 | 직전 단계 대비 |
 |---|---:|---:|---:|
-| Normal-E1 | 42,308,335 | 1.0000x | — |
-| K4/H4-E1 | 18,349,320 | 2.3057x | -56.63% |
-| K4/H4-E4 | 11,246,755 | 3.7618x | -38.71% |
-| K3/H3-E4 | 10,385,795 | 4.0737x | -7.66% |
-| K3/H3-E4-M1 | 8,500,620 | 4.9771x | -18.15% |
-| **K3/H3-E4-M2** | **6,890,470** | **6.1401x** | **-18.94%** |
+| Stage 1 | 42,308,335 | 1.0000× | — |
+| Stage 2 | 18,349,320 | 2.3057× | -56.63% |
+| Stage 3 | 11,246,755 | 3.7618× | -38.71% |
+| Stage 4 | 10,385,795 | 4.0737× | -7.66% |
+| Stage 5 | 8,500,620 | 4.9771× | -18.15% |
+| **final configuration** | **6,890,470** | **6.1401×** | **-18.94%** |
 
-타겟이 희소할수록 이득이 큽니다.
+solution이 희소할수록 이득이 큽니다.
 
-| M | Normal | K3/H3-E4-M2 | 배수 |
+| number of solutions | Stage 1 | final configuration | speedup |
 |---:|---:|---:|---:|
-| 1 | 20,927,701 | 2,534,469 | 8.257x |
-| 4 | 10,612,791 | 1,636,791 | 6.484x |
-| 16 | 6,145,825 | 1,199,262 | 5.125x |
-| 64 | 3,049,765 | 858,971 | 3.551x |
-| 256 | 1,572,253 | 660,977 | 2.379x |
+| 1 | 20,927,701 | 2,534,469 | 8.257× |
+| 4 | 10,612,791 | 1,636,791 | 6.484× |
+| 16 | 6,145,825 | 1,199,262 | 5.125× |
+| 64 | 3,049,765 | 858,971 | 3.551× |
+| 256 | 1,572,253 | 660,977 | 2.379× |
 
-물리 Grover 반복은 Normal 31,424 회에서 K4/H4 이후 9,058~9,582 회로 떨어집니다.
-K3/H3 이 K4/H4 보다 반복을 조금 더 쓰면서도(9,058 → 9,582) 총 사이클에서
-이기는 것이 이 표의 핵심입니다 — 정책 지평을 줄이면 결정 비용이 줄어듭니다.
+executed iterations는 Stage 1의 31,424에서 Stage 2 이후 9,058~9,582로 떨어집니다.
+a Checkpoint-Capacity of 3, 3-shot Lookahead가 a Checkpoint-Capacity of 4, 4-shot Lookahead보다 executed iterations를 조금 더 쓰면서도(9,058 → 9,582) 총 cycle에서
+이기는 것이 이 표의 핵심입니다 — Lookahead-Shots를 줄이면 policy 결정 비용이 줄어듭니다.
 
-## 검증
+## verification
 
 `validation.txt` 기준입니다.
 
-- TB PASS 로그 2,500/2,500, 워크로드 완료 500/500, 단계 관측 3,000/3,000
-- 논리 동치 500/500, 불량 로그 0
-- 결정 앵커 (M=256, 시드 0): `18108 / 14898 / 12209 / 11100 / 9052 / 7045` 6단계 전부 일치
+- TB PASS log 2,500/2,500, workload 완료 500/500, 단계 관측 3,000/3,000
+- 논리 동치 500/500, 불량 log 0
+- 결정 anchor (256 solutions, seed 0): `18108 / 14898 / 12209 / 11100 / 9052 / 7045` 6단계 전부 일치
 
 ## 이 숫자를 쓸 때의 경계
 
-**`6.1401x` 는 RTL 사이클 축입니다.** 보드 실경과 시간이 아닙니다. 보드 쪽
-근거는 `hardware_bram/models/hardware_bram_K3H3_E4_M2/vivado/vivado_bbht_grover_fpga/2026-09-08_k3h3_e4_m2_board_500run/`
-이고, 같은 궤적을 따르지만 사이클 값 자체는 다릅니다 (그쪽 evidence.md 참조).
+**`6.1401x` 는 RTL cycle 축입니다.** board wall-clock time이 아닙니다. board 쪽
+근거는 `hardware_bram/configurations/final/vivado/vivado_bbht_grover_fpga/2026-09-08_k3h3_e4_m2_board_500run/`
+이고, 같은 BBHT trajectory를 따르지만 cycle 값 자체는 다릅니다 (그쪽 evidence.md 참조).
 
-**재현 소스는 태그 `board-k3h3-e4-m2` 에 있습니다.** ablation 용 공통소스와 top
-5벌은 그 태그의 `hardware_bram/src_ablation/`, TB 는 `testbench/tb_publication_plusargs.v`,
-러너는 `sim/run_publication.py` 입니다. 거기서 `make -C hardware_bram/sim anchor` 가
-타깃 256 · 시드 0 하나로 여섯 단계 사이클을 정확 대조하고(2026-09-13 확인, 여섯 단계
+**재현 source는 tag `board-verified-build-2026-09-07` 에 있습니다.** ablation study용 공통 source와 top
+5벌은 그 tag의 `hardware_bram/src_ablation/`, TB 는 `testbench/tb_publication_plusargs.v`,
+runner는 `sim/run_publication.py` 입니다. 거기서 `make -C hardware_bram/sim anchor` 가
+256 solutions · seed 0 하나로 여섯 단계 cycle을 정확 대조하고(2026-09-13 확인, 여섯 단계
 전부 일치), `make -C hardware_bram/sim publication` 이 2,500회를 전부 돌려
-`summary.csv` 의 총합과 맞댑니다. top 들이 standalone 틀이라 main 에서는 뺐습니다.
-이 폴더는 결과와 기대값만 보관합니다.
+`summary.csv` 의 총합과 맞댑니다. top들이 standalone 틀이라 main에서는 뺐습니다.
+이 directory는 결과와 expected result만 보관합니다.
 
-그 공통소스는 보드 정본에 `MEAS_M1_ENABLE` · `MEAS_M2_ENABLE` 스위치를 더한 것이고,
-2026-09-13 부터 main 의 `hardware_bram/src/` Main IP 가 바로 이것입니다(바이트 동일).
-두 스위치를 다 1(기본)로 두면 보드 정본과 동작이 같습니다 — 즉 6단계의 마지막 칸이
+그 공통 source는 Board-Verified Build에 `MEAS_M1_ENABLE` · `MEAS_M2_ENABLE` switch를 더한 것이고,
+2026-09-13부터 main의 `hardware_bram/src/` Accelerator Core가 바로 이것입니다(byte 동일).
+두 switch를 다 1(기본)로 두면 Board-Verified Build와 동작이 같습니다 — 즉 Six-Stage Ablation의 마지막 칸이
 `src/` 가 하는 일입니다.
 
-## 파일
+## file
 
-| 파일 | 내용 |
+| file | 내용 |
 |---|---|
-| `summary.csv` | 6단계 집계 (총합·평균·중앙값·표준편차·p95·배수) |
-| `by_target.csv` | 타겟 수별로 쪼갠 같은 표 |
-| `observations.csv` | 3,000 관측 원본 (워크로드 × 단계) |
-| `workload_wide.csv` | 500 워크로드를 가로로 편 표 |
-| `workloads.csv` · `seeds.csv` | 워크로드 목록과 시드 로스터 100개 |
-| `validation.txt` | 캠페인 무결성·앵커·freeze 점검 결과 |
+| `summary.csv` | 여섯 단계 집계 (총합·mean·median·standard deviation·p95·speedup) |
+| `by_target.csv` | number of solutions별로 쪼갠 같은 표 |
+| `observations.csv` | 3,000 관측 원본 (workload × 단계) |
+| `workload_wide.csv` | 500 workloads를 가로로 편 표 |
+| `workloads.csv` · `seeds.csv` | workload 목록과 seed roster 100개 |
+| `validation.txt` | campaign 무결성·anchor·freeze 점검 결과 |

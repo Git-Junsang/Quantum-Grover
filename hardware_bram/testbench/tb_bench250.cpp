@@ -213,7 +213,7 @@ int main(int argc, char **argv)
                 printf("%d,%d,%s,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
                        M, s, mode ? "k4" : "normal",
                        (rc == BBHT_OK) ? res.result_index : 0xFFFFFFFFu,
-                       res.trial_count, res.l_bbht, res.actual_iter,
+                       res.shot_count, res.requested_iterations, res.executed_iterations,
                        res.cycle_count, res.policy_cycles, res.policy_stall,
                        res.policy_actions, res.cold_solve, res.spec_solve,
                        res.plan_mismatch);

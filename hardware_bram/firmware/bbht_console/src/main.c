@@ -6,7 +6,7 @@
  * 값들을 UART 명령으로 받습니다. 비트스트림도 앱도 그대로 두고 호스트에서
  * 조건만 바꿔 가며 돌릴 수 있습니다.
  *
- * 프로토콜 정본은 documents/design_references/14_호스트_인터페이스와_UART_프로토콜.md 입니다. 요약하면,
+ * 프로토콜 정본은 documents/design_references/14_host_interface_and_uart_protocol.md 입니다. 요약하면,
  *   - 명령은 한 줄. 개행으로 끝납니다
  *   - 응답은 데이터 줄이 먼저 나오고, 마지막이 반드시 OK 또는 ERR 입니다
  *   - 호스트는 그 마지막 줄을 보고 다음 명령을 보냅니다
@@ -256,7 +256,7 @@ static int split_kv(char *tok, char **key, char **val)
  * 규칙은 bbht_dataset_gen.h 에 있습니다. PJK 벤치마크 하니스와 같은
  * xorshift32 이고, 술어를 주면(PRED=) 배경을 그 술어의 비정답 쪽으로 접어
  * 넣어 TARGETS 개가 정확히 정답이 되게 합니다. 같은 인자면
- * software/golden_develop/models/common/benchmark_dataset.py 와 바이트 단위로 같은 배열이
+ * software/reference_model_develop/models/common/benchmark_dataset.py 와 바이트 단위로 같은 배열이
  * 나오므로, 보드에서 얻은 결과를 SW 기준모델과 대조할 수 있습니다.
  *==================================================================*/
 /* PRED 만 주고 A/B/POS 를 안 주면 Predicate500 의 값을 씁니다
@@ -382,8 +382,8 @@ static void report_run(bbht_status_t rc)
         int val = (res.result_index < dataset_count)
                 ? bbht_unpack16(dataset, res.result_index) : 0;
         printf("HIT idx=%u val=%d trials=%u l=%u iters=%u cyc=%u us=%u wall_us=%u\n",
-               res.result_index, val, res.trial_count, res.l_bbht,
-               res.actual_iter, res.cycle_count,
+               res.result_index, val, res.shot_count, res.requested_iterations,
+               res.executed_iterations, res.cycle_count,
                bbht_cycles_to_us(res.cycle_count), last_wall_us);
         if (res.amp_overflow) printf("# amp_overflow (진단용, 결과는 유효)\n");
         printf("OK\n");
@@ -395,7 +395,7 @@ static void report_run(bbht_status_t rc)
                         : (res.status & BBHT_ST_BUDGET_LIMIT) ? "BUDGET"
                         : "NONE";
         printf("MISS reason=%s trials=%u l=%u iters=%u cyc=%u us=%u wall_us=%u\n",
-               why, res.trial_count, res.l_bbht, res.actual_iter, res.cycle_count,
+               why, res.shot_count, res.requested_iterations, res.executed_iterations, res.cycle_count,
                bbht_cycles_to_us(res.cycle_count), last_wall_us);
         printf("OK\n");
         return;
@@ -631,7 +631,7 @@ int main(void)
             printf("STAT status=0x%08x valid=%u idx=%u\n",
                    res.status, res.result_valid, res.result_index);
             printf("STAT trials=%u l_bbht=%u actual_iter=%u cyc=%u us=%u\n",
-                   res.trial_count, res.l_bbht, res.actual_iter,
+                   res.shot_count, res.requested_iterations, res.executed_iterations,
                    res.cycle_count, bbht_cycles_to_us(res.cycle_count));
             printf("STAT found=%u consec_fail=%u max_fifo=%u fifo_stall=%u\n",
                    res.found_count, res.consec_fail,

@@ -8,7 +8,7 @@ RVX 플랫폼 전체를 Questa 로 돌리면 bbht_console 이 스크립트 모�
 
   make -C hardware_bram/sim console-seq          # 기준 CSV (30초쯤)
   python3 hardware_bram/sim/soc_console_check.py \\
-      $RVX_MINI_HOME/platform/bbht_grover_upgrade/sim_rtl/qtsim.log \\
+      $RVX_MINI_HOME/platform/bbht_grover_final/sim_rtl/qtsim.log \\
       --ref /tmp/sjs_console_seq/console_seq.csv \\
       --transcript transcript.txt --out crosscheck.txt
 
@@ -56,7 +56,7 @@ ROOT = os.path.normpath(os.path.join(HW, os.pardir))          # 저장소 루트
 sys.path.insert(0, os.path.join(ROOT, "software", "host"))
 import bbht_cli                                                 # noqa: E402
 
-M2 = os.path.join(HW, "models", "hardware_bram_K3H3_E4_M2")     # 보드 정본 구성 모델
+M2 = os.path.join(HW, "configurations", "final")     # 보드 정본 구성 모델
 MAIN_C = os.path.join(HW, "firmware", "bbht_console", "src", "main.c")
 DATASETS = os.path.join(ROOT, "software", "testbench_data", "2026-09-08_common500",
                         "datasets")

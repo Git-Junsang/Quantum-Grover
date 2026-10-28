@@ -1,0 +1,5 @@
+k,h,e,build_rows,prune,id,rtl_actions_per_decision,rtl_cycles_per_decision,rtl_decisions,rtl_exact_prune,rtl_max_latency,rtl_policy_actions,rtl_policy_cycles,cycles,iter,policy_actions,policy_cycles,policy_stall,validated_workloads,nominal_time_us
+3,3,4,4,6,k3h3_e4_b4_p6,4.175,84.225,40,6,425,167,3369,30425,79,187,3618,531,2,304.25
+3,8,4,4,6,k3h8_e4_b4_p6,15.65,414.0,40,6,8808,626,16560,42023,79,715,17533,12119,2,420.23
+4,3,4,4,6,k4h3_e4_b4_p6,6.1,168.7,40,6,3323,244,6748,33497,79,280,7139,3601,2,334.97
+4,8,4,4,6,k4h8_e4_b4_p6,24.85,467.775,40,6,8808,994,18711,43370,79,1085,19802,13464,2,433.7

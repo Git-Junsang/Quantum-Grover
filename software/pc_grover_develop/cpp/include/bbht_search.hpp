@@ -83,12 +83,12 @@ public:
             int index = core_.sample(*st, *cdf, ms, threshold);
             bool success = index >= 0 && mask_[index];
             episode_l += requested;
-            r.L_BBHT += requested;
+            r.requested_iterations += requested;
             r.physical_iterations += physical;
-            r.trial_count += 1;
+            r.shot_count += 1;
             if (trace) r.attempts.push_back({requested, source, physical, threshold, index, success});
             if (success) { r.success = true; r.termination = Termination::SUCCESS; r.result_index = index; break; }
-            if (r.trial_count >= shot_cap) { r.termination = Termination::SHOT_LIMIT; break; }
+            if (r.shot_count >= shot_cap) { r.termination = Termination::SHOT_LIMIT; break; }
             if (episode_l + 1 >= LOGICAL_BUDGET) { r.termination = Termination::BUDGET_LIMIT; break; }
             round = std::min<int>(round + 1, int(M_BOUNDS.size()) - 1);
         }

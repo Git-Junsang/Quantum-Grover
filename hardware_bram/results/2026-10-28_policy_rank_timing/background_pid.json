@@ -1,0 +1,11 @@
+{
+  "pid": 1264341,
+  "submitted_utc": "2026-10-28T12:38:08.231330+00:00",
+  "worker": "/workspace/hardware_bram/results/2026-10-28_policy_rank_timing/pipeline_worker.py",
+  "args": [
+    "--resume"
+  ],
+  "recovery": "Console observer field names fixed and preflight passed. Reuse only source-matched completed regression and Common500.",
+  "next_stages": "full SoC -> max three implementation strategies -> board on timing pass",
+  "status_after_submission": "not polled"
+}

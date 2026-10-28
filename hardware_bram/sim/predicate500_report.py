@@ -7,7 +7,7 @@ predicate500_report.py -- Predicate500 RTL 벤치 CSV 를 SW 기준모델 기댓
     predicate,m,seed_idx,mode,rc,result_index,result_value,trial,l_bbht,iter,cycles,status
 입니다.
 
-기댓값은 software/golden_data/2026-09-25_predicate500/
+기댓값은 software/reference_model_data/2026-09-25_predicate500/
 predicate500_expected.csv 입니다 (run_predicate500_golden.py 가 만듦).
 
 실행 하나마다 여섯 축을 봅니다.
@@ -20,8 +20,8 @@ predicate500_expected.csv 입니다 (run_predicate500_golden.py 가 만듦).
                     bram normal -> actual_iter_normal
                     bram ckpt   -> actual_iter_k3h3
                     dram normal -> actual_iter_dram_session
-                    nocheckpoint normal -> actual_iter_normal
-                      (hardware_bram_nocheckpoint. 체크포인트가 없으니 NORMAL 과
+                    no_checkpoint_baseline normal -> actual_iter_normal
+                      (no_checkpoint_baseline. 체크포인트가 없으니 NORMAL 과
                       같은 물리 반복입니다)
                   dram 은 적재한 데이터셋 하나에서 시드를 차례로 돌며 DRAM 표를
                   이어 씁니다. 그래서 탐색마다 표를 비운 DRAM_ALL_J 가 아니라
@@ -30,7 +30,7 @@ predicate500_expected.csv 입니다 (run_predicate500_golden.py 가 만듦).
 사이클은 기준모델에 없으므로 맞대지 않고 모드별 합만 보고합니다.
 
 사용법:
-    python3 predicate500_report.py [--branch bram|bram_k4h4|dram|nocheckpoint] CSV [CSV ...]
+    python3 predicate500_report.py [--branch bram|bram_k4h4|dram|no_checkpoint_baseline] CSV [CSV ...]
 종료 코드는 불일치가 하나라도 있으면 1 입니다.
 """
 import argparse
@@ -41,7 +41,7 @@ from collections import defaultdict
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.normpath(os.path.join(HERE, os.pardir, os.pardir))
-EXPECTED = os.path.join(REPO, "software", "golden_data", "2026-09-25_predicate500",
+EXPECTED = os.path.join(REPO, "software", "reference_model_data", "2026-09-25_predicate500",
                         "predicate500_expected.csv")
 
 ORDER = ("LT", "GT", "EQ", "RANGE")
@@ -49,8 +49,8 @@ ITER_COLUMN = {
     ("bram", "normal"): "actual_iter_normal",
     ("bram", "ckpt"):   "actual_iter_k3h3",
     ("dram", "normal"): "actual_iter_dram_session",
-    ("nocheckpoint", "normal"): "actual_iter_normal",
-    # K4/H4 정책 모델(K4H4_E1 · K4H4_E4). sim/Makefile 이 MODEL 로 고릅니다(2026-10-08)
+    ("no_checkpoint_baseline", "normal"): "actual_iter_normal",
+    # K4/H4 정책 모델(capacity4_lookahead4_pes1_singlerow_linear · capacity4_lookahead4_pes4_singlerow_linear). sim/Makefile 이 MODEL 로 고릅니다(2026-10-08)
     ("bram_k4h4", "normal"): "actual_iter_normal",
     ("bram_k4h4", "ckpt"):   "actual_iter_k4h4",
 }
@@ -68,7 +68,7 @@ def pred_ok(p, v, a, b):
 
 def main():
     ap = argparse.ArgumentParser(description="Predicate500 RTL 대 SW 기댓값")
-    ap.add_argument("--branch", choices=("bram", "bram_k4h4", "dram", "nocheckpoint"), default="bram")
+    ap.add_argument("--branch", choices=("bram", "bram_k4h4", "dram", "no_checkpoint_baseline"), default="bram")
     ap.add_argument("--expected", default=EXPECTED)
     ap.add_argument("--partial", action="store_true",
                     help="일부 워크로드만 돌린 시험 실행. 빠진 실행을 실패로 보지 않습니다")

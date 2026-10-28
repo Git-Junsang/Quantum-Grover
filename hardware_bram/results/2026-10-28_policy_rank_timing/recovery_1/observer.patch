@@ -1,0 +1,11 @@
+--- tb_console_seq.cpp
++++ tb_console_seq_driver_fields.cpp
+@@ -209,7 +209,7 @@
+         bbht_read_result(&res);           // 콘솔 STAT 과 같은 읽기
+         printf("run%d,%u,%d,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,\n",
+                k + 1, bursts[k], (int)rc,
+-               res.result_index, res.trial_count, res.l_bbht, res.actual_iter,
++               res.result_index, res.shot_count, res.requested_iterations, res.executed_iterations,
+                res.cycle_count, res.policy_cycles, res.policy_stall,
+                res.policy_actions, res.policy_memo_hit, res.policy_memo_miss,
+                res.cold_solve, res.spec_solve, res.plan_mismatch,

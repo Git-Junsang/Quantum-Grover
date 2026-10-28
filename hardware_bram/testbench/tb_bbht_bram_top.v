@@ -8,7 +8,7 @@
 //   APB 마스터       이 테스트벤치의 태스크. RVX 위 펌웨어가 CSR 을 읽고
 //                    쓰는 순서를 그대로 흉내 냅니다. 호스트 PC 의 UART
 //                    명령(SET / LOAD / RUN / ENUM)은 펌웨어 안에서 결국 이
-//                    순서가 됩니다 (documents/design_references/17_보드_운용.md)
+//                    순서가 됩니다 (documents/design_references/17_board_operation.md)
 //   ahb_sram_model   RVX System SRAM 흉내
 //
 // hardware_dram/testbench/tb_bbht_dram_top.v 와 짝입니다. 호스트 쪽 자극과
@@ -21,8 +21,8 @@
 // 탐색 결과는 두 겹으로 확인합니다.
 //   1. 호스트 쪽 판정   RESULT_INDEX 나 FIFO_DATA 가 가리키는 값이 이 TB 가
 //                       SRAM 에 넣은 배열에서 정말 술어를 만족하는가
-//   2. 모드 짝 비교     같은 설정·같은 시드를 NORMAL_SINGLE 과 CKPT_SINGLE
-//                       로 한 번씩 돌려 궤적(valid/idx/trials/L_BBHT/상태
+//   2. 모드 짝 비교     같은 설정·같은 시드를 RESTART_SINGLE 과 CHECKPOINT_SINGLE
+//                       로 한 번씩 돌려 궤적(valid/idx/trials/requested_iterations/상태
 //                       비트)이 같은지 봅니다. 체크포인트는 psi 를 어떻게
 //                       계산하느냐만 바꾸지 탐색 궤적을 바꾸지 않습니다
 //                       (sim/Makefile 의 bench250 주석과 같은 불변식).
@@ -49,7 +49,7 @@
 //   H11  C5 / C5b / C7 -- RANGE, 재실행, 정상 실행
 //   H12  적재 중 COMMAND 는 버려짐 (start 수락 조건의 !load_busy 항)
 //   H13  정답이 없는 술어 -- shot_cap 에서 멈추고 직전 result_valid 를 지움
-//   H14  열거 (NORMAL_ENUM / CKPT_ENUM) -- FIFO read-to-pop, FIFO_COUNT
+//   H14  열거 (RESTART_ENUMERATION / CHECKPOINT_ENUMERATION) -- FIFO read-to-pop, FIFO_COUNT
 //        감소, 인덱스 0 도 정상값, 결과가 남아 있으면 COMMAND 가 버려짐
 //        (start 수락 조건의 res_empty 항)
 //   H15  체크포인트 경로가 CSR burst 비트로 실제로 켜지는가
@@ -377,9 +377,9 @@ module tb_bbht_bram_top;
     begin
         apb_read(`CSR_IDX_STATUS,              r_status);
         apb_read(`CSR_IDX_RESULT_INDEX,        r_idx);
-        apb_read(`CSR_IDX_TRIAL_COUNT,         r_trials);
-        apb_read(`CSR_IDX_L_BBHT,              r_lbbht);
-        apb_read(`CSR_IDX_ACTUAL_ITER,         r_iters);
+        apb_read(`CSR_IDX_SHOT_COUNT,         r_trials);
+        apb_read(`CSR_IDX_REQUESTED_ITERATIONS,              r_lbbht);
+        apb_read(`CSR_IDX_EXECUTED_ITERATIONS,         r_iters);
         apb_read(`CSR_IDX_CYCLE_COUNT,         r_cyc);
         apb_read(`CSR_IDX_POLICY_CYCLES_TOTAL, r_pol);
     end
@@ -488,7 +488,7 @@ module tb_bbht_bram_top;
     end
     endtask
 
-    // NORMAL_SINGLE 로 한 번, CKPT_SINGLE 로 한 번. 궤적이 같아야 합니다.
+    // RESTART_SINGLE 로 한 번, CHECKPOINT_SINGLE 로 한 번. 궤적이 같아야 합니다.
     // 반복 수와 사이클은 달라야 정상이고(그게 체크포인트의 이득), 기록만
     // 합니다. CKPT 판의 결과가 r_* 에 남습니다.
     reg [31:0] n_status, n_idx, n_trials, n_lbbht, n_iters, n_cyc;
@@ -537,19 +537,19 @@ module tb_bbht_bram_top;
         wait_done(st, to);
         if (to != 0) begin
             $display("  FAIL %0s: 열거가 끝나지 않았습니다 (STATUS=0x%08x)",
-                     ckpt ? "CKPT_ENUM" : "NORMAL_ENUM", st);
+                     ckpt ? "CHECKPOINT_ENUMERATION" : "RESTART_ENUMERATION", st);
             errors = errors + 1;
         end
         expect_true("enum_done", st[`BBHT_ST_ENUM_DONE]);
         expect_true("config_error 없음", !st[`BBHT_ST_CONFIG_ERROR]);
 
         apb_read(`CSR_IDX_FOUND_COUNT, e_found);
-        apb_read(`CSR_IDX_TRIAL_COUNT, e_trials);
+        apb_read(`CSR_IDX_SHOT_COUNT, e_trials);
         apb_read(`CSR_IDX_FIFO_COUNT,  cnt);
         check("FOUND_COUNT", e_found, 32'd4);
         check("FIFO_COUNT = FOUND_COUNT", cnt, e_found);
         $display("CASE %0s LT4 found=%0d trials=%0d",
-                 ckpt ? "CKPT_ENUM" : "NORMAL_ENUM", e_found, e_trials);
+                 ckpt ? "CHECKPOINT_ENUMERATION" : "RESTART_ENUMERATION", e_found, e_trials);
 
         // 결과가 FIFO 에 남아 있는 동안 COMMAND 는 버려져야 합니다
         // (res_empty 항). COMMAND 쓰기가 done_sticky 를 지우므로, 버려졌다면
@@ -788,12 +788,12 @@ module tb_bbht_bram_top;
 
         //-------------------------------------------------------------
         $display("[H14] 열거 -- LT 4 는 {0,1,2,3}");
-        $display("  -- NORMAL_ENUM");
+        $display("  -- RESTART_ENUMERATION");
         run_enum(1'b0, 32'h1357_2468, 32'h8642_9753);
         en_found = e_found; en_trials = e_trials;
-        $display("  -- CKPT_ENUM");
+        $display("  -- CHECKPOINT_ENUMERATION");
         run_enum(1'b1, 32'h1357_2468, 32'h8642_9753);
-        expect_true("NORMAL_ENUM 과 CKPT_ENUM 의 발견 수·시도 수가 같음",
+        expect_true("RESTART_ENUMERATION 과 CHECKPOINT_ENUMERATION 의 발견 수·시도 수가 같음",
                     e_found == en_found && e_trials == en_trials);
 
         //-------------------------------------------------------------
@@ -801,16 +801,16 @@ module tb_bbht_bram_top;
         // NORMAL 판 하나, CKPT 판 하나를 연달아 돌려 정책 엔진 사이클을
         // 봅니다. CKPT 판에서 0 이면 burst 비트가 Main IP 까지 안 간 것이고,
         // NORMAL 판에서 0 이 아니면 burst=0 인데도 체크포인트가 켜진 것입니다.
-        // 이 카운터는 수락된 start 마다 비워지므로(바로 앞이 CKPT_ENUM 인데도
+        // 이 카운터는 수락된 start 마다 비워지므로(바로 앞이 CHECKPOINT_ENUMERATION 인데도
         // NORMAL 판이 0 으로 읽힘) 두 값을 따로 판정할 수 있습니다.
         run_case("H15 NORMAL", 1'b0, 1'b1, 0, `BBHT_PRED_LT, 16'sd256, 16'sd0,
                  32'h1234_5678, 32'h9ABC_DEF0, 16'd100, 1, 0, 1'b0);
-        check("NORMAL_SINGLE 에서 정책 엔진 안 돎 (POLICY_CYCLES_TOTAL)", r_pol, 32'd0);
+        check("RESTART_SINGLE 에서 정책 엔진 안 돎 (POLICY_CYCLES_TOTAL)", r_pol, 32'd0);
         d = r_pol;
         run_case("H15 CKPT", 1'b1, 1'b1, 0, `BBHT_PRED_LT, 16'sd256, 16'sd0,
                  32'h1234_5678, 32'h9ABC_DEF0, 16'd100, 1, 0, 1'b0);
-        $display("  CKPT_SINGLE POLICY_CYCLES_TOTAL = %0d", r_pol);
-        expect_true("CKPT_SINGLE 에서 정책 엔진이 돌았음 (POLICY_CYCLES_TOTAL > 0)",
+        $display("  CHECKPOINT_SINGLE POLICY_CYCLES_TOTAL = %0d", r_pol);
+        expect_true("CHECKPOINT_SINGLE 에서 정책 엔진이 돌았음 (POLICY_CYCLES_TOTAL > 0)",
                     r_pol > d);
 
         $display("  -- 모드 짝 사이클 합계: NORMAL %0d / CKPT %0d (기록만, 판정 아님)",

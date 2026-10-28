@@ -4,7 +4,7 @@
 // it.
 //
 // Design intent (see CLAUDE.md section 3, hardware_dram branch)
-//   hardware_bram keeps only CKPT_K=3/4 materialized amplitude states and
+//   hardware_bram keeps only CHECKPOINT_CAPACITY=3/4 materialized amplitude states and
 //   replays grover_checkpoint.v's planner/executor to reach an arbitrary j.
 //   hardware_dram instead snapshots the FULL 512-row/736-bit amplitude table
 //   to DRAM after every completed Grover iteration, so any j in [1, GP_M_MAX]

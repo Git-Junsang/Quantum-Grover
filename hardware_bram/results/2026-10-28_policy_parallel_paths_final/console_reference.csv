@@ -1,0 +1,6 @@
+step,burst,rc,idx,trials,l_bbht,actual_iter,cyc,policy_cyc,stall,actions,memo_hit,memo_miss,cold_solve,spec_solve,mismatch,max_latency,empty,enum_idx
+run1,0,0,8685,21,119,119,39525,0,0,0,0,0,0,0,0,0,0,
+run2,1,0,8685,21,119,38,15942,779,415,66,1,21,1,21,0,382,1,
+run3,1,0,8685,21,119,38,15657,646,130,91,3,37,1,21,0,98,2,
+enum,1,0,,,,,260326,,,,,,,,,,,8685 2852 507 4724
+# DONE found=4

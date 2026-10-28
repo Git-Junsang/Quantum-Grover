@@ -49,42 +49,42 @@ extern void         bbht_host_wr(unsigned int off, unsigned int val);
 #endif
 
 /* 레지스터 오프셋 */
-#define BBHT_COMMAND                    0x000u   /* W1P  탐색 시작 */
-#define BBHT_CONTROL                    0x004u   /* RW   동작 모드 */
-#define BBHT_J_TARGET                   0x008u   /* RW   manual requested j (0~127) */
-#define BBHT_THRESHOLD_A                0x00Cu   /* RW   임계값 A */
-#define BBHT_THRESHOLD_B                0x010u   /* RW   임계값 B */
-#define BBHT_DATA_COUNT                 0x014u   /* RW   유효 데이터 개수 1~16384 */
-#define BBHT_SHOT_CAP                   0x018u   /* RW   BBHT shot 상한 */
-#define BBHT_SEED_J                     0x01Cu   /* RW   requested-j PRNG 시드 */
-#define BBHT_SEED_MEAS                  0x020u   /* RW   측정 PRNG 시드 */
-#define BBHT_STATUS                     0x024u   /* RO   실행 상태 */
-#define BBHT_RESULT_INDEX               0x028u   /* RO   Single 모드 결과 인덱스 */
-#define BBHT_TRIAL_COUNT                0x02Cu   /* RO   run 전체의 logical trial 수 */
-#define BBHT_L_BBHT                     0x030u   /* RO   Sum of requested j - 알고리즘 지표 */
-#define BBHT_ACTUAL_ITER                0x034u   /* RO   실제로 돌린 물리 Grover 반복 수 - checkpoint 가 줄이는 대상 */
-#define BBHT_CYCLE_COUNT                0x038u   /* RO   run 소비 사이클 */
-#define BBHT_ENUM_CFG                   0x03Cu   /* RW   열거 모드 설정 */
+#define BBHT_COMMAND                    0x000u   /* W1P  search 시작 */
+#define BBHT_CONTROL                    0x004u   /* RW   동작 mode */
+#define BBHT_J_TARGET                   0x008u   /* RW   Manual mode의 requested iterations (0~127) */
+#define BBHT_THRESHOLD_A                0x00Cu   /* RW   threshold A */
+#define BBHT_THRESHOLD_B                0x010u   /* RW   threshold B */
+#define BBHT_DATA_COUNT                 0x014u   /* RW   유효 data 개수 1~16384 */
+#define BBHT_SHOT_CAP                   0x018u   /* RW   BBHT shot cap */
+#define BBHT_SEED_J                     0x01Cu   /* RW   Iteration-Count LFSR seed */
+#define BBHT_SEED_MEAS                  0x020u   /* RW   Measurement PRNG seed */
+#define BBHT_STATUS                     0x024u   /* RO   실행 state */
+#define BBHT_RESULT_INDEX               0x028u   /* RO   Single mode 결과 index */
+#define BBHT_SHOT_COUNT                 0x02Cu   /* RO   run 전체의 shot 수 */
+#define BBHT_REQUESTED_ITERATIONS       0x030u   /* RO   requested iterations의 sum - algorithm 지표 */
+#define BBHT_EXECUTED_ITERATIONS        0x034u   /* RO   executed iterations - checkpoint가 줄이는 대상 */
+#define BBHT_CYCLE_COUNT                0x038u   /* RO   run 소비 cycle */
+#define BBHT_ENUM_CFG                   0x03Cu   /* RW   enumeration mode 설정 */
 #define BBHT_FIFO_DATA                  0x040u   /* RPOP Result FIFO head */
 #define BBHT_FIFO_COUNT                 0x044u   /* RO   현재 FIFO occupancy */
-#define BBHT_FOUND_COUNT                0x048u   /* RO   unique target 누적 */
+#define BBHT_FOUND_COUNT                0x048u   /* RO   unique solution 누적 */
 #define BBHT_CONSEC_FAIL                0x04Cu   /* RO   complete BBHT failure 연속 횟수 */
 #define BBHT_MAX_FIFO_OCC               0x050u   /* RO   run 중 최대 occupancy */
-#define BBHT_FIFO_STALL                 0x054u   /* RO   FIFO full 로 멈춘 사이클 */
-#define BBHT_DATA_ADDR                  0x058u   /* RW   System SRAM 원본 주소 */
-#define BBHT_DMA_COMMAND                0x05Cu   /* W1P  DMA 적재 시작 */
-#define BBHT_DMA_STATUS                 0x060u   /* RO   DMA 상태 */
-#define BBHT_POLICY_CYCLES_TOTAL        0x064u   /* RO   policy 총 사이클 */
+#define BBHT_FIFO_STALL                 0x054u   /* RO   FIFO full 로 멈춘 cycle */
+#define BBHT_DATA_ADDR                  0x058u   /* RW   System SRAM 원본 address */
+#define BBHT_DMA_COMMAND                0x05Cu   /* W1P  DMA load 시작 */
+#define BBHT_DMA_STATUS                 0x060u   /* RO   DMA state */
+#define BBHT_POLICY_CYCLES_TOTAL        0x064u   /* RO   policy 총 cycle */
 #define BBHT_POLICY_STALL_CYCLES        0x068u   /* RO   policy stall */
 #define BBHT_POLICY_ACTIONS_EVAL        0x06Cu   /* RO   평가한 action 수 */
 #define BBHT_POLICY_MEMO_HIT            0x070u   /* RO   memo hit */
 #define BBHT_POLICY_MEMO_MISS           0x074u   /* RO   memo miss */
-#define BBHT_POLICY_MAX_LATENCY         0x078u   /* RO   policy 최대 지연 */
-#define BBHT_PLAN_FIFO_LEVEL            0x07Cu   /* RO   현재 plan FIFO 레벨 */
-#define BBHT_PLAN_FIFO_HIGHWATER        0x080u   /* RO   plan FIFO 최고 수위 */
-#define BBHT_PLAN_FIFO_EMPTY_DEMAND     0x084u   /* RO   demand 시 empty 횟수 */
-#define BBHT_PLAN_FIFO_HIT_COUNT        0x088u   /* RO   speculative plan hit */
-#define BBHT_PLAN_FIFO_MISMATCH_COUNT   0x08Cu   /* RO   정상 기대값 0 */
+#define BBHT_POLICY_MAX_LATENCY         0x078u   /* RO   policy 최대 latency */
+#define BBHT_PLAN_QUEUE_LEVEL           0x07Cu   /* RO   현재 Plan Queue 레벨 */
+#define BBHT_PLAN_QUEUE_HIGHWATER       0x080u   /* RO   Plan Queue 최고 수위 */
+#define BBHT_PLAN_QUEUE_EMPTY_DEMAND    0x084u   /* RO   demand 시 empty 횟수 */
+#define BBHT_PLAN_QUEUE_HIT_COUNT       0x088u   /* RO   speculative plan hit */
+#define BBHT_PLAN_QUEUE_MISS_COUNT      0x08Cu   /* RO   정상 기대값 0 */
 #define BBHT_POLICY_COLD_SOLVE_COUNT    0x090u   /* RO   cold solve 횟수 */
 #define BBHT_POLICY_SPEC_SOLVE_COUNT    0x094u   /* RO   speculative solve */
 
@@ -95,10 +95,10 @@ extern void         bbht_host_wr(unsigned int off, unsigned int val);
 #define BBHT_ST_RESULT_VALID         (1u << 3 )  /* Single result 유효 */
 #define BBHT_ST_CONFIG_ERROR         (1u << 4 )  /* 설정 오류 sticky */
 #define BBHT_ST_SHOT_LIMIT           (1u << 5 )  /* shot cap 도달 sticky */
-#define BBHT_ST_BUDGET_LIMIT         (1u << 6 )  /* BBHT logical budget 도달 sticky */
-#define BBHT_ST_AMP_OVERFLOW         (1u << 7 )  /* 진폭 포화 sticky. 진단용이며 종료 사유가 아님 */
-#define BBHT_ST_ZERO_WEIGHT_ERROR    (1u << 8 )  /* Born total-weight 오류 sticky */
-#define BBHT_ST_LOAD_ERROR           (1u << 9 )  /* loader 검증 오류 sticky */
+#define BBHT_ST_BUDGET_LIMIT         (1u << 6 )  /* BBHT budget 도달 sticky */
+#define BBHT_ST_AMP_OVERFLOW         (1u << 7 )  /* amplitude saturation sticky. 진단용이며 종료 사유가 아님 */
+#define BBHT_ST_ZERO_WEIGHT_ERROR    (1u << 8 )  /* Born-rule sampling total weight 오류 sticky */
+#define BBHT_ST_LOAD_ERROR           (1u << 9 )  /* DMA Engine 검사 오류 sticky */
 #define BBHT_ST_ENUM_DONE            (1u << 10)  /* Enumeration 종료 sticky */
 #define BBHT_ST_FIFO_EMPTY           (1u << 11)  /* Result FIFO 비어 있음 */
 
@@ -112,10 +112,10 @@ extern void         bbht_host_wr(unsigned int off, unsigned int val);
 /* DMA_STATUS 비트 */
 #define BBHT_DMA_DMA_BUSY            (1u << 0 )  /* DMA 진행 중 */
 #define BBHT_DMA_DMA_ERROR           (1u << 1 )  /* 아래 오류들의 OR */
-#define BBHT_DMA_ALIGN_ERROR         (1u << 2 )  /* DATA_ADDR 4바이트 정렬 위반 */
+#define BBHT_DMA_ALIGN_ERROR         (1u << 2 )  /* DATA_ADDR 4-byte 정렬 위반 */
 #define BBHT_DMA_COUNT_ERROR         (1u << 3 )  /* DATA_COUNT 범위 위반 */
 #define BBHT_DMA_RESP_ERROR          (1u << 4 )  /* AHB 응답 오류 */
-#define BBHT_DMA_BUSY_ERROR          (1u << 5 )  /* Main IP busy 라서 DMA 거절 */
+#define BBHT_DMA_BUSY_ERROR          (1u << 5 )  /* Accelerator Core busy 라서 DMA 거절 */
 #define BBHT_DMA_RANGE_ERROR         (1u << 6 )  /* System SRAM 범위 밖 */
 #define BBHT_DMA_DMA_DONE_STICKY     (1u << 7 )  /* DMA 완료 sticky */
 
@@ -153,10 +153,10 @@ extern void         bbht_host_wr(unsigned int off, unsigned int val);
      (((unsigned int)(fail_limit) & 15u) << 4))
 
 /* 권장 운용 모드 (auto_shot, burst_enable, enum_enable) */
-/*   MANUAL_SINGLE  auto=0 burst=0 enum=0  J_TARGET 을 펌웨어가 지정 */
-/*   NORMAL_SINGLE  auto=1 burst=0 enum=0  표준 BBHT */
-/*   CKPT_SINGLE    auto=1 burst=1 enum=0  checkpoint 모드 (K·H·E·M 은 RTL 빌드에 컴파일됨. 현 정본은 K3/H3-E4-M2) */
-/*   NORMAL_ENUM    auto=1 burst=0 enum=1  표준 BBHT 열거 */
-/*   CKPT_ENUM      auto=1 burst=1 enum=1  checkpoint 열거 (K·H·E·M 은 RTL 빌드에 컴파일됨. 현 정본은 K3/H3-E4-M2) */
+/*   MANUAL_SINGLE  auto=0 burst=0 enum=0  J_TARGET을 firmware가 지정 */
+/*   RESTART_SINGLE auto=1 burst=0 enum=0  Restart mode. 표준 BBHT */
+/*   CHECKPOINT_SINGLE auto=1 burst=1 enum=0  Checkpoint mode (Checkpoint-Capacity · Lookahead-Shots · number of PEs · Measurement Microarchitecture는 RTL build에 컴파일됨. 현 Board-Verified Build는 final configuration) */
+/*   RESTART_ENUMERATION auto=1 burst=0 enum=1  Restart mode enumeration */
+/*   CHECKPOINT_ENUMERATION auto=1 burst=1 enum=1  Checkpoint mode enumeration (Checkpoint-Capacity · Lookahead-Shots · number of PEs · Measurement Microarchitecture는 RTL build에 컴파일됨. 현 Board-Verified Build는 final configuration) */
 
 #endif /* BBHT_GROVER_REGS_H */

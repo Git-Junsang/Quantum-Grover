@@ -1,0 +1,26 @@
+{
+  "grid": {
+    "build_rows": [
+      3
+    ],
+    "e": [
+      4
+    ],
+    "h": [
+      3
+    ],
+    "k": [
+      3
+    ],
+    "prune": [
+      6
+    ]
+  },
+  "hier_select": true,
+  "schema": 1,
+  "target": {
+    "clock_ns": 10.0,
+    "part": "xc7a200tfbg484-2"
+  },
+  "workload_limit": 500
+}

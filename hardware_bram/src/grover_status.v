@@ -33,7 +33,7 @@ module grover_status_counters (
 
     // Algorithmic run-global counters supplied by top-level control.
     input  wire [31:0]                  algorithm_trial_count,
-    input  wire [31:0]                  algorithm_L_BBHT,
+    input  wire [31:0]                  algorithm_requested_iterations,
 
     // Physical Grover work.
     input  wire                         iter_done,
@@ -48,9 +48,9 @@ module grover_status_counters (
     output reg                          amp_overflow,
     output reg                          zero_weight_error,
 
-    output reg  [31:0]                  trial_count,
-    output reg  [31:0]                  L_BBHT,
-    output reg  [31:0]                  actual_grover_iterations,
+    output reg  [31:0]                  shot_count,
+    output reg  [31:0]                  requested_iterations,
+    output reg  [31:0]                  executed_iterations,
     output reg  [31:0]                  cycle_count
 );
     reg search_active;
@@ -66,9 +66,9 @@ module grover_status_counters (
             budget_limit             <= 1'b0;
             amp_overflow             <= 1'b0;
             zero_weight_error        <= 1'b0;
-            trial_count              <= 32'd0;
-            L_BBHT                   <= 32'd0;
-            actual_grover_iterations <= 32'd0;
+            shot_count              <= 32'd0;
+            requested_iterations                   <= 32'd0;
+            executed_iterations <= 32'd0;
             cycle_count              <= 32'd0;
         end else begin
             done <= 1'b0;
@@ -82,17 +82,17 @@ module grover_status_counters (
                 budget_limit             <= 1'b0;
                 amp_overflow             <= 1'b0;
                 zero_weight_error        <= 1'b0;
-                trial_count              <= 32'd0;
-                L_BBHT                   <= 32'd0;
-                actual_grover_iterations <= 32'd0;
+                shot_count              <= 32'd0;
+                requested_iterations                   <= 32'd0;
+                executed_iterations <= 32'd0;
                 cycle_count              <= 32'd0;
             end else if (search_active) begin
-                trial_count <= algorithm_trial_count;
-                L_BBHT      <= algorithm_L_BBHT;
+                shot_count <= algorithm_trial_count;
+                requested_iterations      <= algorithm_requested_iterations;
                 cycle_count <= cycle_count + 32'd1;
 
                 if (iter_done)
-                    actual_grover_iterations <= actual_grover_iterations
+                    executed_iterations <= executed_iterations
                                                 + {16'd0, iter_count_completed};
 
                 if (amp_sat_event)
@@ -106,8 +106,8 @@ module grover_status_counters (
                 if (terminal_done) begin
                     search_active <= 1'b0;
                     done          <= 1'b1;
-                    trial_count   <= algorithm_trial_count;
-                    L_BBHT        <= algorithm_L_BBHT;
+                    shot_count   <= algorithm_trial_count;
+                    requested_iterations        <= algorithm_requested_iterations;
 
                     if (term_success) begin
                         result_valid <= 1'b1;

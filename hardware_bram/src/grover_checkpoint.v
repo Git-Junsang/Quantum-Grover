@@ -9,11 +9,11 @@
 //      - internal 10 x (512 x 69b) + 1 x (512 x 46b)
 //      - no array reset, simple dual-port style
 //   2) grover_ckpt_mem
-//      - CKPT_K = 3 or 4 full-state slots
+//      - CHECKPOINT_CAPACITY = 3 or 4 full-state slots
 //      - 11 packed-word-local source-select/register groups after BRAM outputs
 //      - two-cycle read response from request edge (BRAM + mux register)
 //   3) grover_ckpt_meta
-//      - CKPT_K valid/j metadata, invalidate/clear/commit
+//      - CHECKPOINT_CAPACITY valid/j metadata, invalidate/clear/commit
 //      - canonical sorted logical checkpoint set S
 //   4) grover_ckpt_planner
 //      - logical {source_j, sorted S'} -> deterministic physical slot plan
@@ -33,7 +33,7 @@
 //   - speculative plan FIFO / BBHT top-level integration
 //
 // IMPORTANT
-//   CKPT_K is constrained to 3 or 4. Physical slot IDs remain 2 bits.
+//   CHECKPOINT_CAPACITY is constrained to 3 or 4. Physical slot IDs remain 2 bits.
 //==============================================================================
 `timescale 1ns/1ps
 `include "grover_param.vh"
@@ -137,7 +137,7 @@ module grover_amp_mem_packed (
 endmodule
 
 //------------------------------------------------------------------------------
-// CKPT_K full-state storage with packed-word-local registered source muxes.
+// CHECKPOINT_CAPACITY full-state storage with packed-word-local registered source muxes.
 //
 // Physical-intent note:
 //   The logical row is 736 bits, but the implementation is deliberately expressed
@@ -154,7 +154,7 @@ endmodule
 // The later grover_ctrl_fsm integration MUST retime row/data/write alignment.
 //------------------------------------------------------------------------------
 module grover_ckpt_mem #(
-    parameter integer CKPT_K = 4
+    parameter integer CHECKPOINT_CAPACITY = 4
 ) (
     input  wire                              clk,
 
@@ -179,7 +179,7 @@ module grover_ckpt_mem #(
     wire we0 = wr_en && (wr_slot == 2'd0);
     wire we1 = wr_en && (wr_slot == 2'd1);
     wire we2 = wr_en && (wr_slot == 2'd2);
-    wire we3 = wr_en && (wr_slot == 2'd3) && (CKPT_K == 4);
+    wire we3 = wr_en && (wr_slot == 2'd3) && (CHECKPOINT_CAPACITY == 4);
 
     // All active slots receive the same read row. This is the exact structure
     // used by the K3/K4 736-bit mux OOC micro-synthesis.
@@ -197,7 +197,7 @@ module grover_ckpt_mem #(
     );
 
     generate
-        if (CKPT_K == 4) begin : g_k4_slot
+        if (CHECKPOINT_CAPACITY == 4) begin : g_k4_slot
             grover_amp_mem_packed u_slot3 (
                 .clk(clk), .rd_row(rd_row), .rd_en(rd_en), .rd_amp(q3),
                 .wr_row(wr_row), .wr_en(we3), .wr_amp(wr_amp)
@@ -247,7 +247,7 @@ module grover_ckpt_mem #(
                 sel_g9=q2[689:621]; sel_g10=q2[735:690];
             end
             2'd3: begin
-                if (CKPT_K == 4) begin
+                if (CHECKPOINT_CAPACITY == 4) begin
                     sel_g0=q3[68:0];    sel_g1=q3[137:69];  sel_g2=q3[206:138];
                     sel_g3=q3[275:207]; sel_g4=q3[344:276]; sel_g5=q3[413:345];
                     sel_g6=q3[482:414]; sel_g7=q3[551:483]; sel_g8=q3[620:552];
@@ -289,87 +289,57 @@ module grover_ckpt_mem #(
 endmodule
 
 //------------------------------------------------------------------------------
-// CKPT_K checkpoint metadata.
+// CHECKPOINT_CAPACITY checkpoint metadata.
 // Physical slots never move. Canonical S is produced only for policy input.
-// Ports are fixed to four slots so CKPT_K=3 and 4 share one Main-IP seam.
+// Ports are fixed to four slots so CHECKPOINT_CAPACITY=3 and 4 share one Main-IP seam.
 //------------------------------------------------------------------------------
 module grover_ckpt_meta #(
-    parameter integer CKPT_K = 4
+    parameter integer CHECKPOINT_CAPACITY=4,
+    parameter integer SLOTS=(CHECKPOINT_CAPACITY>4)?CHECKPOINT_CAPACITY:4,
+    parameter integer COUNT_W=(CHECKPOINT_CAPACITY>4)?$clog2(CHECKPOINT_CAPACITY+1):3,
+    parameter integer SLOT_W=(CHECKPOINT_CAPACITY>4)?$clog2(CHECKPOINT_CAPACITY):2
 ) (
-    input  wire                         clk,
-    input  wire                         rstn,
-
-    input  wire                         invalidate_all,
-    input  wire                         clear_en,
-    input  wire [3:0]                   clear_mask,
-    input  wire                         commit_en,
-    input  wire [1:0]                   commit_slot,
-    input  wire [`GP_J_W-1:0]           commit_j,
-
-    output reg  [3:0]                   slot_valid,
-    output reg  [4*`GP_J_W-1:0]         slot_j_flat,
-
-    output reg  [2:0]                   sorted_count,
-    output reg  [4*`GP_J_W-1:0]         sorted_j_flat
+    input wire clk,rstn,invalidate_all,clear_en,
+    input wire [SLOTS-1:0] clear_mask,
+    input wire commit_en,
+    input wire [SLOT_W-1:0] commit_slot,
+    input wire [`GP_J_W-1:0] commit_j,
+    output reg [SLOTS-1:0] slot_valid,
+    output reg [SLOTS*`GP_J_W-1:0] slot_j_flat,
+    output reg [COUNT_W-1:0] sorted_count,
+    output reg [SLOTS*`GP_J_W-1:0] sorted_j_flat
 );
-    localparam [3:0] ACTIVE_MASK = (CKPT_K == 4) ? 4'b1111 : 4'b0111;
-
-    reg [3:0] valid_next;
-    reg [7:0] s0, s1, s2, s3, tmp;
-
+    localparam [SLOTS-1:0] ACTIVE_MASK={SLOTS{1'b1}}>>(SLOTS-CHECKPOINT_CAPACITY);
+    reg [SLOTS-1:0] valid_next;
+    reg [7:0] sorted[0:SLOTS-1];
+    reg [7:0] temporary;
+    integer i,j;
     always @* begin
-        valid_next = slot_valid & ACTIVE_MASK;
-        if (invalidate_all) begin
-            valid_next = 4'b0000;
-        end else begin
-            if (clear_en)
-                valid_next = valid_next & ~(clear_mask & ACTIVE_MASK);
-            if (commit_en && (commit_slot < CKPT_K))
-                valid_next[commit_slot] = 1'b1;
+        valid_next=slot_valid&ACTIVE_MASK;
+        if(invalidate_all) valid_next=0;
+        else begin
+            if(clear_en) valid_next=valid_next&~clear_mask;
+            if(commit_en && commit_slot<CHECKPOINT_CAPACITY) valid_next[commit_slot]=1;
         end
     end
-
     always @(posedge clk) begin
-        if (!rstn) begin
-            slot_valid  <= 4'b0000;
-            slot_j_flat <= {(4*`GP_J_W){1'b0}};
-        end else begin
-            slot_valid <= valid_next;
-            if (commit_en && (commit_slot < CKPT_K)) begin
-                case (commit_slot)
-                    2'd0: slot_j_flat[0*`GP_J_W +: `GP_J_W] <= commit_j;
-                    2'd1: slot_j_flat[1*`GP_J_W +: `GP_J_W] <= commit_j;
-                    2'd2: slot_j_flat[2*`GP_J_W +: `GP_J_W] <= commit_j;
-                    2'd3: slot_j_flat[3*`GP_J_W +: `GP_J_W] <= commit_j;
-                    default: begin end
-                endcase
-            end
+        if(!rstn) begin slot_valid<=0;slot_j_flat<=0;end
+        else begin
+            slot_valid<=valid_next;
+            if(commit_en && commit_slot<CHECKPOINT_CAPACITY && !invalidate_all)
+                slot_j_flat[commit_slot*`GP_J_W+:`GP_J_W]<=commit_j;
         end
     end
-
-    // Four-input sorting network. 8'hFF is outside legal 7-bit j range.
     always @* begin
-        s0 = slot_valid[0] ? {1'b0, slot_j_flat[0*`GP_J_W +: `GP_J_W]} : 8'hFF;
-        s1 = slot_valid[1] ? {1'b0, slot_j_flat[1*`GP_J_W +: `GP_J_W]} : 8'hFF;
-        s2 = slot_valid[2] ? {1'b0, slot_j_flat[2*`GP_J_W +: `GP_J_W]} : 8'hFF;
-        s3 = ((CKPT_K == 4) && slot_valid[3]) ?
-             {1'b0, slot_j_flat[3*`GP_J_W +: `GP_J_W]} : 8'hFF;
-
-        if (s0 > s1) begin tmp=s0; s0=s1; s1=tmp; end
-        if (s2 > s3) begin tmp=s2; s2=s3; s3=tmp; end
-        if (s0 > s2) begin tmp=s0; s0=s2; s2=tmp; end
-        if (s1 > s3) begin tmp=s1; s1=s3; s3=tmp; end
-        if (s1 > s2) begin tmp=s1; s1=s2; s2=tmp; end
-
-        sorted_count = {2'b00,slot_valid[0]} + {2'b00,slot_valid[1]} +
-                       {2'b00,slot_valid[2]} +
-                       ((CKPT_K == 4) ? {2'b00,slot_valid[3]} : 3'd0);
-
-        sorted_j_flat = {(4*`GP_J_W){1'b0}};
-        if (s0 != 8'hFF) sorted_j_flat[0*`GP_J_W +: `GP_J_W] = s0[`GP_J_W-1:0];
-        if (s1 != 8'hFF) sorted_j_flat[1*`GP_J_W +: `GP_J_W] = s1[`GP_J_W-1:0];
-        if (s2 != 8'hFF) sorted_j_flat[2*`GP_J_W +: `GP_J_W] = s2[`GP_J_W-1:0];
-        if (s3 != 8'hFF) sorted_j_flat[3*`GP_J_W +: `GP_J_W] = s3[`GP_J_W-1:0];
+        sorted_count=0;sorted_j_flat=0;temporary=0;
+        for(i=0;i<SLOTS;i=i+1) begin
+            sorted[i]=slot_valid[i]?{1'b0,slot_j_flat[i*`GP_J_W+:`GP_J_W]}:8'hff;
+            if(slot_valid[i]) sorted_count=sorted_count+1'b1;
+        end
+        for(i=0;i<SLOTS;i=i+1) for(j=i+1;j<SLOTS;j=j+1)
+            if(sorted[j]<sorted[i]) begin temporary=sorted[i];sorted[i]=sorted[j];sorted[j]=temporary;end
+        for(i=0;i<SLOTS;i=i+1) if(i<sorted_count)
+            sorted_j_flat[i*`GP_J_W+:`GP_J_W]=sorted[i][`GP_J_W-1:0];
     end
 endmodule
 
@@ -383,17 +353,20 @@ endmodule
 // intermediates. Old checkpoints retained in S' are locked by retain_mask.
 //------------------------------------------------------------------------------
 module grover_ckpt_planner #(
-    parameter integer CKPT_K = 4
+    parameter integer CHECKPOINT_CAPACITY = 4,
+    parameter integer SLOTS=(CHECKPOINT_CAPACITY>4)?CHECKPOINT_CAPACITY:4,
+    parameter integer COUNT_W=(CHECKPOINT_CAPACITY>4)?$clog2(CHECKPOINT_CAPACITY+1):3,
+    parameter integer SLOT_W=(CHECKPOINT_CAPACITY>4)?$clog2(CHECKPOINT_CAPACITY):2
 ) (
     input  wire                         policy_valid,
 
-    input  wire [3:0]                   slot_valid,
-    input  wire [4*`GP_J_W-1:0]         slot_j_flat,
+    input  wire [SLOTS-1:0]                   slot_valid,
+    input  wire [SLOTS*`GP_J_W-1:0]         slot_j_flat,
 
     input  wire [`GP_J_W-1:0]           j_req,
     input  wire [`GP_J_W-1:0]           policy_source_j,
-    input  wire [2:0]                   policy_next_count,
-    input  wire [4*`GP_J_W-1:0]         policy_next_j_flat,
+    input  wire [COUNT_W-1:0]                   policy_next_count,
+    input  wire [SLOTS*`GP_J_W-1:0]         policy_next_j_flat,
 
     output reg                          plan_valid,
     output reg                          plan_error,
@@ -402,32 +375,32 @@ module grover_ckpt_planner #(
     output reg                          source_is_anchor,
     output reg                          source_materialized,
     output reg                          source_retain,
-    output reg  [1:0]                   source_slot,
+    output reg  [SLOT_W-1:0]                   source_slot,
 
-    output reg  [3:0]                   retain_mask,
-    output reg  [3:0]                   clear_mask,
+    output reg  [SLOTS-1:0]                   retain_mask,
+    output reg  [SLOTS-1:0]                   clear_mask,
 
-    output reg  [2:0]                   boundary_count,
-    output reg  [4*`GP_J_W-1:0]         boundary_j_flat,
-    output reg  [7:0]                   boundary_slot_flat,
-    output reg  [1:0]                   endpoint_slot
+    output reg  [COUNT_W-1:0]                   boundary_count,
+    output reg  [SLOTS*`GP_J_W-1:0]         boundary_j_flat,
+    output reg  [SLOTS*SLOT_W-1:0]                   boundary_slot_flat,
+    output reg  [SLOT_W-1:0]                   endpoint_slot
 );
-    localparam [3:0] ACTIVE_MASK = (CKPT_K == 4) ? 4'b1111 : 4'b0111;
-    localparam [2:0] K_COUNT     = CKPT_K;
+    localparam [SLOTS-1:0] ACTIVE_MASK = {SLOTS{1'b1}}>>(SLOTS-CHECKPOINT_CAPACITY);
+    localparam [COUNT_W-1:0] K_COUNT     = CHECKPOINT_CAPACITY;
 
-    reg [`GP_J_W-1:0] sj [0:3];
-    reg [`GP_J_W-1:0] nj [0:3];
-    reg [`GP_J_W-1:0] bj [0:3];
-    reg [1:0]          bs [0:3];
+    reg [`GP_J_W-1:0] sj [0:SLOTS-1];
+    reg [`GP_J_W-1:0] nj [0:SLOTS-1];
+    reg [`GP_J_W-1:0] bj [0:SLOTS-1];
+    reg [SLOT_W-1:0]          bs [0:SLOTS-1];
 
-    reg [3:0] old_in_next;
-    reg [3:0] next_is_old;
-    reg [3:0] avail;
+    reg [SLOTS-1:0] old_in_next;
+    reg [SLOTS-1:0] next_is_old;
+    reg [SLOTS-1:0] avail;
 
     reg [`GP_J_W-1:0] pred_j;
     reg pred_found;
-    reg [1:0] pred_slot;
-    reg [1:0] exact_slot;
+    reg [SLOT_W-1:0] pred_slot;
+    reg [SLOT_W-1:0] exact_slot;
     reg exact_found;
 
     reg endpoint_present;
@@ -435,26 +408,29 @@ module grover_ckpt_planner #(
     reg exact_same_set;
     reg legal_next;
     reg alloc_ok;
-    reg [2:0] current_count;
-    reg [2:0] new_count;
+    reg [COUNT_W-1:0] current_count;
+    reg [COUNT_W-1:0] new_count;
 
     integer i;
     integer j;
     integer n;
 
-    function [1:0] lowest_slot4;
-        input [3:0] mask;
+    function [SLOT_W-1:0] lowest_slot4;
+        input [SLOTS-1:0] mask;
+        integer index;
+        reg found;
         begin
-            if      (mask[0]) lowest_slot4 = 2'd0;
-            else if (mask[1]) lowest_slot4 = 2'd1;
-            else if (mask[2]) lowest_slot4 = 2'd2;
-            else              lowest_slot4 = 2'd3;
+            lowest_slot4=0;found=0;
+            for(index=0;index<SLOTS;index=index+1) if(mask[index] && !found) begin
+                lowest_slot4=index;found=1;
+            end
         end
     endfunction
 
     always @* begin
+        n=0;
         // Unpack inputs.
-        for (i=0; i<4; i=i+1) begin
+        for (i=0; i<SLOTS; i=i+1) begin
             sj[i] = slot_j_flat[i*`GP_J_W +: `GP_J_W];
             nj[i] = policy_next_j_flat[i*`GP_J_W +: `GP_J_W];
             bj[i] = {`GP_J_W{1'b0}};
@@ -471,7 +447,7 @@ module grover_ckpt_planner #(
         retain_mask         = 4'b0000;
         clear_mask          = 4'b0000;
         boundary_count      = 3'd0;
-        boundary_j_flat     = {(4*`GP_J_W){1'b0}};
+        boundary_j_flat     = {(SLOTS*`GP_J_W){1'b0}};
         boundary_slot_flat  = 8'd0;
         endpoint_slot       = 2'd0;
 
@@ -492,17 +468,17 @@ module grover_ckpt_planner #(
         new_count      = 3'd0;
 
         // Count active physical checkpoints and locate exact endpoint/source.
-        for (i=0; i<4; i=i+1) begin
-            if ((i < CKPT_K) && slot_valid[i]) begin
+        for (i=0; i<SLOTS; i=i+1) begin
+            if ((i < CHECKPOINT_CAPACITY) && slot_valid[i]) begin
                 current_count = current_count + 1'b1;
                 if (sj[i] == j_req) begin
                     exact_found = 1'b1;
-                    exact_slot  = i[1:0];
+                    exact_slot  = i[SLOT_W-1:0];
                 end
                 if ((sj[i] <= j_req) && (!pred_found || (sj[i] > pred_j))) begin
                     pred_found = 1'b1;
                     pred_j     = sj[i];
-                    pred_slot  = i[1:0];
+                    pred_slot  = i[SLOT_W-1:0];
                 end
             end
         end
@@ -511,15 +487,15 @@ module grover_ckpt_planner #(
         if ((policy_next_count == 0) || (policy_next_count > K_COUNT))
             canonical_ok = 1'b0;
 
-        for (i=0; i<4; i=i+1) begin
+        for (i=0; i<SLOTS; i=i+1) begin
             if (i < policy_next_count) begin
                 if (nj[i] == j_req)
                     endpoint_present = 1'b1;
                 if ((i > 0) && !(nj[i-1] < nj[i]))
                     canonical_ok = 1'b0;
 
-                for (j=0; j<4; j=j+1) begin
-                    if ((j < CKPT_K) && slot_valid[j] && (nj[i] == sj[j])) begin
+                for (j=0; j<SLOTS; j=j+1) begin
+                    if ((j < CHECKPOINT_CAPACITY) && slot_valid[j] && (nj[i] == sj[j])) begin
                         next_is_old[i] = 1'b1;
                         old_in_next[j] = 1'b1;
                     end
@@ -559,8 +535,8 @@ module grover_ckpt_planner #(
                 exact_same_set = 1'b0;
             if (policy_next_count != current_count)
                 exact_same_set = 1'b0;
-            for (i=0; i<4; i=i+1) begin
-                if ((i < CKPT_K) && slot_valid[i] && !old_in_next[i])
+            for (i=0; i<SLOTS; i=i+1) begin
+                if ((i < CHECKPOINT_CAPACITY) && slot_valid[i] && !old_in_next[i])
                     exact_same_set = 1'b0;
                 if ((i < policy_next_count) && !next_is_old[i])
                     exact_same_set = 1'b0;
@@ -578,7 +554,7 @@ module grover_ckpt_planner #(
             // already-canonical next-state order. A new psi0 is legal only when
             // the endpoint itself is j=0; otherwise intermediates are a<t<j.
             n = 0;
-            for (i=0; i<4; i=i+1) begin
+            for (i=0; i<SLOTS; i=i+1) begin
                 if (i < policy_next_count) begin
                     if (!next_is_old[i]) begin
                         if ((j_req == 0) && (policy_source_j == 0) && (nj[i] == 0)) begin
@@ -586,7 +562,7 @@ module grover_ckpt_planner #(
                         end else if (!((nj[i] > policy_source_j) && (nj[i] <= j_req))) begin
                             legal_next = 1'b0;
                         end
-                        if (n < 4) begin
+                        if (n < SLOTS) begin
                             bj[n] = nj[i];
                             n = n + 1;
                         end else begin
@@ -595,7 +571,7 @@ module grover_ckpt_planner #(
                     end
                 end
             end
-            new_count = n[2:0];
+            new_count = n[COUNT_W-1:0];
             boundary_count = new_count;
 
             if (!legal_next || (new_count == 0) || (new_count > K_COUNT))
@@ -604,7 +580,7 @@ module grover_ckpt_planner #(
             // Physical free/victim pool. Retained slots are never touched.
             avail = ACTIVE_MASK & ~retain_mask;
 
-            for (i=0; i<4; i=i+1) begin
+            for (i=0; i<SLOTS; i=i+1) begin
                 if (i < new_count) begin
                     if ((i == 0) && source_materialized && !source_retain) begin
                         // v1.1 capacity invariant relies on reusing a destructive
@@ -631,9 +607,9 @@ module grover_ckpt_planner #(
             if (!alloc_ok)
                 plan_error = 1'b1;
 
-            for (i=0; i<4; i=i+1) begin
+            for (i=0; i<SLOTS; i=i+1) begin
                 boundary_j_flat[i*`GP_J_W +: `GP_J_W] = bj[i];
-                boundary_slot_flat[i*2 +: 2] = bs[i];
+                boundary_slot_flat[i*SLOT_W +: SLOT_W] = bs[i];
             end
         end
 
@@ -662,11 +638,11 @@ endmodule
 // original long metadata -> predecessor -> allocation -> plan-packet path is
 // split across two clock periods without changing planner semantics.
 //
-// This module is used only when CKPT_MANUAL_ENABLE=0.  The original
+// This module is used only when CHECKPOINT_MANUAL_ENABLE=0.  The original
 // grover_ckpt_planner remains the authoritative Phase-4B manual path.
 //------------------------------------------------------------------------------
 module grover_ckpt_planner_pipe #(
-    parameter integer CKPT_K = 4
+    parameter integer CHECKPOINT_CAPACITY = 4
 ) (
     input  wire                         clk,
     input  wire                         rstn,
@@ -697,8 +673,8 @@ module grover_ckpt_planner_pipe #(
     output reg  [7:0]                   boundary_slot_flat,
     output reg  [1:0]                   endpoint_slot
 );
-    localparam [3:0] ACTIVE_MASK = (CKPT_K == 4) ? 4'b1111 : 4'b0111;
-    localparam [2:0] K_COUNT     = CKPT_K;
+    localparam [3:0] ACTIVE_MASK = (CHECKPOINT_CAPACITY == 4) ? 4'b1111 : 4'b0111;
+    localparam [2:0] K_COUNT     = CHECKPOINT_CAPACITY;
 
     // ---------------------------
     // Stage-1 combinational work.
@@ -713,10 +689,10 @@ module grover_ckpt_planner_pipe #(
     wire [`GP_J_W-1:0] in_nj2 = policy_next_j_flat[2*`GP_J_W +: `GP_J_W];
     wire [`GP_J_W-1:0] in_nj3 = policy_next_j_flat[3*`GP_J_W +: `GP_J_W];
 
-    wire a0 = (CKPT_K > 0) && slot_valid[0];
-    wire a1 = (CKPT_K > 1) && slot_valid[1];
-    wire a2 = (CKPT_K > 2) && slot_valid[2];
-    wire a3 = (CKPT_K > 3) && slot_valid[3];
+    wire a0 = (CHECKPOINT_CAPACITY > 0) && slot_valid[0];
+    wire a1 = (CHECKPOINT_CAPACITY > 1) && slot_valid[1];
+    wire a2 = (CHECKPOINT_CAPACITY > 2) && slot_valid[2];
+    wire a3 = (CHECKPOINT_CAPACITY > 3) && slot_valid[3];
 
     wire e0 = a0 && (in_sj0 <= j_req);
     wire e1 = a1 && (in_sj1 <= j_req);
@@ -955,7 +931,7 @@ module grover_ckpt_planner_pipe #(
                 exact_same_set = 1'b0;
 
             for (i=0; i<4; i=i+1) begin
-                if ((i < CKPT_K) && s1_slot_valid[i] && !s1_old_in_next[i])
+                if ((i < CHECKPOINT_CAPACITY) && s1_slot_valid[i] && !s1_old_in_next[i])
                     exact_same_set = 1'b0;
                 if ((i < s1_policy_next_count) && !s1_next_is_old[i])
                     exact_same_set = 1'b0;
@@ -1045,7 +1021,12 @@ endmodule
 // B-mode intermediate and therefore forces the next forward iteration to be a
 // 1-iteration out-of-place bridge into the next boundary slot.
 //------------------------------------------------------------------------------
-module grover_ckpt_executor (
+module grover_ckpt_executor #(
+    parameter integer CHECKPOINT_CAPACITY=4,
+    parameter integer SLOTS=(CHECKPOINT_CAPACITY>4)?CHECKPOINT_CAPACITY:4,
+    parameter integer COUNT_W=(CHECKPOINT_CAPACITY>4)?$clog2(CHECKPOINT_CAPACITY+1):3,
+    parameter integer SLOT_W=(CHECKPOINT_CAPACITY>4)?$clog2(CHECKPOINT_CAPACITY):2
+) (
     input  wire                         clk,
     input  wire                         rstn,
 
@@ -1057,36 +1038,36 @@ module grover_ckpt_executor (
     input  wire                         plan_source_is_anchor,
     input  wire                         plan_source_materialized,
     input  wire                         plan_source_retain,
-    input  wire [1:0]                   plan_source_slot,
+    input  wire [SLOT_W-1:0]                   plan_source_slot,
     input  wire [`GP_J_W-1:0]           plan_source_j,
     input  wire [`GP_J_W-1:0]           plan_j_req,
-    input  wire [3:0]                   plan_clear_mask,
-    input  wire [2:0]                   plan_boundary_count,
-    input  wire [4*`GP_J_W-1:0]         plan_boundary_j_flat,
-    input  wire [7:0]                   plan_boundary_slot_flat,
-    input  wire [1:0]                   plan_endpoint_slot,
+    input  wire [SLOTS-1:0]                   plan_clear_mask,
+    input  wire [COUNT_W-1:0]                   plan_boundary_count,
+    input  wire [SLOTS*`GP_J_W-1:0]         plan_boundary_j_flat,
+    input  wire [SLOTS*SLOT_W-1:0]                   plan_boundary_slot_flat,
+    input  wire [SLOT_W-1:0]                   plan_endpoint_slot,
 
     // Inner one-segment Grover engine request.
     output reg                          iter_start,
     output reg                          iter_do_init,
     output reg  [15:0]                  iter_count,
-    output reg  [1:0]                   iter_src_slot,
-    output reg  [1:0]                   iter_dst_slot,
+    output reg  [SLOT_W-1:0]                   iter_src_slot,
+    output reg  [SLOT_W-1:0]                   iter_dst_slot,
     output reg                          iter_bridge,
     input  wire                         iter_busy,
     input  wire                         iter_done,
 
     // Metadata operations.
     output reg                          meta_clear_en,
-    output reg  [3:0]                   meta_clear_mask,
+    output reg  [SLOTS-1:0]                   meta_clear_mask,
     output reg                          meta_commit_en,
-    output reg  [1:0]                   meta_commit_slot,
+    output reg  [SLOT_W-1:0]                   meta_commit_slot,
     output reg  [`GP_J_W-1:0]           meta_commit_j,
 
     output reg                          busy,
     output reg                          done,
     output reg                          aborted,
-    output reg  [1:0]                   endpoint_slot,
+    output reg  [SLOT_W-1:0]                   endpoint_slot,
 
     // Debug/counters for later Main-IP integration.
     output reg  [31:0]                  physical_iter_issued,
@@ -1100,43 +1081,26 @@ module grover_ckpt_executor (
     reg [2:0] st;
     reg abort_pending;
 
-    reg [2:0] boundary_count_q;
-    reg [4*`GP_J_W-1:0] boundary_j_q;
-    reg [7:0] boundary_slot_q;
-    reg [2:0] boundary_idx;
+    reg [COUNT_W-1:0] boundary_count_q;
+    reg [SLOTS*`GP_J_W-1:0] boundary_j_q;
+    reg [SLOTS*SLOT_W-1:0] boundary_slot_q;
+    reg [COUNT_W-1:0] boundary_idx;
     reg [15:0] bridge_remaining;
 
     reg [`GP_J_W-1:0] current_boundary_j;
-    reg [1:0] current_boundary_slot;
+    reg [SLOT_W-1:0] current_boundary_slot;
 
     reg [15:0] delta16;
     reg [`GP_J_W-1:0] target_j;
-    reg [1:0] target_slot;
+    reg [SLOT_W-1:0] target_slot;
 
     function [`GP_J_W-1:0] bj_at;
-        input [2:0] idx;
-        begin
-            case (idx)
-                3'd0: bj_at = boundary_j_q[0*`GP_J_W +: `GP_J_W];
-                3'd1: bj_at = boundary_j_q[1*`GP_J_W +: `GP_J_W];
-                3'd2: bj_at = boundary_j_q[2*`GP_J_W +: `GP_J_W];
-                3'd3: bj_at = boundary_j_q[3*`GP_J_W +: `GP_J_W];
-                default: bj_at = {`GP_J_W{1'b0}};
-            endcase
-        end
+        input [COUNT_W-1:0] idx;
+        begin bj_at=(idx<SLOTS)?boundary_j_q[idx*`GP_J_W+:`GP_J_W]:0;end
     endfunction
-
-    function [1:0] bs_at;
-        input [2:0] idx;
-        begin
-            case (idx)
-                3'd0: bs_at = boundary_slot_q[1:0];
-                3'd1: bs_at = boundary_slot_q[3:2];
-                3'd2: bs_at = boundary_slot_q[5:4];
-                3'd3: bs_at = boundary_slot_q[7:6];
-                default: bs_at = 2'd0;
-            endcase
-        end
+    function [SLOT_W-1:0] bs_at;
+        input [COUNT_W-1:0] idx;
+        begin bs_at=(idx<SLOTS)?boundary_slot_q[idx*SLOT_W+:SLOT_W]:0;end
     endfunction
 
     // iter_busy is intentionally accepted as an interface guard for the later
@@ -1148,7 +1112,7 @@ module grover_ckpt_executor (
             st                         <= E_IDLE;
             abort_pending              <= 1'b0;
             boundary_count_q           <= 3'd0;
-            boundary_j_q               <= {(4*`GP_J_W){1'b0}};
+            boundary_j_q               <= {(SLOTS*`GP_J_W){1'b0}};
             boundary_slot_q            <= 8'd0;
             boundary_idx               <= 3'd0;
             bridge_remaining           <= 16'd0;
@@ -1209,7 +1173,7 @@ module grover_ckpt_executor (
                             meta_clear_mask <= plan_clear_mask;
 
                             target_j    = plan_boundary_j_flat[0*`GP_J_W +: `GP_J_W];
-                            target_slot = plan_boundary_slot_flat[1:0];
+                            target_slot = plan_boundary_slot_flat[SLOT_W-1:0];
 
                             if (plan_source_is_anchor) begin
                                 // INIT creates psi0 and the same controller call
@@ -1487,7 +1451,7 @@ endmodule
 // so request->pair_valid latency is two clocks.
 //------------------------------------------------------------------------------
 module grover_ckpt_mem_tdp_e2 #(
-    parameter integer CKPT_K = 4
+    parameter integer CHECKPOINT_CAPACITY = 4
 ) (
     input wire clk,
 
@@ -1521,7 +1485,7 @@ module grover_ckpt_mem_tdp_e2 #(
     wire wr0=pair_wr_en&&(pair_wr_slot==2'd0);
     wire wr1=pair_wr_en&&(pair_wr_slot==2'd1);
     wire wr2=pair_wr_en&&(pair_wr_slot==2'd2);
-    wire wr3=pair_wr_en&&(pair_wr_slot==2'd3)&&(CKPT_K==4);
+    wire wr3=pair_wr_en&&(pair_wr_slot==2'd3)&&(CHECKPOINT_CAPACITY==4);
 
     // Single-read mode is mutually exclusive with E2 pair compute by contract.
     wire use_single=single_rd_en;
@@ -1540,7 +1504,7 @@ module grover_ckpt_mem_tdp_e2 #(
     `E2_SLOT(u_s0,wr0,qa0,qb0)
     `E2_SLOT(u_s1,wr1,qa1,qb1)
     `E2_SLOT(u_s2,wr2,qa2,qb2)
-    generate if (CKPT_K==4) begin: g_s3
+    generate if (CHECKPOINT_CAPACITY==4) begin: g_s3
         `E2_SLOT(u_s3,wr3,qa3,qb3)
     end else begin: g_no_s3
         assign qa3={W{1'b0}}; assign qb3={W{1'b0}};
@@ -1625,7 +1589,7 @@ endmodule
 // previous quad through the independent write port of each phase bank.
 //==============================================================================
 module grover_ckpt_mem_interleaved_e4 #(
-    parameter integer CKPT_K = 4
+    parameter integer CHECKPOINT_CAPACITY = 4
 ) (
     input  wire                              clk,
 
@@ -1655,7 +1619,7 @@ module grover_ckpt_mem_interleaved_e4 #(
     localparam integer W = `GP_P * `GP_AMP_W;
 
     // Keep the 2-bit physical slot address space so the same interleaved
-    // organization supports CKPT_K <= 4 (current E4 experiments use K=3,
+    // organization supports CHECKPOINT_CAPACITY <= 4 (current E4 experiments use K=3,
     // while the frozen publication baseline uses K=4).
     wire [`GP_ROW_W-1:0] quad_raddr = {quad_rd_slot, quad_rd_index};
     wire [`GP_ROW_W-1:0] quad_waddr = {quad_wr_slot, quad_wr_index};
@@ -1717,5 +1681,67 @@ module grover_ckpt_mem_interleaved_e4 #(
         single_rd_valid <= single_v_d;
     end
 
-    wire _unused_ckpt_k_guard = (CKPT_K == 4);
+    wire _unused_ckpt_k_guard = (CHECKPOINT_CAPACITY == 4);
+endmodule
+
+// Parameter-width autonomous plan snapshot and allocation.
+module grover_ckpt_planner_generic_pipe #(
+    parameter integer CHECKPOINT_CAPACITY = 4,
+    parameter integer SLOTS=(CHECKPOINT_CAPACITY>4)?CHECKPOINT_CAPACITY:4,
+    parameter integer COUNT_W=(CHECKPOINT_CAPACITY>4)?$clog2(CHECKPOINT_CAPACITY+1):3,
+    parameter integer SLOT_W=(CHECKPOINT_CAPACITY>4)?$clog2(CHECKPOINT_CAPACITY):2
+) (
+    input wire clk,rstn,capture,
+    input  wire                         policy_valid,
+
+    input  wire [SLOTS-1:0]                   slot_valid,
+    input  wire [SLOTS*`GP_J_W-1:0]         slot_j_flat,
+
+    input  wire [`GP_J_W-1:0]           j_req,
+    input  wire [`GP_J_W-1:0]           policy_source_j,
+    input  wire [COUNT_W-1:0]                   policy_next_count,
+    input  wire [SLOTS*`GP_J_W-1:0]         policy_next_j_flat,
+
+    output wire                          plan_valid,
+    output wire                          plan_error,
+    output wire                          exact_hit,
+
+    output wire                          source_is_anchor,
+    output wire                          source_materialized,
+    output wire                          source_retain,
+    output wire  [SLOT_W-1:0]                   source_slot,
+
+    output wire  [SLOTS-1:0]                   retain_mask,
+    output wire  [SLOTS-1:0]                   clear_mask,
+
+    output wire  [COUNT_W-1:0]                   boundary_count,
+    output wire  [SLOTS*`GP_J_W-1:0]         boundary_j_flat,
+    output wire  [SLOTS*SLOT_W-1:0]                   boundary_slot_flat,
+    output wire  [SLOT_W-1:0]                   endpoint_slot
+);
+    // Capture a complete immutable plan/metadata transaction. Allocation
+    // follows this work boundary and Executor consumes its output directly.
+    reg valid_q;
+    reg [SLOTS-1:0] valid_slots_q;
+    reg [SLOTS*`GP_J_W-1:0] slots_q,next_q;
+    reg [`GP_J_W-1:0] request_q,source_q;
+    reg [COUNT_W-1:0] count_q;
+    always @(posedge clk) begin
+        if(!rstn) begin valid_q<=0;valid_slots_q<=0;slots_q<=0;next_q<=0;request_q<=0;source_q<=0;count_q<=0;end
+        else begin
+            valid_q<=capture && policy_valid;
+            if(capture) begin
+                valid_slots_q<=slot_valid;slots_q<=slot_j_flat;next_q<=policy_next_j_flat;
+                request_q<=j_req;source_q<=policy_source_j;count_q<=policy_next_count;
+            end
+        end
+    end
+    grover_ckpt_planner #(.CHECKPOINT_CAPACITY(CHECKPOINT_CAPACITY),.SLOTS(SLOTS),.COUNT_W(COUNT_W),.SLOT_W(SLOT_W)) u_allocate (
+        .policy_valid(valid_q),.slot_valid(valid_slots_q),.slot_j_flat(slots_q),
+        .j_req(request_q),.policy_source_j(source_q),.policy_next_count(count_q),.policy_next_j_flat(next_q),
+        .plan_valid(plan_valid),.plan_error(plan_error),.exact_hit(exact_hit),
+        .source_is_anchor(source_is_anchor),.source_materialized(source_materialized),.source_retain(source_retain),
+        .source_slot(source_slot),.retain_mask(retain_mask),.clear_mask(clear_mask),
+        .boundary_count(boundary_count),.boundary_j_flat(boundary_j_flat),.boundary_slot_flat(boundary_slot_flat),.endpoint_slot(endpoint_slot)
+    );
 endmodule

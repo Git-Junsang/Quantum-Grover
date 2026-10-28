@@ -2,7 +2,7 @@
 """
 보드에서 bbht_paper_bench 로 잰 500런을 같은 모델의 RTL bench500 과 워크로드마다 맞댑니다.
 
-    board_vs_bench500.py <보드 결과> --model <모델> [--bench <bench500 CSV>]
+    board_vs_bench500.py <보드 결과> --configuration <모델> [--bench <bench500 CSV>]
 
 <보드 결과> 는 둘 중 하나입니다.
   - UART 로그 그대로. HW_REALTIME_CSV 줄만 골라 읽습니다
@@ -33,7 +33,14 @@ from parse_benchmark import parse_rows  # noqa: E402  보드 앱 로그의 정�
 from pathlib import Path  # noqa: E402
 
 BENCH_DIR = os.path.join(HERE, os.pardir, "results", "2026-10-07_bench500_6models")
-MODELS = ("K4H4_E1", "K3H3_E1", "K4H4_E4", "K3H3_E4", "K3H3_E4_M1", "K3H3_E4_M2")
+# 구성 이름 -> 그 묶음의 기록 파일 이름(기록은 2026-10-07 당시 이름 그대로)
+RECORD_NAME = {"capacity4_lookahead4_pes1_singlerow_linear": "k4h4_e1",
+               "capacity3_lookahead3_pes1_singlerow_linear": "k3h3_e1",
+               "capacity4_lookahead4_pes4_singlerow_linear": "k4h4_e4",
+               "capacity3_lookahead3_pes4_singlerow_linear": "k3h3_e4",
+               "capacity3_lookahead3_pes4_dualrow_linear": "k3h3_e4_m1",
+               "final": "k3h3_e4_m2"}
+CONFIGURATIONS = tuple(RECORD_NAME)
 
 # (보고 이름, 보드 열, bench500 열)
 LOGIC = (("result_index", "result_index", "result_index"),
@@ -68,19 +75,27 @@ def load_bench(path):
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("board")
-    ap.add_argument("--model", required=True, choices=MODELS)
+    ap.add_argument("--configuration", required=True, choices=CONFIGURATIONS)
     ap.add_argument("--bench")
     ap.add_argument("--strict-cycles", action="store_true")
     a = ap.parse_args()
 
-    bench_path = a.bench or os.path.join(BENCH_DIR, a.model.lower() + ".csv")
+    bench_path = a.bench or os.path.join(BENCH_DIR, RECORD_NAME[a.configuration] + ".csv")
     board = load_board(a.board)
     bench = load_bench(bench_path)
-    print(f"모델 {a.model}")
+    print(f"구성 {a.configuration}")
     print(f"  보드   {a.board}  ({len(board)}행)")
     print(f"  벤치   {os.path.normpath(bench_path)}")
 
     fails = 0
+    # A truncated UART capture must not pass because there are no rows left
+    # to compare. Require the same complete workload/mode set as the RTL CSV.
+    expected = {(m, seed, 0 if mode == "normal" else 1) for m, seed, mode in bench}
+    actual = [(int(r["target_count"]), int(r["seed_index"]), int(r["mode"])) for r in board]
+    if len(board) != len(bench) or len(set(actual)) != len(actual) or set(actual) != expected:
+        print(f"  FAIL workload coverage: board={len(board)}, expected={len(bench)}, "
+              f"unique={len(set(actual))}, missing={len(expected-set(actual))}, extra={len(set(actual)-expected)}")
+        fails += 1
     errs = [r for r in board if int(r.get("timeout", 0)) or int(r.get("unexpected_error", 0))]
     if errs:
         print(f"  FAIL 보드 오류 행 {len(errs)}개 (timeout 또는 unexpected_error)")

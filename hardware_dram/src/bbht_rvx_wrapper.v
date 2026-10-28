@@ -96,7 +96,7 @@ module bbht_rvx_wrapper #(
     wire        core_load_error;
 
     wire [31:0] core_trial_count;
-    wire [31:0] core_l_bbht;
+    wire [31:0] core_requested_iterations;
     wire [31:0] core_actual_grover_iterations;
     wire [31:0] core_cycle_count;
 
@@ -111,11 +111,11 @@ module bbht_rvx_wrapper #(
     wire [31:0] tm_policy_memo_hit;
     wire [31:0] tm_policy_memo_miss;
     wire [31:0] tm_policy_max_latency;
-    wire [2:0]  tm_plan_fifo_level;
-    wire [2:0]  tm_plan_fifo_highwater;
-    wire [31:0] tm_plan_fifo_empty_demand;
-    wire [31:0] tm_plan_fifo_hit_count;
-    wire [31:0] tm_plan_fifo_mismatch_count;
+    wire [2:0]  tm_plan_queue_level;
+    wire [2:0]  tm_plan_queue_highwater;
+    wire [31:0] tm_plan_queue_empty_demand;
+    wire [31:0] tm_plan_queue_hit_count;
+    wire [31:0] tm_plan_queue_miss_count;
     wire [31:0] tm_policy_cold_solve_count;
     wire [31:0] tm_policy_spec_solve_count;
 
@@ -211,7 +211,7 @@ module bbht_rvx_wrapper #(
         .st_enum_done           (core_enum_done),
         .st_result_index        (core_result_index),
         .st_trial_count         (core_trial_count),
-        .st_l_bbht              (core_l_bbht),
+        .st_requested_iterations              (core_requested_iterations),
         .st_actual_iter         (core_actual_grover_iterations),
         .st_cycle_count         (core_cycle_count),
         .st_found_count         (core_found_count),
@@ -232,11 +232,11 @@ module bbht_rvx_wrapper #(
         .tm_policy_memo_hit          (tm_policy_memo_hit),
         .tm_policy_memo_miss         (tm_policy_memo_miss),
         .tm_policy_max_latency       (tm_policy_max_latency),
-        .tm_plan_fifo_level          (tm_plan_fifo_level),
-        .tm_plan_fifo_highwater      (tm_plan_fifo_highwater),
-        .tm_plan_fifo_empty_demand   (tm_plan_fifo_empty_demand),
-        .tm_plan_fifo_hit_count      (tm_plan_fifo_hit_count),
-        .tm_plan_fifo_mismatch_count (tm_plan_fifo_mismatch_count),
+        .tm_plan_queue_level          (tm_plan_queue_level),
+        .tm_plan_queue_highwater      (tm_plan_queue_highwater),
+        .tm_plan_queue_empty_demand   (tm_plan_queue_empty_demand),
+        .tm_plan_queue_hit_count      (tm_plan_queue_hit_count),
+        .tm_plan_queue_miss_count (tm_plan_queue_miss_count),
         .tm_policy_cold_solve_count  (tm_policy_cold_solve_count),
         .tm_policy_spec_solve_count  (tm_policy_spec_solve_count)
     );
@@ -350,9 +350,9 @@ module bbht_rvx_wrapper #(
         .load_error                 (core_load_error),
 
         // Counters
-        .trial_count                (core_trial_count),
-        .L_BBHT                     (core_l_bbht),
-        .actual_grover_iterations   (core_actual_grover_iterations),
+        .shot_count                (core_trial_count),
+        .requested_iterations                     (core_requested_iterations),
+        .executed_iterations   (core_actual_grover_iterations),
         .cycle_count                (core_cycle_count),
 
         // Policy telemetry
@@ -364,11 +364,11 @@ module bbht_rvx_wrapper #(
         .policy_max_latency         (tm_policy_max_latency),
 
         // Plan telemetry
-        .plan_fifo_level            (tm_plan_fifo_level),
-        .plan_fifo_highwater        (tm_plan_fifo_highwater),
-        .plan_fifo_empty_demand     (tm_plan_fifo_empty_demand),
-        .plan_fifo_hit_count        (tm_plan_fifo_hit_count),
-        .plan_fifo_mismatch_count   (tm_plan_fifo_mismatch_count),
+        .plan_queue_level            (tm_plan_queue_level),
+        .plan_queue_highwater        (tm_plan_queue_highwater),
+        .plan_queue_empty_demand     (tm_plan_queue_empty_demand),
+        .plan_queue_hit_count        (tm_plan_queue_hit_count),
+        .plan_queue_miss_count   (tm_plan_queue_miss_count),
         .policy_cold_solve_count    (tm_policy_cold_solve_count),
         .policy_spec_solve_count    (tm_policy_spec_solve_count)
     );

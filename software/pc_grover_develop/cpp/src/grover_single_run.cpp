@@ -54,7 +54,7 @@ int main(int argc, char** argv) {
             if (engine == "rtl") { Engine<RtlCore> e(pol, mask); r = e.search(sj, sm); }
             else if (prec == "f32") { Engine<FloatCore<float>> e(pol, mask, 1); r = e.search(sj, sm); }
             else { Engine<FloatCore<double>> e(pol, mask, 1); r = e.search(sj, sm); }
-            std::cout << int(r.success) << " " << r.result_index << " " << r.trial_count << " " << r.L_BBHT << " "
+            std::cout << int(r.success) << " " << r.result_index << " " << r.shot_count << " " << r.requested_iterations << " "
                       << r.physical_iterations << "\n";
             return 0;
         }

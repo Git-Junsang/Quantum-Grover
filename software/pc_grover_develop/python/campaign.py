@@ -37,7 +37,7 @@ BENCH_ROOT = Path(__file__).resolve().parents[1]          # software/pc_grover_d
 SOFTWARE = BENCH_ROOT.parent                               # software/
 DEFAULT_COMMON500 = SOFTWARE / "testbench_data" / "2026-09-08_common500"
 DEFAULT_P500_DATASETS = SOFTWARE / "testbench_data" / "2026-10-05_predicate500"
-# Predicate500 oracle thresholds (golden_develop/models/common/benchmark_dataset.py PREDICATE500_SPECS)
+# Predicate500 oracle thresholds (reference_model_develop/models/common/benchmark_dataset.py PREDICATE500_SPECS)
 PREDICATE500_THRESHOLDS = {"LT": (-16384, 0), "GT": (16383, 0), "EQ": (12345, 0), "RANGE": (-4096, 4096)}
 
 

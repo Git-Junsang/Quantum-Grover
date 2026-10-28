@@ -13,7 +13,7 @@
 // hardware_bram's bbht_grover_core (spec/port_contract.tsv
 // §3.4) so the shared communication layer and CSR map do not change.
 //
-// v1 scope -- Single Search only (MANUAL_SINGLE / NORMAL_SINGLE)
+// v1 scope -- Single Search only (MANUAL_SINGLE / RESTART_SINGLE)
 //   enum_enable=1 is rejected as a config_error rather than silently
 //   ignored. Enumeration needs its own multi-candidate result stream and
 //   found-mask exclusion; more importantly it is the mode that actually
@@ -22,7 +22,7 @@
 //   grover_dram_prep_seq.v deliberately does not attempt that yet (see its
 //   header comment: BBHT's round_idx/m_bound schedule only advances after a
 //   confirmed failure, so speculating past that boundary needs the same
-//   kind of speculative-epoch bookkeeping hardware_bram's AUTO_SPEC_ENABLE
+//   kind of speculative-epoch bookkeeping hardware_bram's SPECULATIVE_PLANNING_ENABLE
 //   path uses). Wiring Enumeration on top of grover_dram_shot_fsm.v is
 //   future work once that is designed.
 //
@@ -109,9 +109,9 @@ module lpsoc_bbht_grover_main_ip (
     output wire                                  load_error,
 
     // Performance counters.
-    output wire [31:0]                           trial_count,
-    output wire [31:0]                           L_BBHT,
-    output wire [31:0]                           actual_grover_iterations,
+    output wire [31:0]                           shot_count,
+    output wire [31:0]                           requested_iterations,
+    output wire [31:0]                           executed_iterations,
     output wire [31:0]                           cycle_count,
 
     // Policy telemetry -- not implemented in v1, tied off.
@@ -123,11 +123,11 @@ module lpsoc_bbht_grover_main_ip (
     output wire [31:0]                           policy_max_latency,
 
     // Plan telemetry -- not implemented in v1, tied off.
-    output wire [2:0]                            plan_fifo_level,
-    output wire [2:0]                            plan_fifo_highwater,
-    output wire [31:0]                           plan_fifo_empty_demand,
-    output wire [31:0]                           plan_fifo_hit_count,
-    output wire [31:0]                           plan_fifo_mismatch_count,
+    output wire [2:0]                            plan_queue_level,
+    output wire [2:0]                            plan_queue_highwater,
+    output wire [31:0]                           plan_queue_empty_demand,
+    output wire [31:0]                           plan_queue_hit_count,
+    output wire [31:0]                           plan_queue_miss_count,
     output wire [31:0]                           policy_cold_solve_count,
     output wire [31:0]                           policy_spec_solve_count,
 
@@ -170,11 +170,11 @@ module lpsoc_bbht_grover_main_ip (
     assign policy_memo_hit          = 32'd0;
     assign policy_memo_miss         = 32'd0;
     assign policy_max_latency       = 32'd0;
-    assign plan_fifo_level          = 3'd0;
-    assign plan_fifo_highwater      = 3'd0;
-    assign plan_fifo_empty_demand   = 32'd0;
-    assign plan_fifo_hit_count      = 32'd0;
-    assign plan_fifo_mismatch_count = 32'd0;
+    assign plan_queue_level          = 3'd0;
+    assign plan_queue_highwater      = 3'd0;
+    assign plan_queue_empty_demand   = 32'd0;
+    assign plan_queue_hit_count      = 32'd0;
+    assign plan_queue_miss_count = 32'd0;
     assign policy_cold_solve_count  = 32'd0;
     assign policy_spec_solve_count  = 32'd0;
     assign enum_done                = 1'b0;
@@ -326,7 +326,7 @@ module lpsoc_bbht_grover_main_ip (
     // 사용이 암묵 선언이 되어 Questa 가 "already declared" 로 거절합니다
     // (verilator 와 Vivado 는 넘어갑니다. 2026-09-25 SoC 시뮬에서 발견).
     wire [31:0] bbht_trial_count;
-    wire [31:0] bbht_L_BBHT;
+    wire [31:0] bbht_requested_iterations;
 
     grover_dram_shot_fsm u_shot (
         .clk                    (clk),
@@ -367,8 +367,8 @@ module lpsoc_bbht_grover_main_ip (
         .round_idx              (),
         .current_m_bound        (),
         .current_j              (),
-        .trial_count            (bbht_trial_count),
-        .L_BBHT                 (bbht_L_BBHT),
+        .shot_count            (bbht_trial_count),
+        .requested_iterations                 (bbht_requested_iterations),
         .j_rnd_draw             (),
         .j_rnd_state            ()
     );
@@ -708,11 +708,11 @@ module lpsoc_bbht_grover_main_ip (
         .budget_limit_event      (overall_term_budget_limit),
         .amp_sat_event           (dp_sat_event),
         // enum 거절로 끝난 실행은 shot FSM 이 아예 안 돌았으므로 그 안의
-        // trial_count/L_BBHT 는 직전 실행 값 그대로입니다. 그대로 넘기면
+        // shot_count/requested_iterations 는 직전 실행 값 그대로입니다. 그대로 넘기면
         // 거절된 실행의 카운터가 남의 숫자를 들고 있게 되므로 0 으로
         // 덮습니다 (config_error 실행의 카운터는 의미가 없어야 합니다).
         .algorithm_trial_count   (enum_reject_pulse ? 32'd0 : bbht_trial_count),
-        .algorithm_L_BBHT        (enum_reject_pulse ? 32'd0 : bbht_L_BBHT),
+        .algorithm_requested_iterations        (enum_reject_pulse ? 32'd0 : bbht_requested_iterations),
         .iter_done               (iter_done),
         .iter_count_completed    (prep_iter_count),
         .done                    (done),
@@ -723,9 +723,9 @@ module lpsoc_bbht_grover_main_ip (
         .budget_limit            (budget_limit),
         .amp_overflow            (amp_overflow),
         .zero_weight_error       (zero_weight_error),
-        .trial_count             (trial_count),
-        .L_BBHT                  (L_BBHT),
-        .actual_grover_iterations(actual_grover_iterations),
+        .shot_count             (shot_count),
+        .requested_iterations                  (requested_iterations),
+        .executed_iterations(executed_iterations),
         .cycle_count             (cycle_count)
     );
 

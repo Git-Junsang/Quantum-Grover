@@ -9,7 +9,7 @@
 // unchanged from the reference so this branch stays bit-exact against the
 // same golden model as hardware_bram for a single-target search.
 //
-// v1 scope: single-target search only (MANUAL_SINGLE / NORMAL_SINGLE).
+// v1 scope: single-target search only (MANUAL_SINGLE / RESTART_SINGLE).
 // Enumeration (multi-target, found-mask, result-stream) is not wired here;
 // see lpsoc_bbht_grover_main_ip.v's top comment for why that is deferred.
 //==============================================================================
@@ -53,8 +53,8 @@ module grover_dram_shot_fsm (
     output reg  [`GP_RROM_IDX_W-1:0]   round_idx,
     output wire [7:0]                   current_m_bound,
     output reg  [`GP_J_W-1:0]          current_j,
-    output reg  [31:0]                  trial_count,
-    output reg  [31:0]                  L_BBHT,
+    output reg  [31:0]                  shot_count,
+    output reg  [31:0]                  requested_iterations,
     output wire                         j_rnd_draw,
     output wire [31:0]                  j_rnd_state
 );
@@ -111,8 +111,8 @@ module grover_dram_shot_fsm (
 
     wire shot_hit;
     wire budget_hit;
-    assign shot_hit   = (trial_count >= {{(32-`GP_SHOT_CAP_W){1'b0}}, shot_cap});
-    assign budget_hit = ((L_BBHT + 32'd1) >= `GP_BBHT_BUDGET);
+    assign shot_hit   = (shot_count >= {{(32-`GP_SHOT_CAP_W){1'b0}}, shot_cap});
+    assign budget_hit = ((requested_iterations + 32'd1) >= `GP_BBHT_BUDGET);
 
     always @(posedge clk) begin
         if (!rstn) begin
@@ -132,8 +132,8 @@ module grover_dram_shot_fsm (
             success_index           <= {`GP_INDEX_W{1'b0}};
             round_idx               <= {`GP_RROM_IDX_W{1'b0}};
             current_j               <= {`GP_J_W{1'b0}};
-            trial_count              <= 32'd0;
-            L_BBHT                   <= 32'd0;
+            shot_count              <= 32'd0;
+            requested_iterations                   <= 32'd0;
         end else begin
             random_request          <= 1'b0;
             prep_start               <= 1'b0;
@@ -152,8 +152,8 @@ module grover_dram_shot_fsm (
                         finish_reason <= R_NONE;
                         round_idx     <= {`GP_RROM_IDX_W{1'b0}};
                         current_j     <= {`GP_J_W{1'b0}};
-                        trial_count   <= 32'd0;
-                        L_BBHT        <= 32'd0;
+                        shot_count   <= 32'd0;
+                        requested_iterations        <= 32'd0;
                         success_index <= {`GP_INDEX_W{1'b0}};
                         st            <= S_CONFIG;
                     end
@@ -175,8 +175,8 @@ module grover_dram_shot_fsm (
                     end else begin
                         j_req_r     <= j_target;
                         current_j   <= j_target;
-                        trial_count <= trial_count + 32'd1;
-                        L_BBHT      <= L_BBHT + {{(32-`GP_J_W){1'b0}}, j_target};
+                        shot_count <= shot_count + 32'd1;
+                        requested_iterations      <= requested_iterations + {{(32-`GP_J_W){1'b0}}, j_target};
                         st          <= S_PREP_REQ;
                     end
                 end
@@ -185,8 +185,8 @@ module grover_dram_shot_fsm (
                     if (random_done) begin
                         j_req_r     <= random_j;
                         current_j   <= random_j;
-                        trial_count <= trial_count + 32'd1;
-                        L_BBHT      <= L_BBHT + {{(32-`GP_J_W){1'b0}}, random_j};
+                        shot_count <= shot_count + 32'd1;
+                        requested_iterations      <= requested_iterations + {{(32-`GP_J_W){1'b0}}, random_j};
                         st          <= S_PREP_REQ;
                     end
                 end

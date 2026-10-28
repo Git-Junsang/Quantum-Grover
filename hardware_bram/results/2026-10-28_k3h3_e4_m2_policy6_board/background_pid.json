@@ -1,0 +1,8 @@
+{
+  "pid": 1131985,
+  "submitted_utc": "2026-10-28T08:22:09.281660+00:00",
+  "worker": "/workspace/hardware_bram/results/2026-10-28_k3h3_e4_m2_policy6_board/pipeline_worker.py",
+  "log": "/workspace/hardware_bram/results/2026-10-28_k3h3_e4_m2_policy6_board/pipeline.log",
+  "configuration": "K3/H3/E4, legacy M2: BUILD2 + 16x32 select, latest policy mode6",
+  "status_after_submission": "not polled"
+}

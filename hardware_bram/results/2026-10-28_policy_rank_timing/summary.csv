@@ -1,0 +1,2 @@
+k,h,e,build_rows,prune,id,rtl_actions_per_decision,rtl_cycles_per_decision,rtl_decisions,rtl_exact_prune,rtl_max_latency,rtl_policy_actions,rtl_policy_cycles,cycles,iter,policy_actions,policy_cycles,policy_stall,validated_workloads,nominal_time_us
+3,3,4,2,6,k3h3_e4_b2_p6,2.5740915844927734,10.00513305416723,7403,6,410,19056,74068,5150965,9582,20949,80719,16363,500,51509.65

@@ -1,0 +1,2 @@
+116111d713ca76fde6c8983be139541812c89587acdc6648d2764eaec5dd71cd  bbht_grover_200mhz_fpga.ax7a200b.bit
+6029adc4720560b4fb167250ddff6bb85713f89fcdfbe0eef7c443b3e21ad1ef  bbht_console.sram.hex

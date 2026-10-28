@@ -1,0 +1,8 @@
+{
+  "reason": "Correct opt_design directive using the installed 2026.1 manual while preserving the submitted implementation.",
+  "directives_reference": "/tools/Xilinx/2026.1/Vivado/doc/eng/man/opt_design",
+  "guard_sha256": "93ebcae027faeae98fa1c089e25f0f064dada2636cf5e5217ed249df083eb68a",
+  "user_hook_sha256": "b51d27203dc79f3d59f1041314a7ac009df1cde63b7e7b1f9eea71b41a864038",
+  "worker_file_sha256": "02bfdfdbb974140469aed7487262f809db7982a9493cd466f779fce69959e2e3",
+  "scope": "Normalize only the unsupported optimization alias. RTL, clocks, pins and timing exceptions are unchanged."
+}

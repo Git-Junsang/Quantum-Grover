@@ -20,14 +20,14 @@
 (results/2026-09-10_bench250_final_core/evidence.md 참고).
 
 **Normal 모드 사이클을 6단계의 Normal-E1 과 맞대면 안 됩니다.** E4 모델은
-mode0 도 E4 입니다. Normal-E1 은 INTRA_ENGINES=1 빌드의 mode0 이라 다른 물건입니다.
+mode0 도 E4 입니다. Normal-E1 은 NUMBER_OF_PES=1 빌드의 mode0 이라 다른 물건입니다.
 그래서 이 리포트는 체크포인트 단계(mode1)만 단계 대조에 씁니다.
 
-어느 모델의 결과인지는 환경변수 BENCH500_MODEL 로 받습니다(sim/Makefile 이 MODEL 을
-넘깁니다. 없으면 최종 모델 K3H3_E4_M2). 6단계 대조는 그 모델의 단계와 합니다 --
+어느 모델의 결과인지는 환경변수 BENCH500_CONFIGURATION 로 받습니다(sim/Makefile 이 CONFIGURATION 을
+넘깁니다. 없으면 최종 모델 final). 6단계 대조는 그 모델의 단계와 합니다 --
 K4/H4 모델의 물리 반복은 K3/H3 와 다른 것이 정상이라, 최종 모델 단계와 맞대면
-틀린 FAIL 이 납니다(2026-10-07). 6단계에 없는 모델(K3H3_E1 · K3H4_E1 · K4H8_E1 ·
-Normal_E1 · nocheckpoint)은 단계 대조를 건너뜁니다. 보드 500런과 250쌍 벤치는
+틀린 FAIL 이 납니다(2026-10-07). 6단계에 없는 모델(capacity3_lookahead3_pes1_singlerow_linear · capacity3_lookahead4_pes1_singlerow_linear · capacity4_lookahead8_pes1_singlerow_linear ·
+capacity0_pes1_singlerow_linear · no_checkpoint_baseline)은 단계 대조를 건너뜁니다. 보드 500런과 250쌍 벤치는
 최종 모델로만 낸 근거라 최종 모델에서만 맞댑니다.
 """
 import csv
@@ -41,23 +41,23 @@ PUB_OBS = os.path.join(HERE, os.pardir, "results",
                        "2026-09-08_publication_6stage", "observations.csv")
 # 모델 폴더 이름 -> 6단계 ablation 의 체크포인트 단계 이름
 STAGE_OF = {
-    "K4H4_E1": "K4/H4-E1",
-    "K4H4_E4": "K4/H4-E4",
-    "K3H3_E4": "K3/H3-E4",
-    "K3H3_E4_M1": "K3/H3-E4-M1",
-    "K3H3_E4_M2": "K3/H3-E4-M2",
+    "capacity4_lookahead4_pes1_singlerow_linear": "K4/H4-E1",
+    "capacity4_lookahead4_pes4_singlerow_linear": "K4/H4-E4",
+    "capacity3_lookahead3_pes4_singlerow_linear": "K3/H3-E4",
+    "capacity3_lookahead3_pes4_dualrow_linear": "K3/H3-E4-M1",
+    "final": "K3/H3-E4-M2",
 }
-FINAL_MODEL = "K3H3_E4_M2"
-MODEL = os.environ.get("BENCH500_MODEL") or FINAL_MODEL
-PUB_STAGE = STAGE_OF.get(MODEL)
+FINAL_CONFIGURATION = "final"
+CONFIGURATION = os.environ.get("BENCH500_CONFIGURATION") or FINAL_CONFIGURATION
+PUB_STAGE = STAGE_OF.get(CONFIGURATION)
 
 # 보드 500런의 M2 경로.
-BOARD_M2 = os.path.join(HERE, os.pardir, "models", "hardware_bram_K3H3_E4_M2",
+BOARD_M2 = os.path.join(HERE, os.pardir, "configurations", "final",
                         "vivado", "vivado_bbht_grover_fpga",
                         "2026-09-08_k3h3_e4_m2_board_500run", "per_run_m2.csv")
 
 # 250쌍 벤치가 이미 낸 근거. 앞 50 시드가 겹치므로 부분집합 대조를 합니다.
-BENCH250 = os.path.join(HERE, os.pardir, "models", "hardware_bram_K3H3_E4_M2", "results",
+BENCH250 = os.path.join(HERE, os.pardir, "configurations", "final", "results",
                         "2026-09-10_bench250_final_core", "per_workload.csv")
 
 FIELDS = ("trial", "l_bbht", "iter", "result_index")
@@ -224,10 +224,10 @@ def main() -> int:
     print("\n=== 궤적 불변량 ===")
     fails = check_paired(sys.argv[1], base)
 
-    print(f"\n모델 {MODEL}" + (f" -> 6단계 {PUB_STAGE}" if PUB_STAGE else ""))
+    print(f"\n모델 {CONFIGURATION}" + (f" -> 6단계 {PUB_STAGE}" if PUB_STAGE else ""))
     pub = load_pub() if PUB_STAGE else None
     if PUB_STAGE is None:
-        print(f"\n=== 6단계 대조 === 건너뜀 ({MODEL} 은 6단계에 없는 구성)")
+        print(f"\n=== 6단계 대조 === 건너뜀 ({CONFIGURATION} 은 6단계에 없는 구성)")
     elif pub is None:
         print(f"\n=== 6단계 대조 === 건너뜀 (없음: {PUB_OBS})")
     else:
@@ -243,9 +243,9 @@ def main() -> int:
         fails += bad
         by_target(pairs, "cycles", f"6단계 {PUB_STAGE}")
 
-    board = load_board() if MODEL == FINAL_MODEL else None
-    if MODEL != FINAL_MODEL:
-        print(f"\n=== 보드 실측 대조 === 건너뜀 (보드 500런 근거는 {FINAL_MODEL} 뿐)")
+    board = load_board() if CONFIGURATION == FINAL_CONFIGURATION else None
+    if CONFIGURATION != FINAL_CONFIGURATION:
+        print(f"\n=== 보드 실측 대조 === 건너뜀 (보드 500런 근거는 {FINAL_CONFIGURATION} 뿐)")
     elif board is None:
         print(f"\n=== 보드 실측 대조 === 건너뜀 (없음: {BOARD_M2})")
     else:
@@ -261,7 +261,7 @@ def main() -> int:
         fails += bad
         by_target(pairs, "cycle_count", "보드 M2")
 
-    if MODEL == FINAL_MODEL:
+    if CONFIGURATION == FINAL_CONFIGURATION:
         fails += check_bench250(base)
 
     if len(sys.argv) == 3:

@@ -1,0 +1,32 @@
+{
+  "record_date_kst": "2026-10-29",
+  "purpose": "User-requested checkpoint of the current implementation and verification state",
+  "implemented_integration_steps": [1, 2, 3, 4, 5, 6],
+  "completed_checks": {
+    "selected_main_configurations": 5,
+    "common500_prefix_workloads_per_configuration": 2,
+    "checkpoint_valid_vectors": 344,
+    "shadow_prediction_contexts": 400,
+    "maximum_parameter_combination": "k10/h10/e16/m4 synthetic zero-iteration integration smoke",
+    "scheduler_recovery": ["demand only", "FIFO expected-j mismatch", "cancelled in-flight epoch reuse", "same-Oracle warm restart"],
+    "forced_generic_supported_configuration": "passed",
+    "legacy_prefix_csv_rows_equal": 4,
+    "reference": "final_checks.json"
+  },
+  "remaining": [
+    "Step 7: full Common500 on the generalized implementation",
+    "Full SoC verification of the generalized implementation",
+    "200T resource and timing verification of the generalized implementation",
+    "Board verification"
+  ],
+  "separate_frozen_background_build": {
+    "platform": "bbht_grover_k3h3_e4_m2_rankfix_20261028",
+    "last_observed_result": "First three attempts were killed during synthesis before place-and-route; no bitstream or route timing",
+    "same_source_soc_checks": 90,
+    "same_source_soc_errors": 0,
+    "fourth_attempt": "Submitted with general.maxThreads=1 and synth.maxThreads=1; completion not queried",
+    "receipt": "../2026-10-28_policy_rank_timing/retry_low_memory_background_pid.json",
+    "generalized_rtl_installed_in_background_platform": false
+  },
+  "verification_limit": "This checkpoint is not a full Common500, timing or board sign-off"
+}

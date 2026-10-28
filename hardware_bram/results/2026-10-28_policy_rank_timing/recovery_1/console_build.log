@@ -1,0 +1,10 @@
+/workspace/hardware_bram/results/2026-10-28_policy_rank_timing/source/tb_console_seq.cpp: In function ‘int main(int, char**)’:
+/workspace/hardware_bram/results/2026-10-28_policy_rank_timing/source/tb_console_seq.cpp:212:38: error: ‘struct bbht_result_t’ has no member named ‘trial_count’
+  212 |                res.result_index, res.trial_count, res.l_bbht, res.actual_iter,
+      |                                      ^~~~~~~~~~~
+/workspace/hardware_bram/results/2026-10-28_policy_rank_timing/source/tb_console_seq.cpp:212:55: error: ‘struct bbht_result_t’ has no member named ‘l_bbht’
+  212 |                res.result_index, res.trial_count, res.l_bbht, res.actual_iter,
+      |                                                       ^~~~~~
+/workspace/hardware_bram/results/2026-10-28_policy_rank_timing/source/tb_console_seq.cpp:212:67: error: ‘struct bbht_result_t’ has no member named ‘actual_iter’
+  212 |                res.result_index, res.trial_count, res.l_bbht, res.actual_iter,
+      |                                                                   ^~~~~~~~~~~

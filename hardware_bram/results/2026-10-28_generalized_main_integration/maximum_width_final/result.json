@@ -1,0 +1,31 @@
+{
+  "config": {
+    "schema": 2,
+    "k": 10,
+    "h": 10,
+    "e": 16,
+    "m": 4,
+    "policy_mode": 6,
+    "scan_lanes": 4,
+    "force_generic": false
+  },
+  "scope": "synthetic all-targets j=0 maximum-width smoke; not Common500 performance",
+  "golden_uniform_index": 14282,
+  "input_data_sha256": "f7e35c961b190a02d3335f248bc63d1ff80b0a557cebc0cfa618462c5888bb6f",
+  "policy_replay": {
+    "solver_jobs": 2,
+    "completed_solver_jobs": 2,
+    "accepted_plans": 1,
+    "fifo_accepted_plans": 0,
+    "injected_mismatches": 0,
+    "flushes": 3,
+    "inflight_job_at_end": false,
+    "epoch_reuse_injections": 0,
+    "same_oracle_restarts": 0,
+    "warm_same_oracle_restarts": 0,
+    "errors": 0
+  },
+  "request_window_bits": 77,
+  "tuple_bits": 70,
+  "errors": 0
+}

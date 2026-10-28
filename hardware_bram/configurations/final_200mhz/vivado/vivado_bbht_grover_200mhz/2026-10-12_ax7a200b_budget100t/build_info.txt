@@ -1,0 +1,23 @@
+빌드 일시   2026-10-12 22:25 ~ 23:15 (KST)
+플랫폼      bbht_grover_200mhz
+타깃        ax7a200b / xc7a200tfbg484-2 (100T 예산)
+구조        K3/H3-E4-M2 (어댑터 기본값은 K3H3_E4_M2 와 같음) + 200 MHz 용 레지스터 경계
+클럭 목표   가속기 200 MHz / 시스템 50 MHz
+Vivado      v2026.1, 원격 서버 sdsl-fpga
+RVX         로컬 /opt/rvx 에서 __imp 준비 단계까지 만든 뒤, Vivado 가 읽는 부분
+            (rvx_devkit/env, rvx_hwlib, imp_class_info/ax7a200b, 플랫폼 폴더)만 원격에 복사하고
+            /opt/rvx 경로를 원격 복사본 경로로 바꿔 implement.tcl 을 돌림
+작업방      $RVX_MINI_HOME/platform/bbht_grover_200mhz/imp_ax7a200b_2026-10-12
+소스        모델 rvx/install_to_platform.sh 로 설치. user/rtl/src 의 RTL 14개 중 11개(어댑터 포함)는
+            모델 src/, 3개(mmio · rvx_wrapper · status)는 공용 hardware_bram/src/ 에서 왔고 저장소 원본과
+            바이트가 같음. 해시는 source_sha256.txt (헤더 3개 포함 17개)
+예산        기준 xc7a100tcsg324-1: SLICEL 11100 SLICEM 4750 RAMB36 135 DSP 240 -> LUT 63400 LUTRAM 19000 FF 126800
+            배치 3번째에 Vivado 가 더 막은 site 와 맞아 떨어짐 (배치 뒤 · 배선 뒤 Available 일치)
+배치 · 배선 user/fpga/ax7a200b/pnr_manually.tcl
+              <fpga-flash-100t 예산 블록: budget_apply resource_budget.tcl center>
+              opt_design
+              budget_place -directive ExtraTimingOpt
+              phys_opt_design -directive AggressiveExplore
+              route_design -directive AggressiveExplore
+              phys_opt_design -directive AggressiveExplore
+진행        배치 뒤 WNS -0.326 -> phys_opt -0.025 -> 배선 +0.066 (배선 뒤 phys_opt 는 바꾼 것 없음)

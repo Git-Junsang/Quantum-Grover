@@ -4,7 +4,7 @@
         <name>bbht_grover_dram</name>
         <status>described</status>
 
-        <!-- hardware_bram 의 bbht_grover_upgrade.xml 과 같은 틀에 두 가지를
+        <!-- hardware_bram 의 bbht_grover_final.xml 과 같은 틀에 두 가지를
              더했습니다.
                1. include_slow_dram : Arty A7-100T 의 DDR3L 256 MB 를 MIG
                   (xilinx_ddr3_ctrl_axi32, 32비트 AXI)로 NoC 에 붙입니다.

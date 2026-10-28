@@ -9,7 +9,7 @@
 //   APB 마스터       이 테스트벤치의 태스크. RVX 위 펌웨어가 CSR 을 읽고
 //                    쓰는 순서를 그대로 흉내 냅니다. 호스트 PC 의 UART
 //                    명령(SET / LOAD / RUN)은 펌웨어 안에서 결국 이 순서가
-//                    됩니다 (documents/design_references/17_보드_운용.md)
+//                    됩니다 (documents/design_references/17_board_operation.md)
 //   ahb_sram_model   RVX System SRAM 흉내. hardware_bram/testbench 것을
 //                    그대로 물립니다 (두 갈래 통신 계층이 같으므로)
 //   dram_burst_model DRAM 흉내. 저장한 슬롯이 복원 때 비트 하나 안 틀리고
@@ -412,7 +412,7 @@ module tb_bbht_dram_top #(
     endtask
 
     // 탐색 설정. CONTROL = {predicate[3:2], burst[1], auto_shot[0]}.
-    // burst 비트는 이 갈래 Main IP 가 읽지 않지만, 펌웨어 CKPT_SINGLE 모드가
+    // burst 비트는 이 갈래 Main IP 가 읽지 않지만, 펌웨어 CHECKPOINT_SINGLE 모드가
     // 켜는 비트라 1 로 둡니다 (tb_dram_core 도 burst_enable=1 입니다).
     task configure(input a_shot, input integer jt, input [1:0] mode,
                    input signed [15:0] ta, input signed [15:0] tb,
@@ -457,9 +457,9 @@ module tb_bbht_dram_top #(
     begin
         apb_read(`CSR_IDX_STATUS,       r_status);
         apb_read(`CSR_IDX_RESULT_INDEX, r_idx);
-        apb_read(`CSR_IDX_TRIAL_COUNT,  r_trials);
-        apb_read(`CSR_IDX_L_BBHT,       r_lbbht);
-        apb_read(`CSR_IDX_ACTUAL_ITER,  r_iters);
+        apb_read(`CSR_IDX_SHOT_COUNT,  r_trials);
+        apb_read(`CSR_IDX_REQUESTED_ITERATIONS,       r_lbbht);
+        apb_read(`CSR_IDX_EXECUTED_ITERATIONS,  r_iters);
         apb_read(`CSR_IDX_CYCLE_COUNT,  r_cyc);
     end
     endtask
@@ -836,7 +836,7 @@ module tb_bbht_dram_top #(
         $display("     cycle_count              = %0d", r_cyc);
         apb_read(`CSR_IDX_POLICY_MEMO_HIT, v);
         check("POLICY_MEMO_HIT (정책 엔진 없음)", v, 32'd0);
-        apb_read(`CSR_IDX_PLAN_FIFO_HIT_COUNT, v);
+        apb_read(`CSR_IDX_PLAN_QUEUE_HIT_COUNT, v);
         check("PLAN_FIFO_HIT_COUNT (plan FIFO 없음)", v, 32'd0);
     end
     endtask

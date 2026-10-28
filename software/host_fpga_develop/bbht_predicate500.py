@@ -11,15 +11,15 @@ SW Common500 은 EQ 술어로 M = 1/4/16/64/256 x 공식 시드 100쌍 = 500 워
 보내지 않고 보드가 GEN 으로 직접 만들며, 만든 배열이 기준모델과 같은지는 SUM 이
 돌려주는 FNV-1a 해시로 확인합니다. 두 비트스트림 모두 됩니다.
 
-  bbht_grover_upgrade (hardware_bram_K3H3_E4_M2)  NORMAL 과 CKPT(K3/H3-E4-M2) 를 같은 시드로
+  bbht_grover_final (final)  NORMAL 과 CKPT(K3/H3-E4-M2) 를 같은 시드로
                                        짝지어 돌림 -> 2,000 x 2 = 4,000 실행
   bbht_grover_dram    (hardware_dram)  NORMAL 하나 -> 2,000 실행
-  bbht_grover_nocheckpoint (hardware_bram/models/hardware_bram_nocheckpoint)
+  bbht_grover_no_checkpoint_baseline (hardware_bram/configurations/no_checkpoint_baseline)
                                        NORMAL 하나 -> 2,000 실행. 체크포인트 없이
                                        연산기 네 벌(E4)만 켠 비교 기준
   6단계 ablation 모델 (2026-10-08 추가)  NORMAL 과 CKPT 를 짝지어 4,000 실행
-      bbht_grover_k3h3_e1 · _k3h3_e4 · _k3h3_e4_m1   CKPT 물리 반복을 K3/H3 열과 맞댐
-      bbht_grover_k4h4_e1 · _k4h4_e4                 CKPT 물리 반복을 K4/H4 열과 맞댐
+      bbht_grover_capacity3_lookahead3_pes1_singlerow_linear · _k3h3_e4 · _k3h3_e4_m1   CKPT 물리 반복을 K3/H3 열과 맞댐
+      bbht_grover_capacity4_lookahead4_pes1_singlerow_linear · _k4h4_e4                 CKPT 물리 반복을 K4/H4 열과 맞댐
 
 어느 쪽인지는 ID 응답의 platform= 으로 스스로 알아냅니다.
 
@@ -33,12 +33,12 @@ SW Common500 은 EQ 술어로 M = 1/4/16/64/256 x 공식 시드 100쌍 = 500 워
   남습니다. --resume 으로 같은 CSV 를 주면 끝난 데이터셋은 건너뜁니다.
 
 필요한 패키지: pyserial (보드), openpyxl (엑셀). numpy 는 필요 없습니다.
-기댓값 파일은 software/golden_data/2026-09-25_predicate500/ 에 있습니다
+기댓값 파일은 software/reference_model_data/2026-09-25_predicate500/ 에 있습니다
 (run_predicate500_golden.py 가 만듦).
 
 비교 축 (워크로드마다)
-  result_index, trial_count, L_BBHT   논리 궤적. 모드와 무관하게 기준모델과 같아야 함
-  actual_iter                         물리 반복. bram NORMAL/CKPT, dram 세션 열, nocheckpoint NORMAL 열과 맞댐
+  result_index, trial_count, REQUESTED_ITERATIONS   논리 궤적. 모드와 무관하게 기준모델과 같아야 함
+  actual_iter                         물리 반복. bram NORMAL/CKPT, dram 세션 열, no_checkpoint_baseline NORMAL 열과 맞댐
   술어                                결과 인덱스의 값이 정말 술어를 만족하는가
 시간 축 (기준모델에 없음. 보드에서만 나옴)
   cycle_count   가속기 사이클 (100 MHz)
@@ -62,30 +62,30 @@ sys.path.insert(0, _HERE)
 
 import bbht_cli  # noqa: E402  (같은 폴더. 트랜스포트와 파서를 같이 씁니다)
 
-EXPECTED_DIR = os.path.join(_REPO, "software", "golden_data", "2026-09-25_predicate500")
+EXPECTED_DIR = os.path.join(_REPO, "software", "reference_model_data", "2026-09-25_predicate500")
 PRED_ORDER = ("LT", "GT", "EQ", "RANGE")
 TARGETS = (1, 4, 16, 64, 256)
 FW_MIN = "2026-09-25"
 
 # 플랫폼 -> (갈래, 기본 모드 목록)
 PLATFORMS = {
-    "bbht_grover_upgrade": ("bram", ("normal", "ckpt")),
+    "bbht_grover_final": ("bram", ("normal", "ckpt")),
     "bbht_grover_dram":    ("dram", ("normal",)),
-    "bbht_grover_nocheckpoint": ("nocheckpoint", ("normal",)),
+    "bbht_grover_no_checkpoint_baseline": ("no_checkpoint_baseline", ("normal",)),
     # 6단계 ablation 모델. 연산기 수(E)와 측정 최적화(M)는 물리 반복을 바꾸지 않으므로
     # 체크포인트 정책(K/H)만 갈래로 나눕니다.
-    "bbht_grover_k3h3_e1":    ("bram", ("normal", "ckpt")),
-    "bbht_grover_k3h3_e4":    ("bram", ("normal", "ckpt")),
-    "bbht_grover_k3h3_e4_m1": ("bram", ("normal", "ckpt")),
-    "bbht_grover_k4h4_e1":    ("bram_k4h4", ("normal", "ckpt")),
-    "bbht_grover_k4h4_e4":    ("bram_k4h4", ("normal", "ckpt")),
+    "bbht_grover_capacity3_lookahead3_pes1_singlerow_linear":    ("bram", ("normal", "ckpt")),
+    "bbht_grover_capacity3_lookahead3_pes4_singlerow_linear":    ("bram", ("normal", "ckpt")),
+    "bbht_grover_capacity3_lookahead3_pes4_dualrow_linear": ("bram", ("normal", "ckpt")),
+    "bbht_grover_capacity4_lookahead4_pes1_singlerow_linear":    ("bram_k4h4", ("normal", "ckpt")),
+    "bbht_grover_capacity4_lookahead4_pes4_singlerow_linear":    ("bram_k4h4", ("normal", "ckpt")),
 }
 # (갈래, 모드) -> 기댓값의 물리 반복 열
 ITER_COLUMN = {
     ("bram", "normal"): "actual_iter_normal",
     ("bram", "ckpt"):   "actual_iter_k3h3",
     ("dram", "normal"): "actual_iter_dram_session",
-    ("nocheckpoint", "normal"): "actual_iter_normal",
+    ("no_checkpoint_baseline", "normal"): "actual_iter_normal",
     ("bram_k4h4", "normal"): "actual_iter_normal",
     ("bram_k4h4", "ckpt"):   "actual_iter_k4h4",
 }
@@ -93,10 +93,10 @@ ITER_COLUMN = {
 ROW_FIELDS = (
     "branch", "platform", "predicate", "threshold_a", "threshold_b", "target_count",
     "seed_index", "seed_j", "seed_meas", "mode", "outcome",
-    "result_index", "result_value", "trial_count", "L_BBHT", "actual_iter",
+    "result_index", "result_value", "trial_count", "REQUESTED_ITERATIONS", "actual_iter",
     "cycle_count", "cycle_us", "wall_us",
-    "exp_result_index", "exp_trial_count", "exp_L_BBHT", "exp_actual_iter",
-    "match_result_index", "match_trial_count", "match_L_BBHT", "match_actual_iter",
+    "exp_result_index", "exp_trial_count", "exp_REQUESTED_ITERATIONS", "exp_actual_iter",
+    "match_result_index", "match_trial_count", "match_REQUESTED_ITERATIONS", "match_actual_iter",
     "predicate_ok", "all_match", "note",
 )
 
@@ -110,7 +110,7 @@ def load_expected(exp_dir):
     for p in (runs_path, ds_path):
         if not os.path.exists(p):
             sys.exit("기댓값 파일이 없습니다: %s\n"
-                     "software/golden_develop/predicate500/run_predicate500_golden.py "
+                     "software/reference_model_develop/predicate500/run_predicate500_golden.py "
                      "를 먼저 돌리십시오." % p)
     with open(runs_path, encoding="utf-8") as f:
         runs = {(r["predicate"], int(r["target_count"]), int(r["seed_index"])): r
@@ -207,7 +207,7 @@ class GoldenMockTransport:
             cyc = 700 * it + 900 * int(r["trial_count"])
             self.out = ["HIT idx=%s val=%s trials=%s l=%s iters=%d cyc=%d us=%d wall_us=%d"
                         % (r["result_index"], r["result_value"], r["trial_count"],
-                           r["L_BBHT"], it, cyc, cyc // 100, cyc // 100 + 12), "OK"]
+                           r["REQUESTED_ITERATIONS"], it, cyc, cyc // 100, cyc // 100 + 12), "OK"]
         else:
             self.out = ["ERR UNKNOWN_CMD"]
 
@@ -260,7 +260,7 @@ def compare(row, exp, branch, mode):
     success = exp["success"] == "1"
     row["exp_result_index"] = exp["result_index"] if success else ""
     row["exp_trial_count"] = int(exp["trial_count"])
-    row["exp_L_BBHT"] = int(exp["L_BBHT"])
+    row["exp_REQUESTED_ITERATIONS"] = int(exp["REQUESTED_ITERATIONS"])
     row["exp_actual_iter"] = int(exp[col]) if col else ""
     hit = row["outcome"] == "HIT"
     row["match_result_index"] = int(
@@ -268,12 +268,12 @@ def compare(row, exp, branch, mode):
         or (not hit and not success and row["outcome"] == "MISS"))
     row["match_trial_count"] = int(row["trial_count"] != "" and
                                    int(row["trial_count"]) == row["exp_trial_count"])
-    row["match_L_BBHT"] = int(row["L_BBHT"] != "" and int(row["L_BBHT"]) == row["exp_L_BBHT"])
+    row["match_REQUESTED_ITERATIONS"] = int(row["REQUESTED_ITERATIONS"] != "" and int(row["REQUESTED_ITERATIONS"]) == row["exp_REQUESTED_ITERATIONS"])
     row["match_actual_iter"] = int(col is not None and row["actual_iter"] != "" and
                                    int(row["actual_iter"]) == row["exp_actual_iter"])
     row["predicate_ok"] = int((not hit) or pred_ok(row["predicate"], int(row["result_value"]), a, b))
     row["all_match"] = int(all(row[k] for k in ("match_result_index", "match_trial_count",
-                                                "match_L_BBHT", "match_actual_iter",
+                                                "match_REQUESTED_ITERATIONS", "match_actual_iter",
                                                 "predicate_ok")))
 
 
@@ -305,7 +305,7 @@ def summarize(rows, modes):
             ("hit", sum(1 for x in items if x["outcome"] == "HIT")),
             ("match_result_index", s("match_result_index")),
             ("match_trial_count", s("match_trial_count")),
-            ("match_L_BBHT", s("match_L_BBHT")),
+            ("match_REQUESTED_ITERATIONS", s("match_REQUESTED_ITERATIONS")),
             ("match_actual_iter", s("match_actual_iter")),
             ("predicate_ok", s("predicate_ok")),
             ("all_match", s("all_match")),
@@ -365,7 +365,7 @@ def write_xlsx(path, rows, ds_rows, summary, summary_m, env, modes, is_mock):
                "실행 시각", env.get("started", "")])
     ws.append([])
     header = ["predicate", "mode", "runs", "hit", "match_result_index", "match_trial_count",
-              "match_L_BBHT", "match_actual_iter", "predicate_ok", "all_match",
+              "match_REQUESTED_ITERATIONS", "match_actual_iter", "predicate_ok", "all_match",
               "sum_actual_iter", "sum_cycle_count", "sum_wall_us", "mean_wall_us"]
     start = ws.max_row + 1
     ws.append(header)
@@ -398,13 +398,13 @@ def write_xlsx(path, rows, ds_rows, summary, summary_m, env, modes, is_mock):
 
     ws.append([])
     notes = [
-        "비교 기준: software/golden_data/2026-09-25_predicate500/ (Q1.22 bit-exact 기준모델)",
-        "all_match = result_index, trial_count, L_BBHT, actual_iter 가 기댓값과 같고 결과 값이 술어를 만족",
+        "비교 기준: software/reference_model_data/2026-09-25_predicate500/ (Q1.22 bit-exact 기준모델)",
+        "all_match = result_index, trial_count, REQUESTED_ITERATIONS, actual_iter 가 기댓값과 같고 결과 값이 술어를 만족",
         "cycle_count 는 가속기 100 MHz 사이클, wall_us 는 보드 실시간 클럭(1 MHz)으로 COMMAND~DONE 을 잰 값",
         "고전 선형 스캔과 비교하지 마십시오. 에뮬레이터는 고전 스캔보다 느립니다 (CLAUDE.md 2절)",
     ]
-    if env.get("branch") == "nocheckpoint":
-        notes.append("nocheckpoint 는 체크포인트·정책 엔진·측정 최적화(M1/M2) 없이 연산기 네 벌(E4)만 켠 "
+    if env.get("branch") == "no_checkpoint_baseline":
+        notes.append("no_checkpoint_baseline 는 체크포인트·정책 엔진·측정 최적화(M1/M2) 없이 연산기 네 벌(E4)만 켠 "
                      "비교 기준 판입니다. actual_iter 는 기준모델 NORMAL 열과 맞댑니다")
     if env.get("branch") == "dram":
         notes.append("dram 의 actual_iter 는 데이터셋 하나를 적재한 뒤 시드를 차례로 돌며 DRAM 표를 "
@@ -415,7 +415,7 @@ def write_xlsx(path, rows, ds_rows, summary, summary_m, env, modes, is_mock):
     # 2. M별 요약
     ws = wb.create_sheet("M별 요약")
     sheet(ws, ["predicate", "target_count", "mode", "runs", "hit", "all_match",
-               "match_result_index", "match_trial_count", "match_L_BBHT", "match_actual_iter",
+               "match_result_index", "match_trial_count", "match_REQUESTED_ITERATIONS", "match_actual_iter",
                "predicate_ok", "sum_actual_iter", "sum_cycle_count", "sum_wall_us", "mean_wall_us"],
           summary_m)
 
@@ -505,7 +505,7 @@ def main():
     ap.add_argument("--resume", action="store_true",
                     help="--out 의 CSV 가 있으면 끝난 데이터셋은 건너뜁니다")
     ap.add_argument("--expected-dir", default=EXPECTED_DIR)
-    ap.add_argument("--mock-platform", default="bbht_grover_upgrade", choices=sorted(PLATFORMS),
+    ap.add_argument("--mock-platform", default="bbht_grover_final", choices=sorted(PLATFORMS),
                     help="--port mock 일 때 흉내 낼 플랫폼")
     ap.add_argument("--emit-script", metavar="HEADER",
                     help="보드 대신 mock 으로 명령 순서만 뽑아 SoC 시뮬용 스크립트 헤더로 씁니다")
@@ -652,7 +652,7 @@ def main():
                             row.update(result_index=kv.get("idx", "") if tag == "HIT" else "",
                                        result_value=kv.get("val", "") if tag == "HIT" else "",
                                        trial_count=kv.get("trials", ""),
-                                       L_BBHT=kv.get("l", ""),
+                                       REQUESTED_ITERATIONS=kv.get("l", ""),
                                        actual_iter=kv.get("iters", ""),
                                        cycle_count=kv.get("cyc", ""),
                                        cycle_us=kv.get("us", ""),
@@ -661,7 +661,7 @@ def main():
                                 row["note"] = "reason=%s" % kv.get("reason", "")
                             compare(row, exp, branch, mode)
                         else:
-                            for k in ("match_result_index", "match_trial_count", "match_L_BBHT",
+                            for k in ("match_result_index", "match_trial_count", "match_REQUESTED_ITERATIONS",
                                       "match_actual_iter", "predicate_ok", "all_match"):
                                 row[k] = 0
                         n_ok += int(row["all_match"])

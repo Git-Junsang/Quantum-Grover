@@ -1,0 +1,7 @@
+{
+  "capacity": 5,
+  "case": "empty set, source zero, forward boundaries 1..capacity",
+  "expected_boundary_count": 5,
+  "binary": "/workspace/hardware_bram/results/2026-10-28_generalized_main_integration/checkpoint_units_final/k5/test.vvp",
+  "binary_sha256": "bbaf09f4f531f7ee002c38b34052451af600e0f85005fc9d4a368de414082485"
+}

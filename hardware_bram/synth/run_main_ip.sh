@@ -14,8 +14,8 @@
 set -e
 HERE="$(cd "$(dirname "$0")" && pwd)"
 OUT="${MAIN_IP_OUTDIR:-$HERE/work_main_ip}"
-MEAS_M3="${MEAS_M3_ENABLE:-0}"
-POLICY_PRUNE="${POLICY_EXACT_PRUNE:-4}"
+BUILD_ROWS="${BUILD_ROWS_PER_CYCLE:-2}"
+POLICY_PRUNE="${POLICY_SEARCH_MODE:-4}"
 
 if [ -n "$VIVADO_BIN" ] && [ -x "$VIVADO_BIN" ]; then
   VIV="$VIVADO_BIN"
@@ -27,8 +27,8 @@ else
 fi
 
 mkdir -p "$OUT"
-SRC_DIR="$HERE/../src" OUTDIR="$OUT" MEAS_M3_ENABLE="$MEAS_M3" \
-  POLICY_EXACT_PRUNE="$POLICY_PRUNE" \
+SRC_DIR="$HERE/../src" OUTDIR="$OUT" BUILD_ROWS_PER_CYCLE="$BUILD_ROWS" \
+  POLICY_SEARCH_MODE="$POLICY_PRUNE" \
   "$VIV" -mode batch -source "$HERE/main_ip_ooc.tcl" \
          -log "$OUT/vivado.log" -journal "$OUT/vivado.jou"
 

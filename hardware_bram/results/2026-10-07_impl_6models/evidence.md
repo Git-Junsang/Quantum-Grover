@@ -1,76 +1,76 @@
-# 여섯 모델 구현 — Arty 100T 실제 구현과 200T(100T 예산) 구현
+# 여섯 configuration implementation — Arty 100T 실제 implementation과 200T(100T 예산) implementation
 
 ## 무엇인가
 
-모델 사이 보드 비교를 위해 여섯 구성을 두 번씩 구현한 결과를 한 표에 모았습니다.
+configuration 사이 board 비교를 위해 여섯 configuration을 두 번씩 구현한 결과를 한 표에 모았습니다.
 
-- **Arty A7-100T(`xc7a100tcsg324-1`)**: 논문의 "100T 자원 · 타이밍" 근거. 굽지 않았습니다. 최종 모델 `K3H3_E4_M2` 는 새로 돌리지 않고 2026-09-16 재빌드 리포트를 씁니다.
-- **AX7A200B(`xc7a200tfbg484-2`), 100T 예산**: 200T 보드에서 실제로 측정할 비트스트림. `/fpga-syn-rvx --budget-100t` 로 Available 을 100T 와 같게 맞췄습니다.
+- **Arty A7-100T(`xc7a100tcsg324-1`)**: 논문의 "100T resource · timing" 근거. 굽지 않았습니다. final configuration `final` 은 새로 돌리지 않고 2026-09-16 rebuild report를 씁니다.
+- **AX7A200B(`xc7a200tfbg484-2`), 100T 예산**: 200T board에서 실제로 benchmark할 bitstream. `/fpga-syn-rvx --budget-100t` 로 Available을 100T와 같게 맞췄습니다.
 
-개별 리포트는 각 모델의 `vivado/vivado_<프로젝트>/2026-10-07_*` 에 있습니다.
+개별 report는 각 configuration의 `vivado/vivado_<프로젝트>/2026-10-07_*` 에 있습니다.
 
 ## Arty 100T — 인용 값
 
-| 모델 | WNS (ns) | WHS (ns) | LUT | FF | BRAM 타일 | DSP | Main IP LUT / FF / RAMB36 / RAMB18 / DSP |
+| configuration | WNS (ns) | WHS (ns) | LUT | FF | BRAM tile | DSP | Accelerator Core LUT / FF / RAMB36 / RAMB18 / DSP |
 |---|---:|---:|---:|---:|---:|---:|---|
-| `K4H4_E1` | +0.186 | +0.014 | 25,273 | 30,549 | 98 | 68 | 13,624 / 13,610 / 50 / 32 / 64 |
-| `K3H3_E1` | +0.267 | +0.010 | 25,049 | 30,339 | 87 | 68 | 13,404 / 13,398 / 39 / 32 / 64 |
-| `K4H4_E4` | +0.193 | +0.008 | 42,495 | 42,809 | 115 | 68 | 29,080 / 25,820 / 51 / 64 / 64 |
-| `K3H3_E4` | +0.083 | +0.028 | 42,277 | 42,606 | 115 | 68 | 28,842 / 25,617 / 51 / 64 / 64 |
-| `K3H3_E4_M1` | +0.056 | +0.016 | 45,347 | 45,167 | 116 | 132 | 32,419 / 28,178 / 52 / 64 / 128 |
-| `K3H3_E4_M2` | +0.196 | +0.017 | 45,116 | 45,210 | 116 | 132 | 32,180 / 28,221 / 52 / 64 / 128 |
+| `capacity4_lookahead4_pes1_singlerow_linear` | +0.186 | +0.014 | 25,273 | 30,549 | 98 | 68 | 13,624 / 13,610 / 50 / 32 / 64 |
+| `capacity3_lookahead3_pes1_singlerow_linear` | +0.267 | +0.010 | 25,049 | 30,339 | 87 | 68 | 13,404 / 13,398 / 39 / 32 / 64 |
+| `capacity4_lookahead4_pes4_singlerow_linear` | +0.193 | +0.008 | 42,495 | 42,809 | 115 | 68 | 29,080 / 25,820 / 51 / 64 / 64 |
+| `capacity3_lookahead3_pes4_singlerow_linear` | +0.083 | +0.028 | 42,277 | 42,606 | 115 | 68 | 28,842 / 25,617 / 51 / 64 / 64 |
+| `capacity3_lookahead3_pes4_dualrow_linear` | +0.056 | +0.016 | 45,347 | 45,167 | 116 | 132 | 32,419 / 28,178 / 52 / 64 / 128 |
+| `final` | +0.196 | +0.017 | 45,116 | 45,210 | 116 | 132 | 32,180 / 28,221 / 52 / 64 / 128 |
 
-Available: LUT 63,400 · FF 126,800 · BRAM 타일 135 · DSP 240. 여섯 모두 "All user specified timing constraints are met" 입니다.
+Available: LUT 63,400 · FF 126,800 · BRAM tile 135 · DSP 240. 여섯 모두 "All user specified timing constraints are met"입니다.
 
-## 200T, 100T 예산 — 측정 대상 빌드
+## 200T, 100T 예산 — benchmark 대상 build
 
-| 모델 | WNS (ns) | WHS (ns) | LUT | FF | BRAM 타일 | DSP | Available 일치 |
+| configuration | WNS (ns) | WHS (ns) | LUT | FF | BRAM tile | DSP | Available 일치 |
 |---|---:|---:|---:|---:|---:|---:|:-:|
-| `K4H4_E1` | +0.879 | +0.042 | 25,499 | 30,551 | 98 | 68 | 예 |
-| `K3H3_E1` | +0.620 | +0.024 | 25,230 | 30,339 | 87 | 68 | 예 |
-| `K4H4_E4` | +0.121 | +0.051 | 42,759 | 42,812 | 115 | 68 | 예 |
-| `K3H3_E4` | +0.169 | +0.031 | 42,463 | 42,614 | 115 | 68 | 예 |
-| `K3H3_E4_M1` | +0.100 | +0.042 | 45,487 | 45,146 | 116 | 132 | 예 |
-| `K3H3_E4_M2` | +0.052 | +0.030 | 45,316 | 45,210 | 116 | 132 | 예 |
+| `capacity4_lookahead4_pes1_singlerow_linear` | +0.879 | +0.042 | 25,499 | 30,551 | 98 | 68 | 예 |
+| `capacity3_lookahead3_pes1_singlerow_linear` | +0.620 | +0.024 | 25,230 | 30,339 | 87 | 68 | 예 |
+| `capacity4_lookahead4_pes4_singlerow_linear` | +0.121 | +0.051 | 42,759 | 42,812 | 115 | 68 | 예 |
+| `capacity3_lookahead3_pes4_singlerow_linear` | +0.169 | +0.031 | 42,463 | 42,614 | 115 | 68 | 예 |
+| `capacity3_lookahead3_pes4_dualrow_linear` | +0.100 | +0.042 | 45,487 | 45,146 | 116 | 132 | 예 |
+| `final` | +0.052 | +0.030 | 45,316 | 45,210 | 116 | 132 | 예 |
 
-## 체크포인트를 뺀 판까지 — Main IP 자원 사다리 (Arty 100T)
+## checkpoint를 뺀 revision까지 — Accelerator Core resource ablation study (Arty 100T)
 
-체크포인트 하드웨어 자체의 자원을 보려면 체크포인트를 끈 빌드가 필요합니다. 체크포인트 빌드를 mode0 으로 돌리면 사이클은 같지만 체크포인트 저장소 · 정책 엔진 · memo 는 칩에 그대로 남기 때문입니다. `Normal_E1` 은 2026-10-08 에 같은 흐름으로 구현했고([리포트](../../models/hardware_bram_Normal_E1/vivado/vivado_bbht_grover_normal_e1/2026-10-08_arty100t_build/evidence.md)), Normal-E4 는 `nocheckpoint` 의 2026-09-25 빌드([리포트](../../models/hardware_bram_nocheckpoint/vivado/vivado_bbht_grover_nocheckpoint/2026-09-25_nocheckpoint_build/evidence.md))입니다.
+checkpoint hardware 자체의 resource를 보려면 checkpoint를 끈 build가 필요합니다. checkpoint build를 mode0으로 돌리면 cycle은 같지만 checkpoint 저장소 · Policy Engine · memo table은 chip에 그대로 남기 때문입니다. `capacity0_pes1_singlerow_linear` 는 2026-10-08에 같은 흐름으로 구현했고([report](../../configurations/capacity0_pes1_singlerow_linear/vivado/vivado_bbht_grover_normal_e1/2026-10-08_arty100t_build/evidence.md)), No-Checkpoint Baseline은 `no_checkpoint_baseline` 의 2026-09-25 build([report](../../configurations/no_checkpoint_baseline/vivado/vivado_bbht_grover_nocheckpoint/2026-09-25_nocheckpoint_build/evidence.md))입니다.
 
-| 구성 | 빌드 | Main IP LUT | FF | RAMB36 | RAMB18 | DSP | SoC LUT | SoC BRAM 타일 | WNS (ns) |
+| configuration | build | Accelerator Core LUT | FF | RAMB36 | RAMB18 | DSP | SoC LUT | SoC BRAM tile | WNS (ns) |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| Normal-E1 | `Normal_E1` (2026-10-08) | 8,601 | 8,631 | 2 | 64 | 64 | 20,185 | 66 | +0.094 |
-| K4/H4-E1 | `K4H4_E1` | 13,624 | 13,610 | 50 | 32 | 64 | 25,273 | 98 | +0.186 |
-| K3/H3-E1 | `K3H3_E1` | 13,404 | 13,398 | 39 | 32 | 64 | 25,049 | 87 | +0.267 |
-| Normal-E4 | `nocheckpoint` (2026-09-25) | 24,846 | 21,650 | 47 | 64 | 64 | 38,133 | 111 | +0.193 |
-| K4/H4-E4 | `K4H4_E4` | 29,080 | 25,820 | 51 | 64 | 64 | 42,495 | 115 | +0.193 |
-| K3/H3-E4 | `K3H3_E4` | 28,842 | 25,617 | 51 | 64 | 64 | 42,277 | 115 | +0.083 |
-| K3/H3-E4-M1 | `K3H3_E4_M1` | 32,419 | 28,178 | 52 | 64 | 128 | 45,347 | 116 | +0.056 |
-| K3/H3-E4-M2 | `K3H3_E4_M2` (2026-09-16) | 32,180 | 28,221 | 52 | 64 | 128 | 45,116 | 116 | +0.196 |
+| Stage 1 | `capacity0_pes1_singlerow_linear` (2026-10-08) | 8,601 | 8,631 | 2 | 64 | 64 | 20,185 | 66 | +0.094 |
+| Stage 2 | `capacity4_lookahead4_pes1_singlerow_linear` | 13,624 | 13,610 | 50 | 32 | 64 | 25,273 | 98 | +0.186 |
+| a Checkpoint-Capacity of 3, 3-shot Lookahead and 1 PE | `capacity3_lookahead3_pes1_singlerow_linear` | 13,404 | 13,398 | 39 | 32 | 64 | 25,049 | 87 | +0.267 |
+| No-Checkpoint Baseline | `no_checkpoint_baseline` (2026-09-25) | 24,846 | 21,650 | 47 | 64 | 64 | 38,133 | 111 | +0.193 |
+| Stage 3 | `capacity4_lookahead4_pes4_singlerow_linear` | 29,080 | 25,820 | 51 | 64 | 64 | 42,495 | 115 | +0.193 |
+| Stage 4 | `capacity3_lookahead3_pes4_singlerow_linear` | 28,842 | 25,617 | 51 | 64 | 64 | 42,277 | 115 | +0.083 |
+| Stage 5 | `capacity3_lookahead3_pes4_dualrow_linear` | 32,419 | 28,178 | 52 | 64 | 128 | 45,347 | 116 | +0.056 |
+| final configuration | `final` (2026-09-16) | 32,180 | 28,221 | 52 | 64 | 128 | 45,116 | 116 | +0.196 |
 
-- **체크포인트(K4/H4)를 넣는 값**은 Main IP 기준으로 E1 에서 LUT +5,023 · FF +4,979 · RAMB36 +48 · RAMB18 -32 (Normal-E1 → K4/H4-E1), E4 에서 LUT +4,234 · FF +4,170 · RAMB36 +4 (Normal-E4 → K4/H4-E4) 입니다. 논리는 두 경우가 비슷하고, BRAM 은 E1 에서만 크게 늘어납니다. E4 는 체크포인트가 없어도 진폭 메모리를 넓은 RAMB36 으로 두기 때문입니다([20장 20.6절](../../../documents/design_references/20_체크포인트_없는_BRAM_판.md#206-자원)).
-- **K4/H4 → K3/H3** 는 E1 에서 Main IP RAMB36 이 50 → 39 로 줄고, E4 에서는 51 로 같습니다.
-- 여덟 구성 모두 100T 에서 타이밍을 통과합니다.
-- `nocheckpoint` 는 Vivado 판(2026.1)과 흐름은 같지만 이 묶음과 다른 날(2026-09-25) 빌드입니다.
+- **checkpoint(a Checkpoint-Capacity of 4, 4-shot Lookahead)를 넣는 값**은 Accelerator Core 기준으로 1 PE에서 LUT +5,023 · FF +4,979 · RAMB36 +48 · RAMB18 -32 (Stage 1 → Stage 2), 4 PEs에서 LUT +4,234 · FF +4,170 · RAMB36 +4 (No-Checkpoint Baseline → Stage 3)입니다. 논리는 두 경우가 비슷하고, BRAM은 1 PE에서만 크게 늘어납니다. 4 PEs는 checkpoint가 없어도 amplitude memory를 넓은 RAMB36으로 두기 때문입니다([20장 20.6절](../../../documents/design_references/20_no_checkpoint_baseline.md#206-resource)).
+- **a Checkpoint-Capacity of 4, 4-shot Lookahead → a Checkpoint-Capacity of 3, 3-shot Lookahead**에서는 1 PE의 Accelerator Core RAMB36이 50 → 39로 줄고, 4 PEs에서는 51로 같습니다.
+- 여덟 configuration 모두 100T에서 timing을 통과합니다.
+- `no_checkpoint_baseline` 은 Vivado version(2026.1)과 흐름은 같지만 이 묶음과 다른 날(2026-09-25) build입니다.
 
 ## 읽는 법
 
-- **E1 → E4** 에서 SoC LUT 가 약 2.5만에서 4.2만으로 늘고 BRAM 이 98·87 에서 115 로 늡니다. 연산기 네 벌의 값입니다.
-- **K4/H4 → K3/H3** 는 E1 에서 BRAM 타일 98 → 87 로 줄고, E4 에서는 115 로 같습니다. E4 의 진폭 메모리는 행 폭으로 RAMB36 개수가 정해져 체크포인트 슬롯 하나를 줄여도 타일이 줄지 않습니다.
-- **M1** 에서 DSP 가 68 → 132 로 늘어납니다. 측정 경로가 사이클당 두 행의 Born 제곱을 하기 때문입니다. M2 는 그 위에서 자원이 거의 늘지 않습니다.
-- 가장 빠듯한 자원은 BRAM 이고, E4 이상에서 100T 의 85~86% 입니다.
-- 200T(100T 예산) 사용량은 Arty 100T 와 LUT 1% 안, BRAM · DSP 는 같습니다.
+- **1 PE → 4 PEs**에서 SoC LUT가 약 2.5만에서 4.2만으로 늘고 BRAM이 98·87에서 115로 늡니다. 4 PEs의 값입니다.
+- **a Checkpoint-Capacity of 4, 4-shot Lookahead → a Checkpoint-Capacity of 3, 3-shot Lookahead**에서는 1 PE의 BRAM tile이 98 → 87로 줄고, 4 PEs에서는 115로 같습니다. 4 PEs의 amplitude memory는 row width로 RAMB36 개수가 정해져 checkpoint slot 하나를 줄여도 BRAM tile이 줄지 않습니다.
+- **Dual-Row Build**에서 DSP가 68 → 132로 늘어납니다. Measurement Unit이 cycle당 두 row의 amplitude square를 구하기 때문입니다. Two-Level Select는 그 위에서 resource가 거의 늘지 않습니다.
+- 가장 빠듯한 resource는 BRAM이고, 4 PEs 이상에서 100T의 85~86%입니다.
+- 200T(100T 예산) 사용량은 Arty 100T와 LUT 1% 안, BRAM · DSP는 같습니다.
 
 ## 인용할 때
 
-- 자원 · 타이밍 인용은 **Arty 100T** 표에서 합니다. 200T 빌드의 WNS 는 0 이상인지만 봅니다.
-- 가속기 자원을 말할 때는 Main IP(`u_main_ip`) 열을, SoC 전체를 말할 때는 앞 열을 쓰고 둘을 섞지 마십시오. 2026-09-08 자원 ablation(합성, Vivado 2024.2, standalone top 안 계층)과는 조건이 달라 직접 맞대지 마십시오.
-- `K3H3_E4_M2` 의 100T 값은 2026-09-16 빌드입니다. 그 뒤 2026-09-25 의 Main IP 변경(E4 generate 조건)은 `CHECKPOINT_ENABLE=1` 에서 같은 값이 되어 이 구성의 논리를 바꾸지 않습니다([20장 20.2절](../../../documents/design_references/20_체크포인트_없는_BRAM_판.md#202-소스를-어떻게-나눴나)).
+- resource · timing 인용은 **Arty 100T** 표에서 합니다. 200T build의 WNS는 0 이상인지만 봅니다.
+- accelerator resource를 말할 때는 Accelerator Core(`u_main_ip`) 열을, SoC 전체를 말할 때는 앞 열을 쓰고 둘을 섞지 마십시오. 2026-09-08 resource ablation study(synthesis, Vivado 2024.2, standalone top 안 hierarchy)와는 조건이 달라 직접 맞대지 마십시오.
+- `final` 의 100T 값은 2026-09-16 build입니다. 그 뒤 2026-09-25의 Accelerator Core 변경(4 PEs generate 조건)은 `CHECKPOINT_ENABLE=1` 에서 같은 값이 되어 이 구성의 논리를 바꾸지 않습니다([20장 20.2절](../../../documents/design_references/20_no_checkpoint_baseline.md#202-source를-어떻게-나눴나)).
 - 전력은 활동률 없는 추정이라 인용하지 않습니다.
-- 200T 빌드의 `fpga_syn_rvx.sh result` 는 판정 스크립트 버그로 "타이밍 위반" 을 냈습니다. 위 값은 리포트에서 직접 읽었습니다.
+- 200T build의 `fpga_syn_rvx.sh result` 는 판정 script bug로 "timing 위반"을 냈습니다. 위 값은 report에서 직접 읽었습니다.
 
-## 파일
+## file
 
-| 파일 | 내용 |
+| file | 내용 |
 |---|---|
-| `summary.csv` | 여섯 모델 × 빌드 한 줄씩. SoC 전체 · Available · Main IP · 전력. Normal-E1 · Normal-E4 는 각자의 리포트 묶음에 있습니다 |
+| `summary.csv` | 여섯 configuration × build 한 줄씩. SoC 전체 · Available · Accelerator Core · 전력. Stage 1 · No-Checkpoint Baseline은 각자의 report 묶음에 있습니다 |

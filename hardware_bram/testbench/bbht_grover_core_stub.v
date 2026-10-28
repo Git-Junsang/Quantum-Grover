@@ -87,9 +87,9 @@ module bbht_grover_core (
     output reg         load_error,
 
     // Counters
-    output reg  [31:0] trial_count,
-    output reg  [31:0] L_BBHT,
-    output reg  [31:0] actual_grover_iterations,
+    output reg  [31:0] shot_count,
+    output reg  [31:0] requested_iterations,
+    output reg  [31:0] executed_iterations,
     output reg  [31:0] cycle_count,
 
     // Policy telemetry
@@ -101,11 +101,11 @@ module bbht_grover_core (
     output wire [31:0] policy_max_latency,
 
     // Plan telemetry
-    output wire [2:0]  plan_fifo_level,
-    output wire [2:0]  plan_fifo_highwater,
-    output wire [31:0] plan_fifo_empty_demand,
-    output wire [31:0] plan_fifo_hit_count,
-    output wire [31:0] plan_fifo_mismatch_count,
+    output wire [2:0]  plan_queue_level,
+    output wire [2:0]  plan_queue_highwater,
+    output wire [31:0] plan_queue_empty_demand,
+    output wire [31:0] plan_queue_hit_count,
+    output wire [31:0] plan_queue_miss_count,
     output wire [31:0] policy_cold_solve_count,
     output wire [31:0] policy_spec_solve_count
 );
@@ -190,9 +190,9 @@ module bbht_grover_core (
             budget_limit             <= 1'b0;
             amp_overflow             <= 1'b0;
             zero_weight_error        <= 1'b0;
-            trial_count              <= 32'd0;
-            L_BBHT                   <= 32'd0;
-            actual_grover_iterations <= 32'd0;
+            shot_count              <= 32'd0;
+            requested_iterations                   <= 32'd0;
+            executed_iterations <= 32'd0;
             cycle_count              <= 32'd0;
             fifo_wptr                <= 9'd0;
             fifo_rptr                <= 9'd0;
@@ -216,9 +216,9 @@ module bbht_grover_core (
                     consecutive_fail_count   <= 4'd0;
                     max_fifo_occupancy       <= 9'd0;
                     fifo_stall_cycles        <= 32'd0;
-                    trial_count              <= 32'd0;
-                    L_BBHT                   <= 32'd0;
-                    actual_grover_iterations <= 32'd0;
+                    shot_count              <= 32'd0;
+                    requested_iterations                   <= 32'd0;
+                    executed_iterations <= 32'd0;
                     cycle_count              <= 32'd0;
                     shot_limit               <= 1'b0;
                     budget_limit             <= 1'b0;
@@ -237,9 +237,9 @@ module bbht_grover_core (
                     state <= S_FIN;
                 end else begin
                     if (hit) begin
-                        trial_count              <= trial_count + 32'd1;
-                        L_BBHT                   <= L_BBHT + 32'd1;
-                        actual_grover_iterations <= actual_grover_iterations + 32'd1;
+                        shot_count              <= shot_count + 32'd1;
+                        requested_iterations                   <= requested_iterations + 32'd1;
+                        executed_iterations <= executed_iterations + 32'd1;
 
                         if (enum_enable) begin
                             if (occ != 9'd256) begin
@@ -279,7 +279,7 @@ module bbht_grover_core (
 
     //-----------------------------------------------------------------
     // 텔레메트리는 스텁에 없습니다. 0 이 나오는 것이 정상이고, 실물에서는
-    // plan_fifo_mismatch_count 만 0 이어야 합니다.
+    // plan_queue_miss_count 만 0 이어야 합니다.
     //-----------------------------------------------------------------
     assign policy_cycles_total      = 32'd0;
     assign policy_stall_cycles      = 32'd0;
@@ -287,11 +287,11 @@ module bbht_grover_core (
     assign policy_memo_hit          = 32'd0;
     assign policy_memo_miss         = 32'd0;
     assign policy_max_latency       = 32'd0;
-    assign plan_fifo_level          = 3'd0;
-    assign plan_fifo_highwater      = 3'd0;
-    assign plan_fifo_empty_demand   = 32'd0;
-    assign plan_fifo_hit_count      = 32'd0;
-    assign plan_fifo_mismatch_count = 32'd0;
+    assign plan_queue_level          = 3'd0;
+    assign plan_queue_highwater      = 3'd0;
+    assign plan_queue_empty_demand   = 32'd0;
+    assign plan_queue_hit_count      = 32'd0;
+    assign plan_queue_miss_count = 32'd0;
     assign policy_cold_solve_count  = 32'd0;
     assign policy_spec_solve_count  = 32'd0;
 

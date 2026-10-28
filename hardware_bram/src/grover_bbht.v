@@ -493,8 +493,8 @@ endmodule
 //     meas_done carrying verify_hit/zero_weight_error/candidate.
 //
 // Counter timing used internally for termination follows v0.6:
-//   trial_count += 1 and L_BBHT += requested j when j_req is finalized.
-//   budget B = 1 + L_BBHT; terminate after a failed shot when B >= 576.
+//   shot_count += 1 and requested_iterations += requested j when j_req is finalized.
+//   budget B = 1 + requested_iterations; terminate after a failed shot when B >= 576.
 //
 // Terminal priority after a completed shot:
 //   success > zero-weight runtime error > shot_limit > budget_limit >
@@ -552,8 +552,8 @@ module grover_bbht_shot_fsm (
     output reg  [`GP_RROM_IDX_W-1:0]   round_idx,
     output wire [7:0]                   current_m_bound,
     output reg  [`GP_J_W-1:0]          current_j,
-    output reg  [31:0]                  trial_count,
-    output reg  [31:0]                  L_BBHT,
+    output reg  [31:0]                  shot_count,
+    output reg  [31:0]                  requested_iterations,
     output wire                         j_rnd_draw,
     output wire [31:0]                  j_rnd_state
 );
@@ -613,8 +613,8 @@ module grover_bbht_shot_fsm (
 
     wire shot_hit;
     wire budget_hit;
-    assign shot_hit   = (trial_count >= {{(32-`GP_SHOT_CAP_W){1'b0}}, shot_cap});
-    assign budget_hit = ((L_BBHT + 32'd1) >= `GP_BBHT_BUDGET);
+    assign shot_hit   = (shot_count >= {{(32-`GP_SHOT_CAP_W){1'b0}}, shot_cap});
+    assign budget_hit = ((requested_iterations + 32'd1) >= `GP_BBHT_BUDGET);
 
     always @(posedge clk) begin
         if (!rstn) begin
@@ -637,8 +637,8 @@ module grover_bbht_shot_fsm (
             success_index          <= {`GP_INDEX_W{1'b0}};
             round_idx              <= {`GP_RROM_IDX_W{1'b0}};
             current_j              <= {`GP_J_W{1'b0}};
-            trial_count            <= 32'd0;
-            L_BBHT                 <= 32'd0;
+            shot_count            <= 32'd0;
+            requested_iterations                 <= 32'd0;
         end else begin
             // Default pulse outputs.
             random_request         <= 1'b0;
@@ -662,8 +662,8 @@ module grover_bbht_shot_fsm (
                         finish_reason <= R_NONE;
                         round_idx     <= {`GP_RROM_IDX_W{1'b0}};
                         current_j     <= {`GP_J_W{1'b0}};
-                        trial_count   <= 32'd0;
-                        L_BBHT        <= 32'd0;
+                        shot_count   <= 32'd0;
+                        requested_iterations        <= 32'd0;
                         success_index <= {`GP_INDEX_W{1'b0}};
                         st            <= S_CONFIG;
                     end
@@ -685,8 +685,8 @@ module grover_bbht_shot_fsm (
                     end else begin
                         j_req_r     <= j_target;
                         current_j   <= j_target;
-                        trial_count <= trial_count + 32'd1;
-                        L_BBHT      <= L_BBHT + {{(32-`GP_J_W){1'b0}}, j_target};
+                        shot_count <= shot_count + 32'd1;
+                        requested_iterations      <= requested_iterations + {{(32-`GP_J_W){1'b0}}, j_target};
                         st          <= S_CACHE;
                     end
                 end
@@ -695,8 +695,8 @@ module grover_bbht_shot_fsm (
                     if (random_done) begin
                         j_req_r     <= random_j;
                         current_j   <= random_j;
-                        trial_count <= trial_count + 32'd1;
-                        L_BBHT      <= L_BBHT + {{(32-`GP_J_W){1'b0}}, random_j};
+                        shot_count <= shot_count + 32'd1;
+                        requested_iterations      <= requested_iterations + {{(32-`GP_J_W){1'b0}}, random_j};
                         st          <= S_CACHE;
                     end
                 end

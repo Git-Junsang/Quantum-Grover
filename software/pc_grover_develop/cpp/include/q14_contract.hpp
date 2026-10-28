@@ -2,7 +2,7 @@
 // random streams, m bounds, oracle mask, dataset/seed loading, timer, result structs).
 //
 // Everything in this header must match the frozen v0.9.8 hardware contract
-// (software/golden_develop/models/.../final_hardware_contract.py, checkpoint_bbht_model.py):
+// (software/reference_model_develop/models/.../final_hardware_contract.py, checkpoint_bbht_model.py):
 //   Q14, N = 16384, P = 32 lanes, signed Q1.22 amplitudes,
 //   BBHT m0 = 1, lambda = 6/5, m_max = 128, logical budget 576, shot cap 100,
 //   J stream  : 32-bit LFSR, pre-state word then 7 ordinary steps per draw,
@@ -199,8 +199,8 @@ struct SearchResult {
     bool success = false;
     Termination termination = Termination::SHOT_LIMIT;
     int result_index = -1;
-    int trial_count = 0;
-    int L_BBHT = 0;
+    int shot_count = 0;
+    int requested_iterations = 0;
     int physical_iterations = 0;
     int64_t compute_ns = 0;      // Grover iterations only
     std::vector<Attempt> attempts;   // filled only when tracing

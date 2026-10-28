@@ -1,0 +1,402 @@
+%Warning-WIDTHTRUNC: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:535:22: Operator VAR 'OPTIONAL_CAPACITY' expects 3 bits on the Initial value, but Initial value's SUB generates 32 bits.
+                                                                              : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+  535 |     localparam [2:0] OPTIONAL_CAPACITY = CKPT_K-1;
+      |                      ^~~~~~~~~~~~~~~~~
+                     ... For warning description see https://verilator.org/warn/WIDTHTRUNC?v=5.020
+                     ... Use "/* verilator lint_off WIDTHTRUNC */" and lint_on around source to disable this message.
+%Warning-WIDTHTRUNC: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:536:22: Operator VAR 'LAST_SUFFIX_INDEX' expects 4 bits on the Initial value, but Initial value's SUB generates 32 bits.
+                                                                              : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+  536 |     localparam [3:0] LAST_SUFFIX_INDEX = H_FUTURE-1;
+      |                      ^~~~~~~~~~~~~~~~~
+%Warning-WIDTHTRUNC: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_checkpoint.v:701:22: Operator VAR 'K_COUNT' expects 3 bits on the Initial value, but Initial value's VARREF 'CKPT_K' generates 32 bits.
+                                                                                  : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_ckpt_planner_auto_pipe.u_ckpt_planner_pipe'
+  701 |     localparam [2:0] K_COUNT     = CKPT_K;
+      |                      ^~~~~~~
+%Warning-WIDTHTRUNC: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_memories.v:381:28: Operator VAR 'DEPTH_COUNT' expects 9 bits on the Initial value, but Initial value's VARREF 'DEPTH' generates 32 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.u_result_fifo'
+  381 |     localparam [CNT_W-1:0] DEPTH_COUNT = DEPTH;
+      |                            ^~~~~~~~~~~
+%Warning-WIDTHTRUNC: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_measurement.v:298:28: Operator ASSIGN expects 6 bits on the Assign RHS, but Assign RHS's ADD generates 32 bits.
+                                                                                   : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.u_measure_verify.u_born.u_reject64'
+  298 |                     k_comb = k_i + 1;
+      |                            ^
+%Warning-WIDTHTRUNC: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_bbht.v:185:23: Operator ASSIGN expects 4 bits on the Assign RHS, but Assign RHS's ADD generates 32 bits.
+                                                                            : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.u_bbht.u_bbht_random.u_reject'
+  185 |                     k = i + 1;
+      |                       ^
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:630:17: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's VARREF 'ord' generates 7 bits.
+                                                                               : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+  630 |             rem = ord;
+      |                 ^
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:631:18: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's VARREF 'k' generates 2 bits.
+                                                                               : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+  631 |             need = k;
+      |                  ^
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:634:35: Operator SUB expects 32 bits on the LHS, but LHS's VARREF 'n' generates 4 bits.
+                                                                               : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+  634 |                     c = choose13(n-p-1, need-1);
+      |                                   ^
+%Warning-WIDTHTRUNC: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:634:25: Operator FUNCREF 'choose13' expects 4 bits on the Function Argument, but Function Argument's SUB generates 32 bits.
+                                                                              : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+  634 |                     c = choose13(n-p-1, need-1);
+      |                         ^~~~~~~~
+%Warning-WIDTHTRUNC: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:634:25: Operator FUNCREF 'choose13' expects 3 bits on the Function Argument, but Function Argument's SUB generates 32 bits.
+                                                                              : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+  634 |                     c = choose13(n-p-1, need-1);
+      |                         ^~~~~~~~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:634:23: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's FUNCREF 'choose13' generates 11 bits.
+                                                                               : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+  634 |                     c = choose13(n-p-1, need-1);
+      |                       ^
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:831:33: Operator ADD expects 14 bits on the RHS, but RHS's VARREF 'rank' generates 11 bits.
+                                                                               : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+  831 |             memo_addr_of = base + rank;
+      |                                 ^
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:843:23: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'r' generates 4 bits.
+                                                                               : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+  843 |                 if (r == p) rank_onehot[p] = 1'b1;
+      |                       ^~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:963:59: Operator GTE expects 32 bits on the LHS, but LHS's VARREF 'univ_count' generates 4 bits.
+                                                                               : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+  963 |                                (!raw_found && (univ_count >= U_MAX)));
+      |                                                           ^~
+%Warning-WIDTHTRUNC: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:970:44: Bit extraction of var[3:0] requires 2 bit index, not 5 bits.
+                                                                              : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+  970 |             build_sel_valid = in_slot_valid[build_idx];
+      |                                            ^
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:977:32: Operator LT expects 32 bits on the LHS, but LHS's VARREF 'build_idx' generates 5 bits.
+                                                                               : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+  977 |         end else if (build_idx < (4 + WINDOW_LEN)) begin
+      |                                ^
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:1421:49: Operator LTE expects 32 bits on the LHS, but LHS's VARREF 'a_ctx_keep_count' generates 3 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 1421 |                               (a_ctx_keep_count <= (CKPT_K-1));
+      |                                                 ^~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:1423:44: Operator ADD expects 3 bits on the RHS, but RHS's VARREF 'root_single_new_endpoint' generates 1 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 1423 |     wire [2:0] root_single_count = a_count + root_single_new_endpoint;
+      |                                            ^
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:1623:51: Operator ADD expects 32 bits on the LHS, but LHS's REPLICATE generates 4 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 1623 |         early_has_next2 = (({1'b0,a_req_idx[2:0]} + 4'd2) <= H_FUTURE);
+      |                                                   ^
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:1623:51: Operator ADD expects 32 bits on the RHS, but RHS's CONST '4'h2' generates 4 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 1623 |         early_has_next2 = (({1'b0,a_req_idx[2:0]} + 4'd2) <= H_FUTURE);
+      |                                                   ^
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:1798:36: Operator GTE expects 32 bits on the LHS, but LHS's VARREF 'a_req_idx' generates 4 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 1798 |     wire top_terminal = (a_req_idx >= H_FUTURE);
+      |                                    ^~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2024:56: Operator EQ expects 32 bits on the LHS, but LHS's REPLICATE generates 5 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2024 |     wire scan_exact_finish=(sp!=0) && ({1'b0,a_req_idx}==H_FUTURE-1);
+      |                                                        ^~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2225:25: Operator FUNCREF 'next_comb9' expects 4 bits on the Function Argument, but Function Argument's VARREF 'keep_count' generates 3 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2225 |                 nmask = next_comb9(a_rmask, keep_count, a_rsize);
+      |                         ^~~~~~~~~~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2229:25: Operator FUNCREF 'next_comb9' expects 3 bits on the Function Argument, but Function Argument's VARREF 'a_dsize' generates 2 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2229 |                 nmask = next_comb9(a_dmask, extra_count, a_dsize);
+      |                         ^~~~~~~~~~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2237:42: Operator SUB expects 32 bits on the RHS, but RHS's VARREF 'ndsize' generates 2 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2237 |                 else nrsize = (CKPT_K-1) - ndsize;
+      |                                          ^
+%Warning-WIDTHTRUNC: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2237:29: Operator ASSIGN expects 3 bits on the Assign RHS, but Assign RHS's SUB generates 32 bits.
+                                                                               : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2237 |                 else nrsize = (CKPT_K-1) - ndsize;
+      |                             ^
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2236:32: Operator LT expects 32 bits on the LHS, but LHS's VARREF 'keep_count' generates 3 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2236 |                 if (keep_count < ((CKPT_K-1) - ndsize)) nrsize = keep_count;
+      |                                ^
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2236:46: Operator SUB expects 32 bits on the RHS, but RHS's VARREF 'ndsize' generates 2 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2236 |                 if (keep_count < ((CKPT_K-1) - ndsize)) nrsize = keep_count;
+      |                                              ^
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2239:28: Operator FUNCREF 'first_comb9' expects 3 bits on the Function Argument, but Function Argument's VARREF 'ndsize' generates 2 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2239 |                 a_dmask <= first_comb9(ndsize); f_dmask[sp] <= first_comb9(ndsize);
+      |                            ^~~~~~~~~~~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2239:64: Operator FUNCREF 'first_comb9' expects 3 bits on the Function Argument, but Function Argument's VARREF 'ndsize' generates 2 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2239 |                 a_dmask <= first_comb9(ndsize); f_dmask[sp] <= first_comb9(ndsize);
+      |                                                                ^~~~~~~~~~~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2234:35: Operator LT expects 32 bits on the LHS, but LHS's VARREF 'a_dsize' generates 2 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2234 |             end else if ((a_dsize < (CKPT_K-1)) && ((a_dsize + 1'b1) <= extra_count)) begin
+      |                                   ^
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2234:62: Operator ADD expects 4 bits on the LHS, but LHS's VARREF 'a_dsize' generates 2 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2234 |             end else if ((a_dsize < (CKPT_K-1)) && ((a_dsize + 1'b1) <= extra_count)) begin
+      |                                                              ^
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2228:26: Operator FUNCREF 'comb_has_next9' expects 3 bits on the Function Argument, but Function Argument's VARREF 'a_dsize' generates 2 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2228 |             end else if (comb_has_next9(a_dmask, extra_count, a_dsize)) begin
+      |                          ^~~~~~~~~~~~~~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2224:17: Operator FUNCREF 'comb_has_next9' expects 4 bits on the Function Argument, but Function Argument's VARREF 'keep_count' generates 3 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2224 |             if (comb_has_next9(a_rmask, keep_count, a_rsize)) begin
+      |                 ^~~~~~~~~~~~~~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2275:25: Operator FUNCREF 'next_comb9' expects 4 bits on the Function Argument, but Function Argument's VARREF 'keep_count' generates 3 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2275 |                 nmask = next_comb9(pre_rmask, keep_count, pre_rsize);
+      |                         ^~~~~~~~~~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2279:25: Operator FUNCREF 'next_comb9' expects 3 bits on the Function Argument, but Function Argument's VARREF 'pre_dsize' generates 2 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2279 |                 nmask = next_comb9(pre_dmask, extra_count, pre_dsize);
+      |                         ^~~~~~~~~~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2288:42: Operator SUB expects 32 bits on the RHS, but RHS's VARREF 'ndsize' generates 2 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2288 |                 else nrsize = (CKPT_K-1) - ndsize;
+      |                                          ^
+%Warning-WIDTHTRUNC: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2288:29: Operator ASSIGN expects 3 bits on the Assign RHS, but Assign RHS's SUB generates 32 bits.
+                                                                               : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2288 |                 else nrsize = (CKPT_K-1) - ndsize;
+      |                             ^
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2287:32: Operator LT expects 32 bits on the LHS, but LHS's VARREF 'keep_count' generates 3 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2287 |                 if (keep_count < ((CKPT_K-1) - ndsize)) nrsize = keep_count;
+      |                                ^
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2287:46: Operator SUB expects 32 bits on the RHS, but RHS's VARREF 'ndsize' generates 2 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2287 |                 if (keep_count < ((CKPT_K-1) - ndsize)) nrsize = keep_count;
+      |                                              ^
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2291:28: Operator FUNCREF 'first_comb9' expects 3 bits on the Function Argument, but Function Argument's VARREF 'ndsize' generates 2 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2291 |                 a_dmask <= first_comb9(ndsize);
+      |                            ^~~~~~~~~~~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2292:32: Operator FUNCREF 'first_comb9' expects 3 bits on the Function Argument, but Function Argument's VARREF 'ndsize' generates 2 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2292 |                 f_dmask[sp] <= first_comb9(ndsize);
+      |                                ^~~~~~~~~~~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2284:37: Operator LT expects 32 bits on the LHS, but LHS's VARREF 'pre_dsize' generates 2 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2284 |             end else if ((pre_dsize < (CKPT_K-1)) &&
+      |                                     ^
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2285:38: Operator ADD expects 4 bits on the LHS, but LHS's VARREF 'pre_dsize' generates 2 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2285 |                          ((pre_dsize + 1'b1) <= extra_count)) begin
+      |                                      ^
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2278:26: Operator FUNCREF 'comb_has_next9' expects 3 bits on the Function Argument, but Function Argument's VARREF 'pre_dsize' generates 2 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2278 |             end else if (comb_has_next9(pre_dmask, extra_count, pre_dsize)) begin
+      |                          ^~~~~~~~~~~~~~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2274:17: Operator FUNCREF 'comb_has_next9' expects 4 bits on the Function Argument, but Function Argument's VARREF 'keep_count' generates 3 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2274 |             if (comb_has_next9(pre_rmask, keep_count, pre_rsize)) begin
+      |                 ^~~~~~~~~~~~~~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2481:35: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'clear_ctr' generates 14 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2481 |                     if (clear_ctr == MEM_ENTRIES-1) begin
+      |                                   ^~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2521:48: Operator GTE expects 32 bits on the LHS, but LHS's VARREF 'univ_count' generates 4 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2521 |                                 if (univ_count >= U_MAX) begin
+      |                                                ^~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2574:36: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'build_idx' generates 5 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2574 |                     if ((build_idx == (4 + WINDOW_LEN - 1)) && !build_commit_abort) begin
+      |                                    ^~
+%Warning-WIDTHTRUNC: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2644:37: Operator ASSIGNDLY expects 3 bits on the Assign RHS, but Assign RHS's SUB generates 32 bits.
+                                                                               : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2644 |                         f_rsize[sp] <= (CKPT_K-1);
+      |                                     ^~
+%Warning-WIDTHTRUNC: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2645:33: Operator ASSIGNDLY expects 3 bits on the Assign RHS, but Assign RHS's SUB generates 32 bits.
+                                                                               : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2645 |                         a_rsize <= (CKPT_K-1);
+      |                                 ^~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2640:41: Operator LT expects 32 bits on the LHS, but LHS's VARREF 'prep_keep_count' generates 3 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2640 |                     if (prep_keep_count < (CKPT_K-1)) begin
+      |                                         ^
+%Warning-WIDTHTRUNC: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2651:40: Operator FUNCREF 'first_comb9' expects 3 bits on the Function Argument, but Function Argument's SUB generates 32 bits.
+                                                                               : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2651 |                         f_rmask[sp] <= first_comb9(CKPT_K-1);
+      |                                        ^~~~~~~~~~~
+%Warning-WIDTHTRUNC: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2652:36: Operator FUNCREF 'first_comb9' expects 3 bits on the Function Argument, but Function Argument's SUB generates 32 bits.
+                                                                               : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2652 |                         a_rmask <= first_comb9(CKPT_K-1);
+      |                                    ^~~~~~~~~~~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2647:41: Operator LT expects 32 bits on the LHS, but LHS's VARREF 'prep_keep_count' generates 3 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2647 |                     if (prep_keep_count < (CKPT_K-1)) begin
+      |                                         ^
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2747:67: Operator EQ expects 32 bits on the LHS, but LHS's REPLICATE generates 5 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2747 |                                                 ({1'b0,a_req_idx} == (H_FUTURE-1));
+      |                                                                   ^~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2748:66: Operator COND expects 11 bits on the Conditional False, but Conditional False's SEL generates 10 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2748 |                                 mresp_lb <= seed_issue_from_scan ?
+      |                                                                  ^
+%Warning-WIDTHTRUNC: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2748:42: Operator ASSIGNDLY expects 10 bits on the Assign RHS, but Assign RHS's COND generates 11 bits.
+                                                                               : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2748 |                                 mresp_lb <= seed_issue_from_scan ?
+      |                                          ^~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:2811:76: Operator EQ expects 32 bits on the LHS, but LHS's REPLICATE generates 5 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 2811 |                                         if ((sp != 0) && ({1'b0,a_req_idx} == (H_FUTURE-1))) begin
+      |                                                                            ^~
+%Warning-WIDTHTRUNC: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:3052:45: Operator FUNCREF 'memo_addr_of' expects 3 bits on the Function Argument, but Function Argument's SUB generates 4 bits.
+                                                                               : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy'
+ 3052 |                             memo_wr_addr <= memo_addr_of(f_req_idx[sp]-1'b1,
+      |                                             ^~~~~~~~~~~~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:3218:28: Operator ADD expects 32 bits on the RHS, but RHS's VARREF 'cand8' generates 8 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_shadow_j'
+ 3218 |         L_after_accept = L + cand8;
+      |                            ^
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:3256:37: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'out_idx' generates 4 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_shadow_j'
+ 3256 |                         if (out_idx == (FUTURE_COUNT-1)) begin
+      |                                     ^~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_checkpoint.v:327:43: Operator LT expects 32 bits on the LHS, but LHS's VARREF 'commit_slot' generates 2 bits.
+                                                                                   : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.u_ckpt_meta'
+  327 |             if (commit_en && (commit_slot < CKPT_K))
+      |                                           ^
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_checkpoint.v:338:43: Operator LT expects 32 bits on the LHS, but LHS's VARREF 'commit_slot' generates 2 bits.
+                                                                                   : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.u_ckpt_meta'
+  338 |             if (commit_en && (commit_slot < CKPT_K)) begin
+      |                                           ^
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:3335:27: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'level' generates 3 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_plan_fifo'
+ 3335 |     assign full  = (level == DEPTH);
+      |                           ^~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:3362:35: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'wptr' generates 2 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_plan_fifo'
+ 3362 |                     wptr <= (wptr == DEPTH-1) ? {PTR_W{1'b0}} : wptr + 1'b1;
+      |                                   ^~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:3368:35: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'rptr' generates 2 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_plan_fifo'
+ 3368 |                     rptr <= (rptr == DEPTH-1) ? {PTR_W{1'b0}} : rptr + 1'b1;
+      |                                   ^~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:3373:35: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'wptr' generates 2 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_plan_fifo'
+ 3373 |                     wptr <= (wptr == DEPTH-1) ? {PTR_W{1'b0}} : wptr + 1'b1;
+      |                                   ^~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:3374:35: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'rptr' generates 2 bits.
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_plan_fifo'
+ 3374 |                     rptr <= (rptr == DEPTH-1) ? {PTR_W{1'b0}} : rptr + 1'b1;
+      |                                   ^~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_loader.v:89:51: Operator LTE expects 32 bits on the LHS, but LHS's VARREF 'expected_count' generates 15 bits.
+                                                                              : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.u_loader'
+   89 |                                   (expected_count <= N);
+      |                                                   ^~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_iteration.v:1627:48: Operator LT expects 32 bits on the LHS, but LHS's VARREF 'issue_count' generates 8 bits.
+                                                                                   : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_intra_e4.u_iter_ctrl'
+ 1627 |     wire issue_valid=state_issues&&(issue_count<QUADS);
+      |                                                ^
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_iteration.v:1645:48: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'out_count' generates 8 bits.
+                                                                                   : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_intra_e4.u_iter_ctrl'
+ 1645 |     wire last_out=dp_quad_out_valid&&(out_count==QUADS-1);
+      |                                                ^~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_iteration.v:1646:44: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'sum_count' generates 8 bits.
+                                                                                   : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_intra_e4.u_iter_ctrl'
+ 1646 |     wire last_sum=dp_sum_commit&&(sum_count==QUADS-1);
+      |                                            ^~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_checkpoint.v:1254:58: Operator ASSIGNDLY expects 32 bits on the Assign RHS, but Assign RHS's VARREF 'delta16' generates 16 bits.
+                                                                                    : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.u_ckpt_executor'
+ 1254 |                                     physical_iter_issued <= delta16;
+      |                                                          ^~
+%Warning-WIDTHEXPAND: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_checkpoint.v:1281:74: Operator ADD expects 32 bits on the RHS, but RHS's VARREF 'bridge_remaining' generates 16 bits.
+                                                                                    : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.u_ckpt_executor'
+ 1281 |                             physical_iter_issued <= physical_iter_issued + bridge_remaining;
+      |                                                                          ^
+%Warning-CMPCONST: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_iteration.v:1475:55: Comparison is constant due to limited range
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_intra_e4.u_iter_dp'
+ 1475 |         assign pad0[b]=r0_before|(r0_tail&&(LANE_INDEX<tail));
+      |                                                       ^
+%Warning-CMPCONST: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_iteration.v:1476:55: Comparison is constant due to limited range
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_intra_e4.u_iter_dp'
+ 1476 |         assign pad1[b]=r1_before|(r1_tail&&(LANE_INDEX<tail));
+      |                                                       ^
+%Warning-CMPCONST: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_iteration.v:1477:55: Comparison is constant due to limited range
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_intra_e4.u_iter_dp'
+ 1477 |         assign pad2[b]=r2_before|(r2_tail&&(LANE_INDEX<tail));
+      |                                                       ^
+%Warning-CMPCONST: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_iteration.v:1478:55: Comparison is constant due to limited range
+                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_intra_e4.u_iter_dp'
+ 1478 |         assign pad3[b]=r3_before|(r3_tail&&(LANE_INDEX<tail));
+      |                                                       ^
+%Warning-CMPCONST: /tmp/bbht_dse_fa0e89aa93be5229/src/bbht_grover_main_ip.v:674:47: Comparison is constant due to limited range
+                                                                                  : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip'
+  674 |     wire [7:0] ckpt_sort_l1_2 = (ckpt_sort_i2 <= ckpt_sort_i3) ?
+      |                                               ^~
+%Warning-CMPCONST: /tmp/bbht_dse_fa0e89aa93be5229/src/bbht_grover_main_ip.v:676:47: Comparison is constant due to limited range
+                                                                                  : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip'
+  676 |     wire [7:0] ckpt_sort_l1_3 = (ckpt_sort_i2 <= ckpt_sort_i3) ?
+      |                                               ^~
+%Warning-LATCH: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_checkpoint.v:351:5: Latch inferred for signal 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.u_ckpt_meta.tmp' (not all control paths of combinational always assign a value)
+                                                                            : ... Suggest use of always_latch for intentional latches
+  351 |     always @* begin
+      |     ^~~~~~
+%Warning-LATCH: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_checkpoint.v:351:5: Latch inferred for signal 'bbht_rvx_wrapper.u_core.u_main_ip.ckpt_sorted_count' (not all control paths of combinational always assign a value)
+                                                                            : ... Suggest use of always_latch for intentional latches
+  351 |     always @* begin
+      |     ^~~~~~
+%Warning-LATCH: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_checkpoint.v:351:5: Latch inferred for signal 'bbht_rvx_wrapper.u_core.u_main_ip.ckpt_sorted_j_flat' (not all control paths of combinational always assign a value)
+                                                                            : ... Suggest use of always_latch for intentional latches
+  351 |     always @* begin
+      |     ^~~~~~
+%Warning-LATCH: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:1446:5: Latch inferred for signal 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy.sel_id' (not all control paths of combinational always assign a value)
+                                                                         : ... Suggest use of always_latch for intentional latches
+ 1446 |     always @* begin
+      |     ^~~~~~
+%Warning-LATCH: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:1446:5: Latch inferred for signal 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy.action_raw_child_count' (not all control paths of combinational always assign a value)
+                                                                         : ... Suggest use of always_latch for intentional latches
+ 1446 |     always @* begin
+      |     ^~~~~~
+%Warning-LATCH: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:1446:5: Latch inferred for signal 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy.action_raw0' (not all control paths of combinational always assign a value)
+                                                                         : ... Suggest use of always_latch for intentional latches
+ 1446 |     always @* begin
+      |     ^~~~~~
+%Warning-LATCH: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:1446:5: Latch inferred for signal 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy.action_raw1' (not all control paths of combinational always assign a value)
+                                                                         : ... Suggest use of always_latch for intentional latches
+ 1446 |     always @* begin
+      |     ^~~~~~
+%Warning-LATCH: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:1446:5: Latch inferred for signal 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy.action_raw2' (not all control paths of combinational always assign a value)
+                                                                         : ... Suggest use of always_latch for intentional latches
+ 1446 |     always @* begin
+      |     ^~~~~~
+%Warning-LATCH: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_policy.v:1446:5: Latch inferred for signal 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_auto_policy.action_raw3' (not all control paths of combinational always assign a value)
+                                                                         : ... Suggest use of always_latch for intentional latches
+ 1446 |     always @* begin
+      |     ^~~~~~
+%Warning-LATCH: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_checkpoint.v:903:5: Latch inferred for signal 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_ckpt_planner_auto_pipe.u_ckpt_planner_pipe.n' (not all control paths of combinational always assign a value)
+                                                                            : ... Suggest use of always_latch for intentional latches
+  903 |     always @* begin
+      |     ^~~~~~
+%Warning-UNOPTFLAT: /tmp/bbht_dse_fa0e89aa93be5229/src/grover_arithmetic.v:136:27: Signal unoptimizable: Circular combinational logic: 'bbht_rvx_wrapper.u_core.u_main_ip.g_intra_e4.u_iter_dp.u_sum0.pre_node'
+  136 |     wire signed [PSW-1:0] pre_node [0:(CUT+1)*P-1];
+      |                           ^~~~~~~~
+                    /tmp/bbht_dse_fa0e89aa93be5229/src/grover_arithmetic.v:136:27:      Example path: bbht_rvx_wrapper.u_core.u_main_ip.g_intra_e4.u_iter_dp.u_sum0.pre_node
+                    /tmp/bbht_dse_fa0e89aa93be5229/src/grover_arithmetic.v:147:40:      Example path: ASSIGNW
+                    /tmp/bbht_dse_fa0e89aa93be5229/src/grover_arithmetic.v:136:27:      Example path: bbht_rvx_wrapper.u_core.u_main_ip.g_intra_e4.u_iter_dp.u_sum0.pre_node
+make: Entering directory '/tmp/bbht_dse_fa0e89aa93be5229/obj'
+g++  -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-overloaded-virtual -Wno-shadow -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable     -DBBHT_HOST_TEST -DBBHT_NO_PRINTF -DBBHT_TIMEOUT=200000000 -I/tmp/bbht_dse_fa0e89aa93be5229/src -O2   -Os -c -o tb_bench500.o /tmp/bbht_dse_fa0e89aa93be5229/src/tb_bench500.cpp
+g++ -Os  -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-overloaded-virtual -Wno-shadow -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable     -DBBHT_HOST_TEST -DBBHT_NO_PRINTF -DBBHT_TIMEOUT=200000000 -I/tmp/bbht_dse_fa0e89aa93be5229/src -O2   -c -o verilated.o /usr/share/verilator/include/verilated.cpp
+g++ -Os  -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-overloaded-virtual -Wno-shadow -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable     -DBBHT_HOST_TEST -DBBHT_NO_PRINTF -DBBHT_TIMEOUT=200000000 -I/tmp/bbht_dse_fa0e89aa93be5229/src -O2   -c -o verilated_threads.o /usr/share/verilator/include/verilated_threads.cpp
+g++ -Os  -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-overloaded-virtual -Wno-shadow -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable     -DBBHT_HOST_TEST -DBBHT_NO_PRINTF -DBBHT_TIMEOUT=200000000 -I/tmp/bbht_dse_fa0e89aa93be5229/src -O2   -x c++-header Vbbht_rvx_wrapper__pch.h -o Vbbht_rvx_wrapper__pch.h.fast.gch
+g++   -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-overloaded-virtual -Wno-shadow -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable     -DBBHT_HOST_TEST -DBBHT_NO_PRINTF -DBBHT_TIMEOUT=200000000 -I/tmp/bbht_dse_fa0e89aa93be5229/src -O2   -x c++-header Vbbht_rvx_wrapper__pch.h -o Vbbht_rvx_wrapper__pch.h.slow.gch
+echo "" > Vbbht_rvx_wrapper__ALL.verilator_deplist.tmp
+g++ -Os  -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-overloaded-virtual -Wno-shadow -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable     -DBBHT_HOST_TEST -DBBHT_NO_PRINTF -DBBHT_TIMEOUT=200000000 -I/tmp/bbht_dse_fa0e89aa93be5229/src -O2   -include Vbbht_rvx_wrapper__pch.h.fast -c -o Vbbht_rvx_wrapper.o Vbbht_rvx_wrapper.cpp
+g++ -Os  -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-overloaded-virtual -Wno-shadow -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable     -DBBHT_HOST_TEST -DBBHT_NO_PRINTF -DBBHT_TIMEOUT=200000000 -I/tmp/bbht_dse_fa0e89aa93be5229/src -O2   -include Vbbht_rvx_wrapper__pch.h.fast -c -o Vbbht_rvx_wrapper___024root__DepSet_h0da39a9b__0.o Vbbht_rvx_wrapper___024root__DepSet_h0da39a9b__0.cpp
+g++ -Os  -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-overloaded-virtual -Wno-shadow -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable     -DBBHT_HOST_TEST -DBBHT_NO_PRINTF -DBBHT_TIMEOUT=200000000 -I/tmp/bbht_dse_fa0e89aa93be5229/src -O2   -include Vbbht_rvx_wrapper__pch.h.fast -c -o Vbbht_rvx_wrapper___024root__DepSet_h41889a0b__0.o Vbbht_rvx_wrapper___024root__DepSet_h41889a0b__0.cpp
+g++ -Os  -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-overloaded-virtual -Wno-shadow -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable     -DBBHT_HOST_TEST -DBBHT_NO_PRINTF -DBBHT_TIMEOUT=200000000 -I/tmp/bbht_dse_fa0e89aa93be5229/src -O2   -include Vbbht_rvx_wrapper__pch.h.fast -c -o Vbbht_rvx_wrapper___024root__DepSet_h41889a0b__1.o Vbbht_rvx_wrapper___024root__DepSet_h41889a0b__1.cpp
+g++ -Os  -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-overloaded-virtual -Wno-shadow -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable     -DBBHT_HOST_TEST -DBBHT_NO_PRINTF -DBBHT_TIMEOUT=200000000 -I/tmp/bbht_dse_fa0e89aa93be5229/src -O2   -include Vbbht_rvx_wrapper__pch.h.fast -c -o Vbbht_rvx_wrapper___024root__DepSet_h41889a0b__2.o Vbbht_rvx_wrapper___024root__DepSet_h41889a0b__2.cpp
+g++ -Os  -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-overloaded-virtual -Wno-shadow -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable     -DBBHT_HOST_TEST -DBBHT_NO_PRINTF -DBBHT_TIMEOUT=200000000 -I/tmp/bbht_dse_fa0e89aa93be5229/src -O2   -include Vbbht_rvx_wrapper__pch.h.fast -c -o Vbbht_rvx_wrapper___024root__DepSet_h41889a0b__3.o Vbbht_rvx_wrapper___024root__DepSet_h41889a0b__3.cpp
+g++ -Os  -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-overloaded-virtual -Wno-shadow -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable     -DBBHT_HOST_TEST -DBBHT_NO_PRINTF -DBBHT_TIMEOUT=200000000 -I/tmp/bbht_dse_fa0e89aa93be5229/src -O2   -include Vbbht_rvx_wrapper__pch.h.fast -c -o Vbbht_rvx_wrapper___024root__DepSet_h41889a0b__4.o Vbbht_rvx_wrapper___024root__DepSet_h41889a0b__4.cpp
+g++   -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-overloaded-virtual -Wno-shadow -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable     -DBBHT_HOST_TEST -DBBHT_NO_PRINTF -DBBHT_TIMEOUT=200000000 -I/tmp/bbht_dse_fa0e89aa93be5229/src -O2   -include Vbbht_rvx_wrapper__pch.h.slow -c -o Vbbht_rvx_wrapper__ConstPool_0.o Vbbht_rvx_wrapper__ConstPool_0.cpp
+g++   -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-overloaded-virtual -Wno-shadow -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable     -DBBHT_HOST_TEST -DBBHT_NO_PRINTF -DBBHT_TIMEOUT=200000000 -I/tmp/bbht_dse_fa0e89aa93be5229/src -O2   -include Vbbht_rvx_wrapper__pch.h.slow -c -o Vbbht_rvx_wrapper___024root__Slow.o Vbbht_rvx_wrapper___024root__Slow.cpp
+g++   -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-overloaded-virtual -Wno-shadow -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable     -DBBHT_HOST_TEST -DBBHT_NO_PRINTF -DBBHT_TIMEOUT=200000000 -I/tmp/bbht_dse_fa0e89aa93be5229/src -O2   -include Vbbht_rvx_wrapper__pch.h.slow -c -o Vbbht_rvx_wrapper___024root__DepSet_h0da39a9b__0__Slow.o Vbbht_rvx_wrapper___024root__DepSet_h0da39a9b__0__Slow.cpp
+g++   -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-overloaded-virtual -Wno-shadow -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable     -DBBHT_HOST_TEST -DBBHT_NO_PRINTF -DBBHT_TIMEOUT=200000000 -I/tmp/bbht_dse_fa0e89aa93be5229/src -O2   -include Vbbht_rvx_wrapper__pch.h.slow -c -o Vbbht_rvx_wrapper___024root__DepSet_h41889a0b__0__Slow.o Vbbht_rvx_wrapper___024root__DepSet_h41889a0b__0__Slow.cpp
+g++   -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-overloaded-virtual -Wno-shadow -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable     -DBBHT_HOST_TEST -DBBHT_NO_PRINTF -DBBHT_TIMEOUT=200000000 -I/tmp/bbht_dse_fa0e89aa93be5229/src -O2   -include Vbbht_rvx_wrapper__pch.h.slow -c -o Vbbht_rvx_wrapper___024root__DepSet_h41889a0b__1__Slow.o Vbbht_rvx_wrapper___024root__DepSet_h41889a0b__1__Slow.cpp
+g++   -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-overloaded-virtual -Wno-shadow -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable     -DBBHT_HOST_TEST -DBBHT_NO_PRINTF -DBBHT_TIMEOUT=200000000 -I/tmp/bbht_dse_fa0e89aa93be5229/src -O2   -include Vbbht_rvx_wrapper__pch.h.slow -c -o Vbbht_rvx_wrapper___024root__DepSet_h41889a0b__2__Slow.o Vbbht_rvx_wrapper___024root__DepSet_h41889a0b__2__Slow.cpp
+g++   -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-overloaded-virtual -Wno-shadow -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable     -DBBHT_HOST_TEST -DBBHT_NO_PRINTF -DBBHT_TIMEOUT=200000000 -I/tmp/bbht_dse_fa0e89aa93be5229/src -O2   -include Vbbht_rvx_wrapper__pch.h.slow -c -o Vbbht_rvx_wrapper___024root__DepSet_h41889a0b__3__Slow.o Vbbht_rvx_wrapper___024root__DepSet_h41889a0b__3__Slow.cpp
+g++   -I.  -MMD -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-overloaded-virtual -Wno-shadow -Wno-sign-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable     -DBBHT_HOST_TEST -DBBHT_NO_PRINTF -DBBHT_TIMEOUT=200000000 -I/tmp/bbht_dse_fa0e89aa93be5229/src -O2   -include Vbbht_rvx_wrapper__pch.h.slow -c -o Vbbht_rvx_wrapper__Syms.o Vbbht_rvx_wrapper__Syms.cpp
+Archive ar -rcs Vbbht_rvx_wrapper__ALL.a Vbbht_rvx_wrapper.o Vbbht_rvx_wrapper___024root__DepSet_h0da39a9b__0.o Vbbht_rvx_wrapper___024root__DepSet_h41889a0b__0.o Vbbht_rvx_wrapper___024root__DepSet_h41889a0b__1.o Vbbht_rvx_wrapper___024root__DepSet_h41889a0b__2.o Vbbht_rvx_wrapper___024root__DepSet_h41889a0b__3.o Vbbht_rvx_wrapper___024root__DepSet_h41889a0b__4.o Vbbht_rvx_wrapper__ConstPool_0.o Vbbht_rvx_wrapper___024root__Slow.o Vbbht_rvx_wrapper___024root__DepSet_h0da39a9b__0__Slow.o Vbbht_rvx_wrapper___024root__DepSet_h41889a0b__0__Slow.o Vbbht_rvx_wrapper___024root__DepSet_h41889a0b__1__Slow.o Vbbht_rvx_wrapper___024root__DepSet_h41889a0b__2__Slow.o Vbbht_rvx_wrapper___024root__DepSet_h41889a0b__3__Slow.o Vbbht_rvx_wrapper__Syms.o
+g++     tb_bench500.o verilated.o verilated_threads.o Vbbht_rvx_wrapper__ALL.a   /tmp/bbht_dse_fa0e89aa93be5229/driver.o  -pthread -lpthread -latomic   -o bench
+rm Vbbht_rvx_wrapper__ALL.verilator_deplist.tmp
+make: Leaving directory '/tmp/bbht_dse_fa0e89aa93be5229/obj'

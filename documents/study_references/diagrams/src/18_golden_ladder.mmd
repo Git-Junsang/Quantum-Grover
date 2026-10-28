@@ -1,9 +1,9 @@
 flowchart TD
-    SPEC["고정한 규약<br/>Q1.22 · round-half-to-even · 대칭 포화 · 두 난수 스트림 · 그룹→행→레인 · 정책 동률 규칙"]
-    L1["1단 · NumPy float64 · Qiskit Aer<br/>알고리즘이 맞나?"] --- P1["합격: 이론값 재현<br/>NumPy ↔ Qiskit 궤적 500/500"]
-    L2["2단 · Q1.22 bit-exact 기준모델 (골든)<br/>수 표현이 맞나?"] --- P2["합격: 전 실행 오차 < 10⁻³<br/>보드와 궤적 · 물리 반복 500/500"]
-    L3["3단 · RTL (verilator · iverilog)<br/>회로가 맞나?"] --- P3["합격: requested-j 256케이스 bit-exact<br/>500 워크로드 궤적 일치"]
-    BD["보드 · Arty A7-100T<br/>실물에서 도는가?"] --- P4["궤적 500/500 · 실경과 7.626배<br/>사이클 값은 RTL 과 다름"]
+    SPEC["고정한 규약<br/>Q1.22 · round-half-to-even · symmetric saturation · 두 random number stream · group→row→lane · policy 동률 규칙"]
+    L1["1단 · NumPy float64 · Qiskit Aer<br/>algorithm이 맞나?"] --- P1["합격: 이론값 재현<br/>NumPy ↔ Qiskit BBHT trajectory 500/500"]
+    L2["2단 · Q1.22 bit-exact reference model<br/>수 표현이 맞나?"] --- P2["합격: 전 실행 error < 10⁻³<br/>board와 BBHT trajectory · executed iterations 500/500"]
+    L3["3단 · RTL (verilator · iverilog)<br/>circuit가 맞나?"] --- P3["합격: requested iterations 256 cases bit-exact<br/>500 workloads BBHT trajectory 일치"]
+    BD["board · Arty A7-100T<br/>실물에서 도는가?"] --- P4["BBHT trajectory 500/500 · wall-clock time 7.626×<br/>cycle 값은 RTL 과 다름"]
     SPEC --> L1
     L1 --> L2
     L2 --> L3

@@ -6,10 +6,10 @@
 // 한 번도 검증되지 않습니다. 이 하네스는 같은 M 다섯 개 x 공식 시드 100쌍을
 // 술어마다 따로 돌려 SW 기준모델의 기댓값과 맞댑니다.
 //
-//   자극   software/golden_develop/tb_stimulus/dump_predicate500_workload.py 가 떨군
+//   자극   software/reference_model_develop/tb_stimulus/dump_predicate500_workload.py 가 떨군
 //          WL_DIR/workloads_<P>.txt 목록 (환경변수 WL_LIST 로 파일 하나를 지정)
 //          한 줄 = "<P> <술어코드> <A> <B> <M> <bin 경로>"
-//   기댓값 software/golden_data/2026-09-25_predicate500/
+//   기댓값 software/reference_model_data/2026-09-25_predicate500/
 //          predicate500_expected.csv (predicate500_report.py 가 대조)
 //
 // 실행 순서는 보드 앱과 같습니다. 데이터셋 하나를 적재하고, 시드마다 Normal 다음
@@ -20,7 +20,7 @@
 //
 // 환경변수 PRED500_MODES 로 돌릴 모드를 고릅니다. "normal" 이면 Normal 만,
 // 안 주거나 "both" 면 Normal 과 체크포인트 둘 다입니다. 체크포인트 없는 판
-// (hardware_bram_nocheckpoint) 은 BURST 를 무시하므로 Normal 만 돌립니다.
+// (no_checkpoint_baseline) 은 BURST 를 무시하므로 Normal 만 돌립니다.
 //
 // CSR 접근은 tb_bench500.cpp 와 같은 BBHT_HOST_TEST 갈래이고, 데이터셋 버퍼는
 // 0xE0000000 에 mmap 해 실제 System SRAM 주소를 씁니다.
@@ -218,7 +218,7 @@ int main(int argc, char **argv)
                        bbht_status_str(rc),
                        found ? (int)res.result_index : -1,
                        found ? (int)g_data[res.result_index] : 0,
-                       res.trial_count, res.l_bbht, res.actual_iter,
+                       res.shot_count, res.requested_iterations, res.executed_iterations,
                        res.cycle_count, res.status);
                 fflush(stdout);
             }

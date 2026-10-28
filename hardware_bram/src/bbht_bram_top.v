@@ -34,7 +34,7 @@
 // 결선 판단
 //   1. start 수락 조건        아래 §start
 //   2. checkpoint_auto_enable = burst_enable && auto_shot   (§checkpoint)
-//   3. 수동 체크포인트 입력   전부 0 (CKPT_MANUAL_ENABLE=0)
+//   3. 수동 체크포인트 입력   전부 0 (CHECKPOINT_MANUAL_ENABLE=0)
 //
 // 클럭
 //   전부 clk 하나(clk_accel = 100 MHz)입니다. APB/AHB 쪽 CDC 는 RVX 가
@@ -137,7 +137,7 @@ module bbht_bram_top #(
     wire        core_load_error;
 
     wire [31:0] core_trial_count;
-    wire [31:0] core_l_bbht;
+    wire [31:0] core_requested_iterations;
     wire [31:0] core_actual_grover_iterations;
     wire [31:0] core_cycle_count;
 
@@ -146,7 +146,7 @@ module bbht_bram_top #(
     wire [8:0]  res_count;
     wire        res_pop;
 
-    // 정책·plan 텔레메트리. CKPT_SINGLE / CKPT_ENUM 에서 정책 엔진과
+    // 정책·plan 텔레메트리. CHECKPOINT_SINGLE / CHECKPOINT_ENUMERATION 에서 정책 엔진과
     // speculative plan FIFO 가 채웁니다. NORMAL_* 에서는 움직이지 않습니다.
     wire [31:0] tm_policy_cycles_total;
     wire [31:0] tm_policy_stall_cycles;
@@ -154,11 +154,11 @@ module bbht_bram_top #(
     wire [31:0] tm_policy_memo_hit;
     wire [31:0] tm_policy_memo_miss;
     wire [31:0] tm_policy_max_latency;
-    wire [2:0]  tm_plan_fifo_level;
-    wire [2:0]  tm_plan_fifo_highwater;
-    wire [31:0] tm_plan_fifo_empty_demand;
-    wire [31:0] tm_plan_fifo_hit_count;
-    wire [31:0] tm_plan_fifo_mismatch_count;
+    wire [2:0]  tm_plan_queue_level;
+    wire [2:0]  tm_plan_queue_highwater;
+    wire [31:0] tm_plan_queue_empty_demand;
+    wire [31:0] tm_plan_queue_hit_count;
+    wire [31:0] tm_plan_queue_miss_count;
     wire [31:0] tm_policy_cold_solve_count;
     wire [31:0] tm_policy_spec_solve_count;
 
@@ -199,8 +199,8 @@ module bbht_bram_top #(
     // CONTROL 의 burst 비트 하나가 Normal 과 체크포인트를 가릅니다
     // (CSR 정본 run_modes).
     //   auto_shot=0, burst=0  MANUAL_SINGLE
-    //   auto_shot=1, burst=0  NORMAL_SINGLE / NORMAL_ENUM
-    //   auto_shot=1, burst=1  CKPT_SINGLE   / CKPT_ENUM
+    //   auto_shot=1, burst=0  RESTART_SINGLE / RESTART_ENUMERATION
+    //   auto_shot=1, burst=1  CHECKPOINT_SINGLE   / CHECKPOINT_ENUMERATION
     // 수동 실행에 체크포인트를 붙이는 경로는 정본 구성에 없으므로
     // auto_shot 으로 같이 막습니다.
     //=================================================================
@@ -253,7 +253,7 @@ module bbht_bram_top #(
         .st_enum_done           (core_enum_done),
         .st_result_index        (core_result_index),
         .st_trial_count         (core_trial_count),
-        .st_l_bbht              (core_l_bbht),
+        .st_requested_iterations              (core_requested_iterations),
         .st_actual_iter         (core_actual_grover_iterations),
         .st_cycle_count         (core_cycle_count),
         .st_found_count         (core_found_count),
@@ -274,11 +274,11 @@ module bbht_bram_top #(
         .tm_policy_memo_hit          (tm_policy_memo_hit),
         .tm_policy_memo_miss         (tm_policy_memo_miss),
         .tm_policy_max_latency       (tm_policy_max_latency),
-        .tm_plan_fifo_level          (tm_plan_fifo_level),
-        .tm_plan_fifo_highwater      (tm_plan_fifo_highwater),
-        .tm_plan_fifo_empty_demand   (tm_plan_fifo_empty_demand),
-        .tm_plan_fifo_hit_count      (tm_plan_fifo_hit_count),
-        .tm_plan_fifo_mismatch_count (tm_plan_fifo_mismatch_count),
+        .tm_plan_queue_level          (tm_plan_queue_level),
+        .tm_plan_queue_highwater      (tm_plan_queue_highwater),
+        .tm_plan_queue_empty_demand   (tm_plan_queue_empty_demand),
+        .tm_plan_queue_hit_count      (tm_plan_queue_hit_count),
+        .tm_plan_queue_miss_count (tm_plan_queue_miss_count),
         .tm_policy_cold_solve_count  (tm_policy_cold_solve_count),
         .tm_policy_spec_solve_count  (tm_policy_spec_solve_count)
     );
@@ -327,13 +327,13 @@ module bbht_bram_top #(
     //=================================================================
     bbht_grover_main_ip #(
         .CHECKPOINT_ENABLE  (1),      // 체크포인트 하드웨어를 합성에 넣음
-        .CKPT_K             (3),      // 체크포인트 3벌
-        .POLICY_H_FUTURE    (3),      // 정책 지평 3
-        .CKPT_MANUAL_ENABLE (0),      // 수동 체크포인트 경로 없음
-        .AUTO_SPEC_ENABLE   (1),      // speculative plan FIFO 켬
-        .INTRA_ENGINES      (4),      // 반복 한 번에 연산기 4벌 (E4)
-        .MEAS_M1_ENABLE     (1),      // 측정 BUILD 두 행/사이클 (M1)
-        .MEAS_M2_ENABLE     (1)       // M1 + 16x32 계층 행 선택 (M2)
+        .CHECKPOINT_CAPACITY             (3),      // 체크포인트 3벌
+        .LOOKAHEAD_SHOTS    (3),      // 정책 지평 3
+        .CHECKPOINT_MANUAL_ENABLE (0),      // 수동 체크포인트 경로 없음
+        .SPECULATIVE_PLANNING_ENABLE   (1),      // speculative plan FIFO 켬
+        .NUMBER_OF_PES      (4),      // 반복 한 번에 연산기 4벌 (E4)
+        .BUILD_ROWS_PER_CYCLE (2),    // Dual-Row Build
+        .USE_TWO_LEVEL_SELECT     (1)       // M1 + 16x32 계층 행 선택 (M2)
     ) u_main_ip (
         .clk                        (clk),
         .rstn                       (rstnn),
@@ -346,7 +346,7 @@ module bbht_bram_top #(
         .enum_enable                (cfg_enum_enable),
         .fail_repeat_limit          (cfg_fail_repeat_limit),
 
-        // Checkpoint (manual). CKPT_MANUAL_ENABLE=0 이라 전부 0 으로 묶습니다.
+        // Checkpoint (manual). CHECKPOINT_MANUAL_ENABLE=0 이라 전부 0 으로 묶습니다.
         .checkpoint_manual_enable   (1'b0),
         .policy_valid               (1'b0),
         .policy_source_j            (7'd0),
@@ -403,9 +403,9 @@ module bbht_bram_top #(
         .load_error                 (core_load_error),
 
         // Counters
-        .trial_count                (core_trial_count),
-        .L_BBHT                     (core_l_bbht),
-        .actual_grover_iterations   (core_actual_grover_iterations),
+        .shot_count                (core_trial_count),
+        .requested_iterations                     (core_requested_iterations),
+        .executed_iterations   (core_actual_grover_iterations),
         .cycle_count                (core_cycle_count),
 
         // Policy / Plan telemetry
@@ -415,11 +415,11 @@ module bbht_bram_top #(
         .policy_memo_hit            (tm_policy_memo_hit),
         .policy_memo_miss           (tm_policy_memo_miss),
         .policy_max_latency         (tm_policy_max_latency),
-        .plan_fifo_level            (tm_plan_fifo_level),
-        .plan_fifo_highwater        (tm_plan_fifo_highwater),
-        .plan_fifo_empty_demand     (tm_plan_fifo_empty_demand),
-        .plan_fifo_hit_count        (tm_plan_fifo_hit_count),
-        .plan_fifo_mismatch_count   (tm_plan_fifo_mismatch_count),
+        .plan_queue_level            (tm_plan_queue_level),
+        .plan_queue_highwater        (tm_plan_queue_highwater),
+        .plan_queue_empty_demand     (tm_plan_queue_empty_demand),
+        .plan_queue_hit_count        (tm_plan_queue_hit_count),
+        .plan_queue_miss_count   (tm_plan_queue_miss_count),
         .policy_cold_solve_count    (tm_policy_cold_solve_count),
         .policy_spec_solve_count    (tm_policy_spec_solve_count)
     );

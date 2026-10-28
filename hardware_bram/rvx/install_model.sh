@@ -31,14 +31,14 @@ if [ -z "$1" ] || [ ! -d "$1/src" ]; then
     exit 2
 fi
 
-MODEL=$(cd "$1" && pwd)
+CONFIGURATION=$(cd "$1" && pwd)
 HERE=$(cd "$(dirname "$0")" && pwd)
 BRAM=$(cd "$HERE/.." && pwd)                 # hardware_bram (공용)
 ROOT=$(cd "$BRAM/.." && pwd)                 # 저장소 루트
 APPS=${APPS:-bbht_console}
 
-XML=$(ls "$MODEL"/rvx/*.xml 2>/dev/null)
-[ "$(echo "$XML" | wc -w)" = 1 ] || { echo "모델 rvx/ 에 xml 이 하나가 아닙니다: $MODEL/rvx"; exit 1; }
+XML=$(ls "$CONFIGURATION"/rvx/*.xml 2>/dev/null)
+[ "$(echo "$XML" | wc -w)" = 1 ] || { echo "모델 rvx/ 에 xml 이 하나가 아닙니다: $CONFIGURATION/rvx"; exit 1; }
 XML_NAME=$(basename "$XML" .xml)
 
 PLATFORM=${2:-${RVX_MINI_HOME:-/opt/rvx}/platform/$XML_NAME}
@@ -54,7 +54,7 @@ fi
 
 say() { printf '  %-52s %s\n' "$1" "$2"; }
 
-echo "모델:      $(basename "$MODEL")"
+echo "모델:      $(basename "$CONFIGURATION")"
 echo "설치 대상: $PLATFORM"
 
 # 1. CSR 정본에서 헤더를 다시 생성합니다. 이 순서를 지켜야 RTL 과 C 가
@@ -80,7 +80,7 @@ say "${PLATFORM_NAME}.xml" "-> $PLATFORM/"
 CORE_SRC="bbht_grover_main_ip.v \
           grover_arithmetic.v grover_bbht.v grover_checkpoint.v \
           grover_iteration.v grover_loader.v grover_measurement.v \
-          grover_memories.v grover_policy.v grover_status.v"
+          grover_memories.v grover_policy.v grover_status.v grover_parallel.sv grover_policy_parameterized.sv"
 
 # 앞선 설치(다른 모델일 수도 있습니다)의 흔적이 남지 않게 비우고 다시 채웁니다.
 rm -rf "$PLATFORM/user/rtl/src" "$PLATFORM/user/rtl/include"
@@ -91,13 +91,13 @@ done
 cp "$BRAM/src/grover_param.vh"                     "$PLATFORM/user/rtl/include/"
 cp "$BRAM/src/bbht_rvx_wrapper.v" "$BRAM/src/bbht_grover_mmio.v" \
    "$BRAM/src/bbht_ahb_loader.v"                   "$PLATFORM/user/rtl/src/"
-cp "$MODEL/src/bbht_grover_core_adapter.v"         "$PLATFORM/user/rtl/src/"
+cp "$CONFIGURATION/src/bbht_grover_core_adapter.v"         "$PLATFORM/user/rtl/src/"
 cp "$BRAM/src/bbht_grover_user_region.vh" \
    "$PLATFORM/user/rtl/include/${PLATFORM_NAME}_user_region.vh"
 cp "$ROOT/spec/generated/bbht_grover_csr.vh" "$PLATFORM/user/rtl/include/"
 say "user/rtl/{src,include}" "통신 계층 3 + 모델 어댑터 + Main IP 10 + 헤더"
 # 어떤 구성이 들어갔는지 눈으로 확인할 수 있게 어댑터 기본값을 찍습니다.
-grep -E '^\s*parameter integer' "$MODEL/src/bbht_grover_core_adapter.v" \
+grep -E '^\s*parameter integer' "$CONFIGURATION/src/bbht_grover_core_adapter.v" \
     | sed -E 's/^\s*parameter integer\s+/      /; s/,$//'
 
 # 3b. 사용자 RTL 등록. imp 쪽 set_fpga_syn_env.tcl 이 이 파일을 source 해서

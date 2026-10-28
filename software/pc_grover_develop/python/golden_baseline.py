@@ -1,6 +1,6 @@
 """golden_baseline.py : model G, the team's Python golden model, timed like every other backend.
 
-Runs software/golden_develop/models/rtl_reference_model/checkpoint_bbht_model.py
+Runs software/reference_model_develop/models/rtl_reference_model/checkpoint_bbht_model.py
 (V098AutomaticCore.run_single) unchanged, from the team folder, on the same
 workloads and with the same timing tiers as the other backends (campaign.py).
 It is RTL-exact (signed Q1.22, integer sampler), so its trajectories and
@@ -38,7 +38,7 @@ sys.dont_write_bytecode = True   # never write __pycache__ into the team folders
 HERE = Path(__file__).resolve().parent
 SOFTWARE = HERE.parents[1]
 sys.path.insert(0, str(HERE))
-for d in ("golden_develop/models/common", "golden_develop/models/rtl_reference_model"):
+for d in ("reference_model_develop/models/common", "reference_model_develop/models/rtl_reference_model"):
     sys.path.insert(0, str(SOFTWARE / d))
 
 import campaign  # noqa: E402

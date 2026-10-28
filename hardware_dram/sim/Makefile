@@ -201,7 +201,7 @@ BENCH_BRAM_SRC = $(BRAM_CORE)
 
 bench250:
 	@mkdir -p $(WL_DIR)
-	python3 ../../software/golden_develop/tb_stimulus/dump_bench_workload.py --seeds 50 --out $(WL_DIR)
+	python3 ../../software/reference_model_develop/tb_stimulus/dump_bench_workload.py --seeds 50 --out $(WL_DIR)
 	python3 bin_to_hex.py $(WL_DIR)
 	@verilator --binary --timing $(VFLAGS) -DGD_DRAM_BRANCH \
 	          -DGD_WL_DIR='"$(WL_DIR)"' -DGD_CSV_OUT='"$(BUILD)/bench250_dram.csv"' \
@@ -301,7 +301,7 @@ endif
 
 bench500:
 	@mkdir -p $(WL500_DIR)
-	python3 ../../software/golden_develop/tb_stimulus/dump_bench_workload.py --seeds 100 --out $(WL500_DIR)
+	python3 ../../software/reference_model_develop/tb_stimulus/dump_bench_workload.py --seeds 100 --out $(WL500_DIR)
 	python3 bin_to_hex.py $(WL500_DIR)
 	@verilator --binary --timing $(VFLAGS) -DGD_DRAM_BRANCH $(DRAM_LAT) \
 	          -DGD_WL_DIR='"$(WL500_DIR)"' -DGD_CSV_OUT='"$(BUILD)/bench500_dram_$(DLAT).csv"' \
@@ -330,8 +330,8 @@ bench500:
 #   AXI_STALL=1        axi4_mem_model 에 불규칙한 백프레셔를 겁니다
 #
 # 자극과 기댓값은 hardware_bram 과 같은 파일입니다.
-#   software/golden_develop/tb_stimulus/dump_predicate500_workload.py
-#   software/golden_data/2026-09-25_predicate500/predicate500_expected.csv
+#   software/reference_model_develop/tb_stimulus/dump_predicate500_workload.py
+#   software/reference_model_data/2026-09-25_predicate500/predicate500_expected.csv
 #---------------------------------------------------------------------
 AXI_RTL  = $(RTL_DIR)/bbht_dram_axi_top.v $(RTL_DIR)/grover_dram_axi_bridge.v $(TOP_RTL)
 
@@ -353,7 +353,7 @@ PRED500_DEFS   = -DBBHT_HOST_TEST -DBBHT_NO_PRINTF -DBBHT_TIMEOUT=200000000
 FW_DIR         = ../../hardware_bram/firmware
 
 predicate500-wl:
-	@python3 ../../software/golden_develop/tb_stimulus/dump_predicate500_workload.py --out $(PRED500_WL)
+	@python3 ../../software/reference_model_develop/tb_stimulus/dump_predicate500_workload.py --out $(PRED500_WL)
 
 predicate500-build: lint-axi
 	@python3 ../../spec/gen_csr.py > /dev/null

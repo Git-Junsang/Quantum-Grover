@@ -495,10 +495,43 @@ endmodule
 `timescale 1ns/1ps
 `include "grover_param.vh"
 
+// Four consecutive rows map to four independent 128-row banks.  The read
+// latency is one clock, matching the existing single/two/three-write memories.
+// Lane i always owns rows 4q+i; no write arbitration or replicated state is
+// needed.  All banks are read together and a registered bank tag selects Q.
+module grover_row_weight_mem_m4_4w (
+    input wire clk,
+    input wire rd_en,
+    input wire [`GP_ROW_W-1:0] rd_row,
+    output wire [`GP_ROW_SUM_W-1:0] rd_weight,
+    input wire wr_en,
+    input wire [`GP_ROW_W-1:0] wr_base_row,
+    input wire [4*`GP_ROW_SUM_W-1:0] wr_weights
+);
+    localparam integer RSW = `GP_ROW_SUM_W;
+    wire [4*RSW-1:0] bank_q;
+    reg [1:0] rd_bank;
+    always @(posedge clk)
+        if (rd_en) rd_bank <= rd_row[1:0];
+    genvar bank;
+    generate for (bank=0; bank<4; bank=bank+1) begin : g_bank
+        (* ram_style = "block" *) reg [RSW-1:0] mem [0:(`GP_ROWS/4)-1];
+        reg [RSW-1:0] q;
+        always @(posedge clk) begin
+            if (rd_en) q <= mem[rd_row[`GP_ROW_W-1:2]];
+            if (wr_en) mem[wr_base_row[`GP_ROW_W-1:2]] <=
+                           wr_weights[bank*RSW +: RSW];
+        end
+        assign bank_q[bank*RSW +: RSW] = q;
+    end endgenerate
+    assign rd_weight = bank_q[rd_bank*RSW +: RSW];
+endmodule
+
 module grover_born_sampler #(
     parameter integer AMP_READ_LATENCY = 1,
     parameter integer E4_DUAL_BUILD    = 0,
     parameter integer E4_TRIPLE_BUILD  = 0,
+    parameter integer E4_QUAD_BUILD    = 0,
     parameter integer E4_HIER_SELECT   = 0
 ) (
     input  wire                                  clk,
@@ -595,6 +628,11 @@ module grover_born_sampler #(
     wire [`GP_ROW_W-1:0]          sq2_row;
     wire [P*SQW-1:0]              sq2_lane;
     wire [RSW-1:0]                sq2_row_sum;
+    wire                         sq3_valid;
+    wire [`GP_ROW_W-1:0]         sq3_row;
+    wire [RSW-1:0]               sq3_row_sum;
+    wire e4_build_quad_valid = (E4_QUAD_BUILD != 0) &&
+                               (st == S_BUILD) && amp_quad_valid;
 
     // E4 quad stream scheduler.  Requests are issued every other BUILD cycle.
     // The four returned rows are consumed as {0,1} then buffered {2,3}.
@@ -621,7 +659,8 @@ module grover_born_sampler #(
     assign amp_quad_rd_en = (E4_DUAL_BUILD != 0) &&
                             (st == S_BUILD) &&
                             (e4_quad_issue_count < 8'd128) &&
-                            ((E4_TRIPLE_BUILD != 0) ?
+                            ((E4_QUAD_BUILD != 0) ? 1'b1 :
+                             (E4_TRIPLE_BUILD != 0) ?
                                 (e4_m3_req_phase != 2'd3) :
                                 !e4_quad_req_gap);
     assign amp_quad_rd_index = e4_quad_issue_count[6:0];
@@ -724,20 +763,25 @@ module grover_born_sampler #(
     wire [`GP_ROW_W-1:0] lane_sq_in_row = (AMP_READ_LATENCY == 2) ?
                                            amp_req_row_d2 : amp_req_row_d;
 
-    wire sq0_in_valid = (E4_TRIPLE_BUILD != 0 && st == S_BUILD) ?
+    wire sq0_in_valid = (E4_QUAD_BUILD != 0 && st == S_BUILD) ?
+                         e4_build_quad_valid :
+                        (E4_TRIPLE_BUILD != 0 && st == S_BUILD) ?
                          e4_m3_v0 :
                         ((E4_DUAL_BUILD != 0 && st == S_BUILD) ?
                          e4_build_pair_valid : lane_sq_in_valid);
     wire [`GP_ROW_W-1:0] sq0_in_row =
+        (E4_QUAD_BUILD != 0 && st == S_BUILD) ? e4_resp_base_row :
         (E4_TRIPLE_BUILD != 0 && st == S_BUILD) ? e4_m3_row0 :
         ((E4_DUAL_BUILD != 0 && st == S_BUILD) ? e4_pair_row0 : lane_sq_in_row);
     wire [P*`GP_AMP_W-1:0] sq0_in_amp =
+        (E4_QUAD_BUILD != 0 && st == S_BUILD) ? amp_quad0 :
         (E4_TRIPLE_BUILD != 0 && st == S_BUILD) ? e4_m3_amp0 :
         ((E4_DUAL_BUILD != 0 && st == S_BUILD) ? e4_pair_amp0 : amp_rdata);
 
     wire sq1_in_valid = (E4_DUAL_BUILD != 0) &&
                         (st == S_BUILD) &&
-                        ((E4_TRIPLE_BUILD != 0) ? e4_m3_v1 :
+                        ((E4_QUAD_BUILD != 0) ? e4_build_quad_valid :
+                         (E4_TRIPLE_BUILD != 0) ? e4_m3_v1 :
                                                         e4_build_pair_valid);
 
     grover_born_square32 u_square32 (
@@ -758,8 +802,10 @@ module grover_born_sampler #(
                 .clk         (clk),
                 .rstn        (rstn),
                 .in_valid    (sq1_in_valid),
-                .in_row      ((E4_TRIPLE_BUILD != 0) ? e4_m3_row1 : e4_pair_row1),
-                .in_amp      ((E4_TRIPLE_BUILD != 0) ? e4_m3_amp1 : e4_pair_amp1),
+                .in_row      ((E4_QUAD_BUILD != 0) ? (e4_resp_base_row + 9'd1) :
+                              (E4_TRIPLE_BUILD != 0) ? e4_m3_row1 : e4_pair_row1),
+                .in_amp      ((E4_QUAD_BUILD != 0) ? amp_quad1 :
+                              (E4_TRIPLE_BUILD != 0) ? e4_m3_amp1 : e4_pair_amp1),
                 .out_valid   (sq1_valid),
                 .out_row     (sq1_row),
                 .out_sq      (sq1_lane),
@@ -774,13 +820,13 @@ module grover_born_sampler #(
     endgenerate
 
     generate
-        if (E4_TRIPLE_BUILD != 0) begin : g_m3_square2
+        if ((E4_TRIPLE_BUILD != 0) || (E4_QUAD_BUILD != 0)) begin : g_m3_square2
             grover_born_square32 u_square32_c (
                 .clk         (clk),
                 .rstn        (rstn),
-                .in_valid    (e4_m3_v2),
-                .in_row      (e4_m3_row2),
-                .in_amp      (e4_m3_amp2),
+                .in_valid    ((E4_QUAD_BUILD != 0) ? e4_build_quad_valid : e4_m3_v2),
+                .in_row      ((E4_QUAD_BUILD != 0) ? (e4_resp_base_row + 9'd2) : e4_m3_row2),
+                .in_amp      ((E4_QUAD_BUILD != 0) ? amp_quad2 : e4_m3_amp2),
                 .out_valid   (sq2_valid),
                 .out_row     (sq2_row),
                 .out_sq      (sq2_lane),
@@ -791,6 +837,22 @@ module grover_born_sampler #(
             assign sq2_row     = {`GP_ROW_W{1'b0}};
             assign sq2_lane    = {(P*SQW){1'b0}};
             assign sq2_row_sum = {RSW{1'b0}};
+        end
+    endgenerate
+
+    generate
+        if (E4_QUAD_BUILD != 0) begin : g_m4_square3
+            grover_born_square32 u_square32_d (
+                .clk(clk), .rstn(rstn),
+                .in_valid(e4_build_quad_valid),
+                .in_row(e4_resp_base_row + 9'd3), .in_amp(amp_quad3),
+                .out_valid(sq3_valid), .out_row(sq3_row),
+                .out_sq(), .out_row_sum(sq3_row_sum)
+            );
+        end else begin : g_no_m4_square3
+            assign sq3_valid = 1'b0;
+            assign sq3_row = 0;
+            assign sq3_row_sum = 0;
         end
     endgenerate
 
@@ -812,7 +874,15 @@ module grover_born_sampler #(
     wire rw_wr2_en = (st == S_BUILD) && sq2_valid;
 
     generate
-        if (E4_TRIPLE_BUILD != 0) begin : g_m3_row_weight
+        if (E4_QUAD_BUILD != 0) begin : g_m4_row_weight
+            grover_row_weight_mem_m4_4w u_row_weight_mem (
+                .clk(clk), .rd_en(rw_rd_en), .rd_row(rw_rd_row),
+                .rd_weight(rw_rd_weight),
+                .wr_en(rw_wr0_en && sq1_valid && sq2_valid && sq3_valid),
+                .wr_base_row(sq0_row),
+                .wr_weights({sq3_row_sum,sq2_row_sum,sq1_row_sum,sq0_row_sum})
+            );
+        end else if (E4_TRIPLE_BUILD != 0) begin : g_m3_row_weight
             grover_row_weight_mem_m3_3w u_row_weight_mem (
                 .clk       (clk),
                 .rd_en     (rw_rd_en),
@@ -923,6 +993,13 @@ module grover_born_sampler #(
                                             {2'b00, sq1_row_sum_ext};
     wire [TW:0] build_total_next_ext = {1'b0, build_total} +
                                         {1'b0, sq0_row_sum_ext};
+    // Balanced row-sum tree, then one full-width accumulator add.  Four rows
+    // are aligned to a quad, so a 32-row CDF boundary always lands on lane 3.
+    wire [RSW:0] quad_sum01 = {1'b0,sq0_row_sum} + {1'b0,sq1_row_sum};
+    wire [RSW:0] quad_sum23 = {1'b0,sq2_row_sum} + {1'b0,sq3_row_sum};
+    wire [RSW+1:0] quad_sum = {1'b0,quad_sum01} + {1'b0,quad_sum23};
+    wire [TW:0] build_total_quad_ext = {1'b0,build_total} +
+                                        {{(TW-RSW-1){1'b0}},quad_sum};
 
     //-------------------------------------------------------------------------
     // E4 M2 hierarchical row selection metadata.
@@ -1100,7 +1177,14 @@ module grover_born_sampler #(
 
             // E4 M1/M3 quad request cadence and residual-row buffering.
             if ((E4_DUAL_BUILD != 0) && (st == S_BUILD)) begin
-                if (E4_TRIPLE_BUILD != 0) begin
+                if (E4_QUAD_BUILD != 0) begin
+                    // One memory quad per clock, consumed immediately.  M4
+                    // needs no residual FIFO, unlike the 4-to-3 M3 gearbox.
+                    if (amp_quad_rd_en)
+                        e4_quad_issue_count <= e4_quad_issue_count + 1'b1;
+                    if (amp_quad_valid)
+                        e4_quad_resp_count <= e4_quad_resp_count + 1'b1;
+                end else if (E4_TRIPLE_BUILD != 0) begin
                     if (amp_quad_rd_en) begin
                         e4_quad_issue_count <= e4_quad_issue_count + 1'b1;
                         e4_m3_req_phase <= e4_m3_req_phase + 1'b1;
@@ -1218,8 +1302,23 @@ module grover_born_sampler #(
 
                         if (sq0_valid) begin
                             build_total <= build_total_next_ext[TW-1:0];
+                            // Single-row BUILD also supplies exact group CDFs
+                            // when the generic integration selects 16x32 SELECT.
+                            if ((E4_HIER_SELECT != 0) && (sq0_row[4:0] == 5'd31))
+                                group_cdf[sq0_row[`GP_ROW_W-1:5]] <= build_total_next_ext[TW-1:0];
                             if (sq0_row == (`GP_ROWS-1)) begin
                                 total_weight <= build_total_next_ext[TW-1:0];
+                                st <= S_CHECK_W;
+                            end
+                        end
+                    end else if (E4_QUAD_BUILD != 0) begin
+                        if (sq0_valid && sq1_valid && sq2_valid && sq3_valid) begin
+                            build_total <= build_total_quad_ext[TW-1:0];
+                            if ((E4_HIER_SELECT != 0) && (sq3_row[4:0] == 5'd31))
+                                group_cdf[sq3_row[`GP_ROW_W-1:5]] <=
+                                    build_total_quad_ext[TW-1:0];
+                            if (sq3_row == (`GP_ROWS-1)) begin
+                                total_weight <= build_total_quad_ext[TW-1:0];
                                 st <= S_CHECK_W;
                             end
                         end
@@ -1287,8 +1386,7 @@ module grover_born_sampler #(
                         row_cumulative  <= {TW{1'b0}};
                         rw_valid_d      <= 1'b0;
                         rw_pipe_valid   <= 1'b0;
-                        if ((E4_DUAL_BUILD != 0) &&
-                            (E4_HIER_SELECT != 0)) begin
+                        if (E4_HIER_SELECT != 0) begin
                             group_scan_index <= 4'd0;
                             group_prev_cdf   <= {TW{1'b0}};
                             st               <= S_GROUP_SCAN;
@@ -1325,8 +1423,7 @@ module grover_born_sampler #(
                         row_cumulative  <= {TW{1'b0}};
                         rw_valid_d      <= 1'b0;
                         rw_pipe_valid   <= 1'b0;
-                        if ((E4_DUAL_BUILD != 0) &&
-                            (E4_HIER_SELECT != 0)) begin
+                        if (E4_HIER_SELECT != 0) begin
                             group_scan_index <= 4'd0;
                             group_prev_cdf   <= {TW{1'b0}};
                             st               <= S_GROUP_SCAN;
@@ -1592,6 +1689,7 @@ module grover_measure_verify #(
     parameter integer AMP_READ_LATENCY = 1,
     parameter integer E4_DUAL_BUILD    = 0,
     parameter integer E4_TRIPLE_BUILD  = 0,
+    parameter integer E4_QUAD_BUILD    = 0,
     parameter integer E4_HIER_SELECT   = 0
 ) (
     input  wire                                  clk,
@@ -1667,6 +1765,7 @@ module grover_measure_verify #(
         .AMP_READ_LATENCY(AMP_READ_LATENCY),
         .E4_DUAL_BUILD   (E4_DUAL_BUILD),
         .E4_TRIPLE_BUILD (E4_TRIPLE_BUILD),
+        .E4_QUAD_BUILD   (E4_QUAD_BUILD),
         .E4_HIER_SELECT  (E4_HIER_SELECT)
     ) u_born (
         .clk               (clk),

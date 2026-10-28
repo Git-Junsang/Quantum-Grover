@@ -19,16 +19,16 @@ mkdir -p "$BUILD/src"
 
 # CORE=stub   통신 계층 + 자리 채우개 (기본). 통신 계약만 몇 초에 확인합니다
 # CORE=real   통신 계층 + 모델 어댑터 + Main IP. 어댑터는 ADAPTER 로 받고,
-#             안 주면 보드 정본 구성(K3H3_E4_M2) 모델의 것을 씁니다
+#             안 주면 보드 정본 구성(final) 모델의 것을 씁니다
 CORE=${CORE:-stub}
-ADAPTER=${ADAPTER:-$HERE/../models/hardware_bram_K3H3_E4_M2/src/bbht_grover_core_adapter.v}
+ADAPTER=${ADAPTER:-$HERE/../configurations/final/src/bbht_grover_core_adapter.v}
 
 # 정본 Main IP 중 합성 경로에 들어가는 열입니다. glob 을 쓰면 policy OOC
 # 전용 파일까지 딸려 와서 최상위가 둘이 됩니다.
 CORE_FILES="bbht_grover_main_ip.v \
             grover_arithmetic.v grover_bbht.v grover_checkpoint.v \
             grover_iteration.v grover_loader.v grover_measurement.v \
-            grover_memories.v grover_policy.v grover_status.v"
+            grover_memories.v grover_policy.v grover_status.v grover_parallel.sv grover_policy_parameterized.sv"
 
 cp "$HERE/../testbench/tb_driver.cpp" "$BUILD/src/"
 

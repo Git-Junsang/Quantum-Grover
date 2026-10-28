@@ -180,6 +180,14 @@ int main(int argc, char **argv)
     // 체크포인트. 모드 전환이 이전 체크포인트 상태를 무효화하므로 시드끼리는
     // 서로 독립인 paired 비교가 됩니다.
     const int Ms[5] = {1, 4, 16, 64, 256};
+    // Optional prefix for design-space smoke runs.  Unset means the complete
+    // Common500 sequence, preserving its reset and memo/epoch history.
+    const char *limit_text = getenv("BENCH_LIMIT");
+    const int limit = limit_text ? atoi(limit_text) : 500;
+    if (limit < 1 || limit > 500) {
+        fprintf(stderr, "BENCH_LIMIT must be 1..500\n"); return 1;
+    }
+    int completed = 0;
     for (int mi = 0; mi < 5; mi++) {
         int M = Ms[mi];
         if (load_data(M) != 0) return 1;
@@ -205,11 +213,15 @@ int main(int argc, char **argv)
                 printf("%d,%d,%s,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
                        M, s, mode ? "k4" : "normal",
                        (rc == BBHT_OK) ? res.result_index : 0xFFFFFFFFu,
-                       res.trial_count, res.l_bbht, res.actual_iter,
+                       res.shot_count, res.requested_iterations, res.executed_iterations,
                        res.cycle_count, res.policy_cycles, res.policy_stall,
                        res.policy_actions, res.cold_solve, res.spec_solve,
                        res.plan_mismatch);
                 fflush(stdout);
+            }
+            if (++completed == limit) {
+                printf("# DONE errors=0 workloads=%d\n", completed);
+                return 0;
             }
         }
         fprintf(stderr, "M=%d 완료 (%d 시드)\n", M, g_nseed);

@@ -198,7 +198,7 @@ int main(int argc, char **argv)
                        bbht_status_str(rc),
                        found ? (int)res.result_index : -1,
                        found ? (int)g_data[res.result_index] : 0,
-                       res.trial_count, res.l_bbht, res.actual_iter,
+                       res.shot_count, res.requested_iterations, res.executed_iterations,
                        res.cycle_count, res.status);
                 fflush(stdout);
             }

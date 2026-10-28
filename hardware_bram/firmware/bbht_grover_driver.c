@@ -155,9 +155,9 @@ void bbht_read_result(bbht_result_t *res)
     res->result_valid = (st & BBHT_ST_RESULT_VALID) ? 1u : 0u;
     res->result_index = bbht_rd(BBHT_RESULT_INDEX);
 
-    res->trial_count  = bbht_rd(BBHT_TRIAL_COUNT);
-    res->l_bbht       = bbht_rd(BBHT_L_BBHT);
-    res->actual_iter  = bbht_rd(BBHT_ACTUAL_ITER);
+    res->shot_count  = bbht_rd(BBHT_SHOT_COUNT);
+    res->requested_iterations       = bbht_rd(BBHT_REQUESTED_ITERATIONS);
+    res->executed_iterations  = bbht_rd(BBHT_EXECUTED_ITERATIONS);
     res->cycle_count  = bbht_rd(BBHT_CYCLE_COUNT);
 
     res->found_count  = bbht_rd(BBHT_FOUND_COUNT);
@@ -171,11 +171,11 @@ void bbht_read_result(bbht_result_t *res)
     res->policy_memo_hit    = bbht_rd(BBHT_POLICY_MEMO_HIT);
     res->policy_memo_miss   = bbht_rd(BBHT_POLICY_MEMO_MISS);
     res->policy_max_latency = bbht_rd(BBHT_POLICY_MAX_LATENCY);
-    res->plan_level         = bbht_rd(BBHT_PLAN_FIFO_LEVEL);
-    res->plan_highwater     = bbht_rd(BBHT_PLAN_FIFO_HIGHWATER);
-    res->plan_empty_demand  = bbht_rd(BBHT_PLAN_FIFO_EMPTY_DEMAND);
-    res->plan_hit           = bbht_rd(BBHT_PLAN_FIFO_HIT_COUNT);
-    res->plan_mismatch      = bbht_rd(BBHT_PLAN_FIFO_MISMATCH_COUNT);
+    res->plan_level         = bbht_rd(BBHT_PLAN_QUEUE_LEVEL);
+    res->plan_highwater     = bbht_rd(BBHT_PLAN_QUEUE_HIGHWATER);
+    res->plan_empty_demand  = bbht_rd(BBHT_PLAN_QUEUE_EMPTY_DEMAND);
+    res->plan_hit           = bbht_rd(BBHT_PLAN_QUEUE_HIT_COUNT);
+    res->plan_mismatch      = bbht_rd(BBHT_PLAN_QUEUE_MISS_COUNT);
     res->cold_solve         = bbht_rd(BBHT_POLICY_COLD_SOLVE_COUNT);
     res->spec_solve         = bbht_rd(BBHT_POLICY_SPEC_SOLVE_COUNT);
 

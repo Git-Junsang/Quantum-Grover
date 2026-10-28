@@ -1,0 +1,22 @@
+{
+  "config": {
+    "schema": 2,
+    "k": 5,
+    "h": 3,
+    "e": 16,
+    "m": 4,
+    "policy_mode": 6,
+    "scan_lanes": 4,
+    "force_generic": true
+  },
+  "sha256": {
+    "hardware_bram/src/grover_policy.v": "54e3e9dc167b1fad567cdb5070505095502f9083856b76831ae515ecf4b1c232",
+    "hardware_bram/src/grover_policy_parameterized.sv": "272d9c9519de373747970fa2ad6dee8b0f21f4525d44e60c25ff502cb9ad1287",
+    "hardware_bram/src/grover_param.vh": "f334d27683ec7660250a4c9ccefd90c1c82b9c7047d37bd4ca887fb29a11f2fd",
+    "hardware_bram/testbench/tb_policy_parameterized.sv": "d91baef6ebf241bf7deda32daac4bb48d8f3c0bc24733e20ab7a3494d723f85c"
+  },
+  "random_cases": 48,
+  "seed": 28028,
+  "scope": "standalone RTL policy only; E/M integration not yet implemented",
+  "backend": "generic experimental"
+}

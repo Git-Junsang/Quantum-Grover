@@ -1,0 +1,4 @@
+k,h,decisions,baseline_cycles,prune1_cycles,cycle_change_pct,baseline_actions,prune1_actions,action_change_pct,baseline_max_latency,prune1_max_latency,choice_errors
+3,3,7403,1183308,1079891,-8.739652,167908,140443,-16.357172,811,771,0
+4,4,7403,2841616,2636879,-7.204950,579120,477138,-17.609822,6532,6713,0
+4,8,7403,21593720,23451610,8.603844,7292597,6789416,-6.899888,39622,44368,0

@@ -1,0 +1,6 @@
+K3/H8 pilot: 500 workloads, 7403 policy decisions
+Traceback (most recent call last):
+  File "<stdin>", line 8, in <module>
+  File "/workspace/hardware_bram/sim/kh_sweep.py", line 353, in run_rtl_cell
+    raise RuntimeError(
+RuntimeError: RTL K3H8 failed; see /workspace/hardware_bram/results/2026-10-28_policy_kh_cycles/rtl_p6_k3h8.log

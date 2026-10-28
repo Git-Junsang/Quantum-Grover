@@ -6,7 +6,7 @@
 // 탐색의 사이클이 **그 전에 무엇을 돌았느냐**에 달려 있기 때문입니다.
 //
 //   - 리셋 뒤 첫 체크포인트 탐색은 정책 엔진이 memo BRAM 을 한 번 지웁니다
-//     (grover_policy.v ST_CLEAR). 길이는 H_FUTURE x STATE_RANKS = 3 x 1093
+//     (grover_policy.v ST_CLEAR). 길이는 LOOKAHEAD_SHOTS x STATE_RANKS = 3 x 1093
 //     = 3,279 사이클이고 전부 policy_stall 로 잡힙니다.
 //   - 그 뒤의 탐색도 직전 탐색이 남긴 정책 엔진 상태에 따라 stall 이 달라집니다.
 //
@@ -209,7 +209,7 @@ int main(int argc, char **argv)
         bbht_read_result(&res);           // 콘솔 STAT 과 같은 읽기
         printf("run%d,%u,%d,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,\n",
                k + 1, bursts[k], (int)rc,
-               res.result_index, res.trial_count, res.l_bbht, res.actual_iter,
+               res.result_index, res.shot_count, res.requested_iterations, res.executed_iterations,
                res.cycle_count, res.policy_cycles, res.policy_stall,
                res.policy_actions, res.policy_memo_hit, res.policy_memo_miss,
                res.cold_solve, res.spec_solve, res.plan_mismatch,

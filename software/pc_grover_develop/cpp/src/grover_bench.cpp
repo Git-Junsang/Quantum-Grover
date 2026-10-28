@@ -288,12 +288,12 @@ int main(int argc, char** argv) {
                 << o.threads << "," << o.workers << "," << o.reps << "," << int(r.res.success) << ","
                 << termination_name(r.res.termination) << ",";
             if (r.res.success) csv << r.res.result_index;
-            csv << "," << r.res.trial_count << "," << r.res.L_BBHT << "," << r.res.physical_iterations << ","
+            csv << "," << r.res.shot_count << "," << r.res.requested_iterations << "," << r.res.physical_iterations << ","
                 << r.compute_med << "," << r.search_med << "," << r.search_min << "," << r.prep_ns << ","
                 << (r.prep_ns + r.search_med) << "\n";
             auto& acc = perM[r.target_count];
             acc[0] += r.search_med; acc[1] += r.compute_med; acc[2] += r.prep_ns + r.search_med;
-            successes += r.res.success; trials += r.res.trial_count; L += r.res.L_BBHT; phys += r.res.physical_iterations;
+            successes += r.res.success; trials += r.res.shot_count; L += r.res.requested_iterations; phys += r.res.physical_iterations;
         }
 
         std::ofstream js(o.summary);

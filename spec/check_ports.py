@@ -10,9 +10,9 @@ hardware_bram 의 통신 계층은 모든 모델이 같이 쓰는 hardware_bram/
 코어 자리에 무엇을 끼우느냐로 갈래가 둘입니다.
 
     real [모델]  통신 계층 (hardware_bram/src) + 모델 어댑터
-                 (hardware_bram/models/hardware_bram_<모델>/src/). 어댑터가 계약
+                 (hardware_bram/configurations/<모델>/src/). 어댑터가 계약
                  이름 bbht_grover_core 와 리셋 이름 rstnn 로 맞춰 줍니다.
-                 모델을 안 주면 보드 정본 구성 K3H3_E4_M2 입니다.
+                 모델을 안 주면 보드 정본 구성 final 입니다.
     stub         같은 통신 계층에 자리 채우개를 끼운 것. 통신 계층만 볼 때 씁니다.
 
 보드에 구운 정본 wrapper 는 어댑터 없이 bbht_grover_main_ip 를 직접 물었고,
@@ -22,9 +22,9 @@ hardware_dram 갈래도 같은 계약을 지켜야 합니다. 그쪽 Main IP 는
 초안이지만 wrapper 19 + core 61 신호는 통신 계층과 맞물리는 부분이라 바뀌면
 안 됩니다. dram 갈래는 hardware_dram 의 wrapper 와 어댑터를 봅니다.
 
-nocheckpoint 는 `real nocheckpoint` 의 옛 이름이라 그대로 받습니다.
+no_checkpoint_baseline 는 `real no_checkpoint_baseline` 의 옛 이름이라 그대로 받습니다.
 
-    python3 check_ports.py [stub|real [모델]|nocheckpoint|dram]
+    python3 check_ports.py [stub|real [모델]|no_checkpoint_baseline|dram]
 """
 import io
 import os
@@ -37,10 +37,10 @@ ROOT = os.path.join(HERE, "..")
 CONTRACT = os.path.join(HERE, "port_contract.tsv")
 
 MODE = sys.argv[1] if len(sys.argv) > 1 else "stub"
-MODEL = sys.argv[2] if len(sys.argv) > 2 else "K3H3_E4_M2"
-if MODE == "nocheckpoint":
-    MODE, MODEL = "real", "nocheckpoint"
-MODEL_SRC = ("hardware_bram", "models", "hardware_bram_" + MODEL, "src")
+CONFIGURATION = sys.argv[2] if len(sys.argv) > 2 else "final"
+if MODE == "no_checkpoint_baseline":
+    MODE, CONFIGURATION = "real", "no_checkpoint_baseline"
+MODEL_SRC = ("hardware_bram", "configurations", CONFIGURATION, "src")
 
 # 갈래마다 wrapper 한 벌, 그 wrapper 가 무는 코어 한 벌입니다.
 #   wrapper  §3.3 을 대조할 파일

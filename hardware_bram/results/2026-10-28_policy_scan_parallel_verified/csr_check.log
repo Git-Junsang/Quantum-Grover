@@ -1,0 +1,8 @@
+최신  bbht_grover_regs.h
+최신  bbht_grover_csr.vh
+최신  bbht_grover_csr.py
+최신  13_CSR_레지스터와_실행_모드.md
+
+일치  final_hardware_contract.py
+일치  bbht_paper_bench/src/main.c
+일치  RTL 재정의 없음

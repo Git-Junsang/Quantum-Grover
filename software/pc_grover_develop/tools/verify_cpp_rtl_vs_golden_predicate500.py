@@ -2,7 +2,7 @@
 
 Checks, per predicate and policy, result_index / trial_count / L_BBHT and the physical
 iteration column that belongs to the policy:
-  normal  -> actual_iter_normal      (bram NORMAL, nocheckpoint, board 'normal')
+  normal  -> actual_iter_normal      (bram NORMAL, no_checkpoint_baseline, board 'normal')
   k3h3    -> actual_iter_k3h3        (bram checkpoint, board 'ckpt')
   allj    -> actual_iter_dram_all_j  (DRAM table cleared per search)
   session -> actual_iter_dram_session (DRAM table kept across seeds; board DRAM 'normal')
@@ -43,7 +43,7 @@ for pred in ("LT", "GT", "EQ", "RANGE"):
     print(f"  {pred:5s} " + ", ".join(line))
 
 board_policy = {("bram", "normal"): "normal", ("bram", "ckpt"): "k3h3",
-                ("nocheckpoint", "normal"): "normal", ("dram", "normal"): "session"}
+                ("no_checkpoint_baseline", "normal"): "normal", ("dram", "normal"): "session"}
 for path in a.board:
     rows = list(csv.DictReader(open(path)))
     tally = defaultdict(lambda: [0, 0])

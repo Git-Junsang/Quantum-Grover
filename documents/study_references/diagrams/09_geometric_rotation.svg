@@ -19,20 +19,20 @@
   <!-- axes: origin O=(70,230) -->
   <line x1="70" y1="230" x2="340" y2="230" stroke="#555" stroke-width="1.6" marker-end="url(#axh)"/>
   <line x1="70" y1="230" x2="70" y2="24"  stroke="#555" stroke-width="1.6" marker-end="url(#axh)"/>
-  <text x="348" y="234" font-size="13" fill="#555">|s′⟩  (오답 방향)</text>
-  <text x="60"  y="18"  font-size="13" fill="#555" text-anchor="start">|ω⟩ (정답 방향)</text>
+  <text x="348" y="234" font-size="13" fill="#555">|s′⟩  (non-solution 방향)</text>
+  <text x="60"  y="18"  font-size="13" fill="#555" text-anchor="start">|ω⟩ (solution 방향)</text>
 
   <!-- U_f|psi> : reflection below axis (dashed) -->
   <line x1="70" y1="230" x2="257.9" y2="298.4" stroke="#999" stroke-width="1.6" stroke-dasharray="5 3" marker-end="url(#axh)"/>
-  <text x="264" y="306" font-size="12" fill="#888">U_f|ψ⟩ (오라클: |s′⟩축 반사)</text>
+  <text x="264" y="306" font-size="12" fill="#888">U_f|ψ⟩ (oracle: |s′⟩축 반사)</text>
 
   <!-- |psi> vector -->
   <line x1="70" y1="230" x2="257.9" y2="161.6" stroke="#5b8def" stroke-width="2.4" marker-end="url(#vpsi)"/>
-  <text x="264" y="158" font-size="13" font-weight="bold" fill="#3a6fd0">|ψ⟩  (초기 균등중첩)</text>
+  <text x="264" y="158" font-size="13" font-weight="bold" fill="#3a6fd0">|ψ⟩  (초기 uniform superposition)</text>
 
   <!-- G|psi> vector -->
   <line x1="70" y1="230" x2="170" y2="56.8" stroke="#e8663d" stroke-width="2.4" marker-end="url(#vg)"/>
-  <text x="150" y="48" font-size="13" font-weight="bold" fill="#c14a22" text-anchor="middle">G|ψ⟩ (한 번 반복 후)</text>
+  <text x="150" y="48" font-size="13" font-weight="bold" fill="#c14a22" text-anchor="middle">G|ψ⟩ (한 번 iteration 후)</text>
 
   <!-- angle labels -->
   <path d="M 120,230 A 50,50 0 0 0 116.9,213.9" fill="none" stroke="#3a6fd0" stroke-width="1.3"/>

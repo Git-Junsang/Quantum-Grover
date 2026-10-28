@@ -14,7 +14,7 @@
 // flushed because the BBHT round/m context restarts even though the Oracle does
 // not. The production autonomous planner is internally pipelined
 // (metadata/predecessor -> boundary/slot allocation) by one additional cycle.
-// No timing optimization changes requested-j, trial, L_BBHT, physical work,
+// No timing optimization changes requested-j, trial, requested_iterations, physical work,
 // checkpoint semantics, policy tie-break, or RNG rules.
 //==============================================================================
 `timescale 1ns/1ps
@@ -22,31 +22,40 @@
 
 module bbht_grover_main_ip #(
     parameter integer CHECKPOINT_ENABLE = 0,
-    parameter integer CKPT_K            = 4,
+    parameter integer CHECKPOINT_CAPACITY            = 4,
     // Rolling-policy lookahead.  Default 4 preserves frozen K4/H4.
-    // E4 K3/H3 branch sets POLICY_H_FUTURE=3.
-    parameter integer POLICY_H_FUTURE    = 4,
+    // E4 K3/H3 branch sets LOOKAHEAD_SHOTS=3.
+    parameter integer LOOKAHEAD_SHOTS    = 4,
     // Exact two-request lower-bound pruning at the pre-memo action boundary.
     // This changes search work only; policy action space/objective/tie-break
     // and the selected checkpoint tuple remain bit-exact.
-    parameter integer POLICY_EXACT_PRUNE = 4,
+    parameter integer POLICY_SEARCH_MODE = 4,
+    parameter integer POLICY_CANON_LANES = 4,
+    parameter integer POLICY_SCAN_LANES = POLICY_CANON_LANES,
+    // Select the simulation-oriented parameter-width backend explicitly when
+    // comparing supported configurations against the new generic integration.
+    parameter integer GENERALIZED_RTL = 0,
+    parameter integer POLICY_FORCE_GENERIC = 0,
+    parameter integer POLICY_MEMO_ADDR_W = 12,
     // 1 keeps the Phase-4B manual checkpoint-policy injection path.
     // 0 compile-time removes that verification-only path and its wide
     // manual/auto select cone from the production autonomous K4/H6 build.
-    parameter integer CKPT_MANUAL_ENABLE = 1,
+    parameter integer CHECKPOINT_MANUAL_ENABLE = 1,
     // 0 reproduces the Phase-6A V7 demand-driven cold policy behavior.
     // 1 enables Phase-6B V8 one-shot-ahead Shadow-J + plan-FIFO overlap.
-    parameter integer AUTO_SPEC_ENABLE  = 1,
+    parameter integer SPECULATIVE_PLANNING_ENABLE  = 1,
     // E2 branch default: two P=32 engines cooperate inside each physical
     // Grover iteration. Set to 1 to reproduce the frozen physical kernel.
-    parameter integer INTRA_ENGINES     = 1,
-    // Paper-ablation measurement controls.
-    // M1: E4 two-row/cycle Born BUILD.
-    // M2: M1 + hierarchical 16x32 row selection.
-    // M3: M2 + three-row/cycle Born BUILD (third square32 engine).
-    parameter integer MEAS_M1_ENABLE    = 1,
-    parameter integer MEAS_M2_ENABLE    = 1,
-    parameter integer MEAS_M3_ENABLE    = 0
+    parameter integer NUMBER_OF_PES     = 1,
+    // Measurement Microarchitecture.
+    // BUILD_ROWS_PER_CYCLE: rows whose row weight the Build step makes per
+    //   cycle (1 Single-Row, 2 Dual-Row, 3 Triple-Row, 4 Quad-Row Build).
+    //   More than one row rides on the 4-PE quad read port, so with fewer
+    //   than 4 PEs the Build step always takes one row per cycle.
+    // USE_TWO_LEVEL_SELECT: Two-Level Select (16 groups x 32 rows) instead of
+    //   Linear Select. It rides on the multi-row Build path.
+    parameter integer BUILD_ROWS_PER_CYCLE = 2,
+    parameter integer USE_TWO_LEVEL_SELECT = 1
 ) (
     input  wire                                  clk,
     input  wire                                  rstn,
@@ -70,7 +79,7 @@ module bbht_grover_main_ip #(
 
     // Phase-6 autonomous checkpoint-policy mode.  Omitted/Z is treated as 0
     // for backward compatibility. Both Single and Enumeration are permitted when
-    // CHECKPOINT_ENABLE=1, CKPT_K=4, burst_enable=1, and auto_shot=1.
+    // CHECKPOINT_ENABLE=1, CHECKPOINT_CAPACITY=4, burst_enable=1, and auto_shot=1.
     input  wire                                  checkpoint_auto_enable,
 
     // Oracle / verification configuration.
@@ -121,9 +130,9 @@ module bbht_grover_main_ip #(
     output wire                                  load_error,
 
     // Performance counters.  In Enumeration these are run-global totals.
-    output wire [31:0]                           trial_count,
-    output wire [31:0]                           L_BBHT,
-    output wire [31:0]                           actual_grover_iterations,
+    output wire [31:0]                           shot_count,
+    output wire [31:0]                           requested_iterations,
+    output wire [31:0]                           executed_iterations,
     output wire [31:0]                           cycle_count,
 
     // Phase-6 autonomous-policy observability.  These are run-level counters
@@ -137,26 +146,47 @@ module bbht_grover_main_ip #(
 
     // Speculative-plan observability. These counters do not alter
     // BBHT logical state; they only expose overlap effectiveness.
-    output wire [2:0]                            plan_fifo_level,
-    output wire [2:0]                            plan_fifo_highwater,
-    output wire [31:0]                           plan_fifo_empty_demand,
-    output wire [31:0]                           plan_fifo_hit_count,
-    output wire [31:0]                           plan_fifo_mismatch_count,
+    output wire [2:0]                            plan_queue_level,
+    output wire [2:0]                            plan_queue_highwater,
+    output wire [31:0]                           plan_queue_empty_demand,
+    output wire [31:0]                           plan_queue_hit_count,
+    output wire [31:0]                           plan_queue_miss_count,
     output wire [31:0]                           policy_cold_solve_count,
     output wire [31:0]                           policy_spec_solve_count
 );
     localparam integer AMP_ROW_BITS  = `GP_P * `GP_AMP_W;
     localparam integer DATA_ROW_BITS = `GP_P * `GP_DATA_W;
+    localparam integer CKPT_SLOTS=(CHECKPOINT_CAPACITY>4)?CHECKPOINT_CAPACITY:4;
+    localparam integer CKPT_COUNT_W=(CHECKPOINT_CAPACITY>4)?$clog2(CHECKPOINT_CAPACITY+1):3;
+    localparam integer CKPT_SLOT_W=(CHECKPOINT_CAPACITY>4)?$clog2(CHECKPOINT_CAPACITY):2;
+    localparam integer POLICY_WINDOW=(LOOKAHEAD_SHOTS>8)?LOOKAHEAD_SHOTS+1:9;
+    localparam integer USE_GENERALIZED=(GENERALIZED_RTL!=0) || CHECKPOINT_CAPACITY>4 ||
+        CHECKPOINT_CAPACITY<3 || LOOKAHEAD_SHOTS>8 ||
+        (NUMBER_OF_PES!=1 && NUMBER_OF_PES!=2 && NUMBER_OF_PES!=4) ||
+        (NUMBER_OF_PES!=4 && BUILD_ROWS_PER_CYCLE>1);
+    localparam integer MEAS_ROWS=(USE_GENERALIZED || NUMBER_OF_PES==4)?BUILD_ROWS_PER_CYCLE:1;
+
+`ifndef SYNTHESIS
+    initial begin
+        if((CHECKPOINT_CAPACITY>4 || CHECKPOINT_CAPACITY<3 || LOOKAHEAD_SHOTS>8) &&
+            POLICY_SEARCH_MODE!=5 && POLICY_SEARCH_MODE!=6 && CHECKPOINT_ENABLE!=0)
+            $fatal(1,"extended checkpoint/lookahead requires exact policy mode 5 or 6");
+        if(CHECKPOINT_CAPACITY<1 || CHECKPOINT_CAPACITY>10 || LOOKAHEAD_SHOTS<1 || LOOKAHEAD_SHOTS>10 || NUMBER_OF_PES<1 || NUMBER_OF_PES>16)
+            $fatal(1,"Main IP requires capacity/lookahead 1..10 and iteration engines 1..16");
+        if (BUILD_ROWS_PER_CYCLE < 1 || BUILD_ROWS_PER_CYCLE > 4)
+            $fatal(1, "BUILD_ROWS_PER_CYCLE must be 1..4");
+    end
+`endif
 
     // Simulation/backward-compatibility normalization: an omitted legacy
     // enum_enable port appears as Z and is treated as Single Search.  In
     // synthesized 0/1 hardware this is equivalent to enum_enable itself.
     wire enum_request = (enum_enable === 1'b1);
     wire ckpt_manual_request = (CHECKPOINT_ENABLE != 0) &&
-                               (CKPT_MANUAL_ENABLE != 0) &&
+                               (CHECKPOINT_MANUAL_ENABLE != 0) &&
                                (checkpoint_manual_enable === 1'b1);
     wire ckpt_auto_request = (CHECKPOINT_ENABLE != 0) &&
-                             ((CKPT_K == 3) || (CKPT_K == 4)) &&
+                             ((CHECKPOINT_CAPACITY>=1) && (CHECKPOINT_CAPACITY<=10)) &&
                              (checkpoint_auto_enable === 1'b1);
 
     //==========================================================================
@@ -230,8 +260,8 @@ module bbht_grover_main_ip #(
     reg                                  run_ckpt_auto_mode;
     reg                                  run_policy_valid;
     reg [`GP_J_W-1:0]                   run_policy_source_j;
-    reg [2:0]                            run_policy_next_count;
-    reg [4*`GP_J_W-1:0]                 run_policy_next_j_flat;
+    reg [CKPT_COUNT_W-1:0]                            run_policy_next_count;
+    reg [CKPT_SLOTS*`GP_J_W-1:0]                 run_policy_next_j_flat;
 
     always @(posedge clk) begin
         if (!rstn) begin
@@ -250,7 +280,7 @@ module bbht_grover_main_ip #(
             run_policy_valid      <= 1'b0;
             run_policy_source_j   <= {`GP_J_W{1'b0}};
             run_policy_next_count <= 3'd0;
-            run_policy_next_j_flat<= {(4*`GP_J_W){1'b0}};
+            run_policy_next_j_flat<= {(CKPT_SLOTS*`GP_J_W){1'b0}};
         end else if (accepted_start) begin
             run_enum_mode         <= enum_request;
             run_auto_shot         <= auto_shot;
@@ -262,7 +292,7 @@ module bbht_grover_main_ip #(
             run_data_count        <= data_count;
             run_shot_cap          <= shot_cap;
             run_fail_repeat_limit <= fail_repeat_limit;
-            run_ckpt_manual_mode  <= (CKPT_MANUAL_ENABLE != 0) ?
+            run_ckpt_manual_mode  <= (CHECKPOINT_MANUAL_ENABLE != 0) ?
                                      ckpt_manual_request : 1'b0;
             run_ckpt_auto_mode    <= ckpt_auto_request;
             run_policy_valid      <= policy_valid;
@@ -276,11 +306,11 @@ module bbht_grover_main_ip #(
         (run_data_count != {`GP_DATA_COUNT_W{1'b0}}) &&
         (run_data_count <= `GP_N);
     wire ckpt_plan_valid;
-    // Compile-time folded manual-mode view.  With CKPT_MANUAL_ENABLE=0 this
+    // Compile-time folded manual-mode view.  With CHECKPOINT_MANUAL_ENABLE=0 this
     // becomes constant 0 at elaboration, allowing Vivado to remove the
     // Phase-4B manual/auto mux/select cone from the production timing build.
     wire run_ckpt_manual_active =
-        (CKPT_MANUAL_ENABLE != 0) ? run_ckpt_manual_mode : 1'b0;
+        (CHECKPOINT_MANUAL_ENABLE != 0) ? run_ckpt_manual_mode : 1'b0;
 
     wire run_ckpt_modes_exclusive = !(run_ckpt_manual_active && run_ckpt_auto_mode);
     wire run_manual_mode_legal = !run_ckpt_manual_active ||
@@ -289,7 +319,7 @@ module bbht_grover_main_ip #(
     // Enumeration itself still requires auto_shot in E_CONFIG below.
     wire run_auto_mode_legal = !run_ckpt_auto_mode ||
         (run_burst_mode && run_auto_shot &&
-         ((CKPT_K == 3) || (CKPT_K == 4)));
+         ((CHECKPOINT_CAPACITY>=1) && (CHECKPOINT_CAPACITY<=10)));
     wire run_config_ok = data_valid && run_data_count_valid &&
                          (run_data_count == loaded_count) &&
                          run_ckpt_modes_exclusive &&
@@ -390,7 +420,7 @@ module bbht_grover_main_ip #(
     wire [7:0]                 bbht_m_bound;
     wire [`GP_J_W-1:0]        bbht_current_j;
     wire [31:0]                bbht_trial_count;
-    wire [31:0]                bbht_L_BBHT;
+    wire [31:0]                bbht_requested_iterations;
     wire                       j_rnd_draw;
     wire [31:0]                j_rnd_state;
 
@@ -436,8 +466,8 @@ module bbht_grover_main_ip #(
         .round_idx              (bbht_round_idx),
         .current_m_bound        (bbht_m_bound),
         .current_j              (bbht_current_j),
-        .trial_count            (bbht_trial_count),
-        .L_BBHT                 (bbht_L_BBHT),
+        .shot_count            (bbht_trial_count),
+        .requested_iterations                 (bbht_requested_iterations),
         .j_rnd_draw             (j_rnd_draw),
         .j_rnd_state            (j_rnd_state)
     );
@@ -467,39 +497,39 @@ module bbht_grover_main_ip #(
     //==========================================================================
     // Phase-4B manual K3/K4 checkpoint Planner + Executor
     //==========================================================================
-    wire [3:0] ckpt_slot_valid;
-    wire [4*`GP_J_W-1:0] ckpt_slot_j_flat;
-    wire [2:0] ckpt_sorted_count;
-    wire [4*`GP_J_W-1:0] ckpt_sorted_j_flat;
+    wire [CKPT_SLOTS-1:0] ckpt_slot_valid;
+    wire [CKPT_SLOTS*`GP_J_W-1:0] ckpt_slot_j_flat;
+    wire [CKPT_COUNT_W-1:0] ckpt_sorted_count;
+    wire [CKPT_SLOTS*`GP_J_W-1:0] ckpt_sorted_j_flat;
 
     wire ckpt_plan_error;
     wire ckpt_plan_exact_hit;
     wire ckpt_plan_source_is_anchor;
     wire ckpt_plan_source_materialized;
     wire ckpt_plan_source_retain;
-    wire [1:0] ckpt_plan_source_slot;
-    wire [3:0] ckpt_plan_retain_mask;
-    wire [3:0] ckpt_plan_clear_mask;
-    wire [2:0] ckpt_plan_boundary_count;
-    wire [4*`GP_J_W-1:0] ckpt_plan_boundary_j_flat;
-    wire [7:0] ckpt_plan_boundary_slot_flat;
-    wire [1:0] ckpt_plan_endpoint_slot;
+    wire [CKPT_SLOT_W-1:0] ckpt_plan_source_slot;
+    wire [CKPT_SLOTS-1:0] ckpt_plan_retain_mask;
+    wire [CKPT_SLOTS-1:0] ckpt_plan_clear_mask;
+    wire [CKPT_COUNT_W-1:0] ckpt_plan_boundary_count;
+    wire [CKPT_SLOTS*`GP_J_W-1:0] ckpt_plan_boundary_j_flat;
+    wire [CKPT_SLOTS*CKPT_SLOT_W-1:0] ckpt_plan_boundary_slot_flat;
+    wire [CKPT_SLOT_W-1:0] ckpt_plan_endpoint_slot;
 
     wire ckpt_exec_iter_start;
     wire ckpt_exec_iter_do_init;
     wire [15:0] ckpt_exec_iter_count;
-    wire [1:0] ckpt_exec_src_slot;
-    wire [1:0] ckpt_exec_dst_slot;
+    wire [CKPT_SLOT_W-1:0] ckpt_exec_src_slot;
+    wire [CKPT_SLOT_W-1:0] ckpt_exec_dst_slot;
     wire ckpt_exec_bridge;
     wire ckpt_exec_meta_clear_en;
-    wire [3:0] ckpt_exec_meta_clear_mask;
+    wire [CKPT_SLOTS-1:0] ckpt_exec_meta_clear_mask;
     wire ckpt_exec_meta_commit_en;
-    wire [1:0] ckpt_exec_meta_commit_slot;
+    wire [CKPT_SLOT_W-1:0] ckpt_exec_meta_commit_slot;
     wire [`GP_J_W-1:0] ckpt_exec_meta_commit_j;
     wire ckpt_exec_busy;
     wire ckpt_exec_done;
     wire ckpt_exec_aborted;
-    wire [1:0] ckpt_exec_endpoint_slot;
+    wire [CKPT_SLOT_W-1:0] ckpt_exec_endpoint_slot;
     wire [31:0] ckpt_exec_physical_iter_issued;
     wire [15:0] ckpt_exec_bridge_count;
     wire [15:0] ckpt_exec_intermediate_commit_count;
@@ -508,7 +538,7 @@ module bbht_grover_main_ip #(
     // Autonomous checkpoint controller
     //
     // Functional contract is unchanged from V7: BBHT owns requested-j,
-    // trial_count, L_BBHT and the real J RNG.  The only new behavior is that
+    // shot_count, requested_iterations and the real J RNG.  The only new behavior is that
     // the failure-continuation next-shot policy may be solved in the background
     // and queued. The controller additionally flushes that speculative continuation at each
     // internal Enumeration BBHT-segment restart.  A queued plan is consumed only
@@ -542,16 +572,13 @@ module bbht_grover_main_ip #(
         SP_REQ  = 2'd2,
         SP_WAIT = 2'd3;
 
-    function [3:0] count_to_valid4;
-        input [2:0] c;
+    function [CKPT_SLOTS-1:0] count_to_valid4;
+        input [CKPT_COUNT_W-1:0] c;
+        integer slot;
         begin
-            case (c)
-                3'd0: count_to_valid4 = 4'b0000;
-                3'd1: count_to_valid4 = 4'b0001;
-                3'd2: count_to_valid4 = 4'b0011;
-                3'd3: count_to_valid4 = 4'b0111;
-                default: count_to_valid4 = 4'b1111;
-            endcase
+            count_to_valid4=0;
+            for(slot=0;slot<CKPT_SLOTS;slot=slot+1)
+                count_to_valid4[slot]=(slot<c && slot<CHECKPOINT_CAPACITY);
         end
     endfunction
 
@@ -566,8 +593,65 @@ module bbht_grover_main_ip #(
     reg [`GP_RROM_IDX_W-1:0] auto_round_after_current;
     reg [31:0] auto_L_after_current;
     reg [`GP_SHOT_CAP_W-1:0] auto_trial_after_current;
-    reg [2:0] auto_input_s_count;
-    reg [4*`GP_J_W-1:0] auto_input_s_flat;
+    reg [CKPT_COUNT_W-1:0] auto_input_s_count;
+    reg [CKPT_SLOTS*`GP_J_W-1:0] auto_input_s_flat;
+    // Accepted plan registers precede all procedural references for Verilog
+    // compiler portability, including the committed canonical-state mirror.
+    reg auto_current_plan_valid;
+    reg [`GP_J_W-1:0] auto_current_plan_source_j;
+    reg [CKPT_COUNT_W-1:0] auto_current_plan_next_count;
+    reg [CKPT_SLOTS*`GP_J_W-1:0] auto_current_plan_next_j_flat;
+    reg [10:0] auto_current_plan_root_cost;
+    reg [CKPT_COUNT_W-1:0] auto_current_plan_root_segment_count;
+    // Logical S is already canonical in a completed exact policy plan. Keep
+    // that committed set instead of sorting physical slot metadata on every
+    // demand. Preserve it across BBHT segment/search restarts that preserve
+    // the physical checkpoints; only the same metadata invalidate clears it.
+    reg auto_canonical_s_valid;
+    reg [CKPT_COUNT_W-1:0] auto_canonical_s_count;
+    reg [CKPT_SLOTS*`GP_J_W-1:0] auto_canonical_s_flat;
+    always @(posedge clk) begin
+        if (!rstn || cache_invalidate) begin
+            auto_canonical_s_valid<=1'b1;
+            auto_canonical_s_count<=3'd0;
+            auto_canonical_s_flat<=0;
+        end else if (ckpt_exec_done) begin
+            if (run_ckpt_auto_mode && auto_current_plan_valid) begin
+                auto_canonical_s_valid<=1'b1;
+                auto_canonical_s_count<=auto_current_plan_next_count;
+                auto_canonical_s_flat<=auto_current_plan_next_j_flat;
+            end else begin
+                auto_canonical_s_valid<=1'b0;
+            end
+        end
+    end
+
+`ifndef SYNTHESIS
+    // Check the logical mirror against actual physical metadata at every
+    // demand, including repeated RUN and Enumeration segment restarts.
+    integer cs_i, cs_j, cs_count;
+    reg cs_found;
+    always @(posedge clk) begin
+        if (rstn && !cache_invalidate && CHECKPOINT_MANUAL_ENABLE==0 &&
+            run_ckpt_auto_mode && bbht_iter_start && auto_canonical_s_valid) begin
+            cs_count=0;
+            for (cs_i=0; cs_i<CKPT_SLOTS; cs_i=cs_i+1)
+                if (ckpt_slot_valid[cs_i]) cs_count=cs_count+1;
+            if (cs_count!={29'd0,auto_canonical_s_count})
+                $fatal(1,"canonical checkpoint mirror count mismatch");
+            for (cs_i=0; cs_i<CKPT_SLOTS; cs_i=cs_i+1) begin
+                if (cs_i<auto_canonical_s_count) begin
+                    cs_found=1'b0;
+                    for (cs_j=0; cs_j<CKPT_SLOTS; cs_j=cs_j+1)
+                        if (ckpt_slot_valid[cs_j] &&
+                            ckpt_slot_j_flat[7*cs_j +: 7]==auto_canonical_s_flat[7*cs_i +: 7])
+                            cs_found=1'b1;
+                    if (!cs_found) $fatal(1,"canonical checkpoint mirror value mismatch");
+                end
+            end
+        end
+    end
+`endif
 
     // Checkpoint-set sorting pipeline.
     // Level-1 pairwise compare results are captured at bbht_iter_start.
@@ -576,19 +660,20 @@ module bbht_grover_main_ip #(
     reg [7:0] auto_sort_p1;
     reg [7:0] auto_sort_p2;
     reg [7:0] auto_sort_p3;
-    reg [2:0] auto_sort_count;
+    reg [CKPT_COUNT_W-1:0] auto_sort_count;
+    reg [CKPT_SLOTS*`GP_J_W-1:0] auto_sorted_snapshot;
 
     wire [7:0] ckpt_sort_i0 =
-        ((CKPT_K > 0) && ckpt_slot_valid[0]) ?
+        ((CHECKPOINT_CAPACITY > 0) && ckpt_slot_valid[0]) ?
         {1'b0,ckpt_slot_j_flat[0*`GP_J_W +: `GP_J_W]} : 8'hFF;
     wire [7:0] ckpt_sort_i1 =
-        ((CKPT_K > 1) && ckpt_slot_valid[1]) ?
+        ((CHECKPOINT_CAPACITY > 1) && ckpt_slot_valid[1]) ?
         {1'b0,ckpt_slot_j_flat[1*`GP_J_W +: `GP_J_W]} : 8'hFF;
     wire [7:0] ckpt_sort_i2 =
-        ((CKPT_K > 2) && ckpt_slot_valid[2]) ?
+        ((CHECKPOINT_CAPACITY > 2) && ckpt_slot_valid[2]) ?
         {1'b0,ckpt_slot_j_flat[2*`GP_J_W +: `GP_J_W]} : 8'hFF;
     wire [7:0] ckpt_sort_i3 =
-        ((CKPT_K > 3) && ckpt_slot_valid[3]) ?
+        ((CHECKPOINT_CAPACITY > 3) && ckpt_slot_valid[3]) ?
         {1'b0,ckpt_slot_j_flat[3*`GP_J_W +: `GP_J_W]} : 8'hFF;
 
     // Sorting-network level 1: (0,1) and (2,3).
@@ -620,19 +705,10 @@ module bbht_grover_main_ip #(
     wire [7:0] auto_sort_f3 = auto_sort_l2_3;
 
     wire [2:0] ckpt_sort_count_now =
-        {2'b00,((CKPT_K > 0) && ckpt_slot_valid[0])} +
-        {2'b00,((CKPT_K > 1) && ckpt_slot_valid[1])} +
-        {2'b00,((CKPT_K > 2) && ckpt_slot_valid[2])} +
-        {2'b00,((CKPT_K > 3) && ckpt_slot_valid[3])};
-
-    // Current plan is always latched before Planner/Executor use.  This lets
-    // the single policy engine immediately begin the next speculative solve.
-    reg auto_current_plan_valid;
-    reg [`GP_J_W-1:0] auto_current_plan_source_j;
-    reg [2:0] auto_current_plan_next_count;
-    reg [4*`GP_J_W-1:0] auto_current_plan_next_j_flat;
-    reg [10:0] auto_current_plan_root_cost;
-    reg [2:0] auto_current_plan_root_segment_count;
+        {2'b00,((CHECKPOINT_CAPACITY > 0) && ckpt_slot_valid[0])} +
+        {2'b00,((CHECKPOINT_CAPACITY > 1) && ckpt_slot_valid[1])} +
+        {2'b00,((CHECKPOINT_CAPACITY > 2) && ckpt_slot_valid[2])} +
+        {2'b00,((CHECKPOINT_CAPACITY > 3) && ckpt_slot_valid[3])};
 
     // Timing-fix1: registered Planner -> Executor packet for autonomous K4/H6.
     // This breaks the long auto_current_j -> combinational Planner -> Executor
@@ -648,27 +724,27 @@ module bbht_grover_main_ip #(
     reg auto_plan_pipe_source_is_anchor;
     reg auto_plan_pipe_source_materialized;
     reg auto_plan_pipe_source_retain;
-    reg [1:0] auto_plan_pipe_source_slot;
+    reg [CKPT_SLOT_W-1:0] auto_plan_pipe_source_slot;
     reg [`GP_J_W-1:0] auto_plan_pipe_source_j;
     reg [`GP_J_W-1:0] auto_plan_pipe_j_req;
-    reg [3:0] auto_plan_pipe_clear_mask;
-    reg [2:0] auto_plan_pipe_boundary_count;
-    reg [4*`GP_J_W-1:0] auto_plan_pipe_boundary_j_flat;
-    reg [7:0] auto_plan_pipe_boundary_slot_flat;
-    reg [1:0] auto_plan_pipe_endpoint_slot;
+    reg [CKPT_SLOTS-1:0] auto_plan_pipe_clear_mask;
+    reg [CKPT_COUNT_W-1:0] auto_plan_pipe_boundary_count;
+    reg [CKPT_SLOTS*`GP_J_W-1:0] auto_plan_pipe_boundary_j_flat;
+    reg [CKPT_SLOTS*CKPT_SLOT_W-1:0] auto_plan_pipe_boundary_slot_flat;
+    reg [CKPT_SLOT_W-1:0] auto_plan_pipe_endpoint_slot;
 
-    // Per-demand Shadow-J lookahead.  One verified Shadow-J engine already
-    // produces j[t+1]..j[t+8].  That is sufficient for both H6 windows:
-    //   cold root: current j[t] + future j[t+1]..j[t+7]
-    //   next root: current j[t+1] + future j[t+2]..j[t+8]
-    // The legacy 9-slice policy bus is retained; its highest slice is padding.
+    // A speculative root consumes future[0] as its current request and needs
+    // H further requests.  Keep seven draws for H<=6 (legacy cycle identity),
+    // generate eight/nine for H7/H8, and retain all nine in the snapshot.
+    localparam integer SHADOW_FUTURES = (LOOKAHEAD_SHOTS > 6) ?
+                                        (LOOKAHEAD_SHOTS + 1) : 7;
     reg auto_shadow1_ready;
-    reg [8*`GP_J_W-1:0] auto_lookahead_future8;
+    reg [POLICY_WINDOW*`GP_J_W-1:0] auto_lookahead_future;
 
-    wire [9*`GP_J_W-1:0] auto_cold_window_flat =
-        {auto_lookahead_future8, auto_current_j};
-    wire [9*`GP_J_W-1:0] auto_spec_window_flat =
-        {{`GP_J_W{1'b0}}, auto_lookahead_future8};
+    wire [POLICY_WINDOW*`GP_J_W-1:0] auto_cold_window_flat =
+        {auto_lookahead_future[(POLICY_WINDOW-1)*`GP_J_W-1:0], auto_current_j};
+    wire [POLICY_WINDOW*`GP_J_W-1:0] auto_spec_window_flat =
+        auto_lookahead_future;
 
     // Single Shadow-J engine for K4/H6.
     wire auto_shadow_busy;
@@ -678,7 +754,7 @@ module bbht_grover_main_ip #(
                              !auto_shadow_busy;
 
     wire auto_shadow_done;
-    wire [8*`GP_J_W-1:0] auto_future_j_flat;
+    wire [POLICY_WINDOW*`GP_J_W-1:0] auto_future_j_flat;
     wire [31:0] auto_shadow_state_final;
     wire [`GP_RROM_IDX_W-1:0] auto_shadow_round_final;
     wire [31:0] auto_shadow_L_final;
@@ -690,10 +766,10 @@ module bbht_grover_main_ip #(
     wire auto_policy_done;
     wire auto_policy_error;
     wire [`GP_J_W-1:0] auto_policy_source_j;
-    wire [2:0] auto_policy_next_count;
-    wire [4*`GP_J_W-1:0] auto_policy_next_j_flat;
+    wire [CKPT_COUNT_W-1:0] auto_policy_next_count;
+    wire [CKPT_SLOTS*`GP_J_W-1:0] auto_policy_next_j_flat;
     wire [10:0] auto_policy_root_cost;
-    wire [2:0] auto_policy_root_segment_count;
+    wire [CKPT_COUNT_W-1:0] auto_policy_root_segment_count;
     wire [31:0] auto_policy_cycles_last;
     wire [31:0] auto_policy_actions_last;
     wire [31:0] auto_policy_memo_hit_last;
@@ -707,11 +783,11 @@ module bbht_grover_main_ip #(
     // canonical predicted checkpoint set and a stable next-root H6 window.
     reg [7:0] spec_plan_epoch;
     reg [`GP_J_W-1:0] spec_expected_j;
-    reg [2:0] spec_input_s_count;
-    reg [4*`GP_J_W-1:0] spec_input_s_flat;
-    reg [3:0] spec_policy_slot_valid;
-    reg [4*`GP_J_W-1:0] spec_policy_slot_j_flat;
-    reg [9*`GP_J_W-1:0] spec_policy_window_flat;
+    reg [CKPT_COUNT_W-1:0] spec_input_s_count;
+    reg [CKPT_SLOTS*`GP_J_W-1:0] spec_input_s_flat;
+    reg [CKPT_SLOTS-1:0] spec_policy_slot_valid;
+    reg [CKPT_SLOTS*`GP_J_W-1:0] spec_policy_slot_j_flat;
+    reg [POLICY_WINDOW*`GP_J_W-1:0] spec_policy_window_flat;
     reg spec_launched_for_demand;
 
     // Policy-start ownership.  Cold demand always has priority over a new
@@ -719,7 +795,7 @@ module bbht_grover_main_ip #(
     // finish; if its epoch becomes stale its result is simply discarded.
     wire auto_policy_start_cold = run_ckpt_auto_mode &&
                                   (auto_policy_state == AP_COLD_POLICY_REQ) &&
-                                  !auto_policy_busy;
+                                  !auto_policy_busy && !plan_epoch_advance;
     wire spec_start_context_ok = (auto_policy_state == AP_INPUT_SORT) ||
                                  (auto_policy_state == AP_EXEC_REQ) ||
                                  (auto_policy_state == AP_EXEC_PLAN_WAIT) ||
@@ -727,28 +803,34 @@ module bbht_grover_main_ip #(
                                  (auto_policy_state == AP_EXEC_WAIT) ||
                                  (auto_policy_state == AP_IDLE);
     reg [7:0] auto_plan_epoch;
+    wire plan_epoch_advance;
 
-    wire auto_policy_start_spec = run_ckpt_auto_mode && (AUTO_SPEC_ENABLE != 0) &&
+    wire auto_policy_start_spec = run_ckpt_auto_mode && (SPECULATIVE_PLANNING_ENABLE != 0) &&
                                   (auto_spec_state == SP_REQ) &&
                                   (spec_plan_epoch == auto_plan_epoch) &&
                                   spec_start_context_ok &&
-                                  !auto_policy_busy && !auto_policy_start_cold;
+                                  !auto_policy_busy && !auto_policy_start_cold && !plan_epoch_advance;
     wire auto_policy_start = auto_policy_start_cold | auto_policy_start_spec;
-    // Timing-fix1: the autonomous Planner result is first captured in a
-    // dedicated plan-packet register stage.  Executor launch therefore occurs
-    // one cycle after AP_EXEC_REQ and depends only on registered plan fields.
+    // Production launch consumes Planner Stage-2 directly. The manual
+    // compatibility configuration retains its previous plan-packet register.
     wire auto_exec_start = run_ckpt_auto_mode &&
-                           (auto_policy_state == AP_EXEC_LAUNCH) &&
-                           auto_plan_pipe_valid && !auto_plan_pipe_error;
+        ((CHECKPOINT_MANUAL_ENABLE==0) ?
+            ((auto_policy_state==AP_EXEC_PLAN_WAIT) && auto_current_plan_valid &&
+             ckpt_plan_valid && !ckpt_plan_error) :
+            ((auto_policy_state==AP_EXEC_LAUNCH) && auto_plan_pipe_valid && !auto_plan_pipe_error));
 
-    wire [3:0] auto_policy_slot_valid_in = auto_policy_start_spec ?
+    wire [CKPT_SLOTS-1:0] auto_policy_slot_valid_in = auto_policy_start_spec ?
                                             spec_policy_slot_valid : ckpt_slot_valid;
-    wire [4*`GP_J_W-1:0] auto_policy_slot_j_flat_in = auto_policy_start_spec ?
+    wire [CKPT_SLOTS*`GP_J_W-1:0] auto_policy_slot_j_flat_in = auto_policy_start_spec ?
                                             spec_policy_slot_j_flat : ckpt_slot_j_flat;
-    wire [9*`GP_J_W-1:0] auto_policy_window_flat_in = auto_policy_start_spec ?
+    wire [POLICY_WINDOW*`GP_J_W-1:0] auto_policy_window_flat_in = auto_policy_start_spec ?
                                             spec_policy_window_flat : auto_cold_window_flat;
 
     reg policy_active_is_spec;
+    // A flushed in-flight solve remains stale for its entire lifetime, even
+    // if the finite-width scheduler epoch later wraps to the same value.
+    // This is transaction validity, not a timing-delay stage.
+    reg policy_active_stale;
     reg [7:0] policy_active_plan_epoch;
 
     // Speculative plan FIFO (the module itself was unit-tested in Phase 5).
@@ -759,13 +841,13 @@ module bbht_grover_main_ip #(
     wire [31:0] planq_empty_on_demand;
     wire [7:0] planq_head_epoch;
     wire [`GP_J_W-1:0] planq_head_expected_j;
-    wire [2:0] planq_head_input_s_count;
-    wire [4*`GP_J_W-1:0] planq_head_input_s_flat;
+    wire [CKPT_COUNT_W-1:0] planq_head_input_s_count;
+    wire [CKPT_SLOTS*`GP_J_W-1:0] planq_head_input_s_flat;
     wire [`GP_J_W-1:0] planq_head_source_j;
-    wire [2:0] planq_head_next_count;
-    wire [4*`GP_J_W-1:0] planq_head_next_flat;
+    wire [CKPT_COUNT_W-1:0] planq_head_next_count;
+    wire [CKPT_SLOTS*`GP_J_W-1:0] planq_head_next_flat;
     wire [10:0] planq_head_root_cost;
-    wire [2:0] planq_head_segment_count;
+    wire [CKPT_COUNT_W-1:0] planq_head_segment_count;
 
 
     wire planq_head_match = !planq_empty &&
@@ -774,13 +856,29 @@ module bbht_grover_main_ip #(
                             (planq_head_input_s_count == auto_input_s_count) &&
                             (planq_head_input_s_flat == auto_input_s_flat);
 
+    // Production Planner Stage-1 captures the incoming logical plan on the
+    // same edge that the controller accepts it. This removes the request-only
+    // AP_EXEC_REQ cycle while retaining the planner's actual work boundary.
+    wire auto_accept_fifo = run_ckpt_auto_mode && (SPECULATIVE_PLANNING_ENABLE!=0) &&
+        ((auto_policy_state==AP_DEMAND_CHECK) || (auto_policy_state==AP_WAIT_LATE_SPEC)) &&
+        planq_head_match;
+    wire auto_accept_cold = run_ckpt_auto_mode && (auto_policy_state==AP_COLD_POLICY_WAIT) &&
+        auto_policy_done && !auto_policy_error && !policy_active_is_spec &&
+        (policy_active_plan_epoch==auto_plan_epoch) &&
+        (!USE_GENERALIZED || (!policy_active_stale && !plan_epoch_advance));
+    wire auto_accept_plan = auto_accept_fifo || auto_accept_cold;
+    wire [6:0] auto_incoming_source = auto_accept_fifo ? planq_head_source_j : auto_policy_source_j;
+    wire [CKPT_COUNT_W-1:0] auto_incoming_count = auto_accept_fifo ? planq_head_next_count : auto_policy_next_count;
+    wire [CKPT_SLOTS*`GP_J_W-1:0] auto_incoming_flat = auto_accept_fifo ? planq_head_next_flat : auto_policy_next_j_flat;
+
     wire spec_generation_active_raw = (auto_spec_state != SP_IDLE) ||
                                       (auto_policy_busy && policy_active_is_spec);
     // An Oracle/Enumeration epoch advance deliberately makes an in-flight old
     // speculation stale.  Do not classify that expected discard as a prediction
     // mismatch at the first demand of the new epoch.
     wire spec_generation_active = spec_generation_active_raw &&
-                                  (spec_plan_epoch == auto_plan_epoch);
+                                  (spec_plan_epoch == auto_plan_epoch) &&
+                                  (!USE_GENERALIZED || !policy_active_stale || !auto_policy_busy);
     wire spec_inflight_match = spec_generation_active &&
                                (spec_plan_epoch == auto_plan_epoch) &&
                                (spec_expected_j == auto_current_j) &&
@@ -789,10 +887,10 @@ module bbht_grover_main_ip #(
 
     wire planq_check_state = (auto_policy_state == AP_DEMAND_CHECK) ||
                              (auto_policy_state == AP_WAIT_LATE_SPEC);
-    wire planq_nonempty_mismatch = run_ckpt_auto_mode && (AUTO_SPEC_ENABLE != 0) &&
+    wire planq_nonempty_mismatch = run_ckpt_auto_mode && (SPECULATIVE_PLANNING_ENABLE != 0) &&
                                    planq_check_state && !planq_empty &&
                                    !planq_head_match;
-    wire spec_inflight_mismatch = run_ckpt_auto_mode && (AUTO_SPEC_ENABLE != 0) &&
+    wire spec_inflight_mismatch = run_ckpt_auto_mode && (SPECULATIVE_PLANNING_ENABLE != 0) &&
                                   (auto_policy_state == AP_DEMAND_CHECK) &&
                                   planq_empty && spec_generation_active &&
                                   !spec_inflight_match;
@@ -810,19 +908,20 @@ module bbht_grover_main_ip #(
     wire enum_segment_plan_restart = run_ckpt_auto_mode && run_enum_mode &&
                                      enum_bbht_start;
     wire auto_context_restart = cache_invalidate | enum_segment_plan_restart;
-    wire plan_epoch_advance = accepted_start | cache_invalidate |
+    assign plan_epoch_advance = accepted_start | cache_invalidate |
                               enum_segment_plan_restart |
                               speculation_mismatch_event;
     wire planq_flush = plan_epoch_advance;
-    wire planq_demand = run_ckpt_auto_mode && (AUTO_SPEC_ENABLE != 0) &&
+    wire planq_demand = run_ckpt_auto_mode && (SPECULATIVE_PLANNING_ENABLE != 0) &&
                         (auto_policy_state == AP_DEMAND_CHECK);
-    wire planq_pop = run_ckpt_auto_mode && (AUTO_SPEC_ENABLE != 0) &&
+    wire planq_pop = run_ckpt_auto_mode && (SPECULATIVE_PLANNING_ENABLE != 0) &&
                      planq_head_match && planq_check_state;
 
-    wire planq_push = run_ckpt_auto_mode && (AUTO_SPEC_ENABLE != 0) &&
+    wire planq_push = run_ckpt_auto_mode && (SPECULATIVE_PLANNING_ENABLE != 0) &&
                       auto_policy_done && policy_active_is_spec &&
                       !auto_policy_error &&
                       (policy_active_plan_epoch == auto_plan_epoch) &&
+                      (!USE_GENERALIZED || (!policy_active_stale && !plan_epoch_advance)) &&
                       !planq_full;
 
     // Run-level observability.
@@ -843,11 +942,11 @@ module bbht_grover_main_ip #(
     assign policy_memo_hit           = policy_memo_hit_run;
     assign policy_memo_miss          = policy_memo_miss_run;
     assign policy_max_latency        = policy_max_latency_run;
-    assign plan_fifo_level           = planq_level;
-    assign plan_fifo_highwater       = planq_highwater;
-    assign plan_fifo_empty_demand    = planq_empty_on_demand;
-    assign plan_fifo_hit_count       = planq_hit_run;
-    assign plan_fifo_mismatch_count  = planq_mismatch_run;
+    assign plan_queue_level           = planq_level;
+    assign plan_queue_highwater       = planq_highwater;
+    assign plan_queue_empty_demand    = planq_empty_on_demand;
+    assign plan_queue_hit_count       = planq_hit_run;
+    assign plan_queue_miss_count  = planq_mismatch_run;
     assign policy_cold_solve_count   = policy_cold_solve_run;
     assign policy_spec_solve_count   = policy_spec_solve_run;
 
@@ -876,7 +975,7 @@ module bbht_grover_main_ip #(
         if (!rstn) begin
             auto_shadow_state     <= SH_IDLE;
             auto_shadow1_ready    <= 1'b0;
-            auto_lookahead_future8<= {(8*`GP_J_W){1'b0}};
+            auto_lookahead_future<= {(POLICY_WINDOW*`GP_J_W){1'b0}};
         end else if (accepted_start) begin
             auto_shadow_state     <= SH_IDLE;
             auto_shadow1_ready    <= 1'b0;
@@ -885,11 +984,11 @@ module bbht_grover_main_ip #(
             // the previous Shadow-J continuation context.
             auto_shadow_state     <= SH_IDLE;
             auto_shadow1_ready    <= 1'b0;
-            auto_lookahead_future8<= {(8*`GP_J_W){1'b0}};
+            auto_lookahead_future<= {(POLICY_WINDOW*`GP_J_W){1'b0}};
         end else if (new_auto_demand) begin
             auto_shadow_state     <= SH1_REQ;
             auto_shadow1_ready    <= 1'b0;
-            auto_lookahead_future8<= {(8*`GP_J_W){1'b0}};
+            auto_lookahead_future<= {(POLICY_WINDOW*`GP_J_W){1'b0}};
         end else begin
             case (auto_shadow_state)
                 SH_IDLE: begin end
@@ -899,7 +998,7 @@ module bbht_grover_main_ip #(
                 end
                 SH1_WAIT: begin
                     if (auto_shadow_done) begin
-                        auto_lookahead_future8 <= auto_future_j_flat;
+                        auto_lookahead_future <= auto_future_j_flat;
                         auto_shadow1_ready <= 1'b1;
                         auto_shadow_state <= SH_READY;
                     end
@@ -919,7 +1018,7 @@ module bbht_grover_main_ip #(
             auto_L_after_current                <= 32'd0;
             auto_trial_after_current            <= {`GP_SHOT_CAP_W{1'b0}};
             auto_input_s_count                  <= 3'd0;
-            auto_input_s_flat                   <= {(4*`GP_J_W){1'b0}};
+            auto_input_s_flat                   <= {(CKPT_SLOTS*`GP_J_W){1'b0}};
             auto_sort_p0                        <= 8'hFF;
             auto_sort_p1                        <= 8'hFF;
             auto_sort_p2                        <= 8'hFF;
@@ -928,7 +1027,7 @@ module bbht_grover_main_ip #(
             auto_current_plan_valid             <= 1'b0;
             auto_current_plan_source_j          <= {`GP_J_W{1'b0}};
             auto_current_plan_next_count        <= 3'd0;
-            auto_current_plan_next_j_flat       <= {(4*`GP_J_W){1'b0}};
+            auto_current_plan_next_j_flat       <= {(CKPT_SLOTS*`GP_J_W){1'b0}};
             auto_current_plan_root_cost         <= 11'd0;
             auto_current_plan_root_segment_count<= 3'd0;
             auto_plan_pipe_valid                <= 1'b0;
@@ -942,7 +1041,7 @@ module bbht_grover_main_ip #(
             auto_plan_pipe_j_req                <= {`GP_J_W{1'b0}};
             auto_plan_pipe_clear_mask           <= 4'b0000;
             auto_plan_pipe_boundary_count       <= 3'd0;
-            auto_plan_pipe_boundary_j_flat      <= {(4*`GP_J_W){1'b0}};
+            auto_plan_pipe_boundary_j_flat      <= {(CKPT_SLOTS*`GP_J_W){1'b0}};
             auto_plan_pipe_boundary_slot_flat   <= 8'd0;
             auto_plan_pipe_endpoint_slot        <= 2'd0;
             auto_controller_error               <= 1'b0;
@@ -972,7 +1071,7 @@ module bbht_grover_main_ip #(
                         // j_rnd_state is post-accepted-draw when iter_start fires.
                         auto_post_j_state        <= j_rnd_state;
                         auto_round_after_current <= bbht_round_after_current;
-                        auto_L_after_current     <= bbht_L_BBHT;
+                        auto_L_after_current     <= bbht_requested_iterations;
                         auto_trial_after_current <= bbht_trial_count[`GP_SHOT_CAP_W-1:0];
 
                         // Capture sorting-network level 1 at this register boundary
@@ -982,16 +1081,26 @@ module bbht_grover_main_ip #(
                         auto_sort_p1             <= ckpt_sort_l1_1;
                         auto_sort_p2             <= ckpt_sort_l1_2;
                         auto_sort_p3             <= ckpt_sort_l1_3;
-                        auto_sort_count          <= ckpt_sort_count_now;
+                        auto_sort_count          <= USE_GENERALIZED ? ckpt_sorted_count : ckpt_sort_count_now;
+                        auto_sorted_snapshot     <= ckpt_sorted_j_flat;
 
                         auto_current_plan_valid  <= 1'b0;
-                        auto_policy_state        <= AP_INPUT_SORT;
+                        if ((CHECKPOINT_MANUAL_ENABLE==0) && auto_canonical_s_valid) begin
+                            auto_input_s_count<=auto_canonical_s_count;
+                            auto_input_s_flat<=auto_canonical_s_flat;
+                            auto_policy_state<=AP_DEMAND_CHECK;
+                        end else begin
+                            auto_policy_state<=AP_INPUT_SORT;
+                        end
                     end
                 end
 
                 AP_INPUT_SORT: begin
                     // Finish sorting-network levels 2/3 from Stage-1 regs and
                     // register the exact canonical checkpoint set.
+                    if(USE_GENERALIZED) begin
+                        auto_input_s_count<=auto_sort_count;auto_input_s_flat<=auto_sorted_snapshot;
+                    end else begin
                     auto_input_s_count <= auto_sort_count;
                     auto_input_s_flat[0*`GP_J_W +: `GP_J_W] <=
                         (auto_sort_f0 != 8'hFF) ?
@@ -1005,11 +1114,12 @@ module bbht_grover_main_ip #(
                     auto_input_s_flat[3*`GP_J_W +: `GP_J_W] <=
                         (auto_sort_f3 != 8'hFF) ?
                         auto_sort_f3[`GP_J_W-1:0] : {`GP_J_W{1'b0}};
+                    end
                     auto_policy_state <= AP_DEMAND_CHECK;
                 end
 
                 AP_DEMAND_CHECK: begin
-                    if ((AUTO_SPEC_ENABLE != 0) && planq_head_match) begin
+                    if ((SPECULATIVE_PLANNING_ENABLE != 0) && planq_head_match) begin
                         auto_current_plan_valid              <= 1'b1;
                         auto_current_plan_source_j           <= planq_head_source_j;
                         auto_current_plan_next_count         <= planq_head_next_count;
@@ -1017,18 +1127,18 @@ module bbht_grover_main_ip #(
                         auto_current_plan_root_cost          <= planq_head_root_cost;
                         auto_current_plan_root_segment_count <= planq_head_segment_count;
                         planq_hit_run <= planq_hit_run + 1'b1;
-                        auto_policy_state <= AP_EXEC_REQ;
-                    end else if ((AUTO_SPEC_ENABLE != 0) && !planq_empty) begin
+                        auto_policy_state <= (CHECKPOINT_MANUAL_ENABLE==0) ? AP_EXEC_PLAN_WAIT : AP_EXEC_REQ;
+                    end else if ((SPECULATIVE_PLANNING_ENABLE != 0) && !planq_empty) begin
                         // Nonempty-but-wrong head is never consumed.
                         planq_mismatch_run <= planq_mismatch_run + 1'b1;
                         auto_policy_state <= AP_COLD_WAIT_SHADOW;
-                    end else if ((AUTO_SPEC_ENABLE != 0) && spec_inflight_match) begin
+                    end else if ((SPECULATIVE_PLANNING_ENABLE != 0) && spec_inflight_match) begin
                         // The prediction exists but completed too late to be in
                         // FIFO at demand time.  Wait for that exact solve rather
                         // than launch a duplicate cold solve.
                         auto_policy_state <= AP_WAIT_LATE_SPEC;
                     end else begin
-                        if ((AUTO_SPEC_ENABLE != 0) && spec_generation_active &&
+                        if ((SPECULATIVE_PLANNING_ENABLE != 0) && spec_generation_active &&
                             !spec_inflight_match)
                             planq_mismatch_run <= planq_mismatch_run + 1'b1;
                         auto_policy_state <= AP_COLD_WAIT_SHADOW;
@@ -1044,7 +1154,7 @@ module bbht_grover_main_ip #(
                         auto_current_plan_root_cost          <= planq_head_root_cost;
                         auto_current_plan_root_segment_count <= planq_head_segment_count;
                         planq_hit_run <= planq_hit_run + 1'b1;
-                        auto_policy_state <= AP_EXEC_REQ;
+                        auto_policy_state <= (CHECKPOINT_MANUAL_ENABLE==0) ? AP_EXEC_PLAN_WAIT : AP_EXEC_REQ;
                     end else if (!planq_empty) begin
                         planq_mismatch_run <= planq_mismatch_run + 1'b1;
                         auto_policy_state <= AP_COLD_WAIT_SHADOW;
@@ -1065,9 +1175,11 @@ module bbht_grover_main_ip #(
                 end
 
                 AP_COLD_POLICY_WAIT: begin
-                    if (auto_policy_done && !policy_active_is_spec &&
-                        (policy_active_plan_epoch == auto_plan_epoch)) begin
-                        if (auto_policy_error) begin
+                    if (auto_policy_done && !policy_active_is_spec) begin
+                        if ((policy_active_plan_epoch != auto_plan_epoch) ||
+                            (USE_GENERALIZED && policy_active_stale)) begin
+                            auto_policy_state <= AP_COLD_WAIT_SHADOW;
+                        end else if (auto_policy_error) begin
                             auto_controller_error <= 1'b1;
                             auto_policy_state <= AP_ERROR;
                         end else begin
@@ -1077,13 +1189,13 @@ module bbht_grover_main_ip #(
                             auto_current_plan_next_j_flat        <= auto_policy_next_j_flat;
                             auto_current_plan_root_cost          <= auto_policy_root_cost;
                             auto_current_plan_root_segment_count <= auto_policy_root_segment_count;
-                            auto_policy_state <= AP_EXEC_REQ;
+                            auto_policy_state <= (CHECKPOINT_MANUAL_ENABLE==0) ? AP_EXEC_PLAN_WAIT : AP_EXEC_REQ;
                         end
                     end
                 end
 
                 AP_EXEC_REQ: begin
-                    if (CKPT_MANUAL_ENABLE == 0) begin
+                    if (CHECKPOINT_MANUAL_ENABLE == 0) begin
                         // Production autonomous planner path:
                         // u_ckpt_planner_pipe captures Stage-1 at this edge.
                         // Wait one cycle before capturing its Stage-2 packet.
@@ -1111,6 +1223,17 @@ module bbht_grover_main_ip #(
                 end
 
                 AP_EXEC_PLAN_WAIT: begin
+                    if (CHECKPOINT_MANUAL_ENABLE==0) begin
+                        // Planner Stage-2 drives Executor directly on this
+                        // edge; do not copy it through a redundant Main-IP
+                        // packet register and an additional launch state.
+                        if (!auto_current_plan_valid || !ckpt_plan_valid || ckpt_plan_error) begin
+                            auto_controller_error<=1'b1;
+                            auto_policy_state<=AP_ERROR;
+                        end else begin
+                            auto_policy_state<=AP_EXEC_WAIT;
+                        end
+                    end else begin
                     // Stage-2 of grover_ckpt_planner_pipe is now stable
                     // from registered Stage-1 data.  Capture the complete packet.
                     auto_plan_pipe_valid               <= auto_current_plan_valid &&
@@ -1129,6 +1252,7 @@ module bbht_grover_main_ip #(
                     auto_plan_pipe_boundary_slot_flat  <= ckpt_plan_boundary_slot_flat;
                     auto_plan_pipe_endpoint_slot       <= ckpt_plan_endpoint_slot;
                     auto_policy_state                  <= AP_EXEC_LAUNCH;
+                    end
                 end
 
                 AP_EXEC_LAUNCH: begin
@@ -1170,10 +1294,10 @@ module bbht_grover_main_ip #(
             spec_plan_epoch           <= 8'd0;
             spec_expected_j           <= {`GP_J_W{1'b0}};
             spec_input_s_count        <= 3'd0;
-            spec_input_s_flat         <= {(4*`GP_J_W){1'b0}};
+            spec_input_s_flat         <= {(CKPT_SLOTS*`GP_J_W){1'b0}};
             spec_policy_slot_valid    <= 4'b0000;
-            spec_policy_slot_j_flat   <= {(4*`GP_J_W){1'b0}};
-            spec_policy_window_flat   <= {(9*`GP_J_W){1'b0}};
+            spec_policy_slot_j_flat   <= {(CKPT_SLOTS*`GP_J_W){1'b0}};
+            spec_policy_window_flat   <= {(POLICY_WINDOW*`GP_J_W){1'b0}};
             spec_launched_for_demand  <= 1'b0;
         end else if (accepted_start) begin
             auto_spec_state          <= SP_IDLE;
@@ -1189,12 +1313,12 @@ module bbht_grover_main_ip #(
 
             case (auto_spec_state)
                 SP_IDLE: begin
-                    if (run_ckpt_auto_mode && (AUTO_SPEC_ENABLE != 0) &&
+                    if (run_ckpt_auto_mode && (SPECULATIVE_PLANNING_ENABLE != 0) &&
                         !new_auto_demand && auto_current_plan_valid && auto_shadow1_ready &&
                         !spec_launched_for_demand && !planq_full &&
                         !auto_controller_error) begin
                         spec_plan_epoch         <= auto_plan_epoch;
-                        spec_expected_j         <= auto_lookahead_future8[0*`GP_J_W +: `GP_J_W];
+                        spec_expected_j         <= auto_lookahead_future[0*`GP_J_W +: `GP_J_W];
                         spec_input_s_count      <= auto_current_plan_next_count;
                         spec_input_s_flat       <= auto_current_plan_next_j_flat;
                         spec_policy_slot_valid  <= count_to_valid4(auto_current_plan_next_count);
@@ -1234,6 +1358,7 @@ module bbht_grover_main_ip #(
     always @(posedge clk) begin
         if (!rstn) begin
             policy_active_is_spec    <= 1'b0;
+            policy_active_stale      <= 1'b1;
             policy_active_plan_epoch <= 8'd0;
             policy_cycles_run        <= 32'd0;
             policy_stall_run         <= 32'd0;
@@ -1244,6 +1369,7 @@ module bbht_grover_main_ip #(
             policy_cold_solve_run    <= 32'd0;
             policy_spec_solve_run    <= 32'd0;
         end else if (accepted_start) begin
+            policy_active_stale<=1'b1;
             policy_cycles_run        <= 32'd0;
             policy_stall_run         <= 32'd0;
             policy_actions_run       <= 32'd0;
@@ -1253,6 +1379,8 @@ module bbht_grover_main_ip #(
             policy_cold_solve_run    <= 32'd0;
             policy_spec_solve_run    <= 32'd0;
         end else begin
+            if(plan_epoch_advance) policy_active_stale<=1'b1;
+            else if(auto_policy_start) policy_active_stale<=1'b0;
             if (auto_policy_start_cold) begin
                 policy_active_is_spec    <= 1'b0;
                 policy_active_plan_epoch <= auto_plan_epoch;
@@ -1272,7 +1400,8 @@ module bbht_grover_main_ip #(
                 policy_stall_run <= policy_stall_run + 1'b1;
 
             if (run_ckpt_auto_mode && auto_policy_done &&
-                (policy_active_plan_epoch == auto_plan_epoch)) begin
+                (policy_active_plan_epoch == auto_plan_epoch) &&
+                (!USE_GENERALIZED || (!policy_active_stale && !plan_epoch_advance))) begin
                 policy_cycles_run    <= policy_cycles_run + auto_policy_cycles_last;
                 policy_actions_run   <= policy_actions_run + auto_policy_actions_last;
                 policy_memo_hit_run  <= policy_memo_hit_run + auto_policy_memo_hit_last;
@@ -1293,109 +1422,104 @@ module bbht_grover_main_ip #(
                                   (auto_policy_state == AP_EXEC_REQ) &&
                                   auto_current_plan_valid &&
                                   !auto_controller_error);
-    wire [2:0] selected_policy_next_count =
+    wire [CKPT_COUNT_W-1:0] selected_policy_next_count =
         run_ckpt_manual_active ? run_policy_next_count : auto_current_plan_next_count;
-    wire [4*`GP_J_W-1:0] selected_policy_next_j_flat =
+    wire [CKPT_SLOTS*`GP_J_W-1:0] selected_policy_next_j_flat =
         run_ckpt_manual_active ? run_policy_next_j_flat : auto_current_plan_next_j_flat;
 
-    // The production autonomous planner captures its Stage-1 packet
-    // only on AP_EXEC_REQ.  CKPT_MANUAL_ENABLE=1 keeps the original
-    // combinational Phase-4B planner and does not use this capture pulse.
-    wire auto_planner_capture =
-        (CKPT_MANUAL_ENABLE == 0) &&
-        run_ckpt_auto_mode &&
-        (auto_policy_state == AP_EXEC_REQ) &&
-        auto_current_plan_valid &&
-        !auto_controller_error;
+    // Capture Stage-1 on plan acceptance, in parallel with the current-plan
+    // register. Manual compatibility uses the original combinational planner.
+    wire auto_planner_capture = (CHECKPOINT_MANUAL_ENABLE==0) && auto_accept_plan &&
+                                !auto_controller_error;
 
-    // Registered planner boundary:
-    //   * CKPT_MANUAL_ENABLE=1: preserve the verified Phase-4B manual path.
-    //   * CKPT_MANUAL_ENABLE=0: compile-time remove every direct
-    //     combinational Planner -> Executor path.  The production K4/H6
-    //     Executor can observe only the registered autonomous plan packet.
+    // The production planner already owns a Stage-1 register containing its
+    // immutable plan and metadata snapshot. Feed its Stage-2 allocation
+    // directly to Executor, retaining the actual work boundary while removing
+    // the redundant Main-IP packet copy. The manual compatibility path keeps
+    // its previous register/select behavior.
     //
     // Using the compile-time parameter here (not run_ckpt_auto_mode) is
     // intentional: Vivado can constant-fold the manual branch completely.
     wire exec_plan_valid =
-        (CKPT_MANUAL_ENABLE != 0) ?
+        (CHECKPOINT_MANUAL_ENABLE != 0) ?
             (run_ckpt_auto_mode ? auto_plan_pipe_valid : ckpt_plan_valid) :
-            auto_plan_pipe_valid;
+            ckpt_plan_valid;
 
     wire exec_plan_exact_hit =
-        (CKPT_MANUAL_ENABLE != 0) ?
+        (CHECKPOINT_MANUAL_ENABLE != 0) ?
             (run_ckpt_auto_mode ? auto_plan_pipe_exact_hit : ckpt_plan_exact_hit) :
-            auto_plan_pipe_exact_hit;
+            ckpt_plan_exact_hit;
 
     wire exec_plan_source_is_anchor =
-        (CKPT_MANUAL_ENABLE != 0) ?
+        (CHECKPOINT_MANUAL_ENABLE != 0) ?
             (run_ckpt_auto_mode ? auto_plan_pipe_source_is_anchor :
                                   ckpt_plan_source_is_anchor) :
-            auto_plan_pipe_source_is_anchor;
+            ckpt_plan_source_is_anchor;
 
     wire exec_plan_source_materialized =
-        (CKPT_MANUAL_ENABLE != 0) ?
+        (CHECKPOINT_MANUAL_ENABLE != 0) ?
             (run_ckpt_auto_mode ? auto_plan_pipe_source_materialized :
                                   ckpt_plan_source_materialized) :
-            auto_plan_pipe_source_materialized;
+            ckpt_plan_source_materialized;
 
     wire exec_plan_source_retain =
-        (CKPT_MANUAL_ENABLE != 0) ?
+        (CHECKPOINT_MANUAL_ENABLE != 0) ?
             (run_ckpt_auto_mode ? auto_plan_pipe_source_retain :
                                   ckpt_plan_source_retain) :
-            auto_plan_pipe_source_retain;
+            ckpt_plan_source_retain;
 
-    wire [1:0] exec_plan_source_slot =
-        (CKPT_MANUAL_ENABLE != 0) ?
+    wire [CKPT_SLOT_W-1:0] exec_plan_source_slot =
+        (CHECKPOINT_MANUAL_ENABLE != 0) ?
             (run_ckpt_auto_mode ? auto_plan_pipe_source_slot :
                                   ckpt_plan_source_slot) :
-            auto_plan_pipe_source_slot;
+            ckpt_plan_source_slot;
 
 
     wire [`GP_J_W-1:0] exec_plan_source_j =
-        (CKPT_MANUAL_ENABLE != 0) ?
+        (CHECKPOINT_MANUAL_ENABLE != 0) ?
             (run_ckpt_auto_mode ? auto_plan_pipe_source_j :
                                   selected_policy_source_j) :
-            auto_plan_pipe_source_j;
+            auto_current_plan_source_j;
 
     wire [`GP_J_W-1:0] exec_plan_j_req =
-        (CKPT_MANUAL_ENABLE != 0) ?
+        (CHECKPOINT_MANUAL_ENABLE != 0) ?
             (run_ckpt_auto_mode ? auto_plan_pipe_j_req :
                                   selected_plan_j_req) :
-            auto_plan_pipe_j_req;
+            auto_current_j;
 
-    wire [3:0] exec_plan_clear_mask =
-        (CKPT_MANUAL_ENABLE != 0) ?
+    wire [CKPT_SLOTS-1:0] exec_plan_clear_mask =
+        (CHECKPOINT_MANUAL_ENABLE != 0) ?
             (run_ckpt_auto_mode ? auto_plan_pipe_clear_mask :
                                   ckpt_plan_clear_mask) :
-            auto_plan_pipe_clear_mask;
+            ckpt_plan_clear_mask;
 
-    wire [2:0] exec_plan_boundary_count =
-        (CKPT_MANUAL_ENABLE != 0) ?
+    wire [CKPT_COUNT_W-1:0] exec_plan_boundary_count =
+        (CHECKPOINT_MANUAL_ENABLE != 0) ?
             (run_ckpt_auto_mode ? auto_plan_pipe_boundary_count :
                                   ckpt_plan_boundary_count) :
-            auto_plan_pipe_boundary_count;
+            ckpt_plan_boundary_count;
 
-    wire [4*`GP_J_W-1:0] exec_plan_boundary_j_flat =
-        (CKPT_MANUAL_ENABLE != 0) ?
+    wire [CKPT_SLOTS*`GP_J_W-1:0] exec_plan_boundary_j_flat =
+        (CHECKPOINT_MANUAL_ENABLE != 0) ?
             (run_ckpt_auto_mode ? auto_plan_pipe_boundary_j_flat :
                                   ckpt_plan_boundary_j_flat) :
-            auto_plan_pipe_boundary_j_flat;
+            ckpt_plan_boundary_j_flat;
 
-    wire [7:0] exec_plan_boundary_slot_flat =
-        (CKPT_MANUAL_ENABLE != 0) ?
+    wire [CKPT_SLOTS*CKPT_SLOT_W-1:0] exec_plan_boundary_slot_flat =
+        (CHECKPOINT_MANUAL_ENABLE != 0) ?
             (run_ckpt_auto_mode ? auto_plan_pipe_boundary_slot_flat :
                                   ckpt_plan_boundary_slot_flat) :
-            auto_plan_pipe_boundary_slot_flat;
+            ckpt_plan_boundary_slot_flat;
 
-    wire [1:0] exec_plan_endpoint_slot =
-        (CKPT_MANUAL_ENABLE != 0) ?
+    wire [CKPT_SLOT_W-1:0] exec_plan_endpoint_slot =
+        (CHECKPOINT_MANUAL_ENABLE != 0) ?
             (run_ckpt_auto_mode ? auto_plan_pipe_endpoint_slot :
                                   ckpt_plan_endpoint_slot) :
-            auto_plan_pipe_endpoint_slot;
+            ckpt_plan_endpoint_slot;
 
     generate
         if (CHECKPOINT_ENABLE != 0) begin : g_ckpt_plan_exec
-            grover_ckpt_meta #(.CKPT_K(CKPT_K)) u_ckpt_meta (
+            grover_ckpt_meta #(.CHECKPOINT_CAPACITY(CHECKPOINT_CAPACITY)) u_ckpt_meta (
                 .clk          (clk),
                 .rstn         (rstn),
                 .invalidate_all(cache_invalidate),
@@ -1410,8 +1534,10 @@ module bbht_grover_main_ip #(
                 .sorted_j_flat(ckpt_sorted_j_flat)
             );
 
-            if ((CKPT_K == 3) || (CKPT_K == 4)) begin : g_auto_policy_k34
-                grover_shadow_j u_shadow_j (
+            if ((CHECKPOINT_CAPACITY>=1) && (CHECKPOINT_CAPACITY<=10)) begin : g_auto_policy_k34
+                grover_shadow_j #(
+                    .FUTURE_COUNT(SHADOW_FUTURES), .OUTPUT_COUNT(POLICY_WINDOW)
+                ) u_shadow_j (
                     .clk                 (clk),
                     .rstn                (rstn),
                     .start               (auto_shadow_start),
@@ -1430,10 +1556,37 @@ module bbht_grover_main_ip #(
                 );
 
 
+                if((USE_GENERALIZED || POLICY_FORCE_GENERIC) && (POLICY_SEARCH_MODE==5 || POLICY_SEARCH_MODE==6)) begin : g_parameterized_policy
+                    grover_ckpt_policy_parameterized #(
+                        .CHECKPOINT_CAPACITY(CHECKPOINT_CAPACITY),.LOOKAHEAD_SHOTS(LOOKAHEAD_SHOTS),
+                        .EXACT_PRUNE(POLICY_SEARCH_MODE),.FORCE_GENERIC(POLICY_FORCE_GENERIC),
+                        .SCAN_LANES(POLICY_SCAN_LANES),.MEMO_ADDR_W(POLICY_MEMO_ADDR_W),
+                        .COUNT_W(CKPT_COUNT_W)
+                    ) u_policy (
+                        .clk(clk),.rstn(rstn),.start(auto_policy_start),
+                        .slot_valid(auto_policy_slot_valid_in[CHECKPOINT_CAPACITY-1:0]),
+                        .slot_j_flat(auto_policy_slot_j_flat_in[CHECKPOINT_CAPACITY*`GP_J_W-1:0]),
+                        .j_window_flat(auto_policy_window_flat_in[(LOOKAHEAD_SHOTS+1)*`GP_J_W-1:0]),
+                        .busy(auto_policy_busy),.done(auto_policy_done),.policy_error(auto_policy_error),
+                        .source_j(auto_policy_source_j),.next_count(auto_policy_next_count),
+                        .next_j_flat(generic_next_flat),.root_cost(auto_policy_root_cost),
+                        .root_segment_count(auto_policy_root_segment_count),
+                        .policy_cycles_last(auto_policy_cycles_last),.policy_actions_last(auto_policy_actions_last),
+                        .policy_memo_hit_last(auto_policy_memo_hit_last),.policy_memo_miss_last(auto_policy_memo_miss_last)
+                    );
+                    wire [CHECKPOINT_CAPACITY*`GP_J_W-1:0] generic_next_flat;
+                    assign auto_policy_next_j_flat={{((CKPT_SLOTS-CHECKPOINT_CAPACITY)*`GP_J_W){1'b0}},generic_next_flat};
+                    assign auto_policy_cycles_hw_total=0;
+                    assign auto_policy_actions_hw_total=0;
+                    assign auto_policy_hw_max_latency=0;
+                    assign auto_policy_epoch=0;
+                end else begin : g_production_policy
                 grover_ckpt_policy_rolling #(
-                    .CKPT_K      (CKPT_K),
-                    .H_FUTURE    (POLICY_H_FUTURE),
-                    .EXACT_PRUNE (POLICY_EXACT_PRUNE)
+                    .CHECKPOINT_CAPACITY      (CHECKPOINT_CAPACITY),
+                    .LOOKAHEAD_SHOTS    (LOOKAHEAD_SHOTS),
+                    .EXACT_PRUNE (POLICY_SEARCH_MODE),
+                    .CANON_LANES (POLICY_CANON_LANES),
+                    .SCAN_LANES (POLICY_SCAN_LANES)
                 ) u_auto_policy (
                     .clk                  (clk),
                     .rstn                 (rstn),
@@ -1458,8 +1611,9 @@ module bbht_grover_main_ip #(
                     .policy_max_latency   (auto_policy_hw_max_latency),
                     .policy_epoch         (auto_policy_epoch)
                 );
+                end
 
-                grover_ckpt_plan_fifo #(.DEPTH(4), .PTR_W(2)) u_plan_fifo (
+                grover_ckpt_plan_queue #(.DEPTH(4), .PTR_W(2), .SLOTS(CKPT_SLOTS), .COUNT_W(CKPT_COUNT_W)) u_plan_queue (
                     .clk                    (clk),
                     .rstn                   (rstn),
                     .flush                  (planq_flush),
@@ -1493,7 +1647,7 @@ module bbht_grover_main_ip #(
             end else begin : g_no_auto_policy_k34
                 assign auto_shadow_busy            = 1'b0;
                 assign auto_shadow_done            = 1'b0;
-                assign auto_future_j_flat          = {(8*`GP_J_W){1'b0}};
+                assign auto_future_j_flat          = {(POLICY_WINDOW*`GP_J_W){1'b0}};
                 assign auto_shadow_state_final     = 32'd0;
                 assign auto_shadow_round_final     = {`GP_RROM_IDX_W{1'b0}};
                 assign auto_shadow_L_final         = 32'd0;
@@ -1504,7 +1658,7 @@ module bbht_grover_main_ip #(
                 assign auto_policy_error           = 1'b0;
                 assign auto_policy_source_j        = {`GP_J_W{1'b0}};
                 assign auto_policy_next_count      = 3'd0;
-                assign auto_policy_next_j_flat     = {(4*`GP_J_W){1'b0}};
+                assign auto_policy_next_j_flat     = {(CKPT_SLOTS*`GP_J_W){1'b0}};
                 assign auto_policy_root_cost       = 11'd0;
                 assign auto_policy_root_segment_count = 3'd0;
                 assign auto_policy_cycles_last     = 32'd0;
@@ -1523,18 +1677,18 @@ module bbht_grover_main_ip #(
                 assign planq_head_epoch            = 8'd0;
                 assign planq_head_expected_j       = {`GP_J_W{1'b0}};
                 assign planq_head_input_s_count    = 3'd0;
-                assign planq_head_input_s_flat     = {(4*`GP_J_W){1'b0}};
+                assign planq_head_input_s_flat     = {(CKPT_SLOTS*`GP_J_W){1'b0}};
                 assign planq_head_source_j         = {`GP_J_W{1'b0}};
                 assign planq_head_next_count       = 3'd0;
-                assign planq_head_next_flat        = {(4*`GP_J_W){1'b0}};
+                assign planq_head_next_flat        = {(CKPT_SLOTS*`GP_J_W){1'b0}};
                 assign planq_head_root_cost        = 11'd0;
                 assign planq_head_segment_count    = 3'd0;
             end
 
-            if (CKPT_MANUAL_ENABLE != 0) begin : g_ckpt_planner_manual_compat
+            if (CHECKPOINT_MANUAL_ENABLE != 0) begin : g_ckpt_planner_manual_compat
                 // Original combinational planner is retained unchanged for the
                 // Phase-4B manual verification path and backward compatibility.
-                grover_ckpt_planner #(.CKPT_K(CKPT_K)) u_ckpt_planner (
+                grover_ckpt_planner #(.CHECKPOINT_CAPACITY(CHECKPOINT_CAPACITY)) u_ckpt_planner (
                     .policy_valid          (selected_policy_valid),
                     .slot_valid            (ckpt_slot_valid),
                     .slot_j_flat           (ckpt_slot_j_flat),
@@ -1556,20 +1710,32 @@ module bbht_grover_main_ip #(
                     .boundary_slot_flat    (ckpt_plan_boundary_slot_flat),
                     .endpoint_slot         (ckpt_plan_endpoint_slot)
                 );
+            end else if(USE_GENERALIZED) begin : g_ckpt_planner_generic_pipe
+                grover_ckpt_planner_generic_pipe #(.CHECKPOINT_CAPACITY(CHECKPOINT_CAPACITY)) u_planner (
+                    .clk(clk),.rstn(rstn),.capture(auto_planner_capture),.policy_valid(auto_accept_plan),
+                    .slot_valid(ckpt_slot_valid),.slot_j_flat(ckpt_slot_j_flat),.j_req(auto_current_j),
+                    .policy_source_j(auto_incoming_source),.policy_next_count(auto_incoming_count),.policy_next_j_flat(auto_incoming_flat),
+                    .plan_valid(ckpt_plan_valid),.plan_error(ckpt_plan_error),.exact_hit(ckpt_plan_exact_hit),
+                    .source_is_anchor(ckpt_plan_source_is_anchor),.source_materialized(ckpt_plan_source_materialized),
+                    .source_retain(ckpt_plan_source_retain),.source_slot(ckpt_plan_source_slot),
+                    .retain_mask(ckpt_plan_retain_mask),.clear_mask(ckpt_plan_clear_mask),
+                    .boundary_count(ckpt_plan_boundary_count),.boundary_j_flat(ckpt_plan_boundary_j_flat),
+                    .boundary_slot_flat(ckpt_plan_boundary_slot_flat),.endpoint_slot(ckpt_plan_endpoint_slot)
+                );
             end else begin : g_ckpt_planner_auto_pipe
                 // Production K4/H6 path.  The stage boundary cuts the fix3
                 // metadata -> predecessor -> allocation -> plan-packet path.
-                grover_ckpt_planner_pipe #(.CKPT_K(CKPT_K)) u_ckpt_planner_pipe (
+                grover_ckpt_planner_pipe #(.CHECKPOINT_CAPACITY(CHECKPOINT_CAPACITY)) u_ckpt_planner_pipe (
                     .clk                   (clk),
                     .rstn                  (rstn),
                     .capture               (auto_planner_capture),
-                    .policy_valid          (auto_current_plan_valid),
+                    .policy_valid          (auto_accept_plan),
                     .slot_valid            (ckpt_slot_valid),
                     .slot_j_flat           (ckpt_slot_j_flat),
                     .j_req                 (auto_current_j),
-                    .policy_source_j       (auto_current_plan_source_j),
-                    .policy_next_count     (auto_current_plan_next_count),
-                    .policy_next_j_flat    (auto_current_plan_next_j_flat),
+                    .policy_source_j       (auto_incoming_source),
+                    .policy_next_count     (auto_incoming_count),
+                    .policy_next_j_flat    (auto_incoming_flat),
                     .plan_valid            (ckpt_plan_valid),
                     .plan_error            (ckpt_plan_error),
                     .exact_hit             (ckpt_plan_exact_hit),
@@ -1586,7 +1752,7 @@ module bbht_grover_main_ip #(
                 );
             end
 
-            grover_ckpt_executor u_ckpt_executor (
+            grover_ckpt_executor #(.CHECKPOINT_CAPACITY(CHECKPOINT_CAPACITY)) u_ckpt_executor (
                 .clk                      (clk),
                 .rstn                     (rstn),
                 .start                    ((bbht_iter_start && run_ckpt_manual_active) |
@@ -1628,9 +1794,9 @@ module bbht_grover_main_ip #(
             );
         end else begin : g_no_ckpt_plan_exec
             assign ckpt_slot_valid                    = 4'b0000;
-            assign ckpt_slot_j_flat                   = {(4*`GP_J_W){1'b0}};
+            assign ckpt_slot_j_flat                   = {(CKPT_SLOTS*`GP_J_W){1'b0}};
             assign ckpt_sorted_count                  = 3'd0;
-            assign ckpt_sorted_j_flat                 = {(4*`GP_J_W){1'b0}};
+            assign ckpt_sorted_j_flat                 = {(CKPT_SLOTS*`GP_J_W){1'b0}};
             assign ckpt_plan_valid                    = 1'b0;
             assign ckpt_plan_error                    = 1'b0;
             assign ckpt_plan_exact_hit                = 1'b0;
@@ -1641,7 +1807,7 @@ module bbht_grover_main_ip #(
             assign ckpt_plan_retain_mask              = 4'b0000;
             assign ckpt_plan_clear_mask               = 4'b0000;
             assign ckpt_plan_boundary_count           = 3'd0;
-            assign ckpt_plan_boundary_j_flat          = {(4*`GP_J_W){1'b0}};
+            assign ckpt_plan_boundary_j_flat          = {(CKPT_SLOTS*`GP_J_W){1'b0}};
             assign ckpt_plan_boundary_slot_flat       = 8'd0;
             assign ckpt_plan_endpoint_slot            = 2'd0;
             assign ckpt_exec_iter_start               = 1'b0;
@@ -1664,7 +1830,7 @@ module bbht_grover_main_ip #(
             assign ckpt_exec_intermediate_commit_count= 16'd0;
             assign auto_shadow_busy            = 1'b0;
             assign auto_shadow_done            = 1'b0;
-            assign auto_future_j_flat          = {(8*`GP_J_W){1'b0}};
+            assign auto_future_j_flat          = {(POLICY_WINDOW*`GP_J_W){1'b0}};
             assign auto_shadow_state_final     = 32'd0;
             assign auto_shadow_round_final     = {`GP_RROM_IDX_W{1'b0}};
             assign auto_shadow_L_final         = 32'd0;
@@ -1675,7 +1841,7 @@ module bbht_grover_main_ip #(
             assign auto_policy_error           = 1'b0;
             assign auto_policy_source_j        = {`GP_J_W{1'b0}};
             assign auto_policy_next_count      = 3'd0;
-            assign auto_policy_next_j_flat     = {(4*`GP_J_W){1'b0}};
+            assign auto_policy_next_j_flat     = {(CKPT_SLOTS*`GP_J_W){1'b0}};
             assign auto_policy_root_cost       = 11'd0;
             assign auto_policy_root_segment_count = 3'd0;
             assign auto_policy_cycles_last     = 32'd0;
@@ -1694,10 +1860,10 @@ module bbht_grover_main_ip #(
             assign planq_head_epoch            = 8'd0;
             assign planq_head_expected_j       = {`GP_J_W{1'b0}};
             assign planq_head_input_s_count    = 3'd0;
-            assign planq_head_input_s_flat     = {(4*`GP_J_W){1'b0}};
+            assign planq_head_input_s_flat     = {(CKPT_SLOTS*`GP_J_W){1'b0}};
             assign planq_head_source_j         = {`GP_J_W{1'b0}};
             assign planq_head_next_count       = 3'd0;
-            assign planq_head_next_flat        = {(4*`GP_J_W){1'b0}};
+            assign planq_head_next_flat        = {(CKPT_SLOTS*`GP_J_W){1'b0}};
             assign planq_head_root_cost        = 11'd0;
             assign planq_head_segment_count    = 3'd0;
         end
@@ -1714,12 +1880,12 @@ module bbht_grover_main_ip #(
 
     //==========================================================================
     // Inner Grover physical kernel.
-    // INTRA_ENGINES=1 preserves frozen K4/H4; 2 and 4 enable E2/E4.
+    // NUMBER_OF_PES=1 preserves frozen K4/H4; 2 and 4 enable E2/E4.
     // E2/E4 change only the physical Grover state-vector throughput; BBHT,
     // K4/H4 policy/checkpoint semantics remain unchanged.
     //
     // E2 is enabled only when CHECKPOINT_ENABLE!=0.  E4 is also legal with
-    // CHECKPOINT_ENABLE=0 (2026-09-25, hardware_bram_nocheckpoint): the E4
+    // CHECKPOINT_ENABLE=0 (2026-09-25, no_checkpoint_baseline): the E4
     // interleaved amplitude memory is then used as a single slot 0, which is
     // exactly the slot a NORMAL run already uses in a checkpoint build
     // (ckpt_exec_mode=0 forces src/dst/endpoint slot to 0 below).  So a
@@ -1793,18 +1959,15 @@ module bbht_grover_main_ip #(
         // Read latency follows the amplitude memory that is instantiated:
         // checkpoint memories (E1 ckpt / E2 / E4) answer in two cycles, the
         // legacy single amp memory (E1 without checkpoint) in one.
-        .AMP_READ_LATENCY(((CHECKPOINT_ENABLE != 0) ||
-                           (INTRA_ENGINES == 4)) ? 2 : 1),
+        .AMP_READ_LATENCY(((USE_GENERALIZED != 0) || (CHECKPOINT_ENABLE != 0) ||
+                           (NUMBER_OF_PES == 4)) ? 2 : 1),
         // M1/M2 ride on the E4 four-bank quad read port, so they follow E4
         // and not the checkpoint switch.
-        .E4_DUAL_BUILD   (((INTRA_ENGINES == 4) &&
-                           (MEAS_M1_ENABLE != 0)) ? 1 : 0),
-        .E4_TRIPLE_BUILD (((INTRA_ENGINES == 4) &&
-                           (MEAS_M1_ENABLE != 0) &&
-                           (MEAS_M3_ENABLE != 0)) ? 1 : 0),
-        .E4_HIER_SELECT  (((INTRA_ENGINES == 4) &&
-                           (MEAS_M1_ENABLE != 0) &&
-                           (MEAS_M2_ENABLE != 0)) ? 1 : 0)
+        .E4_DUAL_BUILD   ((MEAS_ROWS >= 2) ? 1 : 0),
+        .E4_TRIPLE_BUILD ((MEAS_ROWS == 3) ? 1 : 0),
+        .E4_QUAD_BUILD   ((MEAS_ROWS == 4) ? 1 : 0),
+        .E4_HIER_SELECT  (((USE_GENERALIZED || ((NUMBER_OF_PES == 4) && (MEAS_ROWS >= 2))) &&
+                           (USE_TWO_LEVEL_SELECT != 0)) ? 1 : 0)
     ) u_measure_verify (
         .clk                  (clk),
         .rstn                 (rstn),
@@ -1841,7 +2004,29 @@ module bbht_grover_main_ip #(
     );
 
     generate
-        if (INTRA_ENGINES == 4) begin : g_intra_e4
+        if(USE_GENERALIZED) begin : g_intra_generalized
+            grover_inner_parallel #(
+                .CHECKPOINT_CAPACITY(CHECKPOINT_CAPACITY),.INTRA_ENGINES(NUMBER_OF_PES),.SLOT_W(CKPT_SLOT_W)
+            ) u_kernel (
+                .clk(clk),.rstn(rstn),.iter_start(physical_iter_start),.iter_do_init(physical_iter_do_init),
+                .iter_count(physical_iter_count),.src_slot(ckpt_exec_mode?ckpt_exec_src_slot:{CKPT_SLOT_W{1'b0}}),
+                .dst_slot(ckpt_exec_mode?ckpt_exec_dst_slot:{CKPT_SLOT_W{1'b0}}),.bridge(ckpt_exec_mode&&ckpt_exec_bridge),
+                .iter_busy(iter_busy),.iter_done(physical_iter_done),.state(iter_state),.pass_tick(iter_pass_tick),
+                .global_sum(dp_global_sum),.two_mean(dp_two_mean),.sat_event(dp_sat_event),
+                .predicate_mode(run_predicate_mode),.threshold_a(run_threshold_a),.threshold_b(run_threshold_b),
+                .data_count(run_data_count),.enum_enable(run_enum_mode),
+                .data_wr_index(loader_mem_wr_addr),.data_wr_en(loader_mem_wr_en),.data_wr_value(loader_mem_wr_data),
+                .verify_index(data_verify_index),.verify_value(data_verify_value),.verify_found(found_mask_verify_found),
+                .mask_clear_start(mask_clear_start),.mask_set_start(mask_set_start),.mask_set_index(mask_set_index),
+                .mask_maint_busy(mask_maint_busy),.mask_clear_done(mask_clear_done),.mask_set_done(mask_set_done),
+                .meas_busy(meas_busy),.meas_slot(ckpt_exec_mode?ckpt_exec_endpoint_slot:{CKPT_SLOT_W{1'b0}}),
+                .meas_single_en(meas_amp_rd_en),.meas_single_row(meas_amp_rd_row),
+                .meas_single_data(amp_mem_rdata),.meas_single_valid(ckpt_amp_rd_valid),
+                .meas_quad_en(meas_amp_quad_rd_en),.meas_quad_index(meas_amp_quad_rd_index),
+                .meas_quad0(meas_amp_quad0),.meas_quad1(meas_amp_quad1),.meas_quad2(meas_amp_quad2),.meas_quad3(meas_amp_quad3),
+                .meas_quad_valid(meas_amp_quad_valid),.amp_write_forbid(meas_amp_write_forbid)
+            );
+        end else if (NUMBER_OF_PES == 4) begin : g_intra_e4
             // ---------------------------------------------------------------
             // E4 controller: 128 quads x 4 rows cover the frozen 512 rows.
             // ---------------------------------------------------------------
@@ -1918,7 +2103,7 @@ module bbht_grover_main_ip #(
                 ((iter_state==4'd1)||(iter_state==4'd2)||(iter_state==4'd4))&&
                 !meas_amp_write_forbid;
 
-            grover_ckpt_mem_interleaved_e4 #(.CKPT_K(CKPT_K)) u_amp_mem (
+            grover_ckpt_mem_interleaved_e4 #(.CHECKPOINT_CAPACITY(CHECKPOINT_CAPACITY)) u_amp_mem (
                 .clk(clk),
                 .quad_rd_slot(e4_mem_quad_rd_slot), .quad_rd_index(e4_mem_quad_rd_index),
                 .quad_rd_en(e4_mem_quad_rd_en),
@@ -1994,7 +2179,7 @@ module bbht_grover_main_ip #(
             );
 
             wire _unused_e4_valid_guard=e4_ckpt_quad_valid^e4_oracle_aligned_valid^e4_scratch_quad_rd_en;
-        end else if ((INTRA_ENGINES == 2) && (CHECKPOINT_ENABLE != 0)) begin : g_intra_e2
+        end else if ((NUMBER_OF_PES == 2) && (CHECKPOINT_ENABLE != 0)) begin : g_intra_e2
             assign meas_amp_quad0      = {AMP_ROW_BITS{1'b0}};
             assign meas_amp_quad1      = {AMP_ROW_BITS{1'b0}};
             assign meas_amp_quad2      = {AMP_ROW_BITS{1'b0}};
@@ -2061,7 +2246,7 @@ module bbht_grover_main_ip #(
             wire e2_scratch_pair_wr_en = e2_dp_pair_out_valid &&
                                          (iter_state == 4'd2);
 
-            grover_ckpt_mem_tdp_e2 #(.CKPT_K(CKPT_K)) u_amp_mem (
+            grover_ckpt_mem_tdp_e2 #(.CHECKPOINT_CAPACITY(CHECKPOINT_CAPACITY)) u_amp_mem (
                 .clk            (clk),
                 .pair_rd_slot   (e2_pair_rd_slot),
                 .pair_rd_index  (e2_pair_index),
@@ -2298,7 +2483,7 @@ module bbht_grover_main_ip #(
             wire amp_mem_wr_en = ctrl_amp_wr_en && dp_row_out_valid && !meas_amp_write_forbid;
 
             if (CHECKPOINT_ENABLE != 0) begin : g_ckpt_amp_mem
-                grover_ckpt_mem #(.CKPT_K(CKPT_K)) u_amp_mem (
+                grover_ckpt_mem #(.CHECKPOINT_CAPACITY(CHECKPOINT_CAPACITY)) u_amp_mem (
                     .clk(clk), .rd_slot(ckpt_amp_rd_slot),
                     .rd_row(amp_mem_rd_row), .rd_en(amp_mem_rd_en),
                     .rd_amp(amp_mem_rdata), .rd_valid(ckpt_amp_rd_valid),
@@ -2564,7 +2749,7 @@ module bbht_grover_main_ip #(
     end
 
     //==========================================================================
-    // Enumeration run-global trial/L_BBHT accumulation.  The local BBHT FSM
+    // Enumeration run-global trial/requested_iterations accumulation.  The local BBHT FSM
     // resets these counters on each internal bbht_start.
     //==========================================================================
     reg [31:0] enum_trial_base;
@@ -2586,7 +2771,7 @@ module bbht_grover_main_ip #(
 
             if (bbht_done && enum_segment_active) begin
                 enum_trial_base     <= enum_trial_base + bbht_trial_count;
-                enum_L_base         <= enum_L_base + bbht_L_BBHT;
+                enum_L_base         <= enum_L_base + bbht_requested_iterations;
                 enum_segment_active <= 1'b0;
             end
         end
@@ -2595,11 +2780,11 @@ module bbht_grover_main_ip #(
     wire [31:0] enum_trial_visible = enum_trial_base +
         (enum_segment_active ? bbht_trial_count : 32'd0);
     wire [31:0] enum_L_visible = enum_L_base +
-        (enum_segment_active ? bbht_L_BBHT : 32'd0);
+        (enum_segment_active ? bbht_requested_iterations : 32'd0);
     wire [31:0] algorithm_trial_count = run_enum_mode ? enum_trial_visible
                                                       : bbht_trial_count;
-    wire [31:0] algorithm_L_BBHT = run_enum_mode ? enum_L_visible
-                                                  : bbht_L_BBHT;
+    wire [31:0] algorithm_requested_iterations = run_enum_mode ? enum_L_visible
+                                                  : bbht_requested_iterations;
 
     //==========================================================================
     // Run-level final/status events
@@ -2634,7 +2819,7 @@ module bbht_grover_main_ip #(
         .budget_limit_event     (budget_limit_event),
         .amp_sat_event          (dp_sat_event),
         .algorithm_trial_count  (algorithm_trial_count),
-        .algorithm_L_BBHT       (algorithm_L_BBHT),
+        .algorithm_requested_iterations       (algorithm_requested_iterations),
         .iter_done              (physical_iter_done),
         .iter_count_completed   (physical_iter_count),
         .done                   (done),
@@ -2645,9 +2830,9 @@ module bbht_grover_main_ip #(
         .budget_limit           (budget_limit),
         .amp_overflow           (amp_overflow),
         .zero_weight_error      (zero_weight_error),
-        .trial_count            (trial_count),
-        .L_BBHT                 (L_BBHT),
-        .actual_grover_iterations(actual_grover_iterations),
+        .shot_count            (shot_count),
+        .requested_iterations                 (requested_iterations),
+        .executed_iterations(executed_iterations),
         .cycle_count            (cycle_count)
     );
 

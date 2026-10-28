@@ -1,0 +1,21 @@
+{
+  "verified_integration_manifests": 9,
+  "live_source_hash_checks": 198,
+  "verified_source_snapshot_files": 19,
+  "baseline_prefix_csv_rows_identical": 4,
+  "frozen_platform_inputs_unchanged": 28,
+  "protected_firmware_files_unchanged": 17,
+  "python_compile": "passed",
+  "document_check": {
+    "documents": 196,
+    "errors": 0,
+    "warnings": 0
+  },
+  "csr_check": "passed",
+  "port_contract": {
+    "wrapper": 19,
+    "core": 61,
+    "errors": 0
+  },
+  "errors": 0
+}

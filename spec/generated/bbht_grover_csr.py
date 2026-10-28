@@ -20,9 +20,9 @@ REG = {
     "SEED_MEAS":                 (0x020, 'RW'),
     "STATUS":                    (0x024, 'RO'),
     "RESULT_INDEX":              (0x028, 'RO'),
-    "TRIAL_COUNT":               (0x02C, 'RO'),
-    "L_BBHT":                    (0x030, 'RO'),
-    "ACTUAL_ITER":               (0x034, 'RO'),
+    "SHOT_COUNT":                (0x02C, 'RO'),
+    "REQUESTED_ITERATIONS":      (0x030, 'RO'),
+    "EXECUTED_ITERATIONS":       (0x034, 'RO'),
     "CYCLE_COUNT":               (0x038, 'RO'),
     "ENUM_CFG":                  (0x03C, 'RW'),
     "FIFO_DATA":                 (0x040, 'RPOP'),
@@ -40,11 +40,11 @@ REG = {
     "POLICY_MEMO_HIT":           (0x070, 'RO'),
     "POLICY_MEMO_MISS":          (0x074, 'RO'),
     "POLICY_MAX_LATENCY":        (0x078, 'RO'),
-    "PLAN_FIFO_LEVEL":           (0x07C, 'RO'),
-    "PLAN_FIFO_HIGHWATER":       (0x080, 'RO'),
-    "PLAN_FIFO_EMPTY_DEMAND":    (0x084, 'RO'),
-    "PLAN_FIFO_HIT_COUNT":       (0x088, 'RO'),
-    "PLAN_FIFO_MISMATCH_COUNT":  (0x08C, 'RO'),
+    "PLAN_QUEUE_LEVEL":          (0x07C, 'RO'),
+    "PLAN_QUEUE_HIGHWATER":      (0x080, 'RO'),
+    "PLAN_QUEUE_EMPTY_DEMAND":   (0x084, 'RO'),
+    "PLAN_QUEUE_HIT_COUNT":      (0x088, 'RO'),
+    "PLAN_QUEUE_MISS_COUNT":     (0x08C, 'RO'),
     "POLICY_COLD_SOLVE_COUNT":   (0x090, 'RO'),
     "POLICY_SPEC_SOLVE_COUNT":   (0x094, 'RO'),
 }
@@ -56,10 +56,10 @@ STATUS_BITS = [
     ( 3, "result_valid",      'Single result 유효'),
     ( 4, "config_error",      '설정 오류 sticky'),
     ( 5, "shot_limit",        'shot cap 도달 sticky'),
-    ( 6, "budget_limit",      'BBHT logical budget 도달 sticky'),
-    ( 7, "amp_overflow",      '진폭 포화 sticky. 진단용이며 종료 사유가 아님'),
-    ( 8, "zero_weight_error", 'Born total-weight 오류 sticky'),
-    ( 9, "load_error",        'loader 검증 오류 sticky'),
+    ( 6, "budget_limit",      'BBHT budget 도달 sticky'),
+    ( 7, "amp_overflow",      'amplitude saturation sticky. 진단용이며 종료 사유가 아님'),
+    ( 8, "zero_weight_error", 'Born-rule sampling total weight 오류 sticky'),
+    ( 9, "load_error",        'DMA Engine 검사 오류 sticky'),
     (10, "enum_done",         'Enumeration 종료 sticky'),
     (11, "fifo_empty",        'Result FIFO 비어 있음'),
 ]
@@ -67,10 +67,10 @@ STATUS_BITS = [
 DMA_STATUS_BITS = [
     ( 0, "dma_busy",          'DMA 진행 중'),
     ( 1, "dma_error",         '아래 오류들의 OR'),
-    ( 2, "align_error",       'DATA_ADDR 4바이트 정렬 위반'),
+    ( 2, "align_error",       'DATA_ADDR 4-byte 정렬 위반'),
     ( 3, "count_error",       'DATA_COUNT 범위 위반'),
     ( 4, "resp_error",        'AHB 응답 오류'),
-    ( 5, "busy_error",        'Main IP busy 라서 DMA 거절'),
+    ( 5, "busy_error",        'Accelerator Core busy 라서 DMA 거절'),
     ( 6, "range_error",       'System SRAM 범위 밖'),
     ( 7, "dma_done_sticky",   'DMA 완료 sticky'),
 ]
@@ -84,10 +84,10 @@ PREDICATE = {
 
 RUN_MODES = {
     "MANUAL_SINGLE":   dict(auto_shot=0, burst_enable=0, enum_enable=0),
-    "NORMAL_SINGLE":   dict(auto_shot=1, burst_enable=0, enum_enable=0),
-    "CKPT_SINGLE":     dict(auto_shot=1, burst_enable=1, enum_enable=0),
-    "NORMAL_ENUM":     dict(auto_shot=1, burst_enable=0, enum_enable=1),
-    "CKPT_ENUM":       dict(auto_shot=1, burst_enable=1, enum_enable=1),
+    "RESTART_SINGLE":  dict(auto_shot=1, burst_enable=0, enum_enable=0),
+    "CHECKPOINT_SINGLE": dict(auto_shot=1, burst_enable=1, enum_enable=0),
+    "RESTART_ENUMERATION": dict(auto_shot=1, burst_enable=0, enum_enable=1),
+    "CHECKPOINT_ENUMERATION": dict(auto_shot=1, burst_enable=1, enum_enable=1),
 }
 
 Q_BITS = 14

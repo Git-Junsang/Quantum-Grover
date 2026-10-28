@@ -2,7 +2,7 @@
 
 Uses the team generator (benchmark_dataset.build_predicate_benchmark_dataset,
 the twin of the board console's GEN command) and checks every image against the
-FNV-1a / sha256 in software/golden_data/2026-09-25_predicate500/predicate500_datasets.csv.
+FNV-1a / sha256 in software/reference_model_data/2026-09-25_predicate500/predicate500_datasets.csv.
 pc_grover already ships the 20 files in experiments/2026-10-05_cpp_numpy_qiskit/predicate500_datasets; this tool
 regenerates them (default) or writes them elsewhere (--out) and proves they match.
 """

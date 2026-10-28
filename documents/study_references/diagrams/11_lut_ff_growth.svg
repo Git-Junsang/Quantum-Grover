@@ -13,7 +13,7 @@
   <!-- axes -->
   <line x1="80" y1="300" x2="560" y2="300" stroke="#555" stroke-width="1.5"/>
   <line x1="80" y1="300" x2="80"  y2="34"  stroke="#555" stroke-width="1.5"/>
-  <text transform="rotate(-90 34 175)" x="34" y="175" font-size="12.5" fill="#555" text-anchor="middle">FPGA 자원 (로그 스케일)</text>
+  <text transform="rotate(-90 34 175)" x="34" y="175" font-size="12.5" fill="#555" text-anchor="middle">FPGA resource (log scale)</text>
 
   <!-- x ticks -->
   <text x="80"  y="320" font-size="12" fill="#555" text-anchor="middle">2</text>
@@ -21,7 +21,7 @@
   <text x="320" y="320" font-size="12" fill="#555" text-anchor="middle">4</text>
   <text x="440" y="320" font-size="12" fill="#555" text-anchor="middle">5</text>
   <text x="560" y="320" font-size="12" fill="#555" text-anchor="middle">6</text>
-  <text x="320" y="343" font-size="12.5" fill="#555" text-anchor="middle">큐비트 수 n</text>
+  <text x="320" y="343" font-size="12.5" fill="#555" text-anchor="middle">number of qubits</text>
 
   <!-- FF line (storage) : nearly flat -->
   <polyline points="80,274.7 200,273.8 320,271.4 440,267.8 560,261.3" fill="none" stroke="#5b8def" stroke-width="2.4"/>
@@ -38,14 +38,14 @@
   <!-- value callouts -->
   <text x="556" y="100" font-size="11.5" font-weight="bold" fill="#c14a22" text-anchor="end">LUT 303,993</text>
   <text x="556" y="253" font-size="11.5" font-weight="bold" fill="#3a6fd0" text-anchor="end">FF 19,852</text>
-  <text x="326" y="292" font-size="10.5" fill="#999">4큐비트: 거의 같은 출발</text>
+  <text x="326" y="292" font-size="10.5" fill="#999">4 qubits: 거의 같은 출발</text>
 
   <!-- legend -->
   <rect x="96" y="52" width="196" height="46" rx="6" fill="#ffffff" stroke="#e3e3e3"/>
   <line x1="108" y1="68" x2="132" y2="68" stroke="#5b8def" stroke-width="2.6"/>
-  <text x="140" y="72" font-size="12" fill="#3a6fd0">FF — 진폭 저장</text>
+  <text x="140" y="72" font-size="12" fill="#3a6fd0">FF — amplitude 저장</text>
   <line x1="108" y1="86" x2="132" y2="86" stroke="#e8663d" stroke-width="2.6"/>
-  <text x="140" y="90" font-size="12" fill="#c14a22">LUT — 병렬 연산 유닛</text>
+  <text x="140" y="90" font-size="12" fill="#c14a22">LUT — 병렬 연산 unit</text>
 
-  <text x="310" y="368" text-anchor="middle" font-size="11.5" fill="#666">04 Table 4 (Kintex UltraScale+). 저장은 1.2배로 평평, 병렬 연산은 20배로 치솟는다 — LUT 폭발의 범인은 저장이 아니다.</text>
+  <text x="310" y="368" text-anchor="middle" font-size="11.5" fill="#666">04 Table 4 (Kintex UltraScale+). 저장은 1.2×로 평평, 병렬 연산은 20×로 치솟는다 — LUT 폭발의 범인은 저장이 아니다.</text>
 </svg>

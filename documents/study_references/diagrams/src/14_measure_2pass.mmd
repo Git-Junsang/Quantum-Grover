@@ -1,8 +1,8 @@
 flowchart TD
-    START([측정 진입 · 진폭 배열 확정 · 읽기만]) --> BUILD["BUILD · 512행을 한 바퀴 읽음<br/>행 가중치 51비트 · 32행마다 그룹 누적 16개 · 총합 W 60비트<br/>M1: 사이클당 2행 · 제곱 엔진 2벌 · DSP 128"]
-    BUILD --> RNG["난수 · 64비트 xorshift 블록의 하위 k 비트<br/>W 이상이면 기각하고 다시"]
-    RNG -->|W = 0| ZW["zero_weight_error"]
-    RNG --> GRP["그룹 고르기 (M2) · 최대 16 사이클"]
-    GRP --> ROW["행 고르기 · 그룹 안 32행 · 최대 32 사이클"]
-    ROW --> LANE["레인 고르기 · 행을 다시 읽어 32레인 제곱 · 잔여값을 처음 넘는 레인"]
-    LANE --> VER([후보 {행, 레인} → 검증 · 술어 · DATA_COUNT · found])
+    START([measurement 진입 · amplitude array 확정 · 읽기만]) --> BUILD["Build · 512 rows를 한 바퀴 읽음<br/>row weight 51-bit · 32 rows마다 group prefix sum 16개 · total weight 60 bits<br/>Dual-Row Build: cycle당 2 rows · square PE 2벌 · DSP 128"]
+    BUILD --> RNG["Measurement PRNG · 64-bit xorshift 출력의 하위 bits<br/>total weight 이상이면 버리고 다시 (rejection sampling)"]
+    RNG -->|total weight = 0| ZW["zero_weight_error"]
+    RNG --> GRP["group 고르기 (Two-Level Select) · 최대 16 cycles"]
+    GRP --> ROW["row 고르기 · group 안 32 rows · 최대 32 cycles"]
+    ROW --> LANE["lane 고르기 · row를 다시 읽어 32 lanes square · 잔여값을 처음 넘는 lane"]
+    LANE --> VER(["후보 (row, lane) → solution check · predicate · DATA_COUNT · Found Mask"])

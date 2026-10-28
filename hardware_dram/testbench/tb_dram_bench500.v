@@ -29,7 +29,7 @@
 //
 // 데이터셋은 GD_WL_DIR 에 있는 data_m<M>.hex (bin_to_hex.py 로 변환) 와
 // seeds.txt 를 읽습니다. 원본은
-// software/golden_develop/tb_stimulus/dump_bench_workload.py --seeds 100 가 만듭니다.
+// software/reference_model_develop/tb_stimulus/dump_bench_workload.py --seeds 100 가 만듭니다.
 //=====================================================================
 `timescale 1ns/1ps
 `ifdef GD_DRAM_BRANCH
@@ -100,8 +100,8 @@ module tb_dram_bench500 #(
     wire [`GP_INDEX_W-1:0]             result_index;
     wire                               config_error, shot_limit, budget_limit;
     wire                               amp_overflow, zero_weight_error, load_error;
-    wire [31:0]                        trial_count, L_BBHT;
-    wire [31:0]                        actual_grover_iterations, cycle_count;
+    wire [31:0]                        shot_count, requested_iterations;
+    wire [31:0]                        executed_iterations, cycle_count;
 
     wire                               enum_done;
     wire [`GP_FOUND_COUNT_W-1:0]       found_count;
@@ -113,8 +113,8 @@ module tb_dram_bench500 #(
 
     wire [31:0] policy_cycles_total, policy_stall_cycles, policy_actions_eval;
     wire [31:0] policy_memo_hit, policy_memo_miss, policy_max_latency;
-    wire [2:0]  plan_fifo_level, plan_fifo_highwater;
-    wire [31:0] plan_fifo_empty_demand, plan_fifo_hit_count, plan_fifo_mismatch_count;
+    wire [2:0]  plan_queue_level, plan_queue_highwater;
+    wire [31:0] plan_queue_empty_demand, plan_queue_hit_count, plan_queue_miss_count;
     wire [31:0] policy_cold_solve_count, policy_spec_solve_count;
 
 `ifdef GD_DRAM_BRANCH
@@ -141,11 +141,11 @@ module tb_dram_bench500 #(
     // (그전에는 hardware_bram/src_v2 의 K4/H4 였습니다).
     bbht_grover_main_ip #(
         .CHECKPOINT_ENABLE  (1),
-        .CKPT_K             (3),
-        .POLICY_H_FUTURE    (3),
-        .CKPT_MANUAL_ENABLE (0),
-        .AUTO_SPEC_ENABLE   (1),
-        .INTRA_ENGINES      (4)
+        .CHECKPOINT_CAPACITY             (3),
+        .LOOKAHEAD_SHOTS    (3),
+        .CHECKPOINT_MANUAL_ENABLE (0),
+        .SPECULATIVE_PLANNING_ENABLE   (1),
+        .NUMBER_OF_PES      (4)
     ) u_ip (
 `endif
         .clk                      (clk),
@@ -211,9 +211,9 @@ module tb_dram_bench500 #(
         .zero_weight_error        (zero_weight_error),
         .load_error               (load_error),
 
-        .trial_count              (trial_count),
-        .L_BBHT                   (L_BBHT),
-        .actual_grover_iterations (actual_grover_iterations),
+        .shot_count              (shot_count),
+        .requested_iterations                   (requested_iterations),
+        .executed_iterations (executed_iterations),
         .cycle_count              (cycle_count),
 
         .policy_cycles_total      (policy_cycles_total),
@@ -223,11 +223,11 @@ module tb_dram_bench500 #(
         .policy_memo_miss         (policy_memo_miss),
         .policy_max_latency       (policy_max_latency),
 
-        .plan_fifo_level          (plan_fifo_level),
-        .plan_fifo_highwater      (plan_fifo_highwater),
-        .plan_fifo_empty_demand   (plan_fifo_empty_demand),
-        .plan_fifo_hit_count      (plan_fifo_hit_count),
-        .plan_fifo_mismatch_count (plan_fifo_mismatch_count),
+        .plan_queue_level          (plan_queue_level),
+        .plan_queue_highwater      (plan_queue_highwater),
+        .plan_queue_empty_demand   (plan_queue_empty_demand),
+        .plan_queue_hit_count      (plan_queue_hit_count),
+        .plan_queue_miss_count (plan_queue_miss_count),
         .policy_cold_solve_count  (policy_cold_solve_count),
         .policy_spec_solve_count  (policy_spec_solve_count)
 
@@ -352,7 +352,7 @@ module tb_dram_bench500 #(
                 $fdisplay(csv, "%0d,%0d,%0s,%0d,%0d,%0d,%0d,%0d,%0d",
                           m_values[m_idx], seed_idx, mode_tag,
                           result_valid ? result_index : {`GP_INDEX_W{1'b1}},
-                          trial_count, L_BBHT, actual_grover_iterations,
+                          shot_count, requested_iterations, executed_iterations,
                           cycle_count, config_error);
             end
             @(negedge clk);

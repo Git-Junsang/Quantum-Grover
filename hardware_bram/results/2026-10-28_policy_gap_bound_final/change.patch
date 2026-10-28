@@ -1,0 +1,540 @@
+diff --git a/hardware_bram/results/2026-10-28_policy_single_action/source/grover_policy.v b/hardware_bram/src/grover_policy.v
+index b567980..201efc1 100755
+--- a/hardware_bram/results/2026-10-28_policy_single_action/source/grover_policy.v
++++ b/hardware_bram/src/grover_policy.v
+@@ -6,6 +6,7 @@
+ // 2026-10-27: remove the policy timing-only BUILD/PREP/evaluation registers.
+ // Keep the synchronous memo read alignment and the full-horizon bound stages,
+ // which carry architectural transactions rather than delaying control for WNS.
++// 2026-10-28: skip solved seeds and evaluate relaxed cost in parallel gaps.
+ //
+ // Functional scope of this file
+ //   1) grover_ckpt_policy_memo
+@@ -207,6 +208,102 @@ module grover_ckpt_policy_memo #(
+     endgenerate
+ endmodule
+ 
++//------------------------------------------------------------------------------
++// Capacity-relaxed cost evaluated by gaps between initial checkpoints.
++//
++// Within one gap, processing a new largest request deposits every smaller
++// request-pool value up to that endpoint. All remaining requests belong to the
++// pool. Later requests at or below the endpoint therefore cost zero, while a
++// larger endpoint pays only the extension. Costs telescope to max(request)-lo
++// in each gap, independently of request order. Requests already held cost zero.
++// The implicit checkpoint 0 supplies the first gap's lower endpoint.
++//
++// Two data stages: capture child/future masks, then find each gap's source and
++// largest request in parallel. The caller registers the balanced cost sum with
++// the packet metadata. Latency is independent of H; logic size grows with UB.
++// values_flat is constant during a solve, and validity/flush belongs to caller.
++//------------------------------------------------------------------------------
++module grover_ckpt_gap_bound #(
++    parameter integer UB = 7
++) (
++    input wire clk,
++    input wire [UB-1:0] child_mask,
++    input wire [UB-1:0] future_mask,
++    input wire [7*UB-1:0] values_flat,
++    output wire [10:0] cost
++);
++    localparam integer SUM_LEAVES = 1 << $clog2(UB+1);
++    reg [UB-1:0] child_q, future_q;
++    // Each array element is a separate acyclic adder node. Ask Verilator to
++    // track them separately too, avoiding a false whole-array feedback path.
++    wire [10:0] sum_tree [1:2*SUM_LEAVES-1] /* verilator split_var */;
++
++    function [UB-1:0] spread_down;
++        input [UB-1:0] mask;
++        integer shift;
++        reg [UB-1:0] bits;
++        begin
++            bits = mask;
++            for (shift=1; shift<UB; shift=shift*2)
++                bits = bits | (bits >> shift);
++            spread_down = bits;
++        end
++    endfunction
++
++    function [UB-1:0] highest_onehot;
++        input [UB-1:0] mask;
++        begin highest_onehot = mask & ~(spread_down(mask) >> 1); end
++    endfunction
++
++    function [6:0] value_of;
++        input [UB-1:0] onehot;
++        input [7*UB-1:0] rank_values;
++        integer rank;
++        begin
++            value_of = 7'd0;
++            for (rank=0; rank<UB; rank=rank+1)
++                value_of = value_of | ({7{onehot[rank]}} & rank_values[7*rank +: 7]);
++        end
++    endfunction
++
++    always @(posedge clk) begin
++        child_q <= child_mask;
++        future_q <= future_mask;
++    end
++
++    genvar gap, node;
++    generate
++        for (gap=0; gap<=UB; gap=gap+1) begin : g_gap
++            // A held rank is a gap's exclusive upper boundary. UB is the
++            // final open boundary above the largest representable value.
++            localparam [UB-1:0] BELOW = {UB{1'b1}} >> (UB-gap);
++            wire active;
++            if (gap < UB) begin : g_finite
++                assign active = child_q[gap];
++            end else begin : g_open
++                assign active = 1'b1;
++            end
++            wire [UB-1:0] lower_children = child_q & BELOW;
++            wire [UB-1:0] requests = future_q & BELOW & ~spread_down(lower_children);
++            reg [UB-1:0] source_oh, request_oh;
++            always @(posedge clk) begin
++                source_oh <= highest_onehot(lower_children);
++                request_oh <= active ? highest_onehot(requests) : {UB{1'b0}};
++            end
++            assign sum_tree[SUM_LEAVES+gap] = (|request_oh) ?
++                ({4'd0,value_of(request_oh,values_flat)} -
++                 {4'd0,value_of(source_oh,values_flat)}) : 11'd0;
++        end
++        for (gap=UB+1; gap<SUM_LEAVES; gap=gap+1) begin : g_pad
++            assign sum_tree[SUM_LEAVES+gap] = 11'd0;
++        end
++        for (node=1; node<SUM_LEAVES; node=node+1) begin : g_sum
++            assign sum_tree[node] = sum_tree[2*node] + sum_tree[2*node+1];
++        end
++    endgenerate
++    assign cost = sum_tree[1];
++endmodule
++
+ //------------------------------------------------------------------------------
+ // Exact K4 / restricted-B / Rolling H7 policy (legacy module name retained).
+ //
+@@ -231,7 +328,7 @@ module grover_ckpt_policy_rolling #(
+     //
+     // EXACT_PRUNE=5 is that stronger version: seed-first exact DFS with the
+     // full-horizon capacity-relaxed lower bound (experiment 24).  Every frame
+-    // first scans all legal children through a registered H-stage bound
++    // first scans all legal children through a fixed-depth gap bound
+     // pipeline, evaluates the child with the smallest bound exactly, and then
+     // walks the canonical action order pruning every child whose bound cannot
+     // beat the incumbent.  Only the search order and the set of evaluated
+@@ -594,43 +691,6 @@ module grover_ckpt_policy_rolling #(
+         end
+     endfunction
+ 
+-    // Ranks whose value is <= the value of rank r.
+-    function [UB-1:0] rank_le;
+-        input [3:0] r;
+-        integer p;
+-        begin
+-            rank_le = {UB{1'b0}};
+-            for (p=0; p<UB; p=p+1)
+-                if (p <= r) rank_le[p] = 1'b1;
+-        end
+-    endfunction
+-
+-    // Ranks whose value is strictly below the value of rank r.
+-    function [UB-1:0] rank_lt;
+-        input [3:0] r;
+-        integer p;
+-        begin
+-            rank_lt = {UB{1'b0}};
+-            for (p=0; p<UB; p=p+1)
+-                if (p < r) rank_lt[p] = 1'b1;
+-        end
+-    endfunction
+-
+-    // suffix_or[p] = OR of m[p..UB-1].  Bits where it is 0 lie strictly above
+-    // the highest set bit of m.
+-    function [UB-1:0] suffix_or;
+-        input [UB-1:0] m;
+-        integer p;
+-        reg acc;
+-        begin
+-            acc = 1'b0;
+-            for (p=UB-1; p>=0; p=p-1) begin
+-                acc = acc | m[p];
+-                suffix_or[p] = acc;
+-            end
+-        end
+-    endfunction
+-
+     // -------------------------------------------------------------------------
+     // Latched solve input, per-solve local universe, request-local IDs.
+     // The request-only pool is deduplicated once during ST_BUILD.  That removes
+@@ -881,13 +941,22 @@ module grover_ckpt_policy_rolling #(
+     // f_* frame arrays; a_phase mirrors the active frame for the hot path.
+     reg [1:0]  f_phase [0:8];
+     reg [1:0]  a_phase;
+-    // Seed found by the SCAN of the active frame.  A SCAN never descends, so
+-    // one copy suffices; it is consumed before the frame can recurse.
++    // Seed found by the SCAN of the active frame. A SCAN never descends, so
++    // one running-minimum record suffices. Its selected generator position
++    // is then saved per frame to avoid canonical replay after recursion.
+     reg        scan_valid;
+     reg [10:0] scan_total;
+     reg [2:0]  scan_cnt;
+     reg [15:0] scan_ids;
+     reg [2:0]  scan_seg;
++    reg [22:0] scan_pre;
++    // The seed has already been evaluated exactly before PH_CANON starts.
++    // Remember its generator position, rather than comparing child tuples on
++    // the action datapath. Each position identifies the complete deposit and
++    // retention choice, including the root segment/tuple tie-break metadata.
++    // Preserve it across DFS descent just like the frame's generator state.
++    reg [22:0] f_seed_pre [0:8];
++    reg [22:0] a_seed_pre;
+     // scan_issued/scan_multi: the SCAN has issued one / more than one child.
+     // A single-child frame needs no canonical walk after its seed.
+     reg        scan_issued;
+@@ -1482,70 +1551,45 @@ module grover_ckpt_policy_rolling #(
+     // The relaxed checkpoint set is a superset of every capacity-K
+     // realization, so the cost can never exceed the true optimum.
+     //
+-    // Hardware form.  All values live in the solve universe, so a checkpoint
+-    // set is a UB-bit mask in sorted-rank order.  With rank order every value
+-    // comparison above becomes a fixed bit range:
+-    //     q      = mask & (ranks <= rank(r))         candidates for source
+-    //     source = highest set bit of q              (0 if q is empty)
+-    //     above  = ranks strictly above that bit     (~suffix_or(q))
+-    //     mask'  = mask | {rank(r)} | (above & ranks < rank(r) & pool & v>0)
+-    // Each request is one registered stage, so no stage contains a value
+-    // comparator or a max tree.  The source value lookup and the cost add
+-    // run one stage later from the registered one-hot source; only the next
+-    // mask depends on the previous mask.
+-    //
+-    // Stages are indexed by absolute request number t=1..H and are active
+-    // when t > a_req_idx (the frame's head request).  The pipeline only ever
+-    // holds packets of the active frame: it is flushed on every memo miss and
+-    // whenever the FSM leaves ST_RUN, i.e. exactly when the frame changes.
++    // grover_ckpt_gap_bound computes this same relaxed cost independently for
++    // each initial-checkpoint gap. The full remaining request set is a rank
++    // mask; its order and repetitions do not affect the relaxed cost. Two
++    // data stages plus the output register replace the former H-stage walk.
++    // Packets still belong to one active frame and are flushed on memo miss
++    // or whenever the FSM leaves ST_RUN.
+     // -------------------------------------------------------------------------
+ 
+     // Per-solve tables.  They depend only on BUILD results, are free-running
+     // registers, and settle two cycles after the last BUILD commit, i.e.
+     // before the root frame reaches ST_RUN.
+     reg [3:0]    rk_req [0:8];
+-    reg [UB-1:0] bt_le  [0:8];
+-    reg [UB-1:0] bt_dep [0:8];
+-    reg [UB-1:0] bt_roh [0:8];
+-    reg [UB-1:0] rk_pool_c;
+-    reg [UB-1:0] rk_nz_c;
+-    integer rt_i;
++    reg [UB-1:0] future_ranks [0:8];
++    reg [UB-1:0] future_ranks_c [0:8];
++    integer rt_i, rt_j;
+ 
+     always @* begin
+-        // Request pool = requests 0..H (deduplicated automatically by rank).
+-        rk_pool_c = {UB{1'b0}};
+-        for (rt_i=0; rt_i<9; rt_i=rt_i+1)
+-            if (rt_i < WINDOW_LEN)
+-                rk_pool_c = rk_pool_c | rank_onehot(rk_req[rt_i]);
+-        // v > 0: only rank 0 can hold the value 0.
+-        rk_nz_c = {UB{1'b1}};
+-        if (rk_sval[0] == 7'd0)
+-            rk_nz_c[0] = 1'b0;
++        for (rt_i=0; rt_i<9; rt_i=rt_i+1) begin
++            future_ranks_c[rt_i] = {UB{1'b0}};
++            for (rt_j=0; rt_j<9; rt_j=rt_j+1)
++                if ((rt_j > rt_i) && (rt_j < WINDOW_LEN))
++                    future_ranks_c[rt_i] = future_ranks_c[rt_i] | rank_onehot(rk_req[rt_j]);
++        end
+     end
+ 
+     always @(posedge clk) begin
+         for (rt_i=0; rt_i<9; rt_i=rt_i+1) begin
+             rk_req[rt_i] <= rk_pos[req_id[rt_i]];
+-            bt_le[rt_i]  <= rank_le(rk_req[rt_i]);
+-            bt_roh[rt_i] <= rank_onehot(rk_req[rt_i]);
+-            bt_dep[rt_i] <= rank_lt(rk_req[rt_i]) & rk_pool_c & rk_nz_c;
++            future_ranks[rt_i] <= future_ranks_c[rt_i];
+         end
+     end
+ 
+-    // Bound pipeline registers.  Index 0 is the entry stage (child set only);
+-    // index t holds the state after request t's mask update.
+-    //   bp_oh[t]   one-hot rank of request t's source (0 if inactive/empty)
+-    //   bp_act[t]  request t was active for this packet's frame
+-    //   bp_tail[t] cost of requests 1..t-1 (one stage behind the mask)
+-    reg [H_FUTURE:0] bp_v;
+-    reg              bp_kind [0:H_FUTURE];
+-    reg [2:0]        bp_cnt  [0:H_FUTURE];
+-    reg [15:0]       bp_ids  [0:H_FUTURE];
+-    reg [23:0]       bp_pre  [0:H_FUTURE];  // {gen_valid,rmask,rsize,dmask,dsize}
+-    reg [UB-1:0]     bp_mask [0:H_FUTURE];
+-    reg [UB-1:0]     bp_oh   [0:H_FUTURE];
+-    reg              bp_act  [0:H_FUTURE];
+-    reg [10:0]       bp_tail [0:H_FUTURE];
++    // Metadata accompanies the bound's two data stages; bo_* is the third
++    // stage. These architectural records are independent of H.
++    reg [1:0]        bp_v;
++    reg              bp_kind [0:1];
++    reg [2:0]        bp_cnt  [0:1];
++    reg [15:0]       bp_ids  [0:1];
++    reg [23:0]       bp_pre  [0:1];  // {gen_valid,rmask,rsize,dmask,dsize}
+ 
+     // Pipeline output, consumed by ST_RUN on the following cycle.
+     //   bo_tail  : relaxed lower bound of the child's remaining window
+@@ -1567,10 +1611,10 @@ module grover_ckpt_policy_rolling #(
+     reg [3:0] bo_sid20, bo_sid21, bo_sid22, bo_sid23;
+     reg [3:0] bo_sort0, bo_sort1, bo_sort2, bo_sort3;
+     always @* begin
+-        bo_raw0 = bp_ids[H_FUTURE][3:0];
+-        bo_raw1 = bp_ids[H_FUTURE][7:4];
+-        bo_raw2 = bp_ids[H_FUTURE][11:8];
+-        bo_raw3 = bp_ids[H_FUTURE][15:12];
++        bo_raw0 = bp_ids[1][3:0];
++        bo_raw1 = bp_ids[1][7:4];
++        bo_raw2 = bp_ids[1][11:8];
++        bo_raw3 = bp_ids[1][15:12];
+         if (bo_raw0 <= bo_raw1) begin bo_sid10=bo_raw0; bo_sid11=bo_raw1; end
+         else begin bo_sid10=bo_raw1; bo_sid11=bo_raw0; end
+         if (bo_raw2 <= bo_raw3) begin bo_sid12=bo_raw2; bo_sid13=bo_raw3; end
+@@ -1589,8 +1633,11 @@ module grover_ckpt_policy_rolling #(
+     // also clears the pipeline because the next ST_RUN belongs to a new frame.
+     wire bp_flush = (fsm_state != ST_RUN) ||
+                     (mresp_valid && !memo_pipe_hit);
++    wire canonical_seed_repeat = SEED_MODE && (a_phase == PH_CANON) &&
++                                  a_gen_valid &&
++                                  ({a_rmask, a_rsize, a_dmask, a_dsize} == a_seed_pre);
+     wire bound_capture = busy && (fsm_state == ST_RUN) && !top_terminal &&
+-                         a_gen_valid && !root_single_action &&
++                         a_gen_valid && !root_single_action && !canonical_seed_repeat &&
+                          ((a_phase == PH_SCAN) || (a_phase == PH_CANON));
+     wire bp_busy  = bo_v || (|bp_v);
+ 
+@@ -1602,6 +1649,7 @@ module grover_ckpt_policy_rolling #(
+     wire [10:0] scan_fin_total = scan_take ? bo_total : scan_total;
+     wire [2:0]  scan_fin_cnt   = scan_take ? bo_cnt   : scan_cnt;
+     wire [15:0] scan_fin_ids   = scan_take ? bo_ids   : scan_ids;
++    wire [22:0] scan_fin_pre   = scan_take ? bo_pre[22:0] : scan_pre;
+     wire [2:0]  scan_fin_seg   = scan_take ?
+         ({1'b0,bo_pre[1:0]} + 1'b1) : scan_seg;
+     wire scan_exact_finish = (sp != 0) && ({1'b0,a_req_idx} == (H_FUTURE-1));
+@@ -1650,35 +1698,25 @@ module grover_ckpt_policy_rolling #(
+         else begin issue_rank1=ir22; issue_rank2=ir21; end
+     end
+ 
+-    // Source value of a one-hot rank (one-hot AND/OR mux).
+-    function [6:0] rank_value;
+-        input [UB-1:0] oh;
+-        integer p;
+-        begin
+-            rank_value = 7'd0;
+-            for (p=0; p<UB; p=p+1)
+-                rank_value = rank_value | ({7{oh[p]}} & rk_sval[p]);
+-        end
+-    endfunction
+-
+     reg [UB-1:0] bn_mask0;
+     reg [UB-1:0] bn_pick [0:13];
+     reg [UB-1:0] bn_or01, bn_or23, bn_or45, bn_or67;
+     reg [UB-1:0] bn_or89, bn_or1011, bn_or1213;
+     reg [UB-1:0] bn_or03, bn_or47, bn_or811;
+     reg [UB-1:0] bn_or07, bn_or813;
+-    reg [UB-1:0] bn_q, bn_pre, bn_oh, bn_new;
+-    reg [10:0]   bn_step;
+-    reg [10:0]   bn_tail_out;
+-    reg          bn_active;
+-    reg          bn_in_kind, bn_in_act;
+-    reg [2:0]    bn_in_cnt;
+-    reg [15:0]   bn_in_ids;
+-    reg [23:0]   bn_in_pre;
+-    reg [UB-1:0] bn_in_mask, bn_in_oh;
+-    reg [10:0]   bn_in_tail;
+-    integer      bs;
+     integer      bm_i;
++    wire [10:0] gap_bound_cost;
++    wire [7*UB-1:0] bound_values;
++    genvar bv;
++    generate
++        for (bv=0; bv<UB; bv=bv+1) begin : g_bound_values
++            assign bound_values[7*bv +: 7] = rk_sval[bv];
++        end
++    endgenerate
++    grover_ckpt_gap_bound #(.UB(UB)) u_gap_bound (
++        .clk(clk), .child_mask(bn_mask0), .future_mask(future_ranks[a_req_idx]),
++        .values_flat(bound_values), .cost(gap_bound_cost)
++    );
+ 
+     always @* begin
+         // Entry stage: generator selections -> rank mask.  The bound only
+@@ -1687,7 +1725,7 @@ module grover_ckpt_policy_rolling #(
+         //
+         //   dmask/rmask -> compaction -> ID sort -> rank lookup -> mask
+         //
+-        // on the bp_mask[0] setup path.  The explicit balanced OR tree keeps
++        // on the bound input path. The explicit balanced OR tree keeps
+         // the selected-onehot reduction at four fixed levels for K3/K4.
+         bn_pick[0] = rank_onehot(rk_pos[a_ctx_jid]);
+         for (bm_i=0; bm_i<9; bm_i=bm_i+1)
+@@ -1711,40 +1749,16 @@ module grover_ckpt_policy_rolling #(
+         bn_or813  = bn_or811 | bn_or1213;
+         bn_mask0  = bn_or07 | bn_or813;
+ 
+-        // Last request's cost, folded into the output register.
+-        if (bp_act[H_FUTURE])
+-            bn_tail_out = bp_tail[H_FUTURE] +
+-                          {4'd0, req_val[H_FUTURE] - rank_value(bp_oh[H_FUTURE])};
+-        else
+-            bn_tail_out = bp_tail[H_FUTURE];
+-    end
+-
+-    // Variable-depth entry.  A frame whose head is request a_req_idx only has
+-    // requests a_req_idx+1..H left, so its packets enter directly at stage
+-    // a_req_idx+1 and skip the inactive front stages.  The bound latency is
+-    // then (H-a_req_idx)+2 cycles instead of H+2.  The selection is a fixed
+-    // 2:1 mux per stage driven by the frame register a_req_idx, which only
+-    // changes while the pipeline is empty.
+-    reg [H_FUTURE:0] bp_enter;   // bp_enter[t]: stage t takes the entry stage
+-    integer be;
+-    always @* begin
+-        bp_enter = {(H_FUTURE+1){1'b0}};
+-        for (be=1; be<=H_FUTURE; be=be+1)
+-            bp_enter[be] = (be == ({1'b0,a_req_idx} + 5'd1));
+     end
+ 
+     always @(posedge clk) begin
+         if (!rstn || bp_flush || !SEED_MODE) begin
+-            bp_v <= {(H_FUTURE+1){1'b0}};
++            bp_v <= 2'b00;
+             bo_v <= 1'b0;
+         end else begin
+             bp_v[0] <= bound_capture;
+-            // Stages at or below the frame head are skipped: they must not
+-            // pick up the entry packet, or it would be duplicated.
+-            for (be=1; be<=H_FUTURE; be=be+1)
+-                bp_v[be] <= (be > a_req_idx) &&
+-                            (bp_enter[be] ? bp_v[0] : bp_v[be-1]);
+-            bo_v <= bp_v[H_FUTURE];
++            bp_v[1] <= bp_v[0];
++            bo_v <= bp_v[1];
+         end
+ 
+         // Data registers carry no reset; validity is tracked by bp_v/bo_v.
+@@ -1752,52 +1766,17 @@ module grover_ckpt_policy_rolling #(
+         bp_cnt[0]  <= action_child_count;
+         bp_ids[0]  <= {action_raw3, action_raw2, action_raw1, action_raw0};
+         bp_pre[0]  <= {a_gen_valid, a_rmask, a_rsize, a_dmask, a_dsize};
+-        bp_mask[0] <= bn_mask0;
+-        bp_oh[0]   <= {UB{1'b0}};
+-        bp_act[0]  <= 1'b0;
+-        bp_tail[0] <= 11'd0;
+-
+-        for (bs=1; bs<=H_FUTURE; bs=bs+1) begin
+-            // Stage input: the entry stage for the frame's first live request,
+-            // otherwise the previous stage.  The entry stage has no pending
+-            // request cost (bp_act[0]=0, bp_tail[0]=0).
+-            bn_active = (bs > a_req_idx);
+-            bn_in_kind = bp_enter[bs] ? bp_kind[0] : bp_kind[bs-1];
+-            bn_in_cnt  = bp_enter[bs] ? bp_cnt[0]  : bp_cnt[bs-1];
+-            bn_in_ids  = bp_enter[bs] ? bp_ids[0]  : bp_ids[bs-1];
+-            bn_in_pre  = bp_enter[bs] ? bp_pre[0]  : bp_pre[bs-1];
+-            bn_in_mask = bp_enter[bs] ? bp_mask[0] : bp_mask[bs-1];
+-            bn_in_oh   = bp_enter[bs] ? {UB{1'b0}} : bp_oh[bs-1];
+-            bn_in_act  = bp_enter[bs] ? 1'b0       : bp_act[bs-1];
+-            bn_in_tail = bp_enter[bs] ? 11'd0      : bp_tail[bs-1];
+-
+-            bn_q   = bn_in_mask & bt_le[bs];
+-            bn_pre = suffix_or(bn_q);
+-            bn_oh  = bn_q & ~(bn_pre >> 1);
+-            bn_new = bn_in_mask | bt_roh[bs] | (~bn_pre & bt_dep[bs]);
+-
+-            bp_kind[bs] <= bn_in_kind;
+-            bp_cnt[bs]  <= bn_in_cnt;
+-            bp_ids[bs]  <= bn_in_ids;
+-            bp_pre[bs]  <= bn_in_pre;
+-            bp_mask[bs] <= bn_active ? bn_new : bn_in_mask;
+-            bp_oh[bs]   <= bn_active ? bn_oh : {UB{1'b0}};
+-            bp_act[bs]  <= bn_active;
+-
+-            // Cost of request bs-1, from the previous stage's registered source.
+-            if (bn_in_act)
+-                bn_step = {4'd0, req_val[bs-1] - rank_value(bn_in_oh)};
+-            else
+-                bn_step = 11'd0;
+-            bp_tail[bs] <= bn_in_tail + bn_step;
+-        end
++        bp_kind[1] <= bp_kind[0];
++        bp_cnt[1] <= bp_cnt[0];
++        bp_ids[1] <= bp_ids[0];
++        bp_pre[1] <= bp_pre[0];
+ 
+-        bo_kind  <= bp_kind[H_FUTURE];
+-        bo_cnt   <= bp_cnt[H_FUTURE];
++        bo_kind  <= bp_kind[1];
++        bo_cnt   <= bp_cnt[1];
+         bo_ids   <= {bo_sort3, bo_sort2, bo_sort1, bo_sort0};
+-        bo_pre   <= bp_pre[H_FUTURE];
+-        bo_tail  <= bn_tail_out;
+-        bo_total <= bn_tail_out + {4'd0, a_ctx_imm};
++        bo_pre   <= bp_pre[1];
++        bo_tail  <= gap_bound_cost;
++        bo_total <= gap_bound_cost + {4'd0, a_ctx_imm};
+     end
+ 
+     // -------------------------------------------------------------------------
+@@ -2001,6 +1980,7 @@ module grover_ckpt_policy_rolling #(
+             a_dsize<=2'd0; a_dmask<=9'd0; a_rsize<=3'd0; a_rmask<=9'd0; a_gen_valid<=1'b0;
+             a_phase<=PH_SCAN;
+             scan_valid<=1'b0; scan_total<=INF_COST; scan_cnt<=3'd0; scan_ids<=16'd0; scan_seg<=3'd0;
++            scan_pre<=23'd0; a_seed_pre<=23'd0;
+             scan_issued<=1'b0; scan_multi<=1'b0;
+             mresp_direct<=1'b0;
+             mresp_lb<=10'd0;
+@@ -2041,6 +2021,7 @@ module grover_ckpt_policy_rolling #(
+                 f_ctx_keep_count[si]<=3'd0; f_ctx_keep_ids[si]<=16'd0;
+                 f_phase[si]<=PH_SCAN;
+                 f_multi[si]<=1'b0;
++                f_seed_pre[si]<=23'd0;
+             end
+             for (si=0; si<13; si=si+1) begin
+                 univ_val[si] <= 7'd0;
+@@ -2398,6 +2379,7 @@ module grover_ckpt_policy_rolling #(
+                                     scan_cnt   <= bo_cnt;
+                                     scan_ids   <= bo_ids;
+                                     scan_seg   <= {1'b0,bo_pre[1:0]} + 1'b1;
++                                    scan_pre   <= bo_pre[22:0];
+                                 end
+                             end
+ 
+@@ -2427,6 +2409,8 @@ module grover_ckpt_policy_rolling #(
+                                             a_phase <= PH_SEED;
+                                             f_phase[sp] <= PH_SEED;
+                                             f_multi[sp] <= scan_multi;
++                                            a_seed_pre <= scan_fin_pre;
++                                            f_seed_pre[sp] <= scan_fin_pre;
+                                         end
+                                     end
+                                 end
+@@ -2435,6 +2419,12 @@ module grover_ckpt_policy_rolling #(
+                                 end
+                                 default: begin
+                                     if (a_gen_valid) begin
++                                        // Advance over the solved seed too,
++                                        // but do not send it through bound or
++                                        // memo again. If an older packet misses
++                                        // on this edge, its saved pre-state is
++                                        // restored and this skip is safely
++                                        // repeated after that child returns.
+                                         advance_generator;
+                                     end else if (!bp_busy && !mresp_valid) begin
+                                         if (sp == 0) fsm_state <= ST_ROOT_DRAIN;
+@@ -2568,6 +2558,7 @@ module grover_ckpt_policy_rolling #(
+                     a_pipe_pred <= f_pipe_pred[sp];
+                     a_pipe_j <= f_pipe_j[sp];
+                     a_phase <= f_phase[sp];
++                    a_seed_pre <= f_seed_pre[sp];
+                     fsm_state <= ST_RETURN_EVAL;
+                 end
+ 

@@ -35,8 +35,8 @@ BANNED = [
     # (정규식, 설명, 허용 파일 목록)
     (r'XC7S100',
      '폐기된 목표 FPGA (현행 Arty A7-100T / xc7a100tcsg324-1)',
-     ['15_논문지도와_설계결정표.md', 'CLAUDE.md', '블록도.md', '반복횟수_결정.md',
-      '개발계획.md', '22_부록_용어집과_폐기된_규격.md']),
+     ['15_paper_map_and_design_decisions.md', 'CLAUDE.md', '블록도.md', '반복횟수_결정.md',
+      '개발계획.md', '22_appendix_glossary_and_retired_specs.md']),
 
     (r'BRAM(36)?\s*(120|66)\s*개|BRAM\s*120\b',
      '폐기된 자원 수치 (XC7S100 기준). 현행 IP 33개 / 보드 135개',
@@ -48,38 +48,38 @@ BANNED = [
 
     (r'xc7s50|Arty-?S7-?50',
      '폐기된 목표 보드 (2026-08-28 Arty A7-100T / xc7a100tcsg324-1 로 변경)',
-     ['15_논문지도와_설계결정표.md', 'CLAUDE.md', '블록도.md', '반복횟수_결정.md',
-      '개발계획.md', '22_부록_용어집과_폐기된_규격.md',
+     ['15_paper_map_and_design_decisions.md', 'CLAUDE.md', '블록도.md', '반복횟수_결정.md',
+      '개발계획.md', '22_appendix_glossary_and_retired_specs.md',
       '2026-07-10_세미나_양자컴퓨팅-입문.md', '체크포인트_일반화_문헌조사.md',
       '체크포인트_K최적화_2차분석.md']),
 
     (r'AXI4-Lite|AXI-?Stream',
      '폐기된 버스 (현행 APB 슬레이브 + AHB 마스터). RVX 에 AXI-Stream 심이 없음',
-     ['17_RVX_SoC_통합.md', '15_논문지도와_설계결정표.md', 'CLAUDE.md',
-      '블록도.md', '반복횟수_결정.md', '개발계획.md', '22_부록_용어집과_폐기된_규격.md']),
+     ['17_rvx_soc_integration.md', '15_paper_map_and_design_decisions.md', 'CLAUDE.md',
+      '블록도.md', '반복횟수_결정.md', '개발계획.md', '22_appendix_glossary_and_retired_specs.md']),
 
     (r'MicroBlaze',
      '폐기된 SoC (현행 RVX rvc_orca)',
-     ['15_논문지도와_설계결정표.md', 'CLAUDE.md', '블록도.md',
-      'README.md', '22_부록_용어집과_폐기된_규격.md']),
+     ['15_paper_map_and_design_decisions.md', 'CLAUDE.md', '블록도.md',
+      'README.md', '22_appendix_glossary_and_retired_specs.md']),
 
-    (r'\$?n\s*=\s*15\$?(?![0-9])',
-     '폐기된 큐비트 수 (현행 n=14). n=15 는 "예산 밖"·"미충족" 같은 기각 문맥에서만',
-     ['CLAUDE.md', '11_상태벡터_에뮬레이터.md', '12_고정소수점과_정밀도.md',
-      '22_부록_용어집과_폐기된_규격.md', '11_채택하지_않은_확장.md']),
+    (r'\$?n\s*=\s*15\$?(?![0-9])|(?<![\d.,])15 qubits',
+     '폐기된 qubit 수 (현행 14 qubits). 15 qubits 는 "예산 밖"·"미충족" 같은 기각 문맥에서만',
+     ['CLAUDE.md', '11_state_vector_emulator.md', '12_fixed_point_and_precision.md',
+      '22_appendix_glossary_and_retired_specs.md', '11_rejected_extensions.md']),
 
     (r'Q2\.16',
-     '폐기된 진폭 형식 (현행 Q1.22, 23비트)',
-     ['CLAUDE.md', '22_부록_용어집과_폐기된_규격.md', '11_채택하지_않은_확장.md']),
+     '폐기된 amplitude 형식 (현행 Q1.22, 23-bit)',
+     ['CLAUDE.md', '22_appendix_glossary_and_retired_specs.md', '11_rejected_extensions.md']),
 
     (r'DSP가?\s*잡히면',
-     '"DSP가 잡히면 잘못 짠 것"은 폐기됨 — 측정 경로는 제곱기 32개를 정상적으로 씁니다',
+     '"DSP가 잡히면 잘못 짠 것"은 폐기됨 — Measurement Unit은 squarer 32개를 정상적으로 씁니다',
      []),
 
-    (r'곱셈기(를)?\s*(하나도|전혀|한 개도)\s*(안|쓰지)',
-     '"곱셈기 0개"에는 반드시 경로를 붙여야 합니다 (확산·오라클·INIT 경로 한정)',
-     ['12_고정소수점과_정밀도.md', '13_오라클_확산_측정_데이터패스.md',
-      '01_큐비트와_양자상태.md', '06_양자회로_모델과_범용성.md',
+    (r'(?:곱셈기|multipliers?)(를|을)?\s*(하나도|전혀|한 개도)\s*(안|쓰지)',
+     '"multiplier 0개"에는 반드시 경로를 붙여야 합니다 (diffusion operator·oracle·Init 경로 한정)',
+     ['12_fixed_point_and_precision.md', '13_oracle_diffusion_measurement_datapath.md',
+      '01_qubits_and_states.md', '06_quantum_circuit_model_and_universality.md',
       'README.md', '개발계획.md']),
 ]
 
@@ -87,9 +87,9 @@ BANNED = [
 CANON = [
     (r'BRAM36\s*(\d+)\s*개', {'2', '4', '11', '32', '44', '52', '64', '84', '116', '135'},
      'BRAM36 개수 (상태 한 벌 11 / 진폭·체크포인트 44 / Main IP 84 tile / 보드 116 · 135)'),
-    (r'평균\s*([\d.]+)\s*(?:번의\s*)?샷', {'22.7', '18.5', '15.1', '10.6', '7.2'},
-     '평균 샷 수 (n=14·M=1 은 22.7, 500 워크로드 RTL 캠페인)'),
-    (r'INIT_AMP\s*[=은는]?\s*(\d+)', {'32768'}, 'INIT_AMP (n=14·Q1.22 는 32768)'),
+    (r'(?:평균|mean)\s*([\d.]+)\s*(?:번의\s*)?(?:샷|shots?)', {'22.7', '18.5', '15.1', '10.6', '7.2'},
+     'mean shot 수 (14 qubits · 1 solution 은 22.7, 500 workloads RTL campaign)'),
+    (r'INIT_AMP\s*[=은는]?\s*(\d+)', {'32768'}, 'INIT_AMP (14 qubits · Q1.22 는 32768)'),
 ]
 
 
@@ -119,7 +119,7 @@ def links(txt):
 # 부정·정정 문맥 표지. 이 말이 같은 문장에 있으면 폐기 스펙을 "언급"한 것이지
 # "주장"한 것이 아니므로 오류가 아니다.
 NEGATION = re.compile(
-    r'틀렸|틀린|아니라|아닙니다|아니다|폐기|버린|버렸|기각|예전|옛|이전 판|구 |'
+    r'틀렸|틀린|아니라|아닙니다|아니다|폐기|버린|버렸|기각|예전|옛|이전 판|이전 revision|구 |'
     r'하지 않|없습니다만|더는|이제는|바뀌|대신|~이었|였습니다|안 들어|넘어서|초과|'
     r'못 |불가|오해|착각|함정|주의|하지 마|마십시오|말 것|금지')
 
@@ -220,14 +220,15 @@ def main():
                 if v in allowed:
                     continue
                 sent = sentence_at(text[f], m.start())
-                if NEGATION.search(sent) or re.search(r'n\s*=\s*1[26]|n=1[26]', sent):
+                if NEGATION.search(sent) or re.search(r'n\s*=\s*1[26]|n=1[26]|1[26] qubits', sent):
                     continue          # 다른 n 조건과의 비교는 정상
                 line = text[f][:m.start()].count('\n') + 1
                 warns.append(f'[수치] {f}:{line}  {what} 로 "{v}" — 확인 필요')
 
     # 8. 장 구조 (해설서 본편만)
     SR = 'documents/study_references'
-    REF_ONLY = {'10_용어정리와_치트시트.md', 'A_수학_빠른복습.md',
+    REF_ONLY = {'10_glossary_and_cheat_sheet.md', 'A_math_review.md',
+                'references.md', 'bbht_related_work.md', 'paper_outline.md',
                 'index.md'}
     for f in files:
         if not f.startswith(SR):

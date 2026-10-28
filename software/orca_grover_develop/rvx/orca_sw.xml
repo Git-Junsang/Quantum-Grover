@@ -5,7 +5,7 @@
         <status>described</status>
 
         <!-- ORCA SW 기준선 전용: 가속기 없이 코어 하나. ②(K3H3) · ①(naive) 의 정적 메모리가
-             128 KB 를 넘어 SRAM 만 256 KB 로 늘립니다. 코어 · 클럭(50 MHz)은 bbht_grover_upgrade 와 같습니다. -->
+             128 KB 를 넘어 SRAM 만 256 KB 로 늘립니다. 코어 · 클럭(50 MHz)은 bbht_grover_final 와 같습니다. -->
         <spec>
             <define>
                 <name>sram_size</name>

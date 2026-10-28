@@ -1,12 +1,12 @@
 graph LR
-    subgraph INIT["1. 초기화"]
-        Q["|0⟩^⊗n"] --> H1["H^⊗n"]
+    subgraph INIT["1. initialization"]
+        Q["|0⟩^⊗(number of qubits)"] --> H1["H^⊗(number of qubits)"]
     end
-    H1 --> PSI["균등중첩 |ψ⟩\n= (1/√N) Σ|x⟩"]
-    subgraph ITER["2. Grover 반복  (× R ≈ (π/4)√N)"]
+    H1 --> PSI["uniform superposition |ψ⟩\n= (1/√(number of states)) Σ|x⟩"]
+    subgraph ITER["2. Grover iteration  (× number of iterations ≈ (π/4)√(number of states))"]
         direction LR
-        UF["오라클 U_f\n정답 부호 반전"] --> UD["확산 U_ψ\n= 2|ψ⟩⟨ψ| − I\n평균 중심 반사"]
+        UF["oracle U_f\nsolution sign 반전"] --> UD["diffusion operator U_ψ\n= 2|ψ⟩⟨ψ| − I\ninversion about the mean"]
     end
     PSI --> UF
-    UD -.->|"R번 반복"| UF
-    UD --> M["3. 측정\n높은 확률로 정답 ω"]
+    UD -.->|"number of iterations만큼 반복"| UF
+    UD --> M["3. measurement\n높은 probability로 solution ω"]

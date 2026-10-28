@@ -1,0 +1,5 @@
+category,before_cycles,after_cycles,saved_cycles,reduction_percent
+build_state_including_early_decision,63224,23163,40061,63.363596102745795
+candidate_walk_or_filter,45376,34304,11072,24.400564174894217
+response_and_finish_without_candidate_walk,54517,46378,8139,14.929288111965075
+scheduler_prepare,29612,7403,22209,75.0

@@ -1,48 +1,48 @@
-# K/H 단독 실험 — E1 · M1/M2 끔 (250 워크로드)
+# Checkpoint-Capacity · Lookahead-Shots 단독 실험 — 1 PE, Single-Row Build · Linear Select (250 workloads)
 
 ## 무엇인가
 
-6단계 ablation 에서 체크포인트 개수 K 와 정책 지평 H 만 떼어 낸 보조 실험입니다.
-연산기는 한 벌(E1), 측정 최적화는 둘 다 끈 상태로 세 조합을 비교합니다.
-같은 공통소스, 같은 TB, 타겟 수 M = 1/4/16/64/256 × 시드 50 = **250 워크로드**,
-구성 3벌이니 750회 시뮬레이션입니다.
+Six-Stage Ablation에서 Checkpoint-Capacity와 Lookahead-Shots만 떼어 낸 보조 실험입니다.
+PE는 한 벌(1 PE), Measurement Microarchitecture 최적화는 둘 다 끈 채(Single-Row Build · Linear Select)로 세 조합을 비교합니다.
+같은 공통소스, 같은 TB, 1/4/16/64/256 solutions × 50 seeds = **250 workloads**,
+configuration 3벌이니 750회 simulation입니다.
 
-K 와 H 를 같이 줄일 때 정말로 이득인지, 아니면 둘 중 하나만 줄여도 되는지를
+Checkpoint-Capacity와 Lookahead-Shots를 같이 줄일 때 정말로 이득인지, 아니면 둘 중 하나만 줄여도 되는지를
 가르는 것이 목적입니다.
 
 ## 확정 수치
 
-| 구성 | 총 사이클 | K4/H4 대비 |
+| configuration | 총 cycle | a Checkpoint-Capacity of 4 and 4-shot Lookahead 대비 |
 |---|---:|---:|
-| K4/H4-E1 (대조군) | 8,836,298 | 1.000000x |
-| K3/H4-E1 | 8,818,101 | 1.002064x |
-| K3/H3-E1 | 8,596,609 | 1.027882x |
+| Stage 2 (대조군) | 8,836,298 | 1.000000× |
+| a Checkpoint-Capacity of 3, 4-shot Lookahead and 1 PE | 8,818,101 | 1.002064× |
+| a Checkpoint-Capacity of 3, 3-shot Lookahead and 1 PE | 8,596,609 | 1.027882× |
 
-- K3/H3 대 K3/H4 는 1.025765x
-- 검증: K3 실행 500/500 PASS, 논리 불일치 0
+- a Checkpoint-Capacity of 3 and 3-shot Lookahead 대 a Checkpoint-Capacity of 3 and 4-shot Lookahead는 1.025765×
+- verification: a Checkpoint-Capacity of 3 실행 500/500 PASS, 논리 불일치 0
 
-읽는 법은 이렇습니다. **체크포인트를 4벌에서 3벌로 줄이는 것만으로는 거의
-차이가 없습니다 (0.21%).** 이득의 대부분은 정책 지평 H 를 4에서 3으로 줄일 때
+읽는 법은 이렇습니다. **Checkpoint-Capacity를 4에서 3으로 줄이는 것만으로는 거의
+차이가 없습니다 (0.21%).** 이득의 대부분은 Lookahead-Shots를 4에서 3으로 줄일 때
 나옵니다 (2.58%). 즉 비싼 쪽은 저장 공간이 아니라 결정 비용입니다.
 
-이 결론은 2026-09-04 묶음이 K4/H8 대 K4/H4 에서 관찰한 것과 방향이 같습니다 —
-지평을 깊게 잡으면 Grover 반복은 조금 덜 쓰지만 policy stall 이 그보다 크게
+이 결론은 2026-09-04 묶음이 a Checkpoint-Capacity of 4 and 8-shot Lookahead 대 a Checkpoint-Capacity of 4 and 4-shot Lookahead에서 관찰한 것과 방향이 같습니다 —
+Lookahead-Shots를 깊게 잡으면 Grover iteration은 조금 덜 쓰지만 policy stall이 그보다 크게
 늘어납니다.
 
 ## 이 숫자를 쓸 때의 경계
 
-- **사이클 축**입니다. 보드 실경과 시간이 아닙니다.
-- E1 · M1=0 · M2=0 조건입니다. 6단계 ablation 의 K3/H3-E4 칸과는 조건이
+- **cycle 축**입니다. board wall-clock time이 아닙니다.
+- 1 PE, Single-Row Build · Linear Select 조건입니다. Six-Stage Ablation의 Stage 4 칸과는 조건이
   달라서 직접 맞대면 안 됩니다.
-- 워크로드가 250 (시드 50) 이라 500 워크로드 캠페인과 총합을 비교할 수 없습니다.
-- TB 표시 문자열에 `k4h4` 가 하드코딩으로 남아 있습니다. 실제 인스턴스
-  파라미터는 top 파일이 정하며 따로 감사됐다고 원 기록에 적혀 있습니다.
-- 재현 소스(top 3벌 · 러너)는 태그 `board-k3h3-e4-m2` 에 있습니다. 거기서
-  `make -C hardware_bram/sim kh` 로 750회를 돌려 `summary.csv` 와 맞댑니다.
+- 250 workloads(50 seeds)라 500 workloads campaign과 총합을 비교할 수 없습니다.
+- TB 표시 문자열에 `k4h4`가 hard-coded로 남아 있습니다. 실제 instance
+  parameter는 top file이 정하며 따로 감사됐다고 원 기록에 적혀 있습니다.
+- 재현 source(top 3벌 · runner)는 tag `board-k3h3-e4-m2`에 있습니다. 거기서
+  `make -C hardware_bram/sim kh`로 750회를 돌려 `summary.csv`와 맞댑니다.
 
-## 파일
+## file
 
-| 파일 | 내용 |
+| file | 내용 |
 |---|---|
-| `summary.csv` | 세 구성의 총 사이클과 상대비 |
-| `workloads.csv` | 250 워크로드 목록 (타겟 수 × 시드 50) |
+| `summary.csv` | 세 configuration의 총 cycle과 상대비 |
+| `workloads.csv` | 250 workloads 목록 (number of solutions × 50 seeds) |

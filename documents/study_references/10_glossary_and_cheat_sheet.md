@@ -1,0 +1,171 @@
+# 10장. 용어 정리와 cheat sheet
+
+> [← 9장 Grover algorithm](09_grover_algorithm.md) · [index](index.md) · [11장 state vector emulator — memory map과 resource 예산 →](11_state_vector_emulator.md)
+> **성격**: 참조용. 앞 장들을 복습하거나 계산 중 빠르게 찾아볼 때 쓰세요.
+
+---
+
+이 장은 새로운 내용을 배우는 곳이 아니라, 1~9장의 핵심을 **한눈에** 모은 참조 자료입니다. gate matrix, 핵심 공식, glossary, 연습문제 답, 원문 대조표를 담았습니다.
+
+---
+
+## 10.1 gate cheat sheet
+
+| gate | matrix | 작용 | 장 |
+|--------|------|------|:--:|
+| $I$ | $\begin{bmatrix}1&0\\0&1\end{bmatrix}$ | identity (quantum wire) | [3](03_single_qubit_gates.md) |
+| $X$ (NOT) | $\begin{bmatrix}0&1\\1&0\end{bmatrix}$ | $\|0\rangle\leftrightarrow\|1\rangle$ | [3](03_single_qubit_gates.md) |
+| $Y$ | $\begin{bmatrix}0&-i\\i&0\end{bmatrix}$ | bit flip + phase flip | [3](03_single_qubit_gates.md) |
+| $Z$ | $\begin{bmatrix}1&0\\0&-1\end{bmatrix}$ | $\|1\rangle$ sign flip (phase) | [3](03_single_qubit_gates.md) |
+| $H$ | $\frac{1}{\sqrt2}\begin{bmatrix}1&1\\1&-1\end{bmatrix}$ | computational basis↔superposition, interference | [3](03_single_qubit_gates.md) |
+| CNOT | $\begin{bmatrix}1&0&0&0\\0&1&0&0\\0&0&0&1\\0&0&1&0\end{bmatrix}$ | control qubit=1이면 target qubit 뒤집기 | [5](05_multiple_qubits_and_entanglement.md) |
+| Toffoli | (8×8) | control qubit 둘 다 1이면 target qubit 뒤집기 = 가역 AND | [6](06_quantum_circuit_model_and_universality.md) |
+
+**꼭 외울 것**: $X, Z, H$ 의 matrix와 작용. $HH = I$, $XX = I$, $Z\|1\rangle = -\|1\rangle$.
+
+---
+
+## 10.2 핵심 state
+
+$$|0\rangle = \begin{bmatrix}1\\0\end{bmatrix},\quad |1\rangle = \begin{bmatrix}0\\1\end{bmatrix},\quad |+\rangle = \frac{|0\rangle+|1\rangle}{\sqrt2},\quad |-\rangle = \frac{|0\rangle-|1\rangle}{\sqrt2}$$
+
+- $H|0\rangle = |+\rangle$, $H|1\rangle = |-\rangle$, $H|+\rangle = |0\rangle$, $H|-\rangle = |1\rangle$.
+- $X|-\rangle = -|-\rangle$ (phase kickback의 핵심, [7장](07_oracle_and_phase_kickback.md)).
+- Bell state (entanglement): $\frac{|00\rangle+|11\rangle}{\sqrt2}$ ([5장](05_multiple_qubits_and_entanglement.md)).
+
+---
+
+## 10.3 핵심 공식
+
+**normalization / measurement (1·4장)**
+$$|\alpha|^2 + |\beta|^2 = 1, \qquad \langle\psi|\psi\rangle = 1, \qquad P(\text{outcome } k) = |\text{amplitude}_k|^2$$
+
+**uniform superposition / Hadamard (6장)**
+$$H^{\otimes \text{number of qubits}}|0\rangle^{\otimes \text{number of qubits}} = \frac{1}{\sqrt{2^{\text{number of qubits}}}}\sum_{x}|x\rangle, \qquad H^{\otimes \text{number of qubits}}|u\rangle = \frac{1}{\sqrt{2^{\text{number of qubits}}}}\sum_v (-1)^{u\cdot v}|v\rangle$$
+
+**oracle / phase kickback (7장)**
+$$U_f|x\rangle = (-1)^{f(x)}|x\rangle, \qquad U_f|x\rangle|-\rangle = (-1)^{f(x)}|x\rangle|-\rangle, \qquad U_f = I - 2|\omega\rangle\langle\omega|$$
+
+**Grover (9장)**
+$$U_\psi = 2|\psi\rangle\langle\psi| - I \;(\text{inversion about the mean } a\mapsto 2\bar a - a), \qquad \sin\theta = \sqrt{\tfrac{\text{number of solutions}}{\text{number of states}}}, \qquad P(\text{number of iterations}) = \sin^2\!\big((2\cdot \text{number of iterations}+1)\theta\big)$$
+
+**number of iterations — 세 가지 경우 (9·14·16장)**
+
+- number of solutions를 **알 때**의 최적 number of iterations: $\frac{\pi}{4}\sqrt{\tfrac{\text{number of states}}{\text{number of solutions}}} - \frac12$. (14 qubits·1 solution이면 $100.03 \to 100$ iterations.)
+- number of solutions를 **모를 때** (이 project의 기본): BBHT recurrence — $\text{sampling range} \leftarrow 1$ 로 시작해 shot마다 $\text{number of iterations} \sim U[0, \text{sampling range})$ 를 뽑고, 실패하면 $\text{sampling range} \leftarrow \min(\text{growth factor} \cdot \text{sampling range}, \sqrt{\text{number of states}})$, $\text{growth factor} = 6/5$ ([16.2절](16_iteration_control_and_checkpoints.md#162-bbht--무작위로-뽑는-number-of-iterations와-12-growth-factor)).
+- 조건을 만족하는 원소를 **전부 enumeration**할 때의 총비용: $\sum_{k=1}^{\text{number of solutions}}\sqrt{\text{number of states}/k} \approx 2\sqrt{\text{number of states} \cdot \text{number of solutions}}$ — solution이 하나씩 줄어 뒤 enumeration round가 비싸집니다 ([14.7절](14_multiple_solutions_and_minimum_search.md#147-enumeration-mode--mask로-중복-없이)).
+
+---
+
+## 10.4 algorithm 한 줄 요약
+
+| algorithm | 문제 | 핵심 | complexity (classical→quantum) |
+|----------|------|------|:---:|
+| Deutsch–Jozsa | constant vs balanced 판별 | $H^{\otimes \text{number of qubits}}$→$U_f$→$H^{\otimes \text{number of qubits}}$, interference 1회 | $O(2^{\text{number of qubits}}) \to O(1)$ |
+| Grover | 정렬 안 된 search | $(U_\psi U_f)$ iteration, $\frac{\pi}{4}\sqrt{\text{number of states}}$ 회 | $O(\text{number of states}) \to O(\sqrt{\text{number of states}})$ |
+| Grover **emulation** (이 project) | 같은 algorithm을 classical circuit으로 흉내 | iteration당 $O(\text{number of states}/\text{number of lanes})$ cycles × $O(\sqrt{\text{number of states}/\text{number of solutions}})$ iterations | $O(\text{number of states}\cdot\sqrt{\text{number of states}/\text{number of solutions}})$ — classical scan보다 **느림** |
+
+마지막 줄을 오해하지 마세요. $\sqrt{\text{number of states}}$ 이득은 **real quantum hardware**의 oracle 호출 횟수 이야기이고, 모든 state의 amplitude를 매 iteration 전부 훑어야 하는 emulator에는 해당하지 않습니다. 그래서 이 해설서는 우리 accelerator를 classical linear scan과 비교하지 않습니다 — 비교 대상은 같은 일을 하는 **Qiskit `AerSimulator`·NumPy state vector simulator**이고, 값어치는 속도 우위가 아니라 quantum algorithm의 동작을 **결정적이고 재현 가능하게 재현·검증하는 전용 hardware**라는 데 있습니다([11.1절](11_state_vector_emulator.md#111-emulationsimulation진짜-quantum-computer)).
+
+---
+
+## 10.5 용어집
+
+| 용어 | 뜻 | 장 |
+|------|-----|:--:|
+| qubit | quantum 정보의 단위. state는 2차원 complex vector | [1](01_qubits_and_states.md) |
+| computational basis | $\|0\rangle, \|1\rangle$ (고전 bit 0, 1에 대응) | [1](01_qubits_and_states.md) |
+| amplitude | state의 complex 성분 $\alpha,\beta$. absolute value의 square가 probability | [1](01_qubits_and_states.md) |
+| superposition | 여러 computational basis state의 linear combination | [1](01_qubits_and_states.md) |
+| normalization | $\|\alpha\|^2+\|\beta\|^2=1$, state vector의 길이가 1 | [1](01_qubits_and_states.md) |
+| ket · bra | column vector $\|\psi\rangle$ · 그 conjugate transpose인 row vector $\langle\psi\|$ | [2](02_dirac_notation_and_linear_algebra.md) |
+| inner product | $\langle\phi\|\psi\rangle$, 두 state가 닮은 정도 (0이면 orthogonal) | [2](02_dirac_notation_and_linear_algebra.md) |
+| conjugate transpose | transpose한 뒤 complex conjugate를 취한 것. adjoint, dagger(†)라고도 부름 | [2](02_dirac_notation_and_linear_algebra.md) |
+| unitary | $U^\dagger U = I$. 길이를 보존. 모든 gate가 unitary | [3](03_single_qubit_gates.md) |
+| Hadamard gate | superposition을 만드는 gate $H$ | [3](03_single_qubit_gates.md) |
+| Pauli gate | $X, Y, Z$ | [3](03_single_qubit_gates.md) |
+| measurement | state를 고전 bit로 collapse시켜 읽음 | [4](04_measurement.md) |
+| Born rule | 결과 probability $= \|\text{amplitude}\|^2$ | [4](04_measurement.md) |
+| collapse | measurement 뒤 computational basis state 하나로 확정됨 (비가역) | [4](04_measurement.md) |
+| global phase | state 전체에 곱해지는 $e^{i\theta}$. measurement 결과에 영향 없음 | [4](04_measurement.md) |
+| tensor product | qubit를 합치는 연산 $\otimes$ | [5](05_multiple_qubits_and_entanglement.md) |
+| CNOT | controlled-NOT. control qubit가 1이면 target qubit를 뒤집음 | [5](05_multiple_qubits_and_entanglement.md) |
+| entanglement | tensor product로 분해되지 않는 state. measurement 결과가 서로 상관됨 | [5](05_multiple_qubits_and_entanglement.md) |
+| quantum parallelism | $2^{\text{number of qubits}}$ 개 입력을 동시에 처리 (단, measurement로는 하나만 얻음) | [6](06_quantum_circuit_model_and_universality.md) |
+| interference | amplitude끼리 상쇄 · 보강 | [6](06_quantum_circuit_model_and_universality.md) |
+| Toffoli gate | controlled-controlled-NOT. 가역 AND (control qubit 2개) | [6](06_quantum_circuit_model_and_universality.md) |
+| universal gate set | single-qubit gate + CNOT | [6](06_quantum_circuit_model_and_universality.md) |
+| oracle | solution을 판별하는 black box $f$ | [7](07_oracle_and_phase_kickback.md) |
+| phase kickback | 출력 쪽 뒤집힘이 입력 phase로 되돌아오는 현상 | [7](07_oracle_and_phase_kickback.md) |
+| diffusion operator | Grover의 inversion about the mean $U_\psi$ | [9](09_grover_algorithm.md) |
+| amplitude amplification | solution amplitude를 키우는 기법 | [9](09_grover_algorithm.md) |
+
+---
+
+## 10.6 연습문제 답
+
+- **1-1** ([1장](01_qubits_and_states.md)): $|c| = \frac{\sqrt3}{2}$. ($\frac14 + |c|^2 = 1$.)
+- **2-1** ([2장](02_dirac_notation_and_linear_algebra.md)): $\langle +|-\rangle = 0$ (orthogonal). $\langle+|-\rangle = \frac{1}{\sqrt2}\begin{bmatrix}1&1\end{bmatrix}\cdot\frac{1}{\sqrt2}\begin{bmatrix}1\\-1\end{bmatrix} = \frac12(1\cdot1 + 1\cdot(-1)) = 0$. 그래서 $|+\rangle, |-\rangle$ 도 orthonormal basis를 이룹니다.
+- **3-1** ([3장](03_single_qubit_gates.md)): $Z|+\rangle = |-\rangle$. ($Z$ 가 $|1\rangle$ sign을 뒤집어 $\frac{|0\rangle-|1\rangle}{\sqrt2}$.)
+- **4-1** ([4장](04_measurement.md)): $P(1) = \left|\frac{\sqrt3}{2}\right|^2 = \frac34$. (Born rule: amplitude의 absolute value square. 참고로 $P(0) = \frac14$, sum은 1.)
+- **5-1** ([5장](05_multiple_qubits_and_entanglement.md)): **product state**. $\frac{|00\rangle+|01\rangle}{\sqrt2} = |0\rangle\otimes\frac{|0\rangle+|1\rangle}{\sqrt2} = |0\rangle|+\rangle$ 로 첫 qubit를 깔끔히 묶어낼 수 있으므로 entanglement가 아닙니다.
+- **6-1** ([6장](06_quantum_circuit_model_and_universality.md)): $\frac{1}{\sqrt8}$. $H^{\otimes 3}|000\rangle$ 은 8개 computational basis를 모두 amplitude $\frac{1}{\sqrt{2^3}} = \frac{1}{\sqrt8}$ 로 균등하게 담으므로, $|101\rangle$ 도 예외 없이 $\frac{1}{\sqrt8}$.
+- **7-1** ([7장](07_oracle_and_phase_kickback.md)): $|x\rangle|-\rangle$ (그대로). $f(x)=0$ 이면 $(-1)^{f(x)} = (-1)^0 = 1$ 이라 phase kickback으로 붙는 sign이 $+1$ 입니다. sign이 뒤집히는 것은 solution($f(x)=1$)뿐.
+- **8-1** ([8장](08_deutsch_jozsa_algorithm.md)): $0$. balanced function은 $|0\cdots0\rangle$ 의 amplitude $\frac{1}{2^{\text{number of qubits}}}\sum_x(-1)^{f(x)}$ 이 $+1$ 절반과 $-1$ 절반의 완벽한 destructive interference로 0이 되므로, measurement에서 절대 나오지 않습니다.
+- **9-1** ([9장](09_grover_algorithm.md)): $\text{number of iterations} \approx \frac{\pi}{4}\sqrt{\text{number of states}/\text{number of solutions}} = \frac{\pi}{4}\sqrt{64/4} = \frac{\pi}{4}\cdot 4 = \pi \approx 3.14$ → 약 **3 iterations**.
+
+---
+
+## 10.7 자주 하는 실수 모음
+
+| 실수 | 바로잡기 | 장 |
+|------|----------|:--:|
+| $\|0\rangle$ 을 zero vector로 착각 | $\|0\rangle = (1,0)^T$, unit vector | [1](01_qubits_and_states.md) |
+| superposition을 "모르는 0/1"로 해석 | 진짜 동시 존재. amplitude는 complex number | [1](01_qubits_and_states.md) |
+| amplitude를 probability로 착각 | probability는 $\|\text{amplitude}\|^2$ (square) | [4](04_measurement.md) |
+| circuit 순서 = matrix 순서로 착각 | 반대. 나중 gate가 matrix 왼쪽 | [3](03_single_qubit_gates.md) |
+| measurement를 가역으로 착각 | measurement는 비가역, superposition 파괴 | [4](04_measurement.md) |
+| global phase와 relative phase 혼동 | global phase는 무의미, relative phase는 결정적 | [4](04_measurement.md) |
+| CNOT이 target qubit만 바꾼다고 일반화 | computational basis에서만. $\|+\rangle\|-\rangle$ 은 control qubit도 바뀜 | [5](05_multiple_qubits_and_entanglement.md) |
+| Grover를 많이 돌릴수록 좋다고 착각 | 최적 초과 시 probability 감소(진동) | [9](09_grover_algorithm.md) |
+| amplitude가 가장 큰 칸을 고르면 된다고 착각 | 모든 solution의 amplitude는 매 iteration **정확히 같음.** maximum comparator는 늘 같은 index 하나만 반환 | [9](09_grover_algorithm.md)·[14](14_multiple_solutions_and_minimum_search.md) |
+| $\|\alpha\| \le 1$ 이니 integer bits 1-bit면 된다고 착각 | diffusion operator 중간값 $2\cdot\text{mean} - \text{amplitude}$ 는 최대 $1 + 2/\sqrt{\text{number of states}}$ 까지 커져 1을 넘음 | [12](12_fixed_point_and_precision.md) |
+
+마지막 두 줄은 교과서적 오해가 아니라 **이 project가 실제로 밟은 함정**입니다. Measurement Unit을 한동안 maximum comparator로 잡아 두었다가 solution이 둘 이상일 때 동률로 무너지는 것을 확인하고 Born-rule sampling으로 갈아엎었고([14.3절](14_multiple_solutions_and_minimum_search.md#143-amplitude-동률--argmax가-무너지는-지점)), amplitude의 크기만 보고 integer bits를 sign 1-bit로 잡았다가 diffusion operator 중간값이 표현 범위를 넘는 것을 보고 한때 integer bits를 2 bits로 늘렸고, 최종 RTL은 저장 data word를 23-bit Q1.22로 두고 중간값 register만 넓혀 symmetric saturation을 거는 쪽으로 정리했습니다([12.3절](12_fixed_point_and_precision.md#123-integer-bits는-몇-bit인가--재는-대상이-셋이다)).
+
+---
+
+## 10.8 원문 자료 대조표
+
+이 해설서가 재구성한 원문(`documents/study_references/papers/1. 양자컴퓨터 기초이론/`):
+
+| 원문 | 다룬 주제 | 대응 장 |
+|------|-----------|---------|
+| **Quantum Computing for the Very Curious** (Matuschak & Nielsen) | qubit·gate·measurement·unitary·CNOT·entanglement·universality·Toffoli | [1](01_qubits_and_states.md)~[6](06_quantum_circuit_model_and_universality.md) |
+| **[기초이론] 5. 그로버 알고리즘과 도이치 알고리즘** (hgmin1159) | oracle·amplitude amplification·inversion about the mean·diffusion operator·Grover circuit·Deutsch–Jozsa | [7](07_oracle_and_phase_kickback.md)~[9](09_grover_algorithm.md) |
+| **양자 컴퓨팅 입문 (2) - Grover's Algorithm** (infossm) | phase kickback·diffusion operator·geometric rotation·number of iterations 유도 | [7](07_oracle_and_phase_kickback.md), [9](09_grover_algorithm.md) |
+
+더 깊이 보려면: Nielsen & Chuang, *Quantum Computation and Quantum Information* (표준 교과서); Sutor, *Dancing With Qubits*; Bernhardt, *Quantum Computing for Everyone*; Grover (1996) 원논문; Boyer et al. (1998) *Tight bounds on quantum searching* (number of Grover iterations의 엄밀한 분석).
+
+---
+
+## 10.9 다음 단계 — Part 5: 이론에서 hardware로
+
+이론을 마쳤으니, 이 algorithm을 **FPGA hardware로 흉내 내는** 이야기로 넘어갈 준비가 되었습니다. 11장부터 18장까지 여덟 장이 그 이야기이고, 이 project가 실제로 만들려는 물건입니다. Part 5(11·12장)가 뼈대 — memory 지도와 수 표현 — 를 놓고, Part 6(13·14장)이 한 shot 안의 datapath를, Part 7(15장)이 설계 좌표를, Part 8(16~18장)이 shot 바깥의 제어·system·verification을 다룹니다.
+
+- [11장 state vector emulator](11_state_vector_emulator.md) — ket $|\psi\rangle$ 이 array가 되는 원리, `amp`·`data`·`mask` 세 array의 BRAM 예산, 32-lane banking, pass 단위 cycle 비용 model.
+- [12장 amplitude를 숫자로](12_fixed_point_and_precision.md) — 왜 floating-point가 아니라 fixed-point인가. Q1.22(23 bits)와 넓은 중간값·symmetric saturation, round-half-to-even, 그리고 bit width는 공식이 아니라 **재서** 정한다는 것.
+- [13장 oracle과 diffusion operator](13_oracle_diffusion_measurement_datapath.md) — 한 iteration 안의 FSM, predicate 4종($<$·$>$·$=$·범위)이 subtractor 하나를 공유하는 방법, accumulation·shift·subtraction만으로 닫히는 diffusion operator(0 multipliers).
+- [14장 multiple solutions](14_multiple_solutions_and_minimum_search.md) — solution이 여럿일 때의 amplitude 동률, Born-rule sampling, row·lane layer measurement, Found Mask로 중복 없이 전부 찾는 enumeration mode.
+- [15장 논문 지도와 설계 결정표](15_paper_map_and_design_decisions.md) — 여섯 논문의 계보와 여덟 개의 대립축, 확정 설계 결정표, 인용 시 주의할 정오표.
+- [16장 몇 번 돌릴지 모를 때](16_iteration_control_and_checkpoints.md) — number of solutions를 모를 때의 BBHT shot loop(mean 22.7 shots, 14 qubits·1 solution)와, 실패한 shot이 남긴 amplitude를 세 벌까지 남겨 두고 이어 도는 checkpoint.
+- [17장 RVX SoC에 붙이기](17_rvx_soc_integration.md) — accelerator를 system에 얹는 일. APB CSR로 제어하고, AHB master로 data를 실어 오고, host와는 UART로 말합니다.
+- [18장 3단 reference model과 bit-exact verification](18_reference_model_verification.md) — float64 → fixed-point model → RTL의 verification ladder로 "무엇이 틀렸나"를 층마다 나눠 묻는 방법.
+
+hardware 쪽 용어(LUT·FF·BRAM·DSP·APB·AHB 같은 것들)는 [15.7절 hardware glossary](15_paper_map_and_design_decisions.md#157-hardware-용어집)에 모아 두었습니다. 위 10.5절의 glossary는 quantum 이론 용어 전용입니다. 그리고 설계 수치 — bit width·BRAM 개수·number of lanes·shot 통계 — 의 source of truth는 [15.4절 확정 설계 결정표](15_paper_map_and_design_decisions.md#154-우리-project의-좌표--확정-설계-결정표)입니다. 다른 장이 같은 값을 본문에 다시 적어 두는 것은 읽는 도중 link를 따라가지 않아도 되게 하려는 배려일 뿐이고, 값이 어긋나면 그쪽이 기준입니다.
+
+이제 "state vector·oracle·diffusion operator·$\sqrt{\text{number of states}}$ iterations·measurement probability"가 무슨 뜻인지 알고 있으므로, 이 이론이 Verilog RTL과 datapath로 바뀌는 것을 따라갈 수 있습니다. 각 논문을 원문으로 정독하고 싶다면 한국어 해설본이 [`../papers/papers_ko/`](papers/papers_ko/)에 있습니다(원문 대조용 보조 자료).
+
+---
+
+> [← 9장 Grover algorithm](09_grover_algorithm.md) · [index](index.md) · [11장 state vector emulator →](11_state_vector_emulator.md)

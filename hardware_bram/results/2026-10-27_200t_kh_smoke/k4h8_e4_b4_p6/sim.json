@@ -1,0 +1,8 @@
+{
+  "cycles": 43370,
+  "iter": 79,
+  "policy_actions": 1085,
+  "policy_cycles": 19802,
+  "policy_stall": 13464,
+  "validated_workloads": 2
+}

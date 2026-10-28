@@ -1,0 +1,67 @@
+{
+  "configuration": {
+    "k": 3,
+    "h": 3,
+    "e": 4,
+    "build_rows": 3,
+    "prune": 6,
+    "workloads": 500
+  },
+  "matching_rows": 1000,
+  "normal_rows_identical": true,
+  "matching_invariants": [
+    "m",
+    "seed_idx",
+    "mode",
+    "result_index",
+    "trial",
+    "l_bbht",
+    "iter",
+    "mismatch"
+  ],
+  "physical_iterations": 9582,
+  "stall_share_of_execution_pct": 0.3865500140398821,
+  "comparisons": {
+    "before_build_cache": {
+      "policy_cycles": {
+        "before": 239873,
+        "after": 80719,
+        "saved_cycles": 159154,
+        "reduction_pct": 66.34927649214376
+      },
+      "policy_stall": {
+        "before": 22298,
+        "after": 17483,
+        "saved_cycles": 4815,
+        "reduction_pct": 21.593864920620682
+      },
+      "cycles": {
+        "before": 4549854,
+        "after": 4522830,
+        "saved_cycles": 27024,
+        "reduction_pct": 0.5939531246497141
+      }
+    },
+    "previous": {
+      "policy_cycles": {
+        "before": 161272,
+        "after": 80719,
+        "saved_cycles": 80553,
+        "reduction_pct": 49.948534153479834
+      },
+      "policy_stall": {
+        "before": 17715,
+        "after": 17483,
+        "saved_cycles": 232,
+        "reduction_pct": 1.3096246119108101
+      },
+      "cycles": {
+        "before": 4523062,
+        "after": 4522830,
+        "saved_cycles": 232,
+        "reduction_pct": 0.005129268623777432
+      }
+    }
+  },
+  "note": "Integrated accelerator RTL cycles; full-SoC console verification is a separate same-source run."
+}

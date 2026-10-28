@@ -1,0 +1,68 @@
+{
+  "cells": [
+    {
+      "build_rows": 3,
+      "e": 4,
+      "h": 3,
+      "id": "k3h3_e4_b3_p6",
+      "k": 3,
+      "prune": 6
+    }
+  ],
+  "config": {
+    "grid": {
+      "build_rows": [
+        3
+      ],
+      "e": [
+        4
+      ],
+      "h": [
+        3
+      ],
+      "k": [
+        3
+      ],
+      "prune": [
+        6
+      ]
+    },
+    "hier_select": true,
+    "schema": 1,
+    "target": {
+      "clock_ns": 10.0,
+      "part": "xc7a200tfbg484-2"
+    },
+    "workload_limit": 500
+  },
+  "scope": "accelerator OOC; RTL cycles; board measurements not included",
+  "sha256": {
+    "hardware_bram/firmware/bbht_grover_driver.c": "85298f3add4fe0ced948e57aec9c2f610248dfbee5b7ea69ee197654caff7950",
+    "hardware_bram/firmware/bbht_grover_driver.h": "68a9872ed3b295013ac62fb8cc5b386db91e5ba311240a861b4b6fa88ddd7540",
+    "hardware_bram/models/hardware_bram_K3H3_E4_M3_S6/src/bbht_grover_core_adapter.v": "24f2bffe1982656f91d3b0f82b5568359918c1e2d8467e2f77e3feef69f5bd90",
+    "hardware_bram/sim/dse.py": "9490b9d17f66cccb8085080300d5911a4c144526ee2700d658ff8d21d0532507",
+    "hardware_bram/sim/kh_sweep.py": "f9e8d36db37c6d02f2e17d405d1c84f221acd58105e14e494c7888742de66e5b",
+    "hardware_bram/src/bbht_ahb_loader.v": "3edf3614ab4b3fbd7286925a9a516f6a804e6b096a925598ea65d88f29cc5339",
+    "hardware_bram/src/bbht_grover_main_ip.v": "d949759b1dc3ae85b4d1b4f336f00f3636c1e94c8c47bee0737eb42f8b306712",
+    "hardware_bram/src/bbht_grover_mmio.v": "1f52df773b3a46c4383d238b7da8e93f800a3bb3dd4c5694302411a2ae7abff6",
+    "hardware_bram/src/bbht_rvx_wrapper.v": "c2ba0750793c9ff763e0045c71ace9cf1d581decae04ff3607e3ed042d405d07",
+    "hardware_bram/src/grover_arithmetic.v": "0ccbac17f68cd331d2766f04ae0f896c4434e695da0ed1d151635e4a83ed590d",
+    "hardware_bram/src/grover_bbht.v": "1641e232132210829b4e073b74e934dca807956c69ad6778634018c94cfd568f",
+    "hardware_bram/src/grover_checkpoint.v": "c2a24f858cf79320b80e94f08cd5a80118e19033efc2019c1ed4b145e60444d6",
+    "hardware_bram/src/grover_iteration.v": "a11f818f12b79700fd3ea2afb6e52b77ee358fc583cebfa63a59bc463116aee7",
+    "hardware_bram/src/grover_loader.v": "75d70aea62b36d4049939b37ee52ffda837e033cd14d5427482fb3e810af63b2",
+    "hardware_bram/src/grover_measurement.v": "160e9e66fa0c3864741dc951998f1902c3c6202ea829a73f9734ac5940bae26f",
+    "hardware_bram/src/grover_memories.v": "d745da86d04b248dccfafc9f259201cbdd0825ddd00e8da4344fc51370790fbd",
+    "hardware_bram/src/grover_param.vh": "f334d27683ec7660250a4c9ccefd90c1c82b9c7047d37bd4ca887fb29a11f2fd",
+    "hardware_bram/src/grover_policy.v": "f3d2a795a3d87df7d74b14885c4d52732da3aee0099601b1c5fd1f069546ebf0",
+    "hardware_bram/src/grover_status.v": "9425fa25d55d05bd73655f646bcd775c7e082de6148e99f32c0067369e590d9f",
+    "hardware_bram/synth/dse_ooc.tcl": "e5ce18dad41b1d7bcdc49c697b71f53d204faf662cdb69a7c559a2716780e9b9",
+    "hardware_bram/testbench/tb_bench500.cpp": "fc53a2684a548e9c711ee1d64993aedad53e74bdd7d599c59dbf4077a385bf5f",
+    "hardware_bram/testbench/tb_policy_kh_sweep.sv": "01079ead0878e22a427ad448a516ffe788656ec53f717b9b845b2505586268a3",
+    "software/golden_develop/tb_stimulus/dump_bench_workload.py": "ce38a51069775572c8703da577391fbe509f52eef7d11bc04f8ef7f790a0f35d",
+    "software/pc_grover_result/2026-10-05_server/verification/runs/rtl_k4h4.jsonl": "c3ca9910ac2835d2f885e85c514f0f91a01eeda170fbf0aa534774479777409e",
+    "software/testbench_data/2026-09-08_common500/official_board_seed_roster.h": "82eb2a35925c54f8813108a77d6e1a759bf640e8bf60d8e40aed3f69d82adb8a",
+    "spec/generated/bbht_grover_csr.vh": "6f41e15ecdad7a54b183ef07943c50c34806208a554d293b3e23e99c96fbf43f",
+    "spec/generated/bbht_grover_regs.h": "f6736d77f55424ef1c466dcade2cdf819dbde667c82646999cba7786e92a5857"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "method": "exact memoized depth-first branch-and-bound",
+  "policy_changed": false,
+  "lower_bound": "capacity-relaxed keep-all/deposit-all restricted-B",
+  "lower_bound_depth": 2,
+  "cells": [
+    {
+      "k": 3,
+      "h": 3
+    },
+    {
+      "k": 4,
+      "h": 4
+    },
+    {
+      "k": 4,
+      "h": 8
+    },
+    {
+      "k": 5,
+      "h": 5
+    }
+  ],
+  "orders": [
+    "bound"
+  ],
+  "workloads": 500,
+  "source_trace": "/workspace/software/pc_grover_result/2026-10-05_server/verification/runs/rtl_k4h4.jsonl",
+  "choice_validation": "baseline source and chosen checkpoint tuple per decision"
+}

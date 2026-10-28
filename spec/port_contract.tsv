@@ -67,9 +67,9 @@ core	Status	budget_limit	OUT	1
 core	Status	amp_overflow	OUT	1	
 core	Status	zero_weight_error	OUT	1	
 core	Status	load_error	OUT	1	
-core	Counters	trial_count	OUT	32	
-core	Counters	L_BBHT	OUT	32	
-core	Counters	actual_grover_iterations	OUT	32	
+core	Counters	shot_count	OUT	32	
+core	Counters	requested_iterations	OUT	32	
+core	Counters	executed_iterations	OUT	32	
 core	Counters	cycle_count	OUT	32	
 core	Policy telemetry	policy_cycles_total	OUT	32	
 core	Policy telemetry	policy_stall_cycles	OUT	32	
@@ -77,10 +77,10 @@ core	Policy telemetry	policy_actions_eval	OUT	32
 core	Policy telemetry	policy_memo_hit	OUT	32	
 core	Policy telemetry	policy_memo_miss	OUT	32	
 core	Policy telemetry	policy_max_latency	OUT	32	
-core	Plan telemetry	plan_fifo_level	OUT	3	
-core	Plan telemetry	plan_fifo_highwater	OUT	3	
-core	Plan telemetry	plan_fifo_empty_demand	OUT	32	
-core	Plan telemetry	plan_fifo_hit_count	OUT	32	
-core	Plan telemetry	plan_fifo_mismatch_count	OUT	32	
+core	Plan telemetry	plan_queue_level	OUT	3	
+core	Plan telemetry	plan_queue_highwater	OUT	3	
+core	Plan telemetry	plan_queue_empty_demand	OUT	32	
+core	Plan telemetry	plan_queue_hit_count	OUT	32	
+core	Plan telemetry	plan_queue_miss_count	OUT	32	
 core	Plan telemetry	policy_cold_solve_count	OUT	32	
 core	Plan telemetry	policy_spec_solve_count	OUT	32	

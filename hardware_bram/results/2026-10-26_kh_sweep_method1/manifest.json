@@ -1,0 +1,42 @@
+{
+  "workloads": 500,
+  "source_trace": "/workspace/software/pc_grover_result/2026-10-05_server/verification/runs/rtl_k4h4.jsonl",
+  "seed_roster": "/workspace/software/testbench_data/2026-09-08_common500/official_board_seed_roster.h",
+  "software_k": [
+    3,
+    4
+  ],
+  "software_h": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "rtl_run": true,
+  "rtl_exact_prune": 4,
+  "rtl_evidence_loaded": true,
+  "rtl_log_dir": [],
+  "rtl_k": [
+    3,
+    4
+  ],
+  "rtl_h": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "system_csv": [],
+  "metric_note": {
+    "rtl_cycles_per_decision": "start-to-done, memo clear included and amortized",
+    "stall_ratio_pct": "integrated policy_stall / checkpoint total cycles"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "checks": 90,
+  "errors": 0,
+  "runs": [
+    "run1",
+    "run2",
+    "run3"
+  ],
+  "enum_indices": [
+    8685,
+    2852,
+    507,
+    4724
+  ],
+  "simulator_errors": 0,
+  "simulator_warnings": 0
+}

@@ -83,7 +83,7 @@ module bbht_grover_mmio (
     input  wire        st_enum_done,          // 완료. 펄스든 레벨이든 받습니다
     input  wire [13:0] st_result_index,
     input  wire [31:0] st_trial_count,
-    input  wire [31:0] st_l_bbht,
+    input  wire [31:0] st_requested_iterations,
     input  wire [31:0] st_actual_iter,
     input  wire [31:0] st_cycle_count,
     input  wire [14:0] st_found_count,
@@ -113,11 +113,11 @@ module bbht_grover_mmio (
     input  wire [31:0] tm_policy_memo_hit,
     input  wire [31:0] tm_policy_memo_miss,
     input  wire [31:0] tm_policy_max_latency,
-    input  wire [2:0]  tm_plan_fifo_level,
-    input  wire [2:0]  tm_plan_fifo_highwater,
-    input  wire [31:0] tm_plan_fifo_empty_demand,
-    input  wire [31:0] tm_plan_fifo_hit_count,
-    input  wire [31:0] tm_plan_fifo_mismatch_count,
+    input  wire [2:0]  tm_plan_queue_level,
+    input  wire [2:0]  tm_plan_queue_highwater,
+    input  wire [31:0] tm_plan_queue_empty_demand,
+    input  wire [31:0] tm_plan_queue_hit_count,
+    input  wire [31:0] tm_plan_queue_miss_count,
     input  wire [31:0] tm_policy_cold_solve_count,
     input  wire [31:0] tm_policy_spec_solve_count
 );
@@ -278,9 +278,9 @@ module bbht_grover_mmio (
         `CSR_IDX_SEED_MEAS    : prdata = cfg_seed_meas;
         `CSR_IDX_STATUS       : prdata = status_word;
         `CSR_IDX_RESULT_INDEX : prdata = {18'd0, st_result_index};
-        `CSR_IDX_TRIAL_COUNT  : prdata = st_trial_count;
-        `CSR_IDX_L_BBHT       : prdata = st_l_bbht;
-        `CSR_IDX_ACTUAL_ITER  : prdata = st_actual_iter;
+        `CSR_IDX_SHOT_COUNT  : prdata = st_trial_count;
+        `CSR_IDX_REQUESTED_ITERATIONS       : prdata = st_requested_iterations;
+        `CSR_IDX_EXECUTED_ITERATIONS  : prdata = st_actual_iter;
         `CSR_IDX_CYCLE_COUNT  : prdata = st_cycle_count;
         `CSR_IDX_ENUM_CFG     : prdata = {24'd0, cfg_fail_repeat_limit,
                                            3'd0, cfg_enum_enable};
@@ -299,11 +299,11 @@ module bbht_grover_mmio (
         `CSR_IDX_POLICY_MEMO_HIT          : prdata = tm_policy_memo_hit;
         `CSR_IDX_POLICY_MEMO_MISS         : prdata = tm_policy_memo_miss;
         `CSR_IDX_POLICY_MAX_LATENCY       : prdata = tm_policy_max_latency;
-        `CSR_IDX_PLAN_FIFO_LEVEL          : prdata = {29'd0, tm_plan_fifo_level};
-        `CSR_IDX_PLAN_FIFO_HIGHWATER      : prdata = {29'd0, tm_plan_fifo_highwater};
-        `CSR_IDX_PLAN_FIFO_EMPTY_DEMAND   : prdata = tm_plan_fifo_empty_demand;
-        `CSR_IDX_PLAN_FIFO_HIT_COUNT      : prdata = tm_plan_fifo_hit_count;
-        `CSR_IDX_PLAN_FIFO_MISMATCH_COUNT : prdata = tm_plan_fifo_mismatch_count;
+        `CSR_IDX_PLAN_QUEUE_LEVEL          : prdata = {29'd0, tm_plan_queue_level};
+        `CSR_IDX_PLAN_QUEUE_HIGHWATER      : prdata = {29'd0, tm_plan_queue_highwater};
+        `CSR_IDX_PLAN_QUEUE_EMPTY_DEMAND   : prdata = tm_plan_queue_empty_demand;
+        `CSR_IDX_PLAN_QUEUE_HIT_COUNT      : prdata = tm_plan_queue_hit_count;
+        `CSR_IDX_PLAN_QUEUE_MISS_COUNT : prdata = tm_plan_queue_miss_count;
         `CSR_IDX_POLICY_COLD_SOLVE_COUNT  : prdata = tm_policy_cold_solve_count;
         `CSR_IDX_POLICY_SPEC_SOLVE_COUNT  : prdata = tm_policy_spec_solve_count;
 

@@ -7,8 +7,8 @@
 set PART   xc7a100tcsg324-1
 set SRC    $::env(SRC_DIR)
 set OUTDIR $::env(OUTDIR)
-set MEAS_M3 $::env(MEAS_M3_ENABLE)
-set POLICY_PRUNE $::env(POLICY_EXACT_PRUNE)
+set BUILD_ROWS $::env(BUILD_ROWS_PER_CYCLE)
+set POLICY_PRUNE $::env(POLICY_SEARCH_MODE)
 
 file mkdir $OUTDIR
 
@@ -21,20 +21,20 @@ set FILES [list \
 foreach f $FILES { if {![file exists $f]} { error "소스 없음: $f" } }
 
 read_verilog $FILES
+read_verilog -sv [list $SRC/grover_parallel.sv $SRC/grover_policy_parameterized.sv]
 
 # 보드 정본과 같은 파라미터입니다 (src/bbht_rvx_wrapper.v 가 넘기는 값).
 synth_design -top bbht_grover_main_ip -part $PART -mode out_of_context \
              -include_dirs $SRC -flatten_hierarchy rebuilt \
              -generic CHECKPOINT_ENABLE=1 \
-             -generic CKPT_K=3 \
-             -generic POLICY_H_FUTURE=3 \
-             -generic POLICY_EXACT_PRUNE=$POLICY_PRUNE \
-             -generic CKPT_MANUAL_ENABLE=0 \
-             -generic AUTO_SPEC_ENABLE=1 \
-             -generic INTRA_ENGINES=4 \
-             -generic MEAS_M1_ENABLE=1 \
-             -generic MEAS_M2_ENABLE=1 \
-             -generic MEAS_M3_ENABLE=$MEAS_M3
+             -generic CHECKPOINT_CAPACITY=3 \
+             -generic LOOKAHEAD_SHOTS=3 \
+             -generic POLICY_SEARCH_MODE=$POLICY_PRUNE \
+             -generic CHECKPOINT_MANUAL_ENABLE=0 \
+             -generic SPECULATIVE_PLANNING_ENABLE=1 \
+             -generic NUMBER_OF_PES=4 \
+             -generic BUILD_ROWS_PER_CYCLE=$BUILD_ROWS \
+             -generic USE_TWO_LEVEL_SELECT=1
 
 report_utilization             -file $OUTDIR/util.rpt
 report_utilization -hierarchical -file $OUTDIR/util_hier.rpt

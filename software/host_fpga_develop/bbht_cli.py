@@ -3,7 +3,7 @@
 bbht_cli.py -- 호스트 PC 에서 BBHT/Grover 보드를 조작하는 CLI
 
 보드의 bbht_console 앱과 UART 로 이야기합니다. 프로토콜 정본은
-documents/design_references/14_호스트_인터페이스와_UART_프로토콜.md 입니다.
+documents/design_references/14_host_interface_and_uart_protocol.md 입니다.
 
   대화형   python3 bbht_cli.py --port /dev/ttyUSB1
   일괄     python3 bbht_cli.py --port /dev/ttyUSB1 -c "GEN TARGETS=4" -c LOAD -c RUN
@@ -247,7 +247,7 @@ class MockTransport:
                 return
             hits = [i for i in range(self.cfg["COUNT"]) if self._match(self.data[i])]
             # 지어낸 숫자입니다. 실물의 성질 두 가지만 지킵니다.
-            #   L_BBHT(Sum requested j)는 checkpoint 와 무관하게 같습니다
+            #   REQUESTED_ITERATIONS(Sum requested j)는 checkpoint 와 무관하게 같습니다
             #   물리 반복(actual_iter)만 체크포인트 경로에서 줄어듭니다
             # 짝맞춤 판정이 이 성질 위에 서 있으므로, 모델이 이걸 어기면
             # 실험 스크립트를 시험할 때 항상 불일치가 납니다.

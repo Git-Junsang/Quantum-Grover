@@ -1,7 +1,7 @@
 /*
  * bbht_dataset_gen.h -- 보드 위 데이터셋 생성기 (GEN 명령) 와 해시 (SUM 명령)
  *
- * software/golden_develop/models/common/benchmark_dataset.py 의 generate_predicate_image() /
+ * software/reference_model_develop/models/common/benchmark_dataset.py 의 generate_predicate_image() /
  * fnv1a32_s16() 과 한 쌍입니다. 같은 인자면 바이트 단위로 같은 배열이 나와야
  * 하고, 그래야 호스트가 32 KiB 데이터셋을 UART 로 보내지 않고도 보드 결과를
  * SW 기준모델 기댓값과 맞댈 수 있습니다. 한쪽을 고치면 다른 쪽도 고치십시오.

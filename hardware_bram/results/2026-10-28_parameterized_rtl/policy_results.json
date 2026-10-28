@@ -1,0 +1,38 @@
+[
+  {
+    "path": "hardware_bram/results/2026-10-28_parameterized_policy_final/k10h10_p6_l4_generic/result.json",
+    "summary": "SUMMARY parameterized capacity=10 lookahead=10 cases=53 errors=0 total_cycles=3189"
+  },
+  {
+    "path": "hardware_bram/results/2026-10-28_parameterized_policy_final/k1h10_p6_l4_generic/result.json",
+    "summary": "SUMMARY parameterized capacity=1 lookahead=10 cases=53 errors=0 total_cycles=1275"
+  },
+  {
+    "path": "hardware_bram/results/2026-10-28_parameterized_policy_final/k2h4_p5_l1_generic/result.json",
+    "summary": "SUMMARY parameterized capacity=2 lookahead=4 cases=53 errors=0 total_cycles=4179"
+  },
+  {
+    "path": "hardware_bram/results/2026-10-28_parameterized_policy_final/k3h3_p6_l4_generic/result.json",
+    "summary": "SUMMARY parameterized capacity=3 lookahead=3 cases=53 errors=0 total_cycles=1765"
+  },
+  {
+    "path": "hardware_bram/results/2026-10-28_parameterized_policy_final/k3h3_p6_l4_production/result.json",
+    "summary": "SUMMARY parameterized capacity=3 lookahead=3 cases=53 errors=0 total_cycles=2662"
+  },
+  {
+    "path": "hardware_bram/results/2026-10-28_parameterized_policy_final/k3h9_p6_l4_generic/result.json",
+    "summary": "SUMMARY parameterized capacity=3 lookahead=9 cases=53 errors=0 total_cycles=9024"
+  },
+  {
+    "path": "hardware_bram/results/2026-10-28_parameterized_policy_final/k4h10_p6_l4_generic/result.json",
+    "summary": "SUMMARY parameterized capacity=4 lookahead=10 cases=53 errors=0 total_cycles=7828"
+  },
+  {
+    "path": "hardware_bram/results/2026-10-28_parameterized_policy_final/k4h8_p5_l2_generic/result.json",
+    "summary": "SUMMARY parameterized capacity=4 lookahead=8 cases=53 errors=0 total_cycles=6353"
+  },
+  {
+    "path": "hardware_bram/results/2026-10-28_parameterized_policy_final/k5h3_p6_l4_generic/result.json",
+    "summary": "SUMMARY parameterized capacity=5 lookahead=3 cases=53 errors=0 total_cycles=1515"
+  }
+]

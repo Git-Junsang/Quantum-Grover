@@ -1,0 +1,142 @@
+%Warning-WIDTHTRUNC: hardware_bram/src/grover_policy_parameterized.sv:158:22: Operator ASSIGN expects 11 bits on the Assign RHS, but Assign RHS's COND generates 32 or 12 bits.
+                                                                            : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+  158 |             next_comb=low!=0 ? raised|(((raised^{1'b0,mask})>>2)/low) : 0;
+      |                      ^
+                     ... For warning description see https://verilator.org/warn/WIDTHTRUNC?v=5.020
+                     ... Use "/* verilator lint_off WIDTHTRUNC */" and lint_on around source to disable this message.
+%Warning-WIDTHEXPAND: hardware_bram/src/grover_policy_parameterized.sv:170:72: Operator FUNCREF 'first_comb' expects 32 bits on the Function Argument, but Function Argument's VARREF 'rs' generates 4 bits.
+                                                                             : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+  170 |                 else if(has_next(dm,ne,ds)) begin dm=next_comb(dm); rm=first_comb(rs); end
+      |                                                                        ^~~~~~~~~~
+%Warning-WIDTHEXPAND: hardware_bram/src/grover_policy_parameterized.sv:172:41: Operator SUB expects 32 bits on the RHS, but RHS's VARREF 'ds' generates 4 bits.
+                                                                             : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+  172 |                     ds=ds+1'b1; room=K-1-ds; rs=(nk<room)?nk:room;
+      |                                         ^
+%Warning-WIDTHTRUNC: hardware_bram/src/grover_policy_parameterized.sv:172:48: Operator ASSIGN expects 4 bits on the Assign RHS, but Assign RHS's COND generates 32 bits.
+                                                                            : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+  172 |                     ds=ds+1'b1; room=K-1-ds; rs=(nk<room)?nk:room;
+      |                                                ^
+%Warning-WIDTHEXPAND: hardware_bram/src/grover_policy_parameterized.sv:173:24: Operator FUNCREF 'first_comb' expects 32 bits on the Function Argument, but Function Argument's VARREF 'ds' generates 4 bits.
+                                                                             : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+  173 |                     dm=first_comb(ds); rm=first_comb(rs);
+      |                        ^~~~~~~~~~
+%Warning-WIDTHEXPAND: hardware_bram/src/grover_policy_parameterized.sv:173:43: Operator FUNCREF 'first_comb' expects 32 bits on the Function Argument, but Function Argument's VARREF 'rs' generates 4 bits.
+                                                                             : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+  173 |                     dm=first_comb(ds); rm=first_comb(rs);
+      |                                           ^~~~~~~~~~
+%Warning-WIDTHEXPAND: hardware_bram/src/grover_policy_parameterized.sv:171:27: Operator LT expects 32 bits on the LHS, but LHS's VARREF 'ds' generates 4 bits.
+                                                                             : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+  171 |                 else if(ds<K-1 && ds<ne) begin
+      |                           ^
+%Warning-WIDTHEXPAND: hardware_bram/src/grover_policy_parameterized.sv:171:37: Operator LT expects 32 bits on the LHS, but LHS's VARREF 'ds' generates 4 bits.
+                                                                             : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+  171 |                 else if(ds<K-1 && ds<ne) begin
+      |                                     ^
+%Warning-WIDTHEXPAND: hardware_bram/src/grover_policy_parameterized.sv:170:25: Operator FUNCREF 'has_next' expects 32 bits on the Function Argument, but Function Argument's VARREF 'ds' generates 4 bits.
+                                                                             : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+  170 |                 else if(has_next(dm,ne,ds)) begin dm=next_comb(dm); rm=first_comb(rs); end
+      |                         ^~~~~~~~
+%Warning-WIDTHEXPAND: hardware_bram/src/grover_policy_parameterized.sv:169:20: Operator FUNCREF 'has_next' expects 32 bits on the Function Argument, but Function Argument's VARREF 'rs' generates 4 bits.
+                                                                             : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+  169 |                 if(has_next(rm,nk,rs)) rm=next_comb(rm);
+      |                    ^~~~~~~~
+%Warning-WIDTHTRUNC: hardware_bram/src/grover_policy_parameterized.sv:212:21: Operator ASSIGN expects 12 bits on the Assign RHS, but Assign RHS's VARREF 'depth' generates 32 bits.
+                                                                            : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+  212 |             hash_key=depth;
+      |                     ^
+%Warning-WIDTHEXPAND: hardware_bram/src/grover_policy_parameterized.sv:226:66: Operator EQ expects 32 bits on the LHS, but LHS's ARRAYSEL generates 4 bits.
+                                                                             : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+  226 |                 memo_depth[hash_key(frame_pending_mask[sp],sp+1)]==sp+1;
+      |                                                                  ^~
+%Warning-WIDTHTRUNC: hardware_bram/src/grover_policy_parameterized.sv:235:52: Operator ASSIGNDLY expects 4 bits on the Assign RHS, but Assign RHS's VARREF 'sp' generates 32 bits.
+                                                                            : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+  235 |             memo_depth[hash_key(frame_mask[sp],sp)]<=sp;
+      |                                                    ^~
+%Warning-WIDTHEXPAND: hardware_bram/src/grover_policy_parameterized.sv:311:52: Operator ADD expects 11 bits on the RHS, but RHS's ARRAYSEL generates 7 bits.
+                                                                             : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+  311 |                 scan_found=1;scan_min=lane_bound[l]+frame_imm[sp];
+      |                                                    ^
+%Warning-WIDTHEXPAND: hardware_bram/src/grover_policy_parameterized.sv:309:51: Operator ADD expects 11 bits on the RHS, but RHS's ARRAYSEL generates 7 bits.
+                                                                             : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+  309 |             if(!scan_found || better(lane_bound[l]+frame_imm[sp],seg2[l],mask2[l],
+      |                                                   ^
+%Warning-WIDTHEXPAND: hardware_bram/src/grover_policy_parameterized.sv:331:39: Operator ADD expects 11 bits on the RHS, but RHS's ARRAYSEL generates 7 bits.
+                                                                             : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+  331 |                 better(walk_word[10:0]+frame_imm[sp],walk_word[11+:CW],
+      |                                       ^
+%Warning-WIDTHTRUNC: hardware_bram/src/grover_policy_parameterized.sv:411:28: Logical operator LOGNOT expects 1 bit on the LHS, but LHS's VARREF 'found' generates 32 bits.
+                                                                            : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+  411 |                         if(!found) begin
+      |                            ^
+%Warning-WIDTHEXPAND: hardware_bram/src/grover_policy_parameterized.sv:433:65: Operator SUB expects 11 bits on the LHS, but LHS's VARREF 'prep_request' generates 7 bits.
+                                                                             : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+  433 |                     if(sp==H) begin frame_best[sp]<=prep_request-prep_pred;state<=FINISH;end
+      |                                                                 ^
+%Warning-WIDTHEXPAND: hardware_bram/src/grover_policy_parameterized.sv:433:65: Operator SUB expects 11 bits on the RHS, but RHS's VARREF 'prep_pred' generates 7 bits.
+                                                                             : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+  433 |                     if(sp==H) begin frame_best[sp]<=prep_request-prep_pred;state<=FINISH;end
+      |                                                                 ^
+%Warning-WIDTHEXPAND: hardware_bram/src/grover_policy_parameterized.sv:435:53: Operator SUB expects 11 bits on the LHS, but LHS's VARREF 'prep_request' generates 7 bits.
+                                                                             : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+  435 |                         frame_best[sp]<=prep_request-prep_pred;frame_best_mask[sp]<=(K==1) ? prep_endpoint : prep_keep|prep_endpoint;
+      |                                                     ^
+%Warning-WIDTHEXPAND: hardware_bram/src/grover_policy_parameterized.sv:435:53: Operator SUB expects 11 bits on the RHS, but RHS's VARREF 'prep_pred' generates 7 bits.
+                                                                             : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+  435 |                         frame_best[sp]<=prep_request-prep_pred;frame_best_mask[sp]<=(K==1) ? prep_endpoint : prep_keep|prep_endpoint;
+      |                                                     ^
+%Warning-WIDTHEXPAND: hardware_bram/src/grover_policy_parameterized.sv:462:67: Operator ADD expects 11 bits on the LHS, but LHS's ARRAYSEL generates 7 bits.
+                                                                             : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+  462 |                         hits<=hits+1;evaluated_cost<=frame_imm[sp]+memo_cost_q;state<=EVALUATE;
+      |                                                                   ^
+%Warning-WIDTHEXPAND: hardware_bram/src/grover_policy_parameterized.sv:467:60: Operator ADD expects 11 bits on the LHS, but LHS's ARRAYSEL generates 7 bits.
+                                                                             : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+  467 |                 RETURN: begin evaluated_cost<=frame_imm[sp]+return_cost;state<=EVALUATE;end
+      |                                                            ^
+%Warning-WIDTHTRUNC: hardware_bram/src/grover_policy_parameterized.sv:494:35: Operator ASSIGNDLY expects 4 bits on the Assign RHS, but Assign RHS's VARREF 'n' generates 32 bits.
+                                                                            : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+  494 |                         next_count<=n;root_cost<=frame_best[0];root_segment_count<=frame_best_seg[0];
+      |                                   ^~
+%Warning-SPLITVAR: hardware_bram/src/grover_policy_parameterized.sv:295:63: 'lane_it' has split_var metacomment but will not be split because index cannot be determined statically.
+                                                                          : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+  295 |             for(integer l=0;l<LANES;l=l+1) valid0[l]<=lane_it[l][IW-1];
+      |                                                               ^
+%Warning-SIDEEFFECT: hardware_bram/src/grover_policy_parameterized.sv:224:38: Expression side effect may be mishandled
+                                                                            : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+                                                                            : ... Suggest use a temporary variable in place of this expression
+  224 |             memo_hit_q <= memo_epoch[hash_key(frame_pending_mask[sp],sp+1)]==epoch &&
+      |                                      ^~~~~~~~
+%Warning-SIDEEFFECT: hardware_bram/src/grover_policy_parameterized.sv:225:27: Expression side effect may be mishandled
+                                                                            : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+                                                                            : ... Suggest use a temporary variable in place of this expression
+  225 |                 memo_mask[hash_key(frame_pending_mask[sp],sp+1)]==frame_pending_mask[sp] &&
+      |                           ^~~~~~~~
+%Warning-SIDEEFFECT: hardware_bram/src/grover_policy_parameterized.sv:226:28: Expression side effect may be mishandled
+                                                                            : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+                                                                            : ... Suggest use a temporary variable in place of this expression
+  226 |                 memo_depth[hash_key(frame_pending_mask[sp],sp+1)]==sp+1;
+      |                            ^~~~~~~~
+%Warning-SIDEEFFECT: hardware_bram/src/grover_policy_parameterized.sv:227:38: Expression side effect may be mishandled
+                                                                            : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+                                                                            : ... Suggest use a temporary variable in place of this expression
+  227 |             memo_cost_q <= memo_cost[hash_key(frame_pending_mask[sp],sp+1)];
+      |                                      ^~~~~~~~
+%Warning-SIDEEFFECT: hardware_bram/src/grover_policy_parameterized.sv:233:24: Expression side effect may be mishandled
+                                                                            : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+                                                                            : ... Suggest use a temporary variable in place of this expression
+  233 |             memo_epoch[hash_key(frame_mask[sp],sp)]<=epoch;
+      |                        ^~~~~~~~
+%Warning-SIDEEFFECT: hardware_bram/src/grover_policy_parameterized.sv:234:23: Expression side effect may be mishandled
+                                                                            : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+                                                                            : ... Suggest use a temporary variable in place of this expression
+  234 |             memo_mask[hash_key(frame_mask[sp],sp)]<=frame_mask[sp];
+      |                       ^~~~~~~~
+%Warning-SIDEEFFECT: hardware_bram/src/grover_policy_parameterized.sv:235:24: Expression side effect may be mishandled
+                                                                            : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+                                                                            : ... Suggest use a temporary variable in place of this expression
+  235 |             memo_depth[hash_key(frame_mask[sp],sp)]<=sp;
+      |                        ^~~~~~~~
+%Warning-SIDEEFFECT: hardware_bram/src/grover_policy_parameterized.sv:236:23: Expression side effect may be mishandled
+                                                                            : ... note: In instance 'grover_ckpt_policy_parameterized.g_general.u_policy'
+                                                                            : ... Suggest use a temporary variable in place of this expression
+  236 |             memo_cost[hash_key(frame_mask[sp],sp)]<=frame_best[sp];
+      |                       ^~~~~~~~

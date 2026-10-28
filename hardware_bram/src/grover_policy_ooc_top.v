@@ -5,8 +5,8 @@
 // All functional inputs/outputs are kept as top-level ports so synthesis cannot
 // constant-fold the policy away.  Main-IP integration is intentionally absent.
 module grover_policy_ooc_top #(
-    parameter integer CKPT_K = 4,
-    parameter integer H_FUTURE = 4,
+    parameter integer CHECKPOINT_CAPACITY = 4,
+    parameter integer LOOKAHEAD_SHOTS = 4,
     parameter integer EXACT_PRUNE = 4
 ) (
     input  wire                         clk,
@@ -35,8 +35,8 @@ module grover_policy_ooc_top #(
     (* keep_hierarchy = "yes" *)
     grover_ckpt_policy_rolling #(
         .ACTION_LIMIT(0),
-        .CKPT_K(CKPT_K),
-        .H_FUTURE(H_FUTURE),
+        .CHECKPOINT_CAPACITY(CHECKPOINT_CAPACITY),
+        .LOOKAHEAD_SHOTS(LOOKAHEAD_SHOTS),
         .EXACT_PRUNE(EXACT_PRUNE)
     ) u_policy (
         .clk(clk), .rstn(rstn), .start(start),

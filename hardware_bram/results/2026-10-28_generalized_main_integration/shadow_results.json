@@ -1,0 +1,13 @@
+{
+  "command": "PYTHONPATH=hardware_bram/sim python3 -m unittest test_dse.DesignSpaceTests.test_shadow_horizons_and_restart",
+  "reported_cases": {
+    "7": 80,
+    "8": 80,
+    "9": 80,
+    "10": 80,
+    "11": 80
+  },
+  "errors": 0,
+  "source": "hardware_bram/sim/test_dse.py",
+  "source_sha256": "420a052993d7b3074eb9974661a554e57c56690d9496efb7fb7bf83733b373ce"
+}

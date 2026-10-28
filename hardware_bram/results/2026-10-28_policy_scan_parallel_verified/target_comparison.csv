@@ -1,0 +1,3 @@
+category,before_cycles,after_cycles,reduction_pct,speedup
+candidate_walk_filter,34304,5089,85.16499533582089,6.740813519355473
+response_finish,46378,13080,71.7969727025745,3.5457186544342507

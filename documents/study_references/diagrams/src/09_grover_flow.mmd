@@ -1,12 +1,12 @@
 flowchart TD
-    A["|0⟩^⊗n 초기화"] --> B["H^⊗n 적용"]
-    B --> C["균등중첩 |ψ⟩\n= (1/√N) Σ|x⟩"]
-    C --> D{"R ≈ (π/4)√(N/M)회\n반복했는가?"}
-    D -->|"아직 (각 반복)"| E["오라클 U_f = I − 2Σ_{x∈A}|x⟩⟨x|\n조건을 만족하는 칸의 부호 반전 (표시)"]
-    E --> F["확산 U_ψ = 2|ψ⟩⟨ψ| − I\n평균 중심 반사 (증폭)"]
+    A["|0⟩^⊗(number of qubits) initialization"] --> B["H^⊗(number of qubits) 적용"]
+    B --> C["uniform superposition |ψ⟩\n= (1/√(number of states)) Σ|x⟩"]
+    C --> D{"(π/4)√(number of states / number of solutions)\niterations를 돌았는가?"}
+    D -->|"아직 (각 iteration)"| E["oracle U_f = I − 2Σ_{x∈A}|x⟩⟨x|\npredicate를 만족하는 칸의 sign 반전 (표시)"]
+    E --> F["diffusion operator U_ψ = 2|ψ⟩⟨ψ| − I\ninversion about the mean (amplitude amplification)"]
     F --> D
-    D -->|"완료"| G["계산 기저 측정"]
-    G --> H["조건을 만족하는 칸\n확률 ≈ 1"]
+    D -->|"완료"| G["computational basis measurement"]
+    G --> H["predicate를 만족하는 칸\nprobability ≈ 1"]
 
     classDef init fill:#eef4ff,stroke:#5b8def,color:#173;
     classDef iter fill:#fff1ea,stroke:#e8663d,color:#333;

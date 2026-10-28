@@ -34,9 +34,9 @@
 `define CSR_IDX_SEED_MEAS                  6'd8     // 0x020 RW
 `define CSR_IDX_STATUS                     6'd9     // 0x024 RO
 `define CSR_IDX_RESULT_INDEX               6'd10    // 0x028 RO
-`define CSR_IDX_TRIAL_COUNT                6'd11    // 0x02C RO
-`define CSR_IDX_L_BBHT                     6'd12    // 0x030 RO
-`define CSR_IDX_ACTUAL_ITER                6'd13    // 0x034 RO
+`define CSR_IDX_SHOT_COUNT                 6'd11    // 0x02C RO
+`define CSR_IDX_REQUESTED_ITERATIONS       6'd12    // 0x030 RO
+`define CSR_IDX_EXECUTED_ITERATIONS        6'd13    // 0x034 RO
 `define CSR_IDX_CYCLE_COUNT                6'd14    // 0x038 RO
 `define CSR_IDX_ENUM_CFG                   6'd15    // 0x03C RW
 `define CSR_IDX_FIFO_DATA                  6'd16    // 0x040 RPOP
@@ -54,11 +54,11 @@
 `define CSR_IDX_POLICY_MEMO_HIT            6'd28    // 0x070 RO
 `define CSR_IDX_POLICY_MEMO_MISS           6'd29    // 0x074 RO
 `define CSR_IDX_POLICY_MAX_LATENCY         6'd30    // 0x078 RO
-`define CSR_IDX_PLAN_FIFO_LEVEL            6'd31    // 0x07C RO
-`define CSR_IDX_PLAN_FIFO_HIGHWATER        6'd32    // 0x080 RO
-`define CSR_IDX_PLAN_FIFO_EMPTY_DEMAND     6'd33    // 0x084 RO
-`define CSR_IDX_PLAN_FIFO_HIT_COUNT        6'd34    // 0x088 RO
-`define CSR_IDX_PLAN_FIFO_MISMATCH_COUNT   6'd35    // 0x08C RO
+`define CSR_IDX_PLAN_QUEUE_LEVEL           6'd31    // 0x07C RO
+`define CSR_IDX_PLAN_QUEUE_HIGHWATER       6'd32    // 0x080 RO
+`define CSR_IDX_PLAN_QUEUE_EMPTY_DEMAND    6'd33    // 0x084 RO
+`define CSR_IDX_PLAN_QUEUE_HIT_COUNT       6'd34    // 0x088 RO
+`define CSR_IDX_PLAN_QUEUE_MISS_COUNT      6'd35    // 0x08C RO
 `define CSR_IDX_POLICY_COLD_SOLVE_COUNT    6'd36    // 0x090 RO
 `define CSR_IDX_POLICY_SPEC_SOLVE_COUNT    6'd37    // 0x094 RO
 

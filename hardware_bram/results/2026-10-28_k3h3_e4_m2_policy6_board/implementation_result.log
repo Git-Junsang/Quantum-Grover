@@ -1,0 +1,13 @@
+구현 폴더: /opt/rvx/platform/bbht_grover_k3h3_e4_m2_policy6_20261028/imp_ax7a200b_2026-10-28
+비트스트림: /opt/rvx/platform/bbht_grover_k3h3_e4_m2_policy6_20261028/imp_ax7a200b_2026-10-28/imp_result/bbht_grover_k3h3_e4_m2_policy6_20261028_fpga.ax7a200b.bit
+  부품 7a200tfbg484  sha256 1ca4087e70e04869…
+타이밍: WNS -26.252 ns, WHS 0.028 ns
+  타이밍 위반
+  클럭 clk_100000000_xilinx_clock_pll_0 100.000 MHz
+  클럭 clk_50000000_xilinx_clock_pll_0 50.000 MHz
+  | Slice LUTs                 | 53260 |     0 |        800 |    133800 | 39.81 |
+  | Slice Registers            | 46072 |     0 |       1600 |    267600 | 17.22 |
+  | Slice Registers                            | 46072 |     0 |       1600 |    267600 | 17.22 |
+  | Block RAM Tile    | 114.5 |     0 |          0 |       365 | 31.37 |
+  | DSPs           |  132 |     0 |          0 |       740 | 17.84 |
+앱 hex: /opt/rvx/platform/bbht_grover_k3h3_e4_m2_policy6_20261028/imp_ax7a200b_2026-10-28/bbht_console.sram.hex

@@ -20,14 +20,14 @@
 // 궤적 불변식 (hardware_bram/sim/Makefile 의 bench250 주석과 같은 논리)
 //   result_index 만 보면 안 됩니다. BBHT 는 뽑은 후보를 술어로 자가 검증
 //   하므로 진폭이 깨져도 답 자체는 맞게 나옵니다. 진폭이 정말 맞는지는
-//   trial_count 와 L_BBHT 로 봅니다 -- 이 둘은 "몇 번째 시도에서 맞췄나" 라
+//   shot_count 와 requested_iterations 로 봅니다 -- 이 둘은 "몇 번째 시도에서 맞췄나" 라
 //   진폭이 조금이라도 다르면 측정 결과가 달라지고 즉시 갈라집니다.
-//   반대로 actual_grover_iterations 와 cycle_count 는 갈라져야 정상입니다.
+//   반대로 executed_iterations 와 cycle_count 는 갈라져야 정상입니다.
 //   그게 이 갈래가 노리는 이득이기 때문입니다.
 //
 // 확인하는 것
 //   C1  MANUAL_SINGLE (j 고정) 이 정답을 내는가
-//   C2  NORMAL_SINGLE (BBHT 자동) 이 정답을 내는가
+//   C2  RESTART_SINGLE (BBHT 자동) 이 정답을 내는가
 //   C3  같은 설정으로 다시 돌리면 DRAM 표를 재사용하는가
 //       (궤적은 같고 Grover 반복 수는 줄어야 합니다)
 //   C4  술어가 바뀌면 DRAM 표를 버리고 다시 만드는가
@@ -113,8 +113,8 @@ module tb_dram_core #(
     wire [`GP_INDEX_W-1:0]             result_index;
     wire                               config_error, shot_limit, budget_limit;
     wire                               amp_overflow, zero_weight_error, load_error;
-    wire [31:0]                        trial_count, L_BBHT;
-    wire [31:0]                        actual_grover_iterations, cycle_count;
+    wire [31:0]                        shot_count, requested_iterations;
+    wire [31:0]                        executed_iterations, cycle_count;
 
     wire                               enum_done;
     wire [`GP_FOUND_COUNT_W-1:0]       found_count;
@@ -126,8 +126,8 @@ module tb_dram_core #(
 
     wire [31:0] policy_cycles_total, policy_stall_cycles, policy_actions_eval;
     wire [31:0] policy_memo_hit, policy_memo_miss, policy_max_latency;
-    wire [2:0]  plan_fifo_level, plan_fifo_highwater;
-    wire [31:0] plan_fifo_empty_demand, plan_fifo_hit_count, plan_fifo_mismatch_count;
+    wire [2:0]  plan_queue_level, plan_queue_highwater;
+    wire [31:0] plan_queue_empty_demand, plan_queue_hit_count, plan_queue_miss_count;
     wire [31:0] policy_cold_solve_count, policy_spec_solve_count;
 
 `ifdef GD_DRAM_BRANCH
@@ -157,11 +157,11 @@ module tb_dram_core #(
     // 바뀌었으므로 옛 로그의 사이클과 맞대지 마십시오.
     bbht_grover_main_ip #(
         .CHECKPOINT_ENABLE  (CKPT_AUTO),
-        .CKPT_K             (3),
-        .POLICY_H_FUTURE    (3),
-        .CKPT_MANUAL_ENABLE (0),
-        .AUTO_SPEC_ENABLE   (1),
-        .INTRA_ENGINES      (4)
+        .CHECKPOINT_CAPACITY             (3),
+        .LOOKAHEAD_SHOTS    (3),
+        .CHECKPOINT_MANUAL_ENABLE (0),
+        .SPECULATIVE_PLANNING_ENABLE   (1),
+        .NUMBER_OF_PES      (4)
     ) u_ip (
 `endif
         .clk                      (clk),
@@ -227,9 +227,9 @@ module tb_dram_core #(
         .zero_weight_error        (zero_weight_error),
         .load_error               (load_error),
 
-        .trial_count              (trial_count),
-        .L_BBHT                   (L_BBHT),
-        .actual_grover_iterations (actual_grover_iterations),
+        .shot_count              (shot_count),
+        .requested_iterations                   (requested_iterations),
+        .executed_iterations (executed_iterations),
         .cycle_count              (cycle_count),
 
         .policy_cycles_total      (policy_cycles_total),
@@ -239,11 +239,11 @@ module tb_dram_core #(
         .policy_memo_miss         (policy_memo_miss),
         .policy_max_latency       (policy_max_latency),
 
-        .plan_fifo_level          (plan_fifo_level),
-        .plan_fifo_highwater      (plan_fifo_highwater),
-        .plan_fifo_empty_demand   (plan_fifo_empty_demand),
-        .plan_fifo_hit_count      (plan_fifo_hit_count),
-        .plan_fifo_mismatch_count (plan_fifo_mismatch_count),
+        .plan_queue_level          (plan_queue_level),
+        .plan_queue_highwater      (plan_queue_highwater),
+        .plan_queue_empty_demand   (plan_queue_empty_demand),
+        .plan_queue_hit_count      (plan_queue_hit_count),
+        .plan_queue_miss_count (plan_queue_miss_count),
         .policy_cold_solve_count  (policy_cold_solve_count),
         .policy_spec_solve_count  (policy_spec_solve_count)
 
@@ -341,7 +341,7 @@ module tb_dram_core #(
     // 맞대는 것이 equiv 회귀입니다.
     task run_case;
         input [255:0] label;
-        input         a_shot;        // 1 = NORMAL_SINGLE, 0 = MANUAL_SINGLE
+        input         a_shot;        // 1 = RESTART_SINGLE, 0 = MANUAL_SINGLE
         input integer jt;
         input [1:0]   mode;
         input signed [`GP_DATA_W-1:0] ta;
@@ -419,13 +419,13 @@ module tb_dram_core #(
                 end
             end
 
-            // 두 갈래를 맞댈 한 줄. 앞의 네 항목(정답/인덱스/시도/L_BBHT)은
+            // 두 갈래를 맞댈 한 줄. 앞의 네 항목(정답/인덱스/시도/requested_iterations)은
             // 반드시 같아야 하고, 뒤의 두 항목(반복 수/사이클)은 달라도
             // 됩니다 -- 그 차이가 이 갈래의 이득입니다.
             $display("CASE %0s valid=%0b idx=%0d trials=%0d lbbht=%0d cfgerr=%0b shotlim=%0b budlim=%0b | iters=%0d cyc=%0d",
-                     label, result_valid, result_index, trial_count, L_BBHT,
+                     label, result_valid, result_index, shot_count, requested_iterations,
                      config_error, shot_limit, budget_limit,
-                     actual_grover_iterations, cycle_count);
+                     executed_iterations, cycle_count);
 `ifdef GD_DRAM_BRANCH
             $display("      DRAM 저장누적=%0d 복원누적=%0d frontier=%0d 오류=%0d",
                      store_bursts, restore_bursts, dram_frontier_j, dram_errors);
@@ -471,13 +471,13 @@ module tb_dram_core #(
         // C2 자동. 여기서 DRAM 표가 처음 만들어집니다.
         run_case("C2 NORMAL LT256", 1'b1, 0, `GP_MODE_LT, 16'sd256, 16'sd0,
                  32'h1234_5678, 32'h9ABC_DEF0, 1, 0, 0);
-        iters_c2 = actual_grover_iterations;
+        iters_c2 = executed_iterations;
 
         // C3 같은 설정, 같은 시드로 재실행. 궤적은 C2 와 똑같아야 하고,
         //    DRAM 표가 살아 있으므로 Grover 반복은 줄어야 합니다.
         run_case("C3 NORMAL LT256 재실행", 1'b1, 0, `GP_MODE_LT, 16'sd256, 16'sd0,
                  32'h1234_5678, 32'h9ABC_DEF0, 1, 0, 0);
-        iters_c3 = actual_grover_iterations;
+        iters_c3 = executed_iterations;
 
         // C4 술어 변경. DRAM 표는 옛 술어로 만든 것이라 버려야 합니다.
         run_case("C4 NORMAL GT16128", 1'b1, 0, `GP_MODE_GT, 16'sd16128, 16'sd0,
@@ -487,13 +487,13 @@ module tb_dram_core #(
         //    GT 였으므로 여기서 DRAM 표가 다시 버려지고 새로 자랍니다.
         run_case("C5 NORMAL RANGE", 1'b1, 0, `GP_MODE_RANGE, 16'sd1000, 16'sd1300,
                  32'hFEED_BEEF, 32'h1357_9BDF, 1, 0, 0);
-        iters_fresh  = actual_grover_iterations;
-        trials_fresh = trial_count;
-        lbbht_fresh  = L_BBHT;
+        iters_fresh  = executed_iterations;
+        trials_fresh = shot_count;
+        lbbht_fresh  = requested_iterations;
         idx_fresh    = result_index;
 
         // C5b 같은 설정, 같은 시드로 재실행. 이 갈래의 주장이 그대로 걸린
-        //     자리입니다. 궤적(시도 수 / L_BBHT / 답)은 한 치도 안 달라야
+        //     자리입니다. 궤적(시도 수 / requested_iterations / 답)은 한 치도 안 달라야
         //     하고, Grover 반복은 DRAM 표를 다시 읽는 것으로 대체되어야
         //     합니다. 둘 중 하나만 만족하면 실패입니다 -- 궤적이 같은데
         //     반복이 그대로면 재사용을 안 한 것이고, 반복이 줄었는데 궤적이
@@ -501,9 +501,9 @@ module tb_dram_core #(
         run_case("C5b RANGE 재실행", 1'b1, 0, `GP_MODE_RANGE, 16'sd1000, 16'sd1300,
                  32'hFEED_BEEF, 32'h1357_9BDF, 1, 0, 0);
         // 뒤 케이스들이 카운터를 덮으므로 여기서 바로 떠 둡니다.
-        iters_reuse  = actual_grover_iterations;
-        trials_reuse = trial_count;
-        lbbht_reuse  = L_BBHT;
+        iters_reuse  = executed_iterations;
+        trials_reuse = shot_count;
+        lbbht_reuse  = requested_iterations;
         idx_reuse    = result_index;
 
 `ifdef GD_DRAM_BRANCH

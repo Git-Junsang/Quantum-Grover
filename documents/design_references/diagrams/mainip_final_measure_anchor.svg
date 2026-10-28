@@ -1,16 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="760" height="208" viewBox="0 0 760 208" font-family="Noto Sans KR, Malgun Gothic, Arial, sans-serif">
 <rect width="760" height="208" fill="#ffffff"/>
-<text x="20" y="32" font-size="18" font-weight="bold" fill="#0E1726">측정 경로 단일 시드 앵커 (타겟 256, 결과 · 시도 · L 동일)</text>
-<text x="20" y="76" font-size="14" font-weight="bold" fill="#0E1726">E4 기준</text>
-<text x="20" y="92" font-size="11" fill="#5B6678">M1=0 / M2=0</text>
+<text x="20" y="32" font-size="15" font-weight="bold" fill="#0E1726">Measurement Unit 단일 seed anchor · 4 PEs (256 solutions, 결과 · shot · requested iterations 동일)</text>
+<text x="20" y="76" font-size="14" font-weight="bold" fill="#0E1726">기준</text>
+<text x="20" y="92" font-size="11" fill="#5B6678">Single-Row Build · Linear Select</text>
 <rect x="170" y="64" width="360.0" height="18" rx="2" fill="#0891B2"/>
-<text x="544" y="78" font-size="14" fill="#0891B2">11,100 사이클</text>
-<text x="20" y="120" font-size="14" font-weight="bold" fill="#0E1726">E4-M1</text>
-<text x="20" y="136" font-size="11" fill="#5B6678">M1=1 / M2=0</text>
+<text x="544" y="78" font-size="14" fill="#0891B2">11,100 cycles</text>
+<text x="20" y="120" font-size="14" font-weight="bold" fill="#0E1726">+ Dual-Row Build</text>
+<text x="20" y="136" font-size="11" fill="#5B6678">Dual-Row Build · Linear Select</text>
 <rect x="170" y="108" width="293.6" height="18" rx="2" fill="#D97706"/>
-<text x="544" y="122" font-size="14" fill="#D97706">9,052 사이클</text>
-<text x="20" y="164" font-size="14" font-weight="bold" fill="#0E1726">E4-M2</text>
-<text x="20" y="180" font-size="11" fill="#5B6678">M1=1 / M2=1</text>
+<text x="544" y="122" font-size="14" fill="#D97706">9,052 cycles</text>
+<text x="20" y="164" font-size="14" font-weight="bold" fill="#0E1726">+ Two-Level Select</text>
+<text x="20" y="180" font-size="11" fill="#5B6678">Dual-Row Build · Two-Level Select</text>
 <rect x="170" y="152" width="228.5" height="18" rx="2" fill="#DC2626"/>
-<text x="544" y="166" font-size="14" fill="#DC2626">7,045 사이클</text>
+<text x="544" y="166" font-size="14" fill="#DC2626">7,045 cycles</text>
 </svg>
