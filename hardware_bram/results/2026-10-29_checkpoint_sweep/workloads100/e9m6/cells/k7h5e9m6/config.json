@@ -1,0 +1,10 @@
+{
+  "schema": 2,
+  "k": 7,
+  "h": 5,
+  "e": 9,
+  "m": 6,
+  "policy_mode": 6,
+  "scan_lanes": 4,
+  "force_generic": true
+}
