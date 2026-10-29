@@ -1,6 +1,6 @@
 # 실험 37. Parameterized iteration engines와 measurement BUILD 확장
 
-> [← 실험 36](36_generalized_common500_and_policy_heatmaps.md) · [실험 보고서 index](index.md)
+> [← 실험 36](36_generalized_common500_and_policy_heatmaps.md) · [실험 보고서 index](index.md) · [실험 38 →](38_iteration_square_engine_sweep_200t.md)
 
 | 구현과 확인 범위 | 근거의 축 | 경계 |
 |---|---|---|
@@ -52,6 +52,7 @@ worst-case 후보 cache, BRAM 깊이와 너비의 padding 등은 resource 최적
 1. checkpoint와 policy를 위한 resource 예산을 남긴 상태에서 iteration / measurement 연산부의
    병목과 실제 cycle을 비교하고, 200T 예산 안의 iteration / square engine 후보를 찾습니다.
    비교 중에는 같은 기준 Checkpoint-Capacity · Lookahead-Shots를 사용해 연산부의 효과를 구분합니다.
+   Normal mode 연산 cycle과 200T 대략 판정은 [실험 38](38_iteration_square_engine_sweep_200t.md)입니다.
 2. 유망한 engine 후보마다 Checkpoint-Capacity · Lookahead-Shots를 탐색합니다. 이미 얻은
    고정 engine heatmap의 최적점을 새 engine 구성의 최종값으로 고정하지 않습니다.
 3. 유망 전체 구성의 확장용 memory를 정리하고 실제 synthesis · timing으로 예산을 보정합니다.

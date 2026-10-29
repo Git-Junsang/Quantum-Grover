@@ -157,7 +157,7 @@ def policy(out, cell, limit):
     save(directory / "policy.json", metrics)
 
 
-def validate_bench(path, limit, expected_iterations=None):
+def validate_bench(path, limit, expected_iterations=None, indices=None):
     if "# DONE errors=0" not in path.read_text():
         raise ValueError(f"unfinished simulation: {path}")
     with path.open() as handle:
@@ -165,7 +165,12 @@ def validate_bench(path, limit, expected_iterations=None):
     if len(rows) != limit * 2:
         raise ValueError(f"expected {limit*2} rows in {path}, found {len(rows)}")
     with kh.DEFAULT_TRACE.open() as handle:
-        golden = [json.loads(line) for line in handle if line.strip()][:limit]
+        golden = [json.loads(line) for line in handle if line.strip()]
+    # indices: Common500 positions actually run (BENCH_PER_M stratified sample).
+    # Without it the run is the ordered prefix used by BENCH_LIMIT.
+    golden = [golden[i] for i in indices] if indices is not None else golden[:limit]
+    if len(golden) != limit:
+        raise ValueError(f"expected {limit} golden workloads, found {len(golden)}")
     checkpoint = []
     for index, item in enumerate(golden):
         normal, ckpt = rows[2*index:2*index+2]

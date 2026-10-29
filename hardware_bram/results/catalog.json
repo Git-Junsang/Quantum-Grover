@@ -423,6 +423,13 @@
    "archived": false,
    "category": "primary_or_reference",
    "evidence": "hardware_bram/results/2026-10-29_generalized_e20_m11/evidence.md"
+  },
+  {
+   "name": "2026-10-29_engine_sweep",
+   "path": "hardware_bram/results/2026-10-29_engine_sweep",
+   "archived": false,
+   "category": "primary_or_reference",
+   "evidence": "hardware_bram/results/2026-10-29_engine_sweep/evidence.md"
   }
  ]
 }

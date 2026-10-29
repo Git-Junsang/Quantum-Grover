@@ -127,7 +127,7 @@ def run(command,log,*,cwd=None,env=None,stdout=None,timeout=None):
         subprocess.run([str(item) for item in command],cwd=cwd,env=env,
             stdout=stdout if stdout is not None else stream,stderr=stream,check=True,timeout=timeout)
 
-def prepare(data,out,limit,speculative,force_kernel,fault=False,epoch_reuse=False):
+def prepare(data,out,limit,speculative,force_kernel,fault=False,epoch_reuse=False,per_m=None):
     if not force_kernel and (data['k'] not in (3,4) or data['h']>8 or data['e'] not in (1,2,4) or (data['e']!=4 and data['m']>1)):
         raise ValueError('legacy kernel requested for an unsupported production configuration')
     paths=[ROOT/'hardware_bram/src'/(name+('.sv' if name in dse.SV_CORE else '.v')) for name in dse.CORE+dse.COMM]
@@ -158,9 +158,11 @@ def prepare(data,out,limit,speculative,force_kernel,fault=False,epoch_reuse=Fals
         phase=f'(({hierarchy}.fsm_state==4) ? (16+integer\'({hierarchy}.a_phase)) : integer\'({hierarchy}.fsm_state))'
     monitor=MONITOR.replace('__POLICY_PHASE__',phase)
     adapter=adapter[:adapter.rindex('endmodule')]+'\n`ifndef SYNTHESIS\n'+monitor+'\n`endif\nendmodule\n'
+    selection=(f'first {per_m} seeds of each target count (BENCH_PER_M={per_m})' if per_m
+               else f'{limit} ordered Common500 workloads')
     manifest={'config':data,'workloads':limit,'speculative':speculative,'force_generalized_kernel':force_kernel,
         'fault_injection':fault,'epoch_reuse_injection':epoch_reuse,
-        'scope':f'Main-IP integration with {limit} ordered Common500 workloads and exact policy replay',
+        'scope':f'Main-IP integration with {selection} and exact policy replay',
         'solver_backend':'generic' if generic else 'optimized',
         'sha256':{str(path.relative_to(ROOT)):dse.digest(path) for path in paths},
         'adapter_sha256':hashlib.sha256(adapter.encode()).hexdigest()}
@@ -226,8 +228,14 @@ def validate_trace(path,data):
         'inflight_job_at_end':pending is not None,'epoch_reuse_injections':reuses,'same_oracle_restarts':restarts,
         'warm_same_oracle_restarts':warm_restarts,'profiled_jobs':profiled,'phase_cycles':profile,'errors':0}
 
-def expected_iterations(data,limit):
-    workloads=dse.kh.load_workloads(dse.kh.DEFAULT_TRACE,dse.kh.DEFAULT_ROSTER,max(8,data['h']),limit)
+def per_m_indices(per_m):
+    # Common500 is ordered target count outer (1,4,16,64,256), 100 seeds inner.
+    return [group*100+seed for group in range(5) for seed in range(per_m)]
+
+def expected_iterations(data,limit,indices=None):
+    workloads=dse.kh.load_workloads(dse.kh.DEFAULT_TRACE,dse.kh.DEFAULT_ROSTER,max(8,data['h']),
+        None if indices is not None else limit)
+    if indices is not None:workloads=[workloads[i] for i in indices]
     values=[]
     for workload in workloads:
         held=();physical=0
@@ -238,8 +246,13 @@ def expected_iterations(data,limit):
         values.append(physical)
     return values
 
-def execute(data,out,limit=2,speculative=True,force_kernel=True,fault=False,console=True,epoch_reuse=False):
-    out=out.resolve();manifest=prepare(data,out,limit,speculative,force_kernel,fault,epoch_reuse)
+def execute(data,out,limit=2,speculative=True,force_kernel=True,fault=False,console=True,epoch_reuse=False,per_m=None):
+    # per_m selects a stratified sample instead of the ordered prefix: the first
+    # per_m seeds of every target count, so measurement-heavy workloads are kept.
+    if per_m:limit=5*per_m
+    indices=per_m_indices(per_m) if per_m else None
+    selection_env={'BENCH_PER_M':str(per_m)} if per_m else {'BENCH_LIMIT':str(limit)}
+    out=out.resolve();manifest=prepare(data,out,limit,speculative,force_kernel,fault,epoch_reuse,per_m)
     model_inputs={'sha256':manifest['sha256'],'adapter_sha256':manifest['adapter_sha256'],'build_flags':'assert,O2,real-driver-v1'}
     fingerprint=hashlib.sha256(json.dumps(model_inputs,sort_keys=True).encode()).hexdigest()[:20]
     build=Path('/tmp')/('bbht_general_model_'+fingerprint)
@@ -265,7 +278,7 @@ def execute(data,out,limit=2,speculative=True,force_kernel=True,fault=False,cons
     save(out/'model.json',{'directory':str(build),'inputs':model_inputs,'reused':cached})
     with (out/'bench.csv').open('w') as stdout:
         run([obj/'bench','+POLICY_TRACE='+str(out/'policy_trace.txt'),f'+INJECT_MISMATCH={int(fault)}',f'+INJECT_EPOCH_REUSE={int(epoch_reuse)}'],out/'simulation.log',
-            env=os.environ|{'WL_DIR':str(workload),'BENCH_LIMIT':str(limit)},stdout=stdout,timeout=int(os.environ.get('BBHT_SIM_TIMEOUT','1800')))
+            env=os.environ|{'WL_DIR':str(workload)}|selection_env,stdout=stdout,timeout=int(os.environ.get('BBHT_SIM_TIMEOUT','1800')))
     # Check exact trajectory and physical work for this K/H, not a fixed H<=8
     # replay window. E/M affect execution schedule, never the policy definition.
     if fault:
@@ -279,8 +292,8 @@ def execute(data,out,limit=2,speculative=True,force_kernel=True,fault=False,cons
             writer=csv.DictWriter(stream,fieldnames=list(rows[0]));writer.writeheader()
             for row in rows:writer.writerow(row|{'mismatch':'0'})
             stream.write('# DONE errors=0\n')
-        metrics=dse.validate_bench(out/'bench_logical_check.csv',limit,expected_iterations(data,limit))
-    else:metrics=dse.validate_bench(out/'bench.csv',limit,expected_iterations(data,limit))
+        metrics=dse.validate_bench(out/'bench_logical_check.csv',limit,expected_iterations(data,limit,indices),indices)
+    else:metrics=dse.validate_bench(out/'bench.csv',limit,expected_iterations(data,limit,indices),indices)
     trace=validate_trace(out/'policy_trace.txt',data)
     if fault and trace['injected_mismatches']!=1:raise ValueError('mismatch injection was not exercised')
     if fault and sum(int(row['mismatch']) for row in rows)!=1:
@@ -315,8 +328,11 @@ if __name__=='__main__':
     parser.add_argument('--config',type=Path,required=True);parser.add_argument('--out',type=Path,required=True)
     parser.add_argument('--workloads',type=int,default=2);parser.add_argument('--demand-only',action='store_true')
     parser.add_argument('--legacy-kernel',action='store_true');parser.add_argument('--inject-mismatch',action='store_true')
-    parser.add_argument('--no-console',action='store_true');parser.add_argument('--inject-epoch-reuse',action='store_true');args=parser.parse_args()
+    parser.add_argument('--no-console',action='store_true');parser.add_argument('--inject-epoch-reuse',action='store_true')
+    parser.add_argument('--per-m',type=int,help='stratified sample: first N seeds of each target count (overrides --workloads)')
+    args=parser.parse_args()
     if not 1<=args.workloads<=500:parser.error('--workloads must be 1..500')
+    if args.per_m is not None and not 1<=args.per_m<=100:parser.error('--per-m must be 1..100')
     if args.inject_mismatch and args.inject_epoch_reuse:parser.error('choose one scheduler injection per run')
     execute(generalize.config(args.config),args.out,args.workloads,not args.demand_only,
-        not args.legacy_kernel,args.inject_mismatch,not args.no_console,args.inject_epoch_reuse)
+        not args.legacy_kernel,args.inject_mismatch,not args.no_console,args.inject_epoch_reuse,args.per_m)

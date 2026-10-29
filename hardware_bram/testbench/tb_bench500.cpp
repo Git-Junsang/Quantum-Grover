@@ -187,6 +187,17 @@ int main(int argc, char **argv)
     if (limit < 1 || limit > 500) {
         fprintf(stderr, "BENCH_LIMIT must be 1..500\n"); return 1;
     }
+    // engine 수 sweep 용 층화 표본. 타겟수 다섯 개마다 앞의 BENCH_PER_M 개 시드만
+    // 돌립니다. 순서(타겟수 바깥, 시드 안쪽, Normal 다음 체크포인트)와 리셋 없는
+    // 연속 실행은 전체 Common500 과 같고, 건너뛴 시드만 빠집니다. BENCH_LIMIT 은
+    // 앞에서부터 자르므로 100 이하이면 전부 m=1 이 되어 measurement 비중이 큰
+    // workload 가 빠집니다. 둘은 함께 쓰지 않습니다.
+    const char *per_m_text = getenv("BENCH_PER_M");
+    const int per_m = per_m_text ? atoi(per_m_text) : NSEED;
+    if (per_m < 1 || per_m > NSEED || (per_m_text && limit_text)) {
+        fprintf(stderr, "BENCH_PER_M must be 1..100 and cannot be combined with BENCH_LIMIT\n");
+        return 1;
+    }
     int completed = 0;
     for (int mi = 0; mi < 5; mi++) {
         int M = Ms[mi];
@@ -195,7 +206,7 @@ int main(int argc, char **argv)
         if (bbht_dma_load(words, NDATA) != BBHT_OK) {
             printf("FAIL: dma_load M=%d\n", M); return 1;
         }
-        for (int s = 0; s < g_nseed; s++) {
+        for (int s = 0; s < per_m; s++) {
             for (int mode = 0; mode < 2; mode++) {
                 bbht_config_t cfg; bbht_result_t res;
                 bbht_config_init(&cfg);
@@ -224,8 +235,9 @@ int main(int argc, char **argv)
                 return 0;
             }
         }
-        fprintf(stderr, "M=%d 완료 (%d 시드)\n", M, g_nseed);
+        fprintf(stderr, "M=%d 완료 (%d 시드)\n", M, per_m);
     }
-    printf("# DONE errors=0\n");
+    if (per_m_text) printf("# DONE errors=0 workloads=%d\n", completed);
+    else printf("# DONE errors=0\n");
     return 0;
 }

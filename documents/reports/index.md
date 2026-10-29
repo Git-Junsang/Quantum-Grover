@@ -23,14 +23,15 @@
 
 2026-10-29에 `hardware_bram/results/`를 두 번 정리했습니다. 첫 정리에서 중간 개발 묶음 28개를
 `archive/` 아래로 옮겨 최상위를 59개에서 31개로 줄였고, 두 번째 정리에서 실험 21~33의 evidence 묶음,
-200T implementation pipeline 기록, 문서가 인용하지 않는 중간 묶음까지 20개를 더 옮겨 12개로 줄였습니다. 최상위에는 2026-09 benchmark,
-실험 18의 Six-Stage Ablation, 실험 34~37의 Parameterized RTL 묶음만 남습니다. 전체 경로는
+200T implementation pipeline 기록, 문서가 인용하지 않는 중간 묶음까지 20개를 더 옮겨 12개로 줄였습니다. 정리 직후 최상위에는 2026-09 benchmark,
+실험 18의 Six-Stage Ablation, 실험 34~37의 Parameterized RTL 묶음만 남았고, 그 뒤 실험 38 묶음을 더했습니다. 전체 경로는
 [catalog.json](../../hardware_bram/results/catalog.json), 이동 전후 경로와 파일 보존 확인은
 [첫 정리 기록](../../hardware_bram/results/archive/2026-10-29_organization/evidence.md)과
 [두 번째 정리 기록](../../hardware_bram/results/archive/2026-10-29_organization_round2/evidence.md)에 있습니다.
 
 | 찾을 결과 | 입구 |
 |---|---|
+| iteration engines × square engines sweep · 200T 판정 | [실험 38 evidence](../../hardware_bram/results/2026-10-29_engine_sweep/evidence.md) |
 | iteration / measurement engine 확장 verification | [실험 37 evidence](../../hardware_bram/results/2026-10-29_generalized_e20_m11/evidence.md) |
 | 최신 full Common500 · policy heatmap | [실험 36 evidence](../../hardware_bram/results/2026-10-29_generalized_common500/evidence.md) |
 | Main IP integration · 경계와 복구 verification | [실험 35 evidence](../../hardware_bram/results/2026-10-28_generalized_main_integration/evidence.md) |
@@ -68,7 +69,7 @@
 | 10 | [Two-Track Execution과 Pass 2–Build Fusion: 채택하지 않은 두 시도](10_two_track_execution_and_pass2_build_fusion.md) | request 열 분할 Two-Track Execution과 Pass 2–Build Fusion을 채택하지 않음 |
 | 11 | [채택하지 않은 확장과 variant](11_rejected_extensions.md) | 15 qubits · 16 qubits · 64 lanes 확장과 그 밖의 variant를 채택하지 않음 |
 
-### benchmark · 비교 실험 (12~37)
+### benchmark · 비교 실험 (12~38)
 
 확정 설계를 실물 board와 baseline에 맞대 확인한 실험입니다. 시간순입니다.
 
@@ -100,6 +101,7 @@
 | 35 | [Parameterized Main IP integration](35_parameterized_main_ip_scheduler_integration.md) | 2026-10-29 | Scheduler · Planner · Executor와 실제 연산 경로 연결, 선택 조합 · checkpoint/FIFO 경계 · warm restart · flush 복구 검증 |
 | 36 | [Generalized Common500과 policy heatmap](36_generalized_common500_and_policy_heatmaps.md) | 2026-10-29 | generic solver 단축, 동일 입력 old/new RTL 검증, 고정 병렬도 full Common500 parameter campaign |
 | 37 | [Iteration / measurement engine 범위 확장](37_expanded_iteration_and_measurement_engines.md) | 2026-10-29 | 가변 BUILD, 임의 정수 engine 수, 최대 parameter의 Main IP 검증과 후속 memory · resource 선정 순서 |
+| 38 | [iteration engines × square engines sweep과 200T resource 판정](38_iteration_square_engine_sweep_200t.md) | 2026-10-29 | 20 workloads 층화 표본, Normal mode shot당 cycle 식, 200T에 들어가는 engine 조합과 최대 Checkpoint-Capacity, 일반화 RTL의 BRAM 추론 실패 |
 
 ---
 

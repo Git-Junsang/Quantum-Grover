@@ -1,0 +1,52 @@
+{
+  "device": "xc7a200tfbg484-2",
+  "available": {
+    "lut": 133800,
+    "ff": 267600,
+    "bram": 365.0,
+    "dsp": 740
+  },
+  "limit_fraction": {
+    "lut": 0.75,
+    "ff": 0.75,
+    "bram": 0.9,
+    "dsp": 0.9
+  },
+  "soc_outside_wrapper": {
+    "lut": 13268,
+    "ff": 16640,
+    "bram": 32.0,
+    "dsp": 4
+  },
+  "unit_costs": {
+    "iteration": {
+      "lut": 4202,
+      "ff": 2985
+    },
+    "dataset_copy": {
+      "lut": 1987,
+      "ff": 5,
+      "bram": 17
+    },
+    "square": {
+      "lut": 2282,
+      "ff": 2601,
+      "bram": 1,
+      "dsp": 64
+    },
+    "fixed": {
+      "lut": 5774,
+      "ff": 8556,
+      "bram": 4
+    }
+  },
+  "amplitude_word_bits": 736,
+  "variants": [
+    "current",
+    "banked"
+  ],
+  "scope": "rough estimate from 2026-10-07 routed module costs and RTL memory structure; not a synthesis result",
+  "current_feasible_cells": 77,
+  "banked_feasible_cells": 91,
+  "cells": 220
+}
