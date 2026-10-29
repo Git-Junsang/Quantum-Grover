@@ -16,5 +16,5 @@
 구분해서 평가해야 합니다.
 
 수치, baseline, verification 절차와 재현 정보는
-[evidence bundle](../../hardware_bram/results/2026-10-28_k3h3_performance_recheck/evidence.md)에 있습니다.
+[evidence bundle](../../hardware_bram/results/archive/policy_optimization/2026-10-28_k3h3_performance_recheck/evidence.md)에 있습니다.
 전체 RVX SoC console verification은 실험 31의 같은 source 결과를 참조하며 이번에는 재실행하지 않았습니다.

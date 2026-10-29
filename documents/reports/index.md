@@ -21,11 +21,13 @@
 
 ## results 탐색
 
-2026-10-29 정리 시점에 `hardware_bram/results/`의 중간 개발 묶음 28개를 `archive/` 아래로 이동했습니다.
-최상위의 실험 묶음은 59개에서 31개로 줄였고, 최신 verification과 과거 benchmark의 대표 근거는
-기존 위치에 유지했습니다. 전체 경로는 [catalog.json](../../hardware_bram/results/catalog.json),
-이동 전후 경로와 파일 보존 확인은
-[정리 기록](../../hardware_bram/results/archive/2026-10-29_organization/evidence.md)에 있습니다.
+2026-10-29에 `hardware_bram/results/`를 두 번 정리했습니다. 첫 정리에서 중간 개발 묶음 28개를
+`archive/` 아래로 옮겨 최상위를 59개에서 31개로 줄였고, 두 번째 정리에서 실험 21~33의 evidence 묶음,
+200T implementation pipeline 기록, 문서가 인용하지 않는 중간 묶음까지 20개를 더 옮겨 12개로 줄였습니다. 최상위에는 2026-09 benchmark,
+실험 18의 Six-Stage Ablation, 실험 34~37의 Parameterized RTL 묶음만 남습니다. 전체 경로는
+[catalog.json](../../hardware_bram/results/catalog.json), 이동 전후 경로와 파일 보존 확인은
+[첫 정리 기록](../../hardware_bram/results/archive/2026-10-29_organization/evidence.md)과
+[두 번째 정리 기록](../../hardware_bram/results/archive/2026-10-29_organization_round2/evidence.md)에 있습니다.
 
 | 찾을 결과 | 입구 |
 |---|---|
@@ -33,11 +35,11 @@
 | 최신 full Common500 · policy heatmap | [실험 36 evidence](../../hardware_bram/results/2026-10-29_generalized_common500/evidence.md) |
 | Main IP integration · 경계와 복구 verification | [실험 35 evidence](../../hardware_bram/results/2026-10-28_generalized_main_integration/evidence.md) |
 | 독립 parameterized RTL block verification | [실험 34 evidence](../../hardware_bram/results/2026-10-28_parameterized_rtl/evidence.md) |
-| 직전 production policy optimization | [실험 31 evidence](../../hardware_bram/results/2026-10-28_policy_scan_parallel_verified/evidence.md) |
-| 기존 200T implementation pipeline 기록 | [timing evidence](../../hardware_bram/results/2026-10-28_policy_rank_timing/evidence.md) |
+| 직전 production policy optimization | [실험 31 evidence](../../hardware_bram/results/archive/policy_optimization/2026-10-28_policy_scan_parallel_verified/evidence.md) |
+| 기존 200T implementation pipeline 기록 | [timing evidence](../../hardware_bram/results/archive/implementation_pipeline/2026-10-28_policy_rank_timing/evidence.md) |
 
-`archive/`의 `policy_search/`, `policy_unpipeline/`, `policy_optimization/`,
-`parameterized_blocks/`는 중간 개발 결과를 주제별로 묶습니다. 묶음의 날짜·이름과 원자료는
+`archive/`의 `design_space/`, `policy_search/`, `policy_optimization/`, `policy_unpipeline/`,
+`parameterized_blocks/`, `implementation_pipeline/`은 중간 개발 결과를 주제별로 묶습니다. 묶음의 날짜·이름과 원자료는
 유지합니다. 과거 log·CSV·JSON 안의 실행 경로는 당시 기록이므로 수정하지 않았습니다.
 독립 block unit test의 새 출력은 `/tmp/`에 생성하여 과거 evidence를 덮어쓰지 않습니다.
 이번 정리에서 background implementation의 상태는 조회하지 않았습니다.

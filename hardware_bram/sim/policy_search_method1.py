@@ -24,7 +24,7 @@ import kh_sweep
 
 
 DEFAULT_OUT = (
-    kh_sweep.ROOT / "hardware_bram/results/2026-10-26_policy_search_method1"
+    kh_sweep.ROOT / "hardware_bram/results/archive/policy_search/2026-10-26_policy_search_method1"
 )
 
 

@@ -1,0 +1,18 @@
+{"stage": "rtl_common500", "updated_utc": "2026-10-28T08:22:09.326646+00:00", "pid": 1131985, "platform": "bbht_grover_k3h3_e4_m2_policy6_20261028"}
+  2026-10-28_k3h3_e4_m2_policy6_board: python3 -> workload.log
+  k3h3_e4_b2_p6: gcc -> driver_build.log
+  k3h3_e4_b2_p6: verilator -> sim_build.log
+Results: /workspace/hardware_bram/results/2026-10-28_k3h3_e4_m2_policy6_board/summary.csv
+{"stage": "soc_console", "updated_utc": "2026-10-28T08:24:32.466629+00:00", "pid": 1131985, "platform": "bbht_grover_k3h3_e4_m2_policy6_20261028"}
+{"stage": "waiting_for_vivado_slot", "updated_utc": "2026-10-28T08:30:04.588874+00:00", "pid": 1131985, "platform": "bbht_grover_k3h3_e4_m2_policy6_20261028"}
+{"stage": "implementation", "updated_utc": "2026-10-28T08:30:04.599503+00:00", "pid": 1131985, "platform": "bbht_grover_k3h3_e4_m2_policy6_20261028"}
+{"stage": "failed", "updated_utc": "2026-10-28T08:51:35.665812+00:00", "pid": 1131985, "platform": "bbht_grover_k3h3_e4_m2_policy6_20261028", "failed_stage": "implementation", "error": "implementation_result.log: command exited 1"}
+Traceback (most recent call last):
+  File "/workspace/hardware_bram/results/2026-10-28_k3h3_e4_m2_policy6_board/pipeline_worker.py", line 131, in <module>
+    try: main()
+         ^^^^^^
+  File "/workspace/hardware_bram/results/2026-10-28_k3h3_e4_m2_policy6_board/pipeline_worker.py", line 110, in main
+    run([SYN,'result',PLATFORM_NAME],'implementation_result.log')
+  File "/workspace/hardware_bram/results/2026-10-28_k3h3_e4_m2_policy6_board/pipeline_worker.py", line 47, in run
+    raise RuntimeError(f'{log}: command exited {result.returncode}')
+RuntimeError: implementation_result.log: command exited 1

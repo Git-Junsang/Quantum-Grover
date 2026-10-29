@@ -41,7 +41,7 @@ DEFAULT_ROSTER = (
     / "software/testbench_data/2026-09-08_common500"
     / "official_board_seed_roster.h"
 )
-DEFAULT_OUT = ROOT / "hardware_bram/results/2026-10-26_kh_sweep"
+DEFAULT_OUT = ROOT / "hardware_bram/results/archive/design_space/2026-10-26_kh_sweep"
 TB = ROOT / "hardware_bram/testbench/tb_policy_kh_sweep.sv"
 POLICY_RTL = ROOT / "hardware_bram/src/grover_policy.v"
 RTL_INCLUDE = ROOT / "hardware_bram/src"

@@ -182,4 +182,4 @@ swap에서만 유지된다. 7,403번의 policy 결정 동안 다섯 번째 check
 - `documents/reports/24_seed_first_branch_and_bound_40_cell_prediction.md`
 - `hardware_bram/src/grover_checkpoint.v`
 - `hardware_bram/src/grover_policy.v`
-- `hardware_bram/results/2026-10-26_policy_search_full40_seedfull/full40_estimates.csv`
+- `hardware_bram/results/archive/policy_search/2026-10-26_policy_search_full40_seedfull/full40_estimates.csv`

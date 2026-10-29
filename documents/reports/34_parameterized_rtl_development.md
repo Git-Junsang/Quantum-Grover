@@ -28,4 +28,4 @@ production 지원 조합은 기존 solver를 유지하고 확장 조합은 param
 console observer의 이전 driver 필드명 때문에 implementation 전에 중단된 상태였습니다.
 observer 사본의 compile·실행을 확인하고 완료한 RTL 검증의 source hash를 대조한 뒤 재제출했습니다.
 재제출 뒤 implementation 결과는 반복 조회하지 않았습니다.
-수정·회귀·재시도 방식은 [timing evidence](../../hardware_bram/results/2026-10-28_policy_rank_timing/evidence.md)에 있습니다.
+수정·회귀·재시도 방식은 [timing evidence](../../hardware_bram/results/archive/implementation_pipeline/2026-10-28_policy_rank_timing/evidence.md)에 있습니다.

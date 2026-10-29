@@ -184,7 +184,7 @@ stall 노출계수는 집계 기반 근사입니다. policy와 Grover 실행의 
 - 40 cells exact search script: `hardware_bram/sim/policy_search_method1.py`
 - cycle/resource 분석기: `hardware_bram/sim/policy_full40_analysis.py`
 - bound pipeline 추정 microkernel: `hardware_bram/sim/full_bound_pipeline_estimate.v`
-- 40 cells 원시 search 결과: `hardware_bram/results/2026-10-26_policy_search_full40_seedfull/method1_search.csv`
-- 전체 예상치: `hardware_bram/results/2026-10-26_policy_search_full40_seedfull/full40_estimates.csv`
-- survivor CSV: `hardware_bram/results/2026-10-26_policy_search_full40_seedfull/survivors_vs_fullbound_k3h3.csv`
-- heatmap: `hardware_bram/results/2026-10-26_policy_search_full40_seedfull/full40_estimates_heatmap.png`
+- 40 cells 원시 search 결과: `hardware_bram/results/archive/policy_search/2026-10-26_policy_search_full40_seedfull/method1_search.csv`
+- 전체 예상치: `hardware_bram/results/archive/policy_search/2026-10-26_policy_search_full40_seedfull/full40_estimates.csv`
+- survivor CSV: `hardware_bram/results/archive/policy_search/2026-10-26_policy_search_full40_seedfull/survivors_vs_fullbound_k3h3.csv`
+- heatmap: `hardware_bram/results/archive/policy_search/2026-10-26_policy_search_full40_seedfull/full40_estimates_heatmap.png`

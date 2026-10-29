@@ -1,0 +1,9 @@
+{"stage": "waiting_for_vivado_slot", "updated_utc": "2026-10-28T17:55:43.228408+00:00", "pid": 1398345, "platform": "bbht_grover_k3h3_e4_m2_rankfix_20261028", "attempt": 4, "recovery": "serial synthesis"}
+{"stage": "implementation", "updated_utc": "2026-10-28T17:55:43.242473+00:00", "pid": 1398345, "platform": "bbht_grover_k3h3_e4_m2_rankfix_20261028", "attempt": 4, "strategy": "explore_serial_synthesis", "max_attempts": 4}
+{"stage": "failed", "updated_utc": "2026-10-28T19:32:14.629266+00:00", "pid": 1398345, "platform": "bbht_grover_k3h3_e4_m2_rankfix_20261028", "failed_stage": "implementation", "error": "Serial synthesis/implementation did not pass the bitstream and timing gate; see attempt 4 logs."}
+Traceback (most recent call last):
+  File "/workspace/hardware_bram/results/2026-10-28_policy_rank_timing/retry_low_memory_20261029.py", line 101, in <module>
+    main()
+  File "/workspace/hardware_bram/results/2026-10-28_policy_rank_timing/retry_low_memory_20261029.py", line 83, in main
+    raise RuntimeError('Serial synthesis/implementation did not pass the bitstream and timing gate; see attempt 4 logs.')
+RuntimeError: Serial synthesis/implementation did not pass the bitstream and timing gate; see attempt 4 logs.

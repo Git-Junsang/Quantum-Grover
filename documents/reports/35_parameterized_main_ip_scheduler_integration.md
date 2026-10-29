@@ -49,4 +49,4 @@ timing-only action queue는 다시 추가하지 않았습니다.
 
 기존 고정 source의 background 200T 작업은 분리했습니다. 사용자 요청 재조회에서 synthesis 중 process 종료를
 확인하고 serial synthesis로 재제출했습니다. 완료 여부는 재제출 뒤 조회하지 않았으며 기록은
-[timing evidence](../../hardware_bram/results/2026-10-28_policy_rank_timing/evidence.md)에 있습니다.
+[timing evidence](../../hardware_bram/results/archive/implementation_pipeline/2026-10-28_policy_rank_timing/evidence.md)에 있습니다.

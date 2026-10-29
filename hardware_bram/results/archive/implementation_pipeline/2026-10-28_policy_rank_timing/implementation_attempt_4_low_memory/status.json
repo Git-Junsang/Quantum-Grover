@@ -1,0 +1,6 @@
+{
+  "implementation_exit": 0,
+  "gate_exit": 1,
+  "strategy": "explore_serial_synthesis",
+  "source_manifest": "../pipeline_inputs.json"
+}

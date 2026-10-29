@@ -6,7 +6,7 @@
 |---|---|---|
 | 정확히 평가한 seed를 canonical search에서 다시 발행하지 않음 | 독립 exhaustive solver와 tuple·비용 비교 | 통과 |
 | 같은 relaxed cost를 checkpoint segment별로 병렬 계산해 Lookahead-Shots에 비례하던 응답 latency 제거 | request별 기존 lower bound oracle, a Checkpoint-Capacity of 3 and 3-shot Lookahead와 a Checkpoint-Capacity of 4 and 8-shot Lookahead 집중 RTL 검사 | 통과 |
-| Common500의 policy 계산 비용 감소 | 단독·통합 RTL | [evidence bundle](../../hardware_bram/results/2026-10-28_policy_gap_bound_final/evidence.md) |
+| Common500의 policy 계산 비용 감소 | 단독·통합 RTL | [evidence bundle](../../hardware_bram/results/archive/policy_optimization/2026-10-28_policy_gap_bound_final/evidence.md) |
 | 전체 RVX SoC console의 RUN·STAT·ENUM이 같은 source 기준과 일치 | Questa, Verilator의 같은 순서 replay | 통과 |
 | 새 lower bound circuit의 200T resource·routing timing | 전체 RVX SoC implementation | 미검증 |
 

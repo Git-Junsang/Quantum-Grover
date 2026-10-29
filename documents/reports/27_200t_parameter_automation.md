@@ -5,8 +5,8 @@
 | 정한 것 / 확인할 것 | 근거의 축 | 상태 |
 |---|---|---|
 | 200T의 실제 부품과 clock을 설정으로 받고 Checkpoint-Capacity · Lookahead-Shots · number of PEs · Build row 수를 같은 runner로 변경 | JSON → adapter → RTL simulation → OOC synthesis·routing → 표·heatmap | implementation 완료 |
-| Build를 4 rows/cycle로 확장하고 기존 Born rule을 보존 | 단독 RTL 비교, Common500 통합 RTL | [evidence bundle](../../hardware_bram/results/2026-10-27_200t_dse/evidence.md) |
-| 7-shot · 8-shot Lookahead에서 speculative planning root까지 Lookahead-Shots 전체를 공급 | Iteration-Count Predictor 독립 test vector, Checkpoint-Capacity · Lookahead-Shots 변경 통합 RTL | [Checkpoint-Capacity · Lookahead-Shots 확인 evidence bundle](../../hardware_bram/results/2026-10-27_200t_kh_smoke/evidence.md) |
+| Build를 4 rows/cycle로 확장하고 기존 Born rule을 보존 | 단독 RTL 비교, Common500 통합 RTL | [evidence bundle](../../hardware_bram/results/archive/design_space/2026-10-27_200t_dse/evidence.md) |
+| 7-shot · 8-shot Lookahead에서 speculative planning root까지 Lookahead-Shots 전체를 공급 | Iteration-Count Predictor 독립 test vector, Checkpoint-Capacity · Lookahead-Shots 변경 통합 RTL | [Checkpoint-Capacity · Lookahead-Shots 확인 evidence bundle](../../hardware_bram/results/archive/design_space/2026-10-27_200t_kh_smoke/evidence.md) |
 | 200T에서 policy · Measurement Microarchitecture · number of PEs 최적화 후 최종 Checkpoint-Capacity · Lookahead-Shots를 선택 | full RVX SoC routing, 전체 workload, board | 후속 단계 |
 
 ## 목표와 이름

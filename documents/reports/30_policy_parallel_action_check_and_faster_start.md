@@ -23,7 +23,7 @@ metadata와 demand마다 대조하는 simulation assertion을 넣었고, metadat
 수동 호환 설정의 기존 경로는 유지합니다.
 
 수치, source hash, 단계별 profile과 verification 범위는
-[evidence bundle](../../hardware_bram/results/2026-10-28_policy_parallel_paths_verified/evidence.md)에 모았습니다.
+[evidence bundle](../../hardware_bram/results/archive/policy_optimization/2026-10-28_policy_parallel_paths_verified/evidence.md)에 모았습니다.
 
 ## 범위
 

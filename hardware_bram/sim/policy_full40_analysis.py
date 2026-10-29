@@ -19,14 +19,14 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_SEARCH = (
-    ROOT / "hardware_bram/results/2026-10-26_policy_search_full40_seedfull"
+    ROOT / "hardware_bram/results/archive/policy_search/2026-10-26_policy_search_full40_seedfull"
     / "method1_search.csv"
 )
 DEFAULT_BASELINE = (
-    ROOT / "hardware_bram/results/2026-10-26_kh_sweep/kh_sweep.csv"
+    ROOT / "hardware_bram/results/archive/design_space/2026-10-26_kh_sweep/kh_sweep.csv"
 )
 DEFAULT_OUT = (
-    ROOT / "hardware_bram/results/2026-10-26_policy_search_full40_seedfull"
+    ROOT / "hardware_bram/results/archive/policy_search/2026-10-26_policy_search_full40_seedfull"
 )
 
 # Measured integrated K3H3-E4-M2 Common500 anchor.

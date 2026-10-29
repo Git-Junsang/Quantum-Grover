@@ -38,7 +38,7 @@ memory: 4 threads로 돌린 두 번의 시도는 container memory(최고 10.8 GB
 첫 부류를 없애려고 search 제어 block을 memo table hit/miss 분기 **앞으로** 옮겼습니다
 (`grover_policy.v`). 같은 cycle의 miss 분기가 나중에 쓰므로 동작은 같고, policy 단독
 34회 · `regress-real` · policy search mode 6의 bench500이 cycle 단위로 같음을 확인했습니다
-([policy RTL 묶음](../../../../../results/2026-10-27_policy_seed_first/evidence.md)).
+([policy RTL 묶음](../../../../../results/archive/policy_search/2026-10-27_policy_seed_first/evidence.md)).
 2차 implementation 결과는 끝나면 이 묶음에 `v2_*/` 로 더합니다.
 
 `bitstream_sha256.txt` 는 1차 build bitstream의 hash입니다. timing 위반이라 board에 올리지

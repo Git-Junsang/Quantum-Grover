@@ -26,7 +26,7 @@ Solver의 SCAN_LANES와 Accelerator Core의 POLICY_SCAN_LANES를 추가했습니
 폭은 CANON bank 수 이하여야 합니다. root 입력 값 정렬도 기존 Build와 병행하도록 옮겼습니다.
 
 source hash·정확성 논거·benchmark 원자료·전체 SoC 상태·재현 명령은
-[evidence bundle](../../hardware_bram/results/2026-10-28_policy_scan_parallel_verified/evidence.md)에 있습니다.
+[evidence bundle](../../hardware_bram/results/archive/policy_optimization/2026-10-28_policy_scan_parallel_verified/evidence.md)에 있습니다.
 
 ## 해석의 범위
 

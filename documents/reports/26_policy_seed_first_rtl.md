@@ -66,7 +66,7 @@ policy 계산의 대부분은 Grover 실행 뒤에 숨기 때문에 전체 cycle
   커서, Dual-Row Build는 어떤 Checkpoint-Capacity · Lookahead-Shots로도 Triple-Row Build의 a Checkpoint-Capacity of 3 and 3-shot Lookahead를 이기지 못합니다.
 
 cell별 표, model, 40 cells heatmap, resource 무제한 가정의 Checkpoint-Capacity 1~10 × 1-shot ~ 10-shot Lookahead 추정은
-[Checkpoint-Capacity · Lookahead-Shots evidence bundle](../../hardware_bram/results/2026-10-27_kh_sweep_m2_m3/evidence.md)에 있습니다.
+[Checkpoint-Capacity · Lookahead-Shots evidence bundle](../../hardware_bram/results/archive/design_space/2026-10-27_kh_sweep_m2_m3/evidence.md)에 있습니다.
 
 ### implementation
 
@@ -74,7 +74,7 @@ OOC placement · routing(100 MHz)은 policy 단독 a Checkpoint-Capacity of 3 an
 +0.068 ns, LUT +1,011). Arty 100T 전체 SoC 1차 implementation은 slice 99.07 %, WNS −0.302 ns로
 실패했습니다. 실패 88 경로 중 68 개가 memo table BRAM 출력에서 search 제어 register의 enable로 가는
 경로였고, search 제어 block를 memo table hit/miss 분기 앞으로 옮겨 없앴습니다(cycle 동일 확인).
-2차 implementation이 진행 중입니다. 근거는 [policy RTL evidence bundle](../../hardware_bram/results/2026-10-27_policy_seed_first/evidence.md)
+2차 implementation이 진행 중입니다. 근거는 [policy RTL evidence bundle](../../hardware_bram/results/archive/policy_search/2026-10-27_policy_seed_first/evidence.md)
 과 [`capacity3_lookahead3_pes4_triplerow_twolevel_seedfirst_singleexit` implementation evidence bundle](../../hardware_bram/configurations/capacity3_lookahead3_pes4_triplerow_twolevel_seedfirst_singleexit/vivado/vivado_bbht_grover_k3h3_e4_m3_s6/2026-10-27_arty100t_build/evidence.md).
 
 ## 남은 일

@@ -19,6 +19,6 @@ Common500과 전체 SoC verification 후 Vivado 하나로 200T implementation을
 다시 load합니다. 실패하면 해당 단계에서 멈춰 기록합니다. Checkpoint-Capacity · Lookahead-Shots 일반화는 포함하지 않습니다.
 
 설정·source hash·worker·제출 및 판정 범위는
-[evidence bundle](../../hardware_bram/results/2026-10-28_k3h3_e4_m2_policy6_board/evidence.md)에 있습니다.
+[evidence bundle](../../hardware_bram/results/archive/implementation_pipeline/2026-10-28_k3h3_e4_m2_policy6_board/evidence.md)에 있습니다.
 
 조회 뒤 timing 수정 재시도와 일반화 블록 개발은 [실험 34](34_parameterized_rtl_development.md)로 이어집니다.

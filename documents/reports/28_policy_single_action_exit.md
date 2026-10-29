@@ -5,7 +5,7 @@
 | 확인한 것 | 근거의 축 | 상태 |
 |---|---|---|
 | Seed-First Branch and Bound with Single-Action Exit의 단일 후보에서 Scan·lower bound·memo table 대기 없이 같은 계획 반환 | 독립 exhaustive solver 비교, Common500 단독·통합 RTL | 통과 |
-| mean policy 비용과 실제 노출 stall 감소 | 동일 a Checkpoint-Capacity of 3 and 3-shot Lookahead · 4 PEs · Triple-Row Build의 수정 전후 RTL cycle | [evidence bundle](../../hardware_bram/results/2026-10-28_policy_single_action/evidence.md) |
+| mean policy 비용과 실제 노출 stall 감소 | 동일 a Checkpoint-Capacity of 3 and 3-shot Lookahead · 4 PEs · Triple-Row Build의 수정 전후 RTL cycle | [evidence bundle](../../hardware_bram/results/archive/policy_optimization/2026-10-28_policy_single_action/evidence.md) |
 | 이번 RTL의 전체 RVX SoC·200T timing·board 동작 | 전체 SoC 및 실물 | 미검증 |
 
 ## 결정

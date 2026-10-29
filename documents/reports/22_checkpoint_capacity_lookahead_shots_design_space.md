@@ -16,7 +16,7 @@ Common500 request BBHT trajectory 500개, policy 결정 7,403회를 사용했습
 
 ## 결과
 
-![Checkpoint-Capacity · Lookahead-Shots 3축 heatmap](../../hardware_bram/results/2026-10-26_kh_sweep/kh_heatmap.png)
+![Checkpoint-Capacity · Lookahead-Shots 3축 heatmap](../../hardware_bram/results/archive/design_space/2026-10-26_kh_sweep/kh_heatmap.png)
 
 | Checkpoint-Capacity | Lookahead-Shots | executed iterations 감소 | actions/decision | RTL cycles/decision | integrated stall |
 |:-:|:-:|---:|---:|---:|---:|
@@ -63,4 +63,4 @@ initialization 비용과 search 비용을 공정하게 분리할 수 있습니�
 source, next set, action count가 일치했습니다.
 
 원본 CSV, RTL 요약, 재현 명령은
-[결과 근거](../../hardware_bram/results/2026-10-26_kh_sweep/evidence.md)에 있습니다.
+[결과 근거](../../hardware_bram/results/archive/design_space/2026-10-26_kh_sweep/evidence.md)에 있습니다.

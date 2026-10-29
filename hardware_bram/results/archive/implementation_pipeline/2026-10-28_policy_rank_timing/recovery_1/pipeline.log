@@ -1,0 +1,18 @@
+{"stage": "solver_regression", "updated_utc": "2026-10-28T12:00:16.334799+00:00", "pid": 1247180, "platform": "bbht_grover_k3h3_e4_m2_rankfix_20261028"}
+{"stage": "rtl_common500", "updated_utc": "2026-10-28T12:03:42.361765+00:00", "pid": 1247180, "platform": "bbht_grover_k3h3_e4_m2_rankfix_20261028"}
+  2026-10-28_policy_rank_timing: python3 -> workload.log
+  k3h3_e4_b2_p6: gcc -> driver_build.log
+  k3h3_e4_b2_p6: verilator -> sim_build.log
+Results: /workspace/hardware_bram/results/2026-10-28_policy_rank_timing/summary.csv
+{"stage": "failed", "updated_utc": "2026-10-28T12:06:00.505907+00:00", "pid": 1247180, "platform": "bbht_grover_k3h3_e4_m2_rankfix_20261028", "failed_stage": "rtl_common500", "error": "console_build.log: command exited 1"}
+Traceback (most recent call last):
+  File "/workspace/hardware_bram/results/2026-10-28_policy_rank_timing/pipeline_worker.py", line 159, in <module>
+    try: main()
+         ^^^^^^
+  File "/workspace/hardware_bram/results/2026-10-28_policy_rank_timing/pipeline_worker.py", line 86, in main
+    console_reference()
+  File "/workspace/hardware_bram/results/2026-10-28_policy_rank_timing/pipeline_worker.py", line 63, in console_reference
+    run(['g++','-O2','-std=c++17','-DBBHT_HOST_TEST','-DBBHT_NO_PRINTF',
+  File "/workspace/hardware_bram/results/2026-10-28_policy_rank_timing/pipeline_worker.py", line 47, in run
+    raise RuntimeError(f'{log}: command exited {result.returncode}')
+RuntimeError: console_build.log: command exited 1

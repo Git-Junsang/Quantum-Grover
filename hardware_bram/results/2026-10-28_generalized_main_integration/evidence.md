@@ -142,7 +142,7 @@ worker는 1차 implementation 단계였습니다([observation](background_observ
 않았습니다. 일반 스레드 제한과 별개인 `synth.maxThreads`가 기본값 7임을 local Vivado에서 확인하고,
 일반 / 합성 스레드를 각각 1로 제한하는 4차 실행을 제출했습니다. RTL과 clock constraints는 유지합니다.
 이는 제출 기록이며 재제출 후 완료 상태를 조회하지 않았습니다. 자세한 기록은
-[timing evidence](../2026-10-28_policy_rank_timing/evidence.md)에 있습니다.
+[timing evidence](../archive/implementation_pipeline/2026-10-28_policy_rank_timing/evidence.md)에 있습니다.
 
 남은 작업은 전체 Common500 성능 campaign, 폭 확장 경로의 전체 SoC 검증과 200T synthesis / implementation,
 board 검증입니다. 사용자 요청에 따라 현재 RTL · 검증 결과 · 남은 범위를 진행 상태 checkpoint로 commit합니다.

@@ -1,0 +1,218 @@
+[
+  {
+    "old_path": "documents/reports/21_policy_memo_table_compaction.md",
+    "path": "documents/reports/21_policy_memo_table_compaction.md",
+    "before_sha256": "be65f9293ecfe1c2f1b52429c0374dccb7f48f42bc1ee4b0970059a8e4a33774",
+    "after_sha256": "2d2a155c6f6e0935c1bbc143d4ef61411f90fbff008f814124fe61d45499e01e"
+  },
+  {
+    "old_path": "documents/reports/22_checkpoint_capacity_lookahead_shots_design_space.md",
+    "path": "documents/reports/22_checkpoint_capacity_lookahead_shots_design_space.md",
+    "before_sha256": "92d1410bf1cf6627e25a7eec2b0a5463224707a1bef219c11e1dd5d76383403f",
+    "after_sha256": "557e5e03274e449a031d2ffe7204b799f01538d0daca6dbc5affe49cc0077681"
+  },
+  {
+    "old_path": "documents/reports/23_policy_search_method_1.md",
+    "path": "documents/reports/23_policy_search_method_1.md",
+    "before_sha256": "0aa36f1db896a84a88d3efc10cdd151c2965a548b90e560032251442eb167ff1",
+    "after_sha256": "bd89bace15fd67fe6928d5bf8acbde571150f8d6326b279c37af1567298880e8"
+  },
+  {
+    "old_path": "documents/reports/24_seed_first_branch_and_bound_40_cell_prediction.md",
+    "path": "documents/reports/24_seed_first_branch_and_bound_40_cell_prediction.md",
+    "before_sha256": "fb258e6dedef2904dad0df6c7d013a4c6e9307aac6771c21b5479f08b567f224",
+    "after_sha256": "f5e94ad02c708f0591a950a98f1b3f731f2c31b8b18a992fe73c52c5402bc830"
+  },
+  {
+    "old_path": "documents/reports/25_triple_row_build_capacity_5_resource_review.md",
+    "path": "documents/reports/25_triple_row_build_capacity_5_resource_review.md",
+    "before_sha256": "441c4af10adc3f166e0b7ca0a834cb1639d0f97f6bf08327f24b20fbddc23df5",
+    "after_sha256": "7d13b8dd0407fa579eef1b574ca87e35601a577fb26df849347f4912c1791a3b"
+  },
+  {
+    "old_path": "documents/reports/26_policy_seed_first_rtl.md",
+    "path": "documents/reports/26_policy_seed_first_rtl.md",
+    "before_sha256": "de4aa1b8f120dd40b63b7041dc248e91c611610c904e2877b31d1e9210b6f843",
+    "after_sha256": "ec8c6068b2febf35f00179d407c437224af4def05408b574385871f56572fdf1"
+  },
+  {
+    "old_path": "documents/reports/27_200t_parameter_automation.md",
+    "path": "documents/reports/27_200t_parameter_automation.md",
+    "before_sha256": "b914db915fc2aa771c7c71c29efa67522c0591a07c5b4b1d5dcc10108bf05d57",
+    "after_sha256": "9b5e05962769e5531f778a64af8da37897e25270eed99d057a4903e05c8b7920"
+  },
+  {
+    "old_path": "documents/reports/28_policy_single_action_exit.md",
+    "path": "documents/reports/28_policy_single_action_exit.md",
+    "before_sha256": "9e081975ab98340782f77bd5e76a9f29ad1e5fff3ec8b49b90755774397bfa72",
+    "after_sha256": "e1687f2cd6451e68e1a4e369c92b53ef98f5a349e716bad49311e76b2ee4ae7a"
+  },
+  {
+    "old_path": "documents/reports/29_policy_per_segment_parallel_lower_bound.md",
+    "path": "documents/reports/29_policy_per_segment_parallel_lower_bound.md",
+    "before_sha256": "ccea239f209e59cad8f2bce79f16cb7fb6aeab78a320f0d5aeedfa1e6a49818e",
+    "after_sha256": "63c91fb56e338568da21cb771e6bca4b6b84c4942b4b80c22bbb8f6ad8011967"
+  },
+  {
+    "old_path": "documents/reports/30_policy_parallel_action_check_and_faster_start.md",
+    "path": "documents/reports/30_policy_parallel_action_check_and_faster_start.md",
+    "before_sha256": "29363de807461a238f5efe88bcdbda0d6f87b7e59ea0dd63d94c44e75ba57f62",
+    "after_sha256": "e236f18f385ef5fc80cc9e6fedead339cebf4280039c832c04c463b4ec008e32"
+  },
+  {
+    "old_path": "documents/reports/31_policy_optimality_early_exit_and_parallel_scan.md",
+    "path": "documents/reports/31_policy_optimality_early_exit_and_parallel_scan.md",
+    "before_sha256": "c5ff795c524be96881af343e1087227aa4711af042d54e02d278480af4dce27d",
+    "after_sha256": "a6bf941aa92cd4b901b2a6010b947d2d3b7234624dd46ceb30bf67a349ad5efb"
+  },
+  {
+    "old_path": "documents/reports/32_capacity_3_lookahead_3_performance_recheck.md",
+    "path": "documents/reports/32_capacity_3_lookahead_3_performance_recheck.md",
+    "before_sha256": "d3c94a03b72fc2cca0a8d106dbacb64d49f5dd61271992142707049a75641dbd",
+    "after_sha256": "a65d0aba93989bcd1c1430bbc4fb7a649b82ebcfcd061d2cbc495a0938100a01"
+  },
+  {
+    "old_path": "documents/reports/33_latest_policy_two_level_select_200t_board_pipeline.md",
+    "path": "documents/reports/33_latest_policy_two_level_select_200t_board_pipeline.md",
+    "before_sha256": "e21e13902a1aee579fcd424c47f1f31e4425a48b01504783f1f126538c80501a",
+    "after_sha256": "9682f93588ddcf086538f7b79101eea8e02dd6963bf72e5959aabbaa1a4cf7cd"
+  },
+  {
+    "old_path": "documents/reports/34_parameterized_rtl_development.md",
+    "path": "documents/reports/34_parameterized_rtl_development.md",
+    "before_sha256": "cc821edb725fe2757105acdc502ab18bea6e288fcb499cd00178888d1f0c2277",
+    "after_sha256": "28a38743c1e8b92fdd14904ad2a37927f36476c15108c7ef56be6fdf074ca8c3"
+  },
+  {
+    "old_path": "documents/reports/35_parameterized_main_ip_scheduler_integration.md",
+    "path": "documents/reports/35_parameterized_main_ip_scheduler_integration.md",
+    "before_sha256": "2c406f238382ef2c85f41a46ce262db77c99df92daf167e41be773fd87609e6a",
+    "after_sha256": "8dec6ce3c6cedf460cd05916885b62a4fbebe286554c5a922cf67e328a6ed1d1"
+  },
+  {
+    "old_path": "documents/reports/index.md",
+    "path": "documents/reports/index.md",
+    "before_sha256": "11a8e72db823f528c4c410d384d84897b834a05dabf772b9cdabe7a16d9fd736",
+    "after_sha256": "1b43d3d9e9b6c5a55d580ff72ad3f5260b2e7bc829ba65cb530702e39f848b15"
+  },
+  {
+    "old_path": "hardware_bram/configurations/capacity3_lookahead3_pes4_triplerow_twolevel_seedfirst_singleexit/vivado/vivado_bbht_grover_k3h3_e4_m3_s6/2026-10-27_arty100t_build/evidence.md",
+    "path": "hardware_bram/configurations/capacity3_lookahead3_pes4_triplerow_twolevel_seedfirst_singleexit/vivado/vivado_bbht_grover_k3h3_e4_m3_s6/2026-10-27_arty100t_build/evidence.md",
+    "before_sha256": "3efd4a3cd2a2013a8a20f9cede77a1f27209e004f21dc20394f68ccf37efeaef",
+    "after_sha256": "33c21b610a28053aac9f09755036a00c6eb19b18ff2d89af4f18cc5458fc4ab7"
+  },
+  {
+    "old_path": "hardware_bram/results/2026-10-28_generalized_main_integration/evidence.md",
+    "path": "hardware_bram/results/2026-10-28_generalized_main_integration/evidence.md",
+    "before_sha256": "cb9963bf6668a7d5a872e976a461ba9d083cce85516b3a33b55de6424015590c",
+    "after_sha256": "9347415a295832e18f2af6530aa1b42b20c7658bfddf2935166ce2358eec1e95"
+  },
+  {
+    "old_path": "hardware_bram/results/2026-10-26_kh_sweep/evidence.md",
+    "path": "hardware_bram/results/archive/design_space/2026-10-26_kh_sweep/evidence.md",
+    "before_sha256": "22273103d2df180e61bccba45e41cad5e3e66409e4248747124694b7a16e8b6d",
+    "after_sha256": "9440c5f04bd817fe9af8133ef95a34f1b39ec55a0342e581d24a7603d2c17b16"
+  },
+  {
+    "old_path": "hardware_bram/results/2026-10-27_200t_dse/evidence.md",
+    "path": "hardware_bram/results/archive/design_space/2026-10-27_200t_dse/evidence.md",
+    "before_sha256": "523a62158e0aea00a8471e4fade02a0ca34a6fe47e58f576549485e771511e8b",
+    "after_sha256": "9cd7132c06f7ad421693259f618ffb05430135a470d0f7e8d12cd6084772218a"
+  },
+  {
+    "old_path": "hardware_bram/results/2026-10-27_200t_kh_smoke/evidence.md",
+    "path": "hardware_bram/results/archive/design_space/2026-10-27_200t_kh_smoke/evidence.md",
+    "before_sha256": "9de3bcee2d23f8a21eeafe745792aa714836ea45b17e726064ab44a358147f22",
+    "after_sha256": "8b07dee24468c3e956e2a5200046d94f03eb67e5420fc34381a33589a4b6f0d0"
+  },
+  {
+    "old_path": "hardware_bram/results/2026-10-28_k3h3_e4_m2_policy6_board/verify_soc.py",
+    "path": "hardware_bram/results/archive/implementation_pipeline/2026-10-28_k3h3_e4_m2_policy6_board/verify_soc.py",
+    "before_sha256": "8a2bdc99ff4d7652b096cabd5eaa13b21fec375bc9f2e3e04d9ca9e67ac0f86e",
+    "after_sha256": "bf8c7d0431450a7c0ad5fef2a7694a24aa387b8afc708d10081ab72211570e1d"
+  },
+  {
+    "old_path": "hardware_bram/results/2026-10-28_policy_rank_timing/evidence.md",
+    "path": "hardware_bram/results/archive/implementation_pipeline/2026-10-28_policy_rank_timing/evidence.md",
+    "before_sha256": "5c565de199a41428aed2281ec2db8d212258b0b73c2e4ace75d0b828640c5f90",
+    "after_sha256": "f985529ca05595f25ff3a0ad84b8219f6f8e39219c7f8c2d0a66b1af68606db5"
+  },
+  {
+    "old_path": "hardware_bram/results/2026-10-28_policy_rank_timing/verify_soc.py",
+    "path": "hardware_bram/results/archive/implementation_pipeline/2026-10-28_policy_rank_timing/verify_soc.py",
+    "before_sha256": "8a2bdc99ff4d7652b096cabd5eaa13b21fec375bc9f2e3e04d9ca9e67ac0f86e",
+    "after_sha256": "bf8c7d0431450a7c0ad5fef2a7694a24aa387b8afc708d10081ab72211570e1d"
+  },
+  {
+    "old_path": "hardware_bram/results/2026-10-28_policy_bottleneck/evidence.md",
+    "path": "hardware_bram/results/archive/policy_optimization/2026-10-28_policy_bottleneck/evidence.md",
+    "before_sha256": "02b4162b1190509a4517d198c133a16f1c3a0775aabfd357afe2e3d98c925cc3",
+    "after_sha256": "1d5a98d82d8da5f14a45c04795b6bce2072813789e89fed1a01df5c3a57dbfbc"
+  },
+  {
+    "old_path": "hardware_bram/results/2026-10-28_policy_gap_bound_final/evidence.md",
+    "path": "hardware_bram/results/archive/policy_optimization/2026-10-28_policy_gap_bound_final/evidence.md",
+    "before_sha256": "23fb997ca694692f74d8beeb9ace777db3c28b33d44fa951892544af75fcfff1",
+    "after_sha256": "7b03bf666fb707610a90e97f79a787ba38c4d5f85cf40de83573348b5a24b5c2"
+  },
+  {
+    "old_path": "hardware_bram/results/2026-10-28_policy_gap_bound_final/verify_soc.py",
+    "path": "hardware_bram/results/archive/policy_optimization/2026-10-28_policy_gap_bound_final/verify_soc.py",
+    "before_sha256": "8a2bdc99ff4d7652b096cabd5eaa13b21fec375bc9f2e3e04d9ca9e67ac0f86e",
+    "after_sha256": "bf8c7d0431450a7c0ad5fef2a7694a24aa387b8afc708d10081ab72211570e1d"
+  },
+  {
+    "old_path": "hardware_bram/results/2026-10-28_policy_parallel_paths_verified/verify_soc.py",
+    "path": "hardware_bram/results/archive/policy_optimization/2026-10-28_policy_parallel_paths_verified/verify_soc.py",
+    "before_sha256": "8a2bdc99ff4d7652b096cabd5eaa13b21fec375bc9f2e3e04d9ca9e67ac0f86e",
+    "after_sha256": "bf8c7d0431450a7c0ad5fef2a7694a24aa387b8afc708d10081ab72211570e1d"
+  },
+  {
+    "old_path": "hardware_bram/results/2026-10-28_policy_scan_parallel_verified/verify_soc.py",
+    "path": "hardware_bram/results/archive/policy_optimization/2026-10-28_policy_scan_parallel_verified/verify_soc.py",
+    "before_sha256": "8a2bdc99ff4d7652b096cabd5eaa13b21fec375bc9f2e3e04d9ca9e67ac0f86e",
+    "after_sha256": "bf8c7d0431450a7c0ad5fef2a7694a24aa387b8afc708d10081ab72211570e1d"
+  },
+  {
+    "old_path": "hardware_bram/results/2026-10-28_policy_single_action/evidence.md",
+    "path": "hardware_bram/results/archive/policy_optimization/2026-10-28_policy_single_action/evidence.md",
+    "before_sha256": "41ce91538ce31c19c1ecc856e84f16a0ea5e45815eb598b90840776220634025",
+    "after_sha256": "501c3452e1d303c9fadd8ecc6c0217326860fc7b1030a78f16b5f081353a634d"
+  },
+  {
+    "old_path": "hardware_bram/results/2026-10-27_policy_seed_first/evidence.md",
+    "path": "hardware_bram/results/archive/policy_search/2026-10-27_policy_seed_first/evidence.md",
+    "before_sha256": "727876dd96fe8b0e085ecef7bceb6eb49e749d70d12ea9a1212672dea37f357f",
+    "after_sha256": "b97c582d5ce198d341fec11a0724ed2d17a8c162d80492826431721eedf69400"
+  },
+  {
+    "old_path": "hardware_bram/results/catalog.json",
+    "path": "hardware_bram/results/catalog.json",
+    "before_sha256": "eb7c696ced5a1853125f0f80723913de545332635ef5df8676f0e7d344d4f19c",
+    "after_sha256": "414e4ebde9519a243392812659568b7120e1c081c28adb3436fda7581ce0f337"
+  },
+  {
+    "old_path": "hardware_bram/sim/kh_sweep.py",
+    "path": "hardware_bram/sim/kh_sweep.py",
+    "before_sha256": "49a1d5737a46befb72dfec151845c634701ef6e2c47c52e31f85d2d37138c54f",
+    "after_sha256": "c796020e8af9cdd72cedb73d1c90023586da5d5d12c4c2affe6bd8ed37f1dc3c"
+  },
+  {
+    "old_path": "hardware_bram/sim/policy_full40_analysis.py",
+    "path": "hardware_bram/sim/policy_full40_analysis.py",
+    "before_sha256": "88446df81d235bb06b10523e61c0ca2af6146f4f1e84585a593ce47e89e989b1",
+    "after_sha256": "a4459e602b789c781a03b3dd29dfa382ee60bfd8d8ae0920f64fa71eb8aa1993"
+  },
+  {
+    "old_path": "hardware_bram/sim/policy_search_method1.py",
+    "path": "hardware_bram/sim/policy_search_method1.py",
+    "before_sha256": "c3d84defec7aea947f03e0eac29737b67d67a2182d05e593a3bd328a5e878218",
+    "after_sha256": "14f5fd04954e1c27002f96dd28c048a737242e870ed198e4f91b7c9908bf492e"
+  },
+  {
+    "old_path": "hardware_bram/synth/full_bound_pipeline_ooc.tcl",
+    "path": "hardware_bram/synth/full_bound_pipeline_ooc.tcl",
+    "before_sha256": "b11b8552ba8fb8cbc4e5403541855555d5c6639a6ac8dfbff0a2b44dd0836dd3",
+    "after_sha256": "3676d31f847a8c87c6b1ec053790bb2e33d5ed176130cc233933487f31d04d3e"
+  }
+]

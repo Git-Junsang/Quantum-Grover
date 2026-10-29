@@ -24,7 +24,7 @@ configuration은 기존 배치를 유지했습니다.
 - Vivado OOC synthesis는 유효한 license를 얻지 못해 resource 수를 새로 확정하지 못함
 
 명령과 주요 counter는
-[`2026-10-26_policy_memo_compact/evidence.md`](../../hardware_bram/results/2026-10-26_policy_memo_compact/evidence.md)에
+[`2026-10-26_policy_memo_compact/evidence.md`](../../hardware_bram/results/archive/policy_optimization/2026-10-26_policy_memo_compact/evidence.md)에
 기록했습니다.
 
 ## 해석

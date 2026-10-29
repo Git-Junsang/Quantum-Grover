@@ -115,9 +115,9 @@ accelerator 시간의 2.05%입니다. 이는 단일 regression 사례이므로 C
 ## 재현 자료
 
 - software comparator: `hardware_bram/sim/policy_search_method1.py`
-- 전체 exact 결과: `hardware_bram/results/2026-10-26_policy_search_method1/method1_search.csv`
-- RTL on/off 결과: `hardware_bram/results/2026-10-26_policy_search_method1/rtl_prune1.csv`
-- 채택 early-prune 결과: `hardware_bram/results/2026-10-26_policy_search_method1/rtl_early2.csv`
+- 전체 exact 결과: `hardware_bram/results/archive/policy_search/2026-10-26_policy_search_method1/method1_search.csv`
+- RTL on/off 결과: `hardware_bram/results/archive/policy_search/2026-10-26_policy_search_method1/rtl_prune1.csv`
+- 채택 early-prune 결과: `hardware_bram/results/archive/policy_search/2026-10-26_policy_search_method1/rtl_early2.csv`
 - 전체 Checkpoint-Capacity · Lookahead-Shots CSV: `hardware_bram/results/archive/policy_search/2026-10-26_kh_sweep_method1/kh_sweep.csv`
 - 전체 Checkpoint-Capacity · Lookahead-Shots heatmap: `hardware_bram/results/archive/policy_search/2026-10-26_kh_sweep_method1/kh_heatmap.png`
 - 깊이별 결과: 같은 날짜의 `policy_search_method1_depth*`, `*_seed*` directory

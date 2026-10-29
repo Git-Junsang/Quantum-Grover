@@ -1,0 +1,4 @@
+보드 정의 설치: /opt/rvx/rvx_install/mini_git/imp_class_info/ax7a200b
+[start] make imp_fpga TARGET_IMP_CLASS=ax7a200b
+[start] 구현 시작: /opt/rvx/platform/bbht_grover_k3h3_e4_m2_rankfix_20261028/imp_ax7a200b_2026-10-29
+        로그 /opt/rvx/platform/bbht_grover_k3h3_e4_m2_rankfix_20261028/imp_ax7a200b_2026-10-29/fpga_syn_rvx.log , 끝나면 /opt/rvx/platform/bbht_grover_k3h3_e4_m2_rankfix_20261028/imp_ax7a200b_2026-10-29/fpga_syn_rvx.done

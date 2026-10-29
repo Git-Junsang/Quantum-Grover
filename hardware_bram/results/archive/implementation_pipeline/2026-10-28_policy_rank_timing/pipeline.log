@@ -1,0 +1,34 @@
+{"stage": "solver_regression", "updated_utc": "2026-10-28T12:00:16.334799+00:00", "pid": 1247180, "platform": "bbht_grover_k3h3_e4_m2_rankfix_20261028"}
+{"stage": "rtl_common500", "updated_utc": "2026-10-28T12:03:42.361765+00:00", "pid": 1247180, "platform": "bbht_grover_k3h3_e4_m2_rankfix_20261028"}
+  2026-10-28_policy_rank_timing: python3 -> workload.log
+  k3h3_e4_b2_p6: gcc -> driver_build.log
+  k3h3_e4_b2_p6: verilator -> sim_build.log
+Results: /workspace/hardware_bram/results/2026-10-28_policy_rank_timing/summary.csv
+{"stage": "failed", "updated_utc": "2026-10-28T12:06:00.505907+00:00", "pid": 1247180, "platform": "bbht_grover_k3h3_e4_m2_rankfix_20261028", "failed_stage": "rtl_common500", "error": "console_build.log: command exited 1"}
+Traceback (most recent call last):
+  File "/workspace/hardware_bram/results/2026-10-28_policy_rank_timing/pipeline_worker.py", line 159, in <module>
+    try: main()
+         ^^^^^^
+  File "/workspace/hardware_bram/results/2026-10-28_policy_rank_timing/pipeline_worker.py", line 86, in main
+    console_reference()
+  File "/workspace/hardware_bram/results/2026-10-28_policy_rank_timing/pipeline_worker.py", line 63, in console_reference
+    run(['g++','-O2','-std=c++17','-DBBHT_HOST_TEST','-DBBHT_NO_PRINTF',
+  File "/workspace/hardware_bram/results/2026-10-28_policy_rank_timing/pipeline_worker.py", line 47, in run
+    raise RuntimeError(f'{log}: command exited {result.returncode}')
+RuntimeError: console_build.log: command exited 1
+{"stage": "solver_regression_reused", "updated_utc": "2026-10-28T12:38:08.281679+00:00", "pid": 1264341, "platform": "bbht_grover_k3h3_e4_m2_rankfix_20261028", "variants": 15, "source_hashes_verified": true}
+{"stage": "rtl_common500", "updated_utc": "2026-10-28T12:38:08.283003+00:00", "pid": 1264341, "platform": "bbht_grover_k3h3_e4_m2_rankfix_20261028"}
+Results: /workspace/hardware_bram/results/2026-10-28_policy_rank_timing/summary.csv
+{"stage": "soc_console", "updated_utc": "2026-10-28T12:38:11.765385+00:00", "pid": 1264341, "platform": "bbht_grover_k3h3_e4_m2_rankfix_20261028"}
+{"stage": "waiting_for_vivado_slot", "updated_utc": "2026-10-28T12:44:00.186213+00:00", "pid": 1264341, "platform": "bbht_grover_k3h3_e4_m2_rankfix_20261028"}
+{"stage": "implementation", "updated_utc": "2026-10-28T12:44:00.677836+00:00", "pid": 1264341, "platform": "bbht_grover_k3h3_e4_m2_rankfix_20261028", "attempt": 1, "strategy": "explore", "max_attempts": 3}
+{"stage": "implementation", "updated_utc": "2026-10-28T12:47:02.700185+00:00", "pid": 1264341, "platform": "bbht_grover_k3h3_e4_m2_rankfix_20261028", "attempt": 2, "strategy": "timing", "max_attempts": 3}
+{"stage": "implementation", "updated_utc": "2026-10-28T12:52:03.903032+00:00", "pid": 1264341, "platform": "bbht_grover_k3h3_e4_m2_rankfix_20261028", "attempt": 3, "strategy": "congestion", "max_attempts": 3}
+{"stage": "failed", "updated_utc": "2026-10-28T12:55:34.952356+00:00", "pid": 1264341, "platform": "bbht_grover_k3h3_e4_m2_rankfix_20261028", "failed_stage": "implementation", "error": "All three physical implementation strategies failed; see archived attempt reports. RTL changes require a new source snapshot."}
+Traceback (most recent call last):
+  File "/workspace/hardware_bram/results/2026-10-28_policy_rank_timing/pipeline_worker.py", line 168, in <module>
+    try: main()
+         ^^^^^^
+  File "/workspace/hardware_bram/results/2026-10-28_policy_rank_timing/pipeline_worker.py", line 147, in main
+    raise RuntimeError('All three physical implementation strategies failed; see archived attempt reports. RTL changes require a new source snapshot.')
+RuntimeError: All three physical implementation strategies failed; see archived attempt reports. RTL changes require a new source snapshot.
