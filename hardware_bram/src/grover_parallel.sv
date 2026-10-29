@@ -31,25 +31,53 @@ module grover_ckpt_mem_parallel #(
         if(CHECKPOINT_CAPACITY<1 || CHECKPOINT_CAPACITY>10 ||
             READ_PORTS<1 || READ_PORTS>`GP_MAX_INTRA_ENGINES ||
             WRITE_PORTS<1 || WRITE_PORTS>`GP_MAX_INTRA_ENGINES)
-            $fatal(1,"parallel memory requires capacity 1..10 and ports 1..20");
+            $fatal(1,"parallel memory requires capacity 1..10 and ports 1..%0d",`GP_MAX_INTRA_ENGINES);
         if(SLOT_W<((CHECKPOINT_CAPACITY<2)?1:$clog2(CHECKPOINT_CAPACITY)))
             $fatal(1,"slot address cannot represent capacity");
     end
+    localparam integer DEPTH=CHECKPOINT_CAPACITY*BANK_ROWS;
+    localparam integer ADDR_W=(DEPTH<2)?1:$clog2(DEPTH);
     genvar bank,port;
     generate
         for(bank=0;bank<BANKS;bank=bank+1) begin : g_bank
-            (* ram_style="block" *) reg [WORD_W-1:0] mem[0:CHECKPOINT_CAPACITY*BANK_ROWS-1];
+            // Each bank is a simple dual-port RAM: one read address and one write
+            // address per cycle. The port that owns this bank in this cycle is
+            // chosen combinationally in front of the RAM, so the storage itself
+            // has a single write port and Vivado can map it to block RAM. The
+            // earlier form wrote the RAM from every port inside one process,
+            // which synthesis cannot infer as BRAM and dissolved into registers.
+            //
+            // Ports never share a bank in the same cycle (checked below in
+            // simulation). If they did, the highest-numbered port wins, which is
+            // what the previous last-assignment-wins loop did, so behaviour is
+            // unchanged in every case.
+            (* ram_style="block" *) reg [WORD_W-1:0] mem[0:DEPTH-1];
             reg [WORD_W-1:0] q;
-            always @(posedge clk) begin
+            reg bank_re,bank_we;
+            reg [ADDR_W-1:0] bank_raddr,bank_waddr;
+            reg [WORD_W-1:0] bank_wdata;
+            always @* begin
+                bank_re=1'b0;bank_raddr={ADDR_W{1'b0}};
                 for(integer p=0;p<READ_PORTS;p=p+1)
                     if(rd_en[p] && rd_slot<CHECKPOINT_CAPACITY &&
-                       rd_rows[p*`GP_ROW_W+:`GP_ROW_W]%BANKS==bank)
-                        q<=mem[rd_slot*BANK_ROWS+rd_rows[p*`GP_ROW_W+:`GP_ROW_W]/BANKS];
+                       rd_rows[p*`GP_ROW_W+:`GP_ROW_W]%BANKS==bank) begin
+                        bank_re=1'b1;
+                        bank_raddr=ADDR_W'(rd_slot*BANK_ROWS+rd_rows[p*`GP_ROW_W+:`GP_ROW_W]/BANKS);
+                    end
+                bank_we=1'b0;bank_waddr={ADDR_W{1'b0}};bank_wdata={WORD_W{1'b0}};
                 for(integer p=0;p<WRITE_PORTS;p=p+1)
                     if(wr_en[p] && wr_slot<CHECKPOINT_CAPACITY &&
-                       wr_rows[p*`GP_ROW_W+:`GP_ROW_W]%BANKS==bank)
-                        mem[wr_slot*BANK_ROWS+wr_rows[p*`GP_ROW_W+:`GP_ROW_W]/BANKS]
-                            <=wr_data[p*WORD_W+:WORD_W];
+                       wr_rows[p*`GP_ROW_W+:`GP_ROW_W]%BANKS==bank) begin
+                        bank_we=1'b1;
+                        bank_waddr=ADDR_W'(wr_slot*BANK_ROWS+wr_rows[p*`GP_ROW_W+:`GP_ROW_W]/BANKS);
+                        bank_wdata=wr_data[p*WORD_W+:WORD_W];
+                    end
+            end
+            // Read-first: a read and a write of the same address in one cycle
+            // return the old word, as the previous single process did.
+            always @(posedge clk) begin
+                if(bank_we) mem[bank_waddr]<=bank_wdata;
+                if(bank_re) q<=mem[bank_raddr];
             end
             assign bank_q[bank]=q;
         end
@@ -121,7 +149,7 @@ module grover_born_sampler_parallel #(
         .out_valid(square_valid),.out_rows(square_rows),.out_sq(squares),.out_row_sum(row_sums)
     );
     initial if(M<1 || M>`GP_MAX_SQUARE_ENGINES)
-        $fatal(1,"parallel sampler requires 1..11 square engines");
+        $fatal(1,"parallel sampler requires 1..%0d square engines",`GP_MAX_SQUARE_ENGINES);
     assign busy=(state!=IDLE);
     assign rnd_draw=(state==RND_HI || state==RND_LO);
 
@@ -305,7 +333,7 @@ module grover_born_square_parallel #(
     output wire [SQUARE_ENGINES*`GP_ROW_SUM_W-1:0] out_row_sum
 );
     initial if(SQUARE_ENGINES<1 || SQUARE_ENGINES>`GP_MAX_SQUARE_ENGINES)
-        $fatal(1,"SQUARE_ENGINES must be 1..11");
+        $fatal(1,"SQUARE_ENGINES must be 1..%0d",`GP_MAX_SQUARE_ENGINES);
     genvar g;
     generate for(g=0;g<SQUARE_ENGINES;g=g+1) begin : g_square
         grover_born_square32 u_square (
@@ -357,7 +385,7 @@ module grover_iter_datapath_parallel #(
         if(!rstn) two_mean<=0;
         else if(op==MEAN) two_mean<=mean_comb;
     end
-    initial if(E<1 || E>`GP_MAX_INTRA_ENGINES) $fatal(1,"INTRA_ENGINES must be 1..20");
+    initial if(E<1 || E>`GP_MAX_INTRA_ENGINES) $fatal(1,"INTRA_ENGINES must be 1..%0d",`GP_MAX_INTRA_ENGINES);
     assign global_sum=sum_tree[1];
     assign sum_commit=|committed;
     assign sat_event=|saturated;

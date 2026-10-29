@@ -132,7 +132,20 @@ module grover_ckpt_policy_generic #(
     reg [CW-1:0] frame_best_seg[0:H],frame_pending_seg[0:H];
     reg frame_seed[0:H];
     integer frame_count[0:H],frame_next[0:H],frame_seed_index[0:H];
-    reg [WORD_W-1:0] cache[0:(H+1)*CACHE_N-1];
+    // Candidate cache: one list of SCAN candidates per stack depth, CACHE_N
+    // words each, at linear address depth*CACHE_N+index. SCAN appends up to
+    // LANES words per cycle at consecutive addresses and CACHE_READ fetches
+    // LANES consecutive words, so the store is split into LANES banks by
+    // address modulo LANES: any LANES consecutive addresses fall in distinct
+    // banks and each bank sees at most one write and one read per cycle. That
+    // single-port-per-bank form lets synthesis map the cache to RAM instead of
+    // registers. Each bank is one word deeper than needed so CACHE_READ may
+    // fetch up to LANES-1 words past the last list without leaving the array;
+    // those words are masked off below exactly as before.
+    localparam integer CACHE_BANK_DEPTH=((H+1)*CACHE_N+LANES-1)/LANES+1;
+    localparam integer CACHE_ADDR_W=(CACHE_BANK_DEPTH<2)?1:$clog2(CACHE_BANK_DEPTH);
+    localparam integer LANE_W=(LANES<2)?1:$clog2(LANES);
+    wire [WORD_W-1:0] cache_q[0:LANES-1];
     reg [EPOCH_W-1:0] epoch;
     reg clear_resume,clear_fast;
     integer clear_index;
@@ -369,11 +382,57 @@ module grover_ckpt_policy_generic #(
     reg replay_found;
     reg [WORD_W-1:0] replay_word,walk_word;
     reg [WORD_W-1:0] replay_words[0:LANES-1];
-    always @(posedge clk) if(state==CACHE_READ)
-        for(integer l=0;l<LANES;l=l+1)
-            if(frame_next[sp]+l<frame_count[sp])
-                replay_words[l]<=cache[sp*CACHE_N+frame_next[sp]+l];
-            else replay_words[l]<=0;
+    // SCAN write side: valid lanes in lane order become consecutive words
+    // starting at cache_wbase (the same compaction the FSM counts with n).
+    integer cache_wbase,cache_rbase,cache_nvalid;
+    reg [WORD_W-1:0] cache_packed[0:LANES-1];
+    always @* begin
+        cache_nvalid=0;
+        for(integer j=0;j<LANES;j=j+1) cache_packed[j]={WORD_W{1'b0}};
+        for(integer l=0;l<LANES;l=l+1) if(valid2[l]) begin
+            cache_packed[cache_nvalid]={mask2[l],seg2[l],lane_bound[l]};
+            cache_nvalid=cache_nvalid+1;
+        end
+        cache_wbase=sp*CACHE_N+frame_count[sp];
+        cache_rbase=sp*CACHE_N+frame_next[sp];
+    end
+    genvar cache_bank;
+    generate
+        for(cache_bank=0;cache_bank<LANES;cache_bank=cache_bank+1) begin : g_cache_bank
+            reg [WORD_W-1:0] mem[0:CACHE_BANK_DEPTH-1];
+            reg [WORD_W-1:0] q;
+            integer write_slot,read_slot;
+            reg write_en;
+            reg [CACHE_ADDR_W-1:0] write_addr,read_addr;
+            reg [WORD_W-1:0] write_word;
+            always @* begin
+                // The compacted word whose address falls in this bank, and
+                // the replay lane whose address falls in this bank.
+                write_slot=(cache_bank-cache_wbase%LANES+LANES)%LANES;
+                read_slot=(cache_bank-cache_rbase%LANES+LANES)%LANES;
+                write_en=rstn && state==SCAN && write_slot<cache_nvalid;
+                write_addr=CACHE_ADDR_W'((cache_wbase+write_slot)/LANES);
+                write_word=cache_packed[write_slot];
+                read_addr=CACHE_ADDR_W'((cache_rbase+read_slot)/LANES);
+            end
+            always @(posedge clk) begin
+                if(write_en) mem[write_addr]<=write_word;
+                if(state==CACHE_READ) q<=mem[read_addr];
+            end
+            assign cache_q[cache_bank]=q;
+        end
+    endgenerate
+    // CACHE_READ side: the bank outputs hold the fetched words until the next
+    // CACHE_READ, like the former replay_words registers. Rotate them back to
+    // lane order and zero the lanes past the end of the current list.
+    reg [LANES-1:0] replay_in_list;
+    reg [LANE_W-1:0] replay_rotate;
+    always @(posedge clk) if(state==CACHE_READ) begin
+        for(integer l=0;l<LANES;l=l+1) replay_in_list[l]<=frame_next[sp]+l<frame_count[sp];
+        replay_rotate<=LANE_W'(cache_rbase%LANES);
+    end
+    always @* for(integer l=0;l<LANES;l=l+1)
+        replay_words[l]=replay_in_list[l]?cache_q[(replay_rotate+l)%LANES]:{WORD_W{1'b0}};
     integer replay_next;
     always @* begin
         replay_found=0;replay_word=0;walk_word=0;replay_next=frame_next[sp];
@@ -519,8 +578,9 @@ module grover_ckpt_policy_generic #(
                     if(|valid2) begin
                         n=0;
                         for(integer l=0;l<LANES;l=l+1) if(valid2[l]) begin
+                            // The word itself is written by g_cache_bank above.
                             if(frame_count[sp]+n>=CACHE_N) $fatal(1,"generic candidate cache overflow");
-                            cache[sp*CACHE_N+frame_count[sp]+n]<={mask2[l],seg2[l],lane_bound[l]};n=n+1;
+                            n=n+1;
                         end
                         actions<=actions+n;frame_count[sp]<=frame_count[sp]+n;
                         frame_seed_bound[sp]<=scan_min;frame_pending_seg[sp]<=scan_seg;

@@ -11,7 +11,7 @@ module tb_measure_build_rows;
     always #5 clk=~clk;
     reg rstn=0, start=0;
     integer pattern=0;
-    localparam integer CONFIGS=11;
+    localparam integer CONFIGS=`GP_MAX_SQUARE_ENGINES;
     wire [CONFIGS-1:0] done;
     reg [CONFIGS-1:0] finished=0;
     wire [59:0] weight[0:CONFIGS-1], threshold[0:CONFIGS-1];
@@ -145,7 +145,7 @@ module tb_measure_build_rows;
                      p,weight[0],candidate[0],latency[0],latency[1],latency[2],latency[3]);
             repeat(4) @(negedge clk);
         end
-        $display("PASS BUILD_ROWS=1..11 bit-exact Born equivalence cases=66 errors=0");
+        $display("PASS BUILD_ROWS=1..%0d bit-exact Born equivalence cases=%0d errors=0",CONFIGS,CONFIGS*6);
         $finish;
     end
 endmodule

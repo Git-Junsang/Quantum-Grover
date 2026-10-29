@@ -173,9 +173,9 @@ module bbht_grover_main_ip #(
             POLICY_SEARCH_MODE!=5 && POLICY_SEARCH_MODE!=6 && CHECKPOINT_ENABLE!=0)
             $fatal(1,"extended checkpoint/lookahead requires exact policy mode 5 or 6");
         if(CHECKPOINT_CAPACITY<1 || CHECKPOINT_CAPACITY>10 || LOOKAHEAD_SHOTS<1 || LOOKAHEAD_SHOTS>10 || NUMBER_OF_PES<1 || NUMBER_OF_PES>`GP_MAX_INTRA_ENGINES)
-            $fatal(1,"Main IP requires capacity/lookahead 1..10 and iteration engines 1..20");
+            $fatal(1,"Main IP requires capacity/lookahead 1..10 and iteration engines 1..%0d",`GP_MAX_INTRA_ENGINES);
         if (BUILD_ROWS_PER_CYCLE < 1 || BUILD_ROWS_PER_CYCLE > `GP_MAX_SQUARE_ENGINES)
-            $fatal(1, "BUILD_ROWS_PER_CYCLE must be 1..11");
+            $fatal(1, "BUILD_ROWS_PER_CYCLE must be 1..%0d", `GP_MAX_SQUARE_ENGINES);
     end
 `endif
 

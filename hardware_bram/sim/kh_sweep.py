@@ -115,12 +115,33 @@ def load_roster(path: Path) -> list[tuple[int, int]]:
     return [(int(seed_j, 16), int(seed_meas, 16)) for seed_j, seed_meas in pairs]
 
 
+BBHT_BUDGET = 576
+SHOT_CAP_DEFAULT = 100
+
+
 def generate_stream(seed_j: int, count: int) -> tuple[int, ...]:
+    """Requested-j stream as the RTL request predictor sees it.
+
+    Entries past a workload's last executed trial are speculative lookahead.
+    When the episode would hit the logical BBHT budget or the shot cap, the
+    predictor in grover_policy.v (context_restart_now) starts a new episode:
+    round index, episode L and trial count return to zero while the j random
+    state continues unchanged. Without this restart the lookahead window of a
+    workload ending near the budget differs from the RTL window, which changed
+    the physical iterations of 4 of 100 K/H cells (all with H >= 9).
+    """
     source = JSource(seed_j)
-    return tuple(
-        source.draw_uniform(M_BOUNDS[min(round_index, len(M_BOUNDS) - 1)])
-        for round_index in range(count)
-    )
+    stream: list[int] = []
+    episode_l = trial = round_index = 0
+    while len(stream) < count:
+        if trial >= SHOT_CAP_DEFAULT or episode_l + 1 >= BBHT_BUDGET:
+            episode_l = trial = round_index = 0
+        value = source.draw_uniform(M_BOUNDS[min(round_index, len(M_BOUNDS) - 1)])
+        stream.append(value)
+        episode_l += value
+        trial += 1
+        round_index += 1
+    return tuple(stream)
 
 
 def load_workloads(
