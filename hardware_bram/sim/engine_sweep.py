@@ -120,6 +120,22 @@ def parse_util(path):
             "bram": row("Block RAM Tile"), "dsp": int(row("DSPs"))}
 
 
+VIVADO_MEMORY_LIMIT_GIB = 10
+
+
+def limit_vivado_memory():
+    """Vivado 프로세스의 주소 공간을 VIVADO_MEMORY_LIMIT_GIB 로 묶습니다(subprocess preexec_fn).
+
+    이 container 는 cgroup 을 만들 수 없어 프로세스 묶음 전체의 상한은 걸 수 없습니다. 대신
+    RLIMIT_AS 를 걸면 Vivado 와 그것이 fork 하는 helper 가 각각 이 한도를 물려받고, 넘을 때는
+    OOM killer 가 옆의 simulation 을 죽이는 대신 Vivado 의 할당만 실패합니다. Vivado 는 두 개를
+    동시에 돌리지 않습니다(동시에 돌리다 메모리 부족으로 끊긴 적이 있습니다).
+    """
+    import resource
+    limit = VIVADO_MEMORY_LIMIT_GIB * 1024 ** 3
+    resource.setrlimit(resource.RLIMIT_AS, (limit, limit))
+
+
 def synth_one(base, data):
     out = base / "synth" / cell_name(data)
     if (out / "resource.json").exists():
@@ -141,7 +157,7 @@ def synth_one(base, data):
         shutil.copy(cell / "source" / "adapter.v", out / "adapter.v")
         env = os.environ | {"ENGINE_SRC": str(cell / "source"), "ENGINE_OUT": str(out), "ENGINE_PART": PART}
         result = subprocess.run([vivado, "-mode", "batch", "-nojournal", "-log", f"{tmp}/vivado.log",
-                                 "-source", str(TCL)], cwd=tmp, env=env,
+                                 "-source", str(TCL)], cwd=tmp, env=env, preexec_fn=limit_vivado_memory,
                                 stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
         if result.returncode:
             shutil.copy(f"{tmp}/vivado.log", out / "vivado_failed.log")
