@@ -66,7 +66,9 @@ class DesignSpaceTests(unittest.TestCase):
                             "-I",str(dse.ROOT / "hardware_bram/src"),"-o",str(binary),
                             str(dse.ROOT / "hardware_bram/testbench/tb_measure_build_rows.sv"),
                             *(str(dse.ROOT / "hardware_bram/src" / (name+".v"))
-                              for name in ("grover_measurement","grover_arithmetic","grover_memories"))],check=True)
+                              for name in ("grover_measurement","grover_arithmetic","grover_memories")),
+                            # square engines above 4 use grover_born_sampler_parallel.
+                            str(dse.ROOT / "hardware_bram/src/grover_parallel.sv")],check=True)
             subprocess.run(["vvp",str(binary)],check=True)
 
 
