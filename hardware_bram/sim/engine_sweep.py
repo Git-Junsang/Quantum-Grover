@@ -62,6 +62,9 @@ SYNTH_POLICY = {"k": 1, "h": 1, "policy_mode": 6, "scan_lanes": 4, "force_generi
 # Common500 Normal mode 의 고정 일. engine 수와 무관합니다(subset_check 에서 확인).
 # heatmap 색 축: 빨강 300만 cycle ~ 보라 1,500만 cycle (사용자 지정).
 COLOR_RANGE = (3_000_000, 15_000_000)
+# heatmap 에 파란 박스로 표시하는 경계 후보 (iteration engines, square engines). 실험 38 다음 단계에서
+# 이 다섯 칸마다 Checkpoint-Capacity / Lookahead-Shots 100칸을 100 workloads 로 잽니다(checkpoint_sweep.py).
+BOUNDARY_CANDIDATES = ((9, 7), (8, 8), (10, 4), (9, 6), (8, 9))
 COMMON500_ITERATIONS = 31424
 COMMON500_MEASUREMENTS = 7403
 PER_M = 4
@@ -379,6 +382,9 @@ def plot(base):
         if np.isfinite(masked).any():
             y, x = np.unravel_index(np.nanargmin(masked), shape)
             ax.add_patch(plt.Rectangle((x - .5, y - .5), 1, 1, fill=False, ec=color, lw=2.5))
+    # 경계 후보는 최소 칸의 주황 / 빨강 박스와 겹쳐도 보이도록 안쪽으로 조금 들여 그립니다.
+    for e, m in BOUNDARY_CANDIDATES:
+        ax.add_patch(plt.Rectangle((m - 1 - .4, e - 1 - .4), .8, .8, fill=False, ec="blue", lw=2.0))
     ax.set_xticks(range(shape[1]), list(M_RANGE))
     ax.set_yticks(range(shape[0]), list(E_RANGE))
     ax.set_xlabel("square engines")
@@ -390,7 +396,9 @@ def plot(base):
                  "solid: fits 200T with the current parameterized RTL; dashed: fits with banked dataset;\n"
                  "hatched: over 200T even with banked dataset (second line: resource over limit);\n"
                  "<=n (m): largest checkpoint capacity within 90% BRAM, banked (current RTL if different);\n"
-                 "orange / red box: fewest cycles inside solid / dashed region", fontsize=9)
+                 "orange / red box: fewest cycles inside solid / dashed region;\n"
+                 "blue inner box: boundary candidates measured next over checkpoint capacity x lookahead shots",
+                 fontsize=9)
     from matplotlib.ticker import FuncFormatter
     bar = fig.colorbar(image, ax=ax, label="RTL cycles (millions)", shrink=0.6, extend="max")
     bar.ax.yaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}"))
