@@ -201,5 +201,9 @@ policy algorithm을 고른 과정은 [실험 05](../reports/05_checkpoint_policy
 확장 범위의 parameterized RTL 독립 블록 검증은 [실험 34](../reports/34_parameterized_rtl_development.md),
 후속 Main IP의 Scheduler · Planner · Executor 연결과 선택한 설정의 integration 검증은
 [실험 35](../reports/35_parameterized_main_ip_scheduler_integration.md)에 있습니다.
-해당 개발 경로의 full Common500 · 전체 SoC · implementation · board 검증은 남아 있으며,
-이 장의 Board-Verified Build 설계와 성능 인용 범위를 바꾸지 않습니다.
+후속 개발 경로의 고정 병렬도 full Common500 검증은 완료했으며, 전체 SoC · implementation · board 검증은
+남아 있습니다. 이 장의 Board-Verified Build 설계와 성능 인용 범위를 바꾸지 않습니다.
+후속 full Common500과 고정 병렬도 parameter sweep은
+[실험 36](../reports/36_generalized_common500_and_policy_heatmaps.md)에서 별도로 기록합니다.
+후속 iteration / square engine 확장, 최종 구성 이후의 확장용 memory 정리와 resource 한도 내
+연산부 최적화 순서는 [실험 37](../reports/37_expanded_iteration_and_measurement_engines.md)에 있습니다.

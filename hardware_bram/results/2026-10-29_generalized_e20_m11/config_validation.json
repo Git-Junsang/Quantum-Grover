@@ -1,0 +1,125 @@
+{
+  "checks": [
+    {
+      "parameter": "k",
+      "value": 1,
+      "accepted": true
+    },
+    {
+      "parameter": "k",
+      "value": 10,
+      "accepted": true
+    },
+    {
+      "parameter": "k",
+      "value": 0,
+      "accepted": false
+    },
+    {
+      "parameter": "k",
+      "value": 11,
+      "accepted": false
+    },
+    {
+      "parameter": "k",
+      "value": true,
+      "accepted": false
+    },
+    {
+      "parameter": "k",
+      "value": 1.0,
+      "accepted": false
+    },
+    {
+      "parameter": "h",
+      "value": 1,
+      "accepted": true
+    },
+    {
+      "parameter": "h",
+      "value": 10,
+      "accepted": true
+    },
+    {
+      "parameter": "h",
+      "value": 0,
+      "accepted": false
+    },
+    {
+      "parameter": "h",
+      "value": 11,
+      "accepted": false
+    },
+    {
+      "parameter": "h",
+      "value": true,
+      "accepted": false
+    },
+    {
+      "parameter": "h",
+      "value": 1.0,
+      "accepted": false
+    },
+    {
+      "parameter": "e",
+      "value": 1,
+      "accepted": true
+    },
+    {
+      "parameter": "e",
+      "value": 20,
+      "accepted": true
+    },
+    {
+      "parameter": "e",
+      "value": 0,
+      "accepted": false
+    },
+    {
+      "parameter": "e",
+      "value": 21,
+      "accepted": false
+    },
+    {
+      "parameter": "e",
+      "value": true,
+      "accepted": false
+    },
+    {
+      "parameter": "e",
+      "value": 1.0,
+      "accepted": false
+    },
+    {
+      "parameter": "m",
+      "value": 1,
+      "accepted": true
+    },
+    {
+      "parameter": "m",
+      "value": 11,
+      "accepted": true
+    },
+    {
+      "parameter": "m",
+      "value": 0,
+      "accepted": false
+    },
+    {
+      "parameter": "m",
+      "value": 12,
+      "accepted": false
+    },
+    {
+      "parameter": "m",
+      "value": true,
+      "accepted": false
+    },
+    {
+      "parameter": "m",
+      "value": 1.0,
+      "accepted": false
+    }
+  ],
+  "errors": 0
+}

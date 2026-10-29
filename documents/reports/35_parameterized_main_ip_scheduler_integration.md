@@ -1,6 +1,6 @@
 # 실험 35. Parameterized Main IP의 Scheduler · Planner · Executor 연결
 
-> [← 실험 34](34_parameterized_rtl_development.md) · [실험 보고서 index](index.md)
+> [← 실험 34](34_parameterized_rtl_development.md) · [실험 보고서 index](index.md) · [실험 36 →](36_generalized_common500_and_policy_heatmaps.md)
 
 | 확인한 것 | 근거의 축 | 범위 |
 |---|---|---|
@@ -42,6 +42,8 @@ timing-only action queue는 다시 추가하지 않았습니다.
 
 다음은 전체 Common500 campaign입니다. 큰 parameter의 solver latency와 실제 전체 cycle을 측정한 뒤,
 일반화 physical kernel의 memory 배치를 200T synthesis / implementation에 맞춰 확인해야 합니다.
+후속 full Common500과 고정 병렬도 heatmap의 진행 기록은
+[실험 36](36_generalized_common500_and_policy_heatmaps.md)에 있습니다.
 이번 경로의 전체 SoC · board 검증은 남아 있습니다.
 현재 구현과 검증 기록은 사용자 요청에 따라 진행 상태 checkpoint로 commit합니다.
 

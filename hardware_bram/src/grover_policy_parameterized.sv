@@ -13,7 +13,8 @@ module grover_ckpt_policy_parameterized #(
     parameter integer SCAN_LANES=4,
     parameter integer MEMO_ADDR_W=12,
     parameter integer EPOCH_W=16,
-    parameter integer COUNT_W=$clog2(CHECKPOINT_CAPACITY+1)
+    parameter integer COUNT_W=$clog2(CHECKPOINT_CAPACITY+1),
+    parameter integer FAST_PATHS=1
 ) (
     input wire clk, rstn, start,
     input wire [CHECKPOINT_CAPACITY-1:0] slot_valid,
@@ -65,7 +66,8 @@ module grover_ckpt_policy_parameterized #(
         end else begin : g_general
             grover_ckpt_policy_generic #(
                 .K(CHECKPOINT_CAPACITY),.H(LOOKAHEAD_SHOTS),.MODE(EXACT_PRUNE),
-                .LANES(SCAN_LANES),.MEMO_ADDR_W(MEMO_ADDR_W),.EPOCH_W(EPOCH_W),.CW(COUNT_W)
+                .LANES(SCAN_LANES),.MEMO_ADDR_W(MEMO_ADDR_W),.EPOCH_W(EPOCH_W),.CW(COUNT_W),
+                .FAST_PATHS(FAST_PATHS)
             ) u_policy (.*);
         end
     endgenerate
@@ -79,7 +81,7 @@ endmodule
 // Memo collisions replace entries after full tag comparison, never alias costs.
 // This is an experimental RTL backend, not a software latency estimate.
 module grover_ckpt_policy_generic #(
-    parameter integer K=3,H=3,MODE=6,LANES=4,MEMO_ADDR_W=12,EPOCH_W=16,CW=$clog2(K+1)
+    parameter integer K=3,H=3,MODE=6,LANES=4,MEMO_ADDR_W=12,EPOCH_W=16,CW=$clog2(K+1),FAST_PATHS=1
 ) (
     input wire clk,rstn,start,
     input wire [K-1:0] slot_valid,
@@ -113,7 +115,7 @@ module grover_ckpt_policy_generic #(
     localparam integer CACHE_N=cache_bound(U-1,K-1);
     localparam integer CACHE_W=$clog2(CACHE_N+1);
     localparam [3:0] IDLE=0,CLEAR=1,BUILD=2,MAP=3,PREP=4,SCAN=5,
-        PROBE=6,RESPONSE=7,EVALUATE=8,REPLAY=9,FINISH=10,RETURN=11,CACHE_READ=12;
+        PROBE=6,RESPONSE=7,EVALUATE=8,REPLAY=9,FINISH=10,RETURN=11,CACHE_READ=12,ROOT_FAST=13;
     reg [3:0] state;
     reg [K-1:0] held_valid;
     reg [K*7-1:0] held_flat;
@@ -132,7 +134,7 @@ module grover_ckpt_policy_generic #(
     integer frame_count[0:H],frame_next[0:H],frame_seed_index[0:H];
     reg [WORD_W-1:0] cache[0:(H+1)*CACHE_N-1];
     reg [EPOCH_W-1:0] epoch;
-    reg clear_resume;
+    reg clear_resume,clear_fast;
     integer clear_index;
     reg [EPOCH_W-1:0] memo_epoch[0:MEM_SIZE-1];
     reg [U-1:0] memo_mask[0:MEM_SIZE-1];
@@ -144,6 +146,48 @@ module grover_ckpt_policy_generic #(
     reg [U-1:0] extra_mask,keep_mask,endpoint;
     integer extra_count,keep_count;
     reg [IW-1:0] iterator;
+
+    // Decide a unique root action directly from the input packet. Building a
+    // sorted universe, mapping every future value and launching lower bounds
+    // cannot change that action. Mode 6 deliberately reports immediate cost
+    // for this established Single-Action Exit contract. The raw physical slot
+    // order is arbitrary, so construct the same ascending canonical tuple.
+    reg [6:0] input_pred,input_request,input_value;
+    reg input_extra,input_held,input_unique;
+    reg [K*7-1:0] input_next;
+    integer input_keeps,input_rank,input_count;
+    always @* begin
+        input_request=j_window_flat[0+:7];input_pred=0;
+        input_extra=0;input_held=0;input_value=0;input_keeps=0;
+        input_rank=0;input_count=0;input_next=0;input_unique=0;
+        for(integer s=0;s<K;s=s+1) if(slot_valid[s]) begin
+            if(slot_j_flat[7*s+:7]<=input_request && slot_j_flat[7*s+:7]>input_pred)
+                input_pred=slot_j_flat[7*s+:7];
+            if(slot_j_flat[7*s+:7]!=input_request) input_keeps=input_keeps+1;
+        end
+        for(integer h=0;h<=H;h=h+1) begin
+            input_value=j_window_flat[7*h+:7];input_held=0;
+            for(integer s=0;s<K;s=s+1)
+                if(slot_valid[s] && slot_j_flat[7*s+:7]==input_value) input_held=1;
+            if(input_pred<input_value && input_value<input_request && !input_held) input_extra=1;
+        end
+        input_unique=(MODE==6) && (K==1 || (!input_extra && input_keeps<K));
+        if(K==1) begin input_next[0+:7]=input_request;input_count=1;end
+        else begin
+            input_rank=0;
+            for(integer s=0;s<K;s=s+1)
+                if(slot_valid[s] && slot_j_flat[7*s+:7]<input_request) input_rank=input_rank+1;
+            if(input_rank<K) input_next[7*input_rank+:7]=input_request;
+            for(integer s=0;s<K;s=s+1) if(slot_valid[s] && slot_j_flat[7*s+:7]!=input_request) begin
+                input_rank=(input_request<slot_j_flat[7*s+:7])?1:0;
+                for(integer t=0;t<K;t=t+1)
+                    if(slot_valid[t] && slot_j_flat[7*t+:7]!=input_request &&
+                        slot_j_flat[7*t+:7]<slot_j_flat[7*s+:7]) input_rank=input_rank+1;
+                if(input_rank<K) input_next[7*input_rank+:7]=slot_j_flat[7*s+:7];
+            end
+            input_count=input_keeps+1;
+        end
+    end
 
     function automatic [CB-1:0] first_comb(input integer size);
         begin first_comb=(1<<size)-1; end
@@ -238,7 +282,7 @@ module grover_ckpt_policy_generic #(
     end
 
     reg [U-1:0] prep_extra,prep_keep,prep_future,prep_endpoint;
-    reg [6:0] prep_pred,prep_request;
+    reg [6:0] prep_pred,prep_request,suffix_request,suffix_pred;
     integer prep_ne,prep_nk,i,j,n,found,position;
     always @* begin
         prep_extra=0;prep_keep=0;prep_future=0;prep_endpoint=0;
@@ -254,6 +298,14 @@ module grover_ckpt_policy_generic #(
             if(prep_extra[i]) prep_ne=prep_ne+1;
         end
         for(i=0;i<=H;i=i+1) if(i>sp) prep_future=prep_future|request_bit[i];
+        // A non-root two-request suffix needs only its cost. With capacity
+        // at least two, the endpoint can coexist with any one eligible old
+        // checkpoint or deposited intermediate. The greatest attainable
+        // predecessor of the last request therefore gives its exact cost.
+        suffix_request=requests[(sp<H)?sp+1:H];
+        suffix_pred=(prep_request<=suffix_request)?prep_request:7'd0;
+        for(i=0;i<U;i=i+1) if(i<universe_count && universe[i]<=suffix_request &&
+            universe[i]>suffix_pred && (frame_mask[sp][i] || prep_extra[i])) suffix_pred=universe[i];
     end
     wire [IW-1:0] lane_it[0:LANES] /* verilator split_var */;
     wire [U-1:0] lane_child[0:LANES-1];
@@ -365,7 +417,7 @@ module grover_ckpt_policy_generic #(
     // solve call and never translates an algorithmic work count into cycles.
     always @(posedge clk) begin
         if(!rstn) begin
-            state<=CLEAR;clear_index<=0;epoch<=0;clear_resume<=0;busy<=1;done<=0;policy_error<=0;
+            state<=CLEAR;clear_index<=0;epoch<=0;clear_resume<=0;clear_fast<=0;busy<=1;done<=0;policy_error<=0;
             source_j<=0;next_count<=0;next_j_flat<=0;root_cost<=0;root_segment_count<=0;
             policy_cycles_last<=0;policy_actions_last<=0;policy_memo_hit_last<=0;policy_memo_miss_last<=0;
             cycles<=0;actions<=0;hits<=0;misses<=0;sp<=0;universe_count<=0;
@@ -386,7 +438,7 @@ module grover_ckpt_policy_generic #(
                 CLEAR: begin
                     if(clear_index==MEM_SIZE-1) begin
                         clear_index<=0;epoch<=1;clear_resume<=0;
-                        if(clear_resume) state<=BUILD;
+                        if(clear_resume) state<=clear_fast?ROOT_FAST:BUILD;
                         else begin state<=IDLE;busy<=0;end
                     end
                     else clear_index<=clear_index+1;
@@ -396,10 +448,21 @@ module grover_ckpt_policy_generic #(
                     busy<=1;policy_error<=0;cycles<=0;actions<=0;hits<=0;misses<=0;
                     universe_count<=0;build_index<=0;pool_mask<=0;sp<=0;
                     frame_mask[0]<=0;state<=BUILD;
+                    clear_fast<=FAST_PATHS && input_unique;
+                    if(FAST_PATHS && input_unique) begin
+                        source_j<=input_pred;next_j_flat<=input_next;next_count<=CW'(input_count);
+                        root_cost<=11'(input_request-input_pred);root_segment_count<=CW'(1);
+                        state<=ROOT_FAST;
+                    end
                     if(epoch=={EPOCH_W{1'b1}}) begin
                         // A start at wrap is accepted and retained while tags clear.
                         state<=CLEAR;epoch<=0;clear_resume<=1;
                     end else epoch<=epoch+1;
+                end
+                ROOT_FAST: begin
+                    policy_cycles_last<=cycles+1;policy_actions_last<=1;
+                    policy_memo_hit_last<=0;policy_memo_miss_last<=0;
+                    busy<=0;done<=1;state<=IDLE;
                 end
                 BUILD: begin
                     if(build_use) begin
@@ -431,9 +494,18 @@ module grover_ckpt_policy_generic #(
                     frame_count[sp]<=0;frame_next[sp]<=0;frame_seed_index[sp]<=0;frame_seed[sp]<=1;
                     if(sp==0) source_j<=prep_pred;
                     if(sp==H) begin frame_best[sp]<=prep_request-prep_pred;state<=FINISH;end
-                    else if(sp==0 && MODE==6 && (K==1 || (prep_ne==0 && prep_nk<=K-1))) begin
+                    else if(FAST_PATHS && sp!=0 && sp==H-1 && K>=2) begin
+                        frame_best[sp]<=11'(prep_request-prep_pred)+11'(suffix_request-suffix_pred);
+                        actions<=actions+1;state<=FINISH;
+                    end else if(sp==0 && MODE==6 && (K==1 || (prep_ne==0 && prep_nk<=K-1))) begin
                         frame_best[sp]<=prep_request-prep_pred;frame_best_mask[sp]<=(K==1) ? prep_endpoint : prep_keep|prep_endpoint;
                         frame_best_seg[sp]<=1;actions<=actions+1;state<=FINISH;
+                    end else if(FAST_PATHS && (K==1 || (prep_ne==0 && prep_nk<K))) begin
+                        // The tail still needs an exact value, but a unique
+                        // child needs neither candidate SCAN nor a bound.
+                        frame_pending_mask[sp]<=(K==1)?prep_endpoint:prep_keep|prep_endpoint;
+                        frame_pending_seg[sp]<=CW'(1);frame_count[sp]<=1;frame_seed[sp]<=0;
+                        actions<=actions+1;state<=PROBE;
                     end else begin
                         extra_mask<=prep_extra;keep_mask<=prep_keep;endpoint<=prep_endpoint;
                         extra_count<=prep_ne;keep_count<=prep_nk;
@@ -454,7 +526,14 @@ module grover_ckpt_policy_generic #(
                         frame_seed_bound[sp]<=scan_min;frame_pending_seg[sp]<=scan_seg;
                         frame_pending_mask[sp]<=scan_mask;frame_seed_index[sp]<=scan_index;
                     end
-                    if(|valid2 && !iterator[IW-1] && !(|valid0) && !(|valid1)) state<=PROBE;
+                    if(|valid2 && !iterator[IW-1] && !(|valid0) && !(|valid1)) begin
+                        if(FAST_PATHS && sp==H-1) begin
+                            // Only one request follows: its relaxed gap bound
+                            // is already exact, including root tie-breaking.
+                            frame_best[sp]<=scan_min;frame_best_mask[sp]<=scan_mask;
+                            frame_best_seg[sp]<=scan_seg;state<=FINISH;
+                        end else state<=PROBE;
+                    end
                 end
                 PROBE: state<=RESPONSE;
                 RESPONSE: begin
@@ -471,7 +550,8 @@ module grover_ckpt_policy_generic #(
                         frame_best[sp]<=evaluated_cost;frame_best_mask[sp]<=frame_pending_mask[sp];
                         frame_best_seg[sp]<=frame_pending_seg[sp];
                     end
-                    if(frame_seed[sp] && evaluated_cost==frame_seed_bound[sp]) state<=FINISH;
+                    if((FAST_PATHS && frame_count[sp]==1) ||
+                        (frame_seed[sp] && evaluated_cost==frame_seed_bound[sp])) state<=FINISH;
                     else begin frame_seed[sp]<=0;state<=CACHE_READ;end
                 end
                 CACHE_READ: state<=REPLAY;

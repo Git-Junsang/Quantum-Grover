@@ -1,0 +1,14 @@
+{
+  "k": 10,
+  "e": 20,
+  "m": 1,
+  "scope": "independent memory/iteration/square RTL blocks; Main IP integration pending",
+  "sha256": {
+    "hardware_bram/src/grover_parallel.sv": "ab266584b7cc5b94b022743e05d12d252902bd52c1350b8ee31adc26341674fe",
+    "hardware_bram/src/grover_arithmetic.v": "0ccbac17f68cd331d2766f04ae0f896c4434e695da0ed1d151635e4a83ed590d",
+    "hardware_bram/src/grover_measurement.v": "79c20720fb194c0f1228f5739ac97d935f7ccc722109770d9767885ec34a7388",
+    "hardware_bram/src/grover_memories.v": "d745da86d04b248dccfafc9f259201cbdd0825ddd00e8da4344fc51370790fbd",
+    "hardware_bram/src/grover_param.vh": "badd012877815481c72c357b3f8df29000296f84b6b4370af89b24e5662c46ac",
+    "hardware_bram/testbench/tb_parallel_generalized.sv": "dff5ba10d49c20cfc3c87e96b6e6470052cea78641fbdcbc63bb90c72374ed4e"
+  }
+}

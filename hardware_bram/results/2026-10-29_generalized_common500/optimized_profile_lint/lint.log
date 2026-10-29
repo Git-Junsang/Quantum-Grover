@@ -1,0 +1,468 @@
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/bbht_grover_main_ip.v:163:24: Operator VAR 'USE_GENERALIZED' expects 32 bits on the Initial value, but Initial value's LOGOR generates 1 bits.
+                                                                                                                                                  : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip'
+  163 |     localparam integer USE_GENERALIZED=(GENERALIZED_RTL!=0) || CHECKPOINT_CAPACITY>4 ||
+      |                        ^~~~~~~~~~~~~~~
+                      ... For warning description see https://verilator.org/warn/WIDTHEXPAND?v=5.020
+                      ... Use "/* verilator lint_off WIDTHEXPAND */" and lint_on around source to disable this message.
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/bbht_grover_main_ip.v:167:51: Logical operator LOGOR expects 1 bit on the LHS, but LHS's VARREF 'USE_GENERALIZED' generates 32 bits.
+                                                                                                                                                 : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip'
+  167 |     localparam integer MEAS_ROWS=(USE_GENERALIZED || NUMBER_OF_PES==4)?BUILD_ROWS_PER_CYCLE:1;
+      |                                                   ^~
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/bbht_grover_main_ip.v:1559:37: Logical operator LOGOR expects 1 bit on the LHS, but LHS's VARREF 'USE_GENERALIZED' generates 32 bits.
+                                                                                                                                                  : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip'
+ 1559 |                 if((USE_GENERALIZED || POLICY_FORCE_GENERIC) && (POLICY_SEARCH_MODE==5 || POLICY_SEARCH_MODE==6)) begin : g_parameterized_policy
+      |                                     ^~
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/bbht_grover_main_ip.v:1559:37: Logical operator LOGOR expects 1 bit on the RHS, but RHS's VARREF 'POLICY_FORCE_GENERIC' generates 32 bits.
+                                                                                                                                                  : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip'
+ 1559 |                 if((USE_GENERALIZED || POLICY_FORCE_GENERIC) && (POLICY_SEARCH_MODE==5 || POLICY_SEARCH_MODE==6)) begin : g_parameterized_policy
+      |                                     ^~
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/bbht_grover_main_ip.v:1713:22: Logical operator GENIF expects 1 bit on the If, but If's VARREF 'USE_GENERALIZED' generates 32 bits.
+                                                                                                                                                  : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip'
+ 1713 |             end else if(USE_GENERALIZED) begin : g_ckpt_planner_generic_pipe
+      |                      ^~
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/bbht_grover_main_ip.v:2007:9: Logical operator GENIF expects 1 bit on the If, but If's VARREF 'USE_GENERALIZED' generates 32 bits.
+                                                                                                                                                 : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip'
+ 2007 |         if(USE_GENERALIZED) begin : g_intra_generalized
+      |         ^~
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/bbht_grover_main_ip.v:1969:45: Logical operator LOGOR expects 1 bit on the LHS, but LHS's VARREF 'USE_GENERALIZED' generates 32 bits.
+                                                                                                                                                  : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip'
+ 1969 |         .E4_HIER_SELECT  (((USE_GENERALIZED || ((NUMBER_OF_PES == 4) && (MEAS_ROWS >= 2))) &&
+      |                                             ^~
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_memories.v:381:28: Operator VAR 'DEPTH_COUNT' expects 9 bits on the Initial value, but Initial value's VARREF 'DEPTH' generates 32 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.u_result_fifo'
+  381 |     localparam [CNT_W-1:0] DEPTH_COUNT = DEPTH;
+      |                            ^~~~~~~~~~~
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:556:22: Operator VAR 'OPTIONAL_CAPACITY' expects 3 bits on the Initial value, but Initial value's SUB generates 32 bits.
+                                                                                                                                           : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+  556 |     localparam [2:0] OPTIONAL_CAPACITY = CHECKPOINT_CAPACITY-1;
+      |                      ^~~~~~~~~~~~~~~~~
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:557:22: Operator VAR 'LAST_SUFFIX_INDEX' expects 4 bits on the Initial value, but Initial value's SUB generates 32 bits.
+                                                                                                                                           : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+  557 |     localparam [3:0] LAST_SUFFIX_INDEX = LOOKAHEAD_SHOTS-1;
+      |                      ^~~~~~~~~~~~~~~~~
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_checkpoint.v:389:30: Operator VAR 'K_COUNT' expects 3 bits on the Initial value, but Initial value's VARREF 'CHECKPOINT_CAPACITY' generates 32 bits.
+                                                                                                                                               : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec..g_ckpt_planner_generic_pipe.u_planner.u_allocate'
+  389 |     localparam [COUNT_W-1:0] K_COUNT     = CHECKPOINT_CAPACITY;
+      |                              ^~~~~~~
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_measurement.v:298:28: Operator ASSIGN expects 6 bits on the Assign RHS, but Assign RHS's ADD generates 32 bits.
+                                                                                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.u_measure_verify.u_born.u_reject64'
+  298 |                     k_comb = k_i + 1;
+      |                            ^
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_bbht.v:185:23: Operator ASSIGN expects 4 bits on the Assign RHS, but Assign RHS's ADD generates 32 bits.
+                                                                                                                                         : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.u_bbht.u_bbht_random.u_reject'
+  185 |                     k = i + 1;
+      |                       ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_parallel.sv:46:79: Operator DIV expects 32 bits on the LHS, but LHS's SEL generates 9 bits.
+                                                                                                                                              : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_intra_generalized.u_kernel.u_amplitudes'
+   46 |                         q<=mem[rd_slot*BANK_ROWS+rd_rows[p*(14 - 5)+:(14 - 5)]/BANKS];
+      |                                                                               ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_parallel.sv:44:43: Operator LT expects 32 bits on the LHS, but LHS's VARREF 'rd_slot' generates 2 bits.
+                                                                                                                                              : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_intra_generalized.u_kernel.u_amplitudes'
+   44 |                     if(rd_en[p] && rd_slot<CHECKPOINT_CAPACITY &&
+      |                                           ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_parallel.sv:45:53: Operator MODDIV expects 32 bits on the LHS, but LHS's SEL generates 9 bits.
+                                                                                                                                              : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_intra_generalized.u_kernel.u_amplitudes'
+   45 |                        rd_rows[p*(14 - 5)+:(14 - 5)]%BANKS==bank)
+      |                                                     ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_parallel.sv:50:76: Operator DIV expects 32 bits on the LHS, but LHS's SEL generates 9 bits.
+                                                                                                                                              : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_intra_generalized.u_kernel.u_amplitudes'
+   50 |                         mem[wr_slot*BANK_ROWS+wr_rows[p*(14 - 5)+:(14 - 5)]/BANKS]
+      |                                                                            ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_parallel.sv:48:43: Operator LT expects 32 bits on the LHS, but LHS's VARREF 'wr_slot' generates 2 bits.
+                                                                                                                                              : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_intra_generalized.u_kernel.u_amplitudes'
+   48 |                     if(wr_en[p] && wr_slot<CHECKPOINT_CAPACITY &&
+      |                                           ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_parallel.sv:49:53: Operator MODDIV expects 32 bits on the LHS, but LHS's SEL generates 9 bits.
+                                                                                                                                              : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_intra_generalized.u_kernel.u_amplitudes'
+   49 |                        wr_rows[p*(14 - 5)+:(14 - 5)]%BANKS==bank)
+      |                                                     ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_parallel.sv:58:66: Operator MODDIV expects 32 bits on the LHS, but LHS's SEL generates 9 bits.
+                                                                                                                                              : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_intra_generalized.u_kernel.u_amplitudes'
+   58 |                 read_bank[port]<=rd_rows[port*(14 - 5)+:(14 - 5)]%BANKS;
+      |                                                                  ^
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_parallel.sv:58:32: Operator ASSIGNDLY expects 2 bits on the Assign RHS, but Assign RHS's MODDIV generates 32 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_intra_generalized.u_kernel.u_amplitudes'
+   58 |                 read_bank[port]<=rd_rows[port*(14 - 5)+:(14 - 5)]%BANKS;
+      |                                ^~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_parallel.sv:67:30: Operator GTE expects 32 bits on the LHS, but LHS's VARREF 'rd_slot' generates 2 bits.
+                                                                                                                                              : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_intra_generalized.u_kernel.u_amplitudes'
+   67 |         if((|rd_en && rd_slot>=CHECKPOINT_CAPACITY) || (|wr_en && wr_slot>=CHECKPOINT_CAPACITY))
+      |                              ^~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_parallel.sv:67:74: Operator GTE expects 32 bits on the LHS, but LHS's VARREF 'wr_slot' generates 2 bits.
+                                                                                                                                              : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_intra_generalized.u_kernel.u_amplitudes'
+   67 |         if((|rd_en && rd_slot>=CHECKPOINT_CAPACITY) || (|wr_en && wr_slot>=CHECKPOINT_CAPACITY))
+      |                                                                          ^~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_parallel.sv:72:50: Operator MODDIV expects 32 bits on the LHS, but LHS's SEL generates 9 bits.
+                                                                                                                                              : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_intra_generalized.u_kernel.u_amplitudes'
+   72 |                     rd_rows[a*(14 - 5)+:(14 - 5)]%BANKS==rd_rows[b*(14 - 5)+:(14 - 5)]%BANKS)
+      |                                                  ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_parallel.sv:72:87: Operator MODDIV expects 32 bits on the LHS, but LHS's SEL generates 9 bits.
+                                                                                                                                              : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_intra_generalized.u_kernel.u_amplitudes'
+   72 |                     rd_rows[a*(14 - 5)+:(14 - 5)]%BANKS==rd_rows[b*(14 - 5)+:(14 - 5)]%BANKS)
+      |                                                                                       ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_parallel.sv:77:50: Operator MODDIV expects 32 bits on the LHS, but LHS's SEL generates 9 bits.
+                                                                                                                                              : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_intra_generalized.u_kernel.u_amplitudes'
+   77 |                     wr_rows[a*(14 - 5)+:(14 - 5)]%BANKS==wr_rows[b*(14 - 5)+:(14 - 5)]%BANKS)
+      |                                                  ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_parallel.sv:77:87: Operator MODDIV expects 32 bits on the LHS, but LHS's SEL generates 9 bits.
+                                                                                                                                              : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_intra_generalized.u_kernel.u_amplitudes'
+   77 |                     wr_rows[a*(14 - 5)+:(14 - 5)]%BANKS==wr_rows[b*(14 - 5)+:(14 - 5)]%BANKS)
+      |                                                                                       ^
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_checkpoint.v:425:29: Operator ASSIGN expects 2 bits on the Assign RHS, but Assign RHS's VARREF 'index' generates 32 bits.
+                                                                                                                                               : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec..g_ckpt_planner_generic_pipe.u_planner.u_allocate'
+  425 |                 lowest_slot4=index;found=1;
+      |                             ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:651:17: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's VARREF 'ord' generates 7 bits.
+                                                                                                                                            : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+  651 |             rem = ord;
+      |                 ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:652:18: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's VARREF 'k' generates 2 bits.
+                                                                                                                                            : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+  652 |             need = k;
+      |                  ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:655:35: Operator SUB expects 32 bits on the LHS, but LHS's VARREF 'n' generates 4 bits.
+                                                                                                                                            : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+  655 |                     c = choose13(n-p-1, need-1);
+      |                                   ^
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:655:25: Operator FUNCREF 'choose13' expects 4 bits on the Function Argument, but Function Argument's SUB generates 32 bits.
+                                                                                                                                           : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+  655 |                     c = choose13(n-p-1, need-1);
+      |                         ^~~~~~~~
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:655:25: Operator FUNCREF 'choose13' expects 3 bits on the Function Argument, but Function Argument's SUB generates 32 bits.
+                                                                                                                                           : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+  655 |                     c = choose13(n-p-1, need-1);
+      |                         ^~~~~~~~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:655:23: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's FUNCREF 'choose13' generates 11 bits.
+                                                                                                                                            : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+  655 |                     c = choose13(n-p-1, need-1);
+      |                       ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:852:33: Operator ADD expects 14 bits on the RHS, but RHS's VARREF 'rank' generates 11 bits.
+                                                                                                                                            : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+  852 |             memo_addr_of = base + rank;
+      |                                 ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:864:23: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'r' generates 4 bits.
+                                                                                                                                            : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+  864 |                 if (r == p) rank_onehot[p] = 1'b1;
+      |                       ^~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:984:59: Operator GTE expects 32 bits on the LHS, but LHS's VARREF 'univ_count' generates 4 bits.
+                                                                                                                                            : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+  984 |                                (!raw_found && (univ_count >= U_MAX)));
+      |                                                           ^~
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:991:44: Bit extraction of var[3:0] requires 2 bit index, not 5 bits.
+                                                                                                                                           : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+  991 |             build_sel_valid = in_slot_valid[build_idx];
+      |                                            ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:998:32: Operator LT expects 32 bits on the LHS, but LHS's VARREF 'build_idx' generates 5 bits.
+                                                                                                                                            : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+  998 |         end else if (build_idx < (4 + WINDOW_LEN)) begin
+      |                                ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:1443:49: Operator LTE expects 32 bits on the LHS, but LHS's VARREF 'a_ctx_keep_count' generates 3 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 1443 |                               (a_ctx_keep_count <= (CHECKPOINT_CAPACITY-1));
+      |                                                 ^~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:1445:44: Operator ADD expects 3 bits on the RHS, but RHS's VARREF 'root_single_new_endpoint' generates 1 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 1445 |     wire [2:0] root_single_count = a_count + root_single_new_endpoint;
+      |                                            ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:1645:51: Operator ADD expects 32 bits on the LHS, but LHS's REPLICATE generates 4 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 1645 |         early_has_next2 = (({1'b0,a_req_idx[2:0]} + 4'd2) <= LOOKAHEAD_SHOTS);
+      |                                                   ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:1645:51: Operator ADD expects 32 bits on the RHS, but RHS's CONST '4'h2' generates 4 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 1645 |         early_has_next2 = (({1'b0,a_req_idx[2:0]} + 4'd2) <= LOOKAHEAD_SHOTS);
+      |                                                   ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:1820:36: Operator GTE expects 32 bits on the LHS, but LHS's VARREF 'a_req_idx' generates 4 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 1820 |     wire top_terminal = (a_req_idx >= LOOKAHEAD_SHOTS);
+      |                                    ^~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2046:56: Operator EQ expects 32 bits on the LHS, but LHS's REPLICATE generates 5 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2046 |     wire scan_exact_finish=(sp!=0) && ({1'b0,a_req_idx}==LOOKAHEAD_SHOTS-1);
+      |                                                        ^~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2235:25: Operator FUNCREF 'next_comb9' expects 4 bits on the Function Argument, but Function Argument's VARREF 'keep_count' generates 3 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2235 |                 nmask = next_comb9(a_rmask, keep_count, a_rsize);
+      |                         ^~~~~~~~~~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2239:25: Operator FUNCREF 'next_comb9' expects 3 bits on the Function Argument, but Function Argument's VARREF 'a_dsize' generates 2 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2239 |                 nmask = next_comb9(a_dmask, extra_count, a_dsize);
+      |                         ^~~~~~~~~~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2247:55: Operator SUB expects 32 bits on the RHS, but RHS's VARREF 'ndsize' generates 2 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2247 |                 else nrsize = (CHECKPOINT_CAPACITY-1) - ndsize;
+      |                                                       ^
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2247:29: Operator ASSIGN expects 3 bits on the Assign RHS, but Assign RHS's SUB generates 32 bits.
+                                                                                                                                            : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2247 |                 else nrsize = (CHECKPOINT_CAPACITY-1) - ndsize;
+      |                             ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2246:32: Operator LT expects 32 bits on the LHS, but LHS's VARREF 'keep_count' generates 3 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2246 |                 if (keep_count < ((CHECKPOINT_CAPACITY-1) - ndsize)) nrsize = keep_count;
+      |                                ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2246:59: Operator SUB expects 32 bits on the RHS, but RHS's VARREF 'ndsize' generates 2 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2246 |                 if (keep_count < ((CHECKPOINT_CAPACITY-1) - ndsize)) nrsize = keep_count;
+      |                                                           ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2249:28: Operator FUNCREF 'first_comb9' expects 3 bits on the Function Argument, but Function Argument's VARREF 'ndsize' generates 2 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2249 |                 a_dmask <= first_comb9(ndsize); f_dmask[sp] <= first_comb9(ndsize);
+      |                            ^~~~~~~~~~~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2249:64: Operator FUNCREF 'first_comb9' expects 3 bits on the Function Argument, but Function Argument's VARREF 'ndsize' generates 2 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2249 |                 a_dmask <= first_comb9(ndsize); f_dmask[sp] <= first_comb9(ndsize);
+      |                                                                ^~~~~~~~~~~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2244:35: Operator LT expects 32 bits on the LHS, but LHS's VARREF 'a_dsize' generates 2 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2244 |             end else if ((a_dsize < (CHECKPOINT_CAPACITY-1)) && ((a_dsize + 1'b1) <= extra_count)) begin
+      |                                   ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2244:75: Operator ADD expects 4 bits on the LHS, but LHS's VARREF 'a_dsize' generates 2 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2244 |             end else if ((a_dsize < (CHECKPOINT_CAPACITY-1)) && ((a_dsize + 1'b1) <= extra_count)) begin
+      |                                                                           ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2238:26: Operator FUNCREF 'comb_has_next9' expects 3 bits on the Function Argument, but Function Argument's VARREF 'a_dsize' generates 2 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2238 |             end else if (comb_has_next9(a_dmask, extra_count, a_dsize)) begin
+      |                          ^~~~~~~~~~~~~~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2234:17: Operator FUNCREF 'comb_has_next9' expects 4 bits on the Function Argument, but Function Argument's VARREF 'keep_count' generates 3 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2234 |             if (comb_has_next9(a_rmask, keep_count, a_rsize)) begin
+      |                 ^~~~~~~~~~~~~~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2285:25: Operator FUNCREF 'next_comb9' expects 4 bits on the Function Argument, but Function Argument's VARREF 'keep_count' generates 3 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2285 |                 nmask = next_comb9(pre_rmask, keep_count, pre_rsize);
+      |                         ^~~~~~~~~~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2289:25: Operator FUNCREF 'next_comb9' expects 3 bits on the Function Argument, but Function Argument's VARREF 'pre_dsize' generates 2 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2289 |                 nmask = next_comb9(pre_dmask, extra_count, pre_dsize);
+      |                         ^~~~~~~~~~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2298:55: Operator SUB expects 32 bits on the RHS, but RHS's VARREF 'ndsize' generates 2 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2298 |                 else nrsize = (CHECKPOINT_CAPACITY-1) - ndsize;
+      |                                                       ^
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2298:29: Operator ASSIGN expects 3 bits on the Assign RHS, but Assign RHS's SUB generates 32 bits.
+                                                                                                                                            : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2298 |                 else nrsize = (CHECKPOINT_CAPACITY-1) - ndsize;
+      |                             ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2297:32: Operator LT expects 32 bits on the LHS, but LHS's VARREF 'keep_count' generates 3 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2297 |                 if (keep_count < ((CHECKPOINT_CAPACITY-1) - ndsize)) nrsize = keep_count;
+      |                                ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2297:59: Operator SUB expects 32 bits on the RHS, but RHS's VARREF 'ndsize' generates 2 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2297 |                 if (keep_count < ((CHECKPOINT_CAPACITY-1) - ndsize)) nrsize = keep_count;
+      |                                                           ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2301:28: Operator FUNCREF 'first_comb9' expects 3 bits on the Function Argument, but Function Argument's VARREF 'ndsize' generates 2 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2301 |                 a_dmask <= first_comb9(ndsize);
+      |                            ^~~~~~~~~~~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2302:32: Operator FUNCREF 'first_comb9' expects 3 bits on the Function Argument, but Function Argument's VARREF 'ndsize' generates 2 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2302 |                 f_dmask[sp] <= first_comb9(ndsize);
+      |                                ^~~~~~~~~~~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2294:37: Operator LT expects 32 bits on the LHS, but LHS's VARREF 'pre_dsize' generates 2 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2294 |             end else if ((pre_dsize < (CHECKPOINT_CAPACITY-1)) &&
+      |                                     ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2295:38: Operator ADD expects 4 bits on the LHS, but LHS's VARREF 'pre_dsize' generates 2 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2295 |                          ((pre_dsize + 1'b1) <= extra_count)) begin
+      |                                      ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2288:26: Operator FUNCREF 'comb_has_next9' expects 3 bits on the Function Argument, but Function Argument's VARREF 'pre_dsize' generates 2 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2288 |             end else if (comb_has_next9(pre_dmask, extra_count, pre_dsize)) begin
+      |                          ^~~~~~~~~~~~~~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2284:17: Operator FUNCREF 'comb_has_next9' expects 4 bits on the Function Argument, but Function Argument's VARREF 'keep_count' generates 3 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2284 |             if (comb_has_next9(pre_rmask, keep_count, pre_rsize)) begin
+      |                 ^~~~~~~~~~~~~~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2491:35: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'clear_ctr' generates 14 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2491 |                     if (clear_ctr == MEM_ENTRIES-1) begin
+      |                                   ^~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2531:48: Operator GTE expects 32 bits on the LHS, but LHS's VARREF 'univ_count' generates 4 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2531 |                                 if (univ_count >= U_MAX) begin
+      |                                                ^~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2584:36: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'build_idx' generates 5 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2584 |                     if ((build_idx == (4 + WINDOW_LEN - 1)) && !build_commit_abort) begin
+      |                                    ^~
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2654:37: Operator ASSIGNDLY expects 3 bits on the Assign RHS, but Assign RHS's SUB generates 32 bits.
+                                                                                                                                            : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2654 |                         f_rsize[sp] <= (CHECKPOINT_CAPACITY-1);
+      |                                     ^~
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2655:33: Operator ASSIGNDLY expects 3 bits on the Assign RHS, but Assign RHS's SUB generates 32 bits.
+                                                                                                                                            : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2655 |                         a_rsize <= (CHECKPOINT_CAPACITY-1);
+      |                                 ^~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2650:41: Operator LT expects 32 bits on the LHS, but LHS's VARREF 'prep_keep_count' generates 3 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2650 |                     if (prep_keep_count < (CHECKPOINT_CAPACITY-1)) begin
+      |                                         ^
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2661:40: Operator FUNCREF 'first_comb9' expects 3 bits on the Function Argument, but Function Argument's SUB generates 32 bits.
+                                                                                                                                            : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2661 |                         f_rmask[sp] <= first_comb9(CHECKPOINT_CAPACITY-1);
+      |                                        ^~~~~~~~~~~
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2662:36: Operator FUNCREF 'first_comb9' expects 3 bits on the Function Argument, but Function Argument's SUB generates 32 bits.
+                                                                                                                                            : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2662 |                         a_rmask <= first_comb9(CHECKPOINT_CAPACITY-1);
+      |                                    ^~~~~~~~~~~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2657:41: Operator LT expects 32 bits on the LHS, but LHS's VARREF 'prep_keep_count' generates 3 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2657 |                     if (prep_keep_count < (CHECKPOINT_CAPACITY-1)) begin
+      |                                         ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2757:67: Operator EQ expects 32 bits on the LHS, but LHS's REPLICATE generates 5 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2757 |                                                 ({1'b0,a_req_idx} == (LOOKAHEAD_SHOTS-1));
+      |                                                                   ^~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2758:66: Operator COND expects 11 bits on the Conditional False, but Conditional False's SEL generates 10 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2758 |                                 mresp_lb <= seed_issue_from_scan ?
+      |                                                                  ^
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2758:42: Operator ASSIGNDLY expects 10 bits on the Assign RHS, but Assign RHS's COND generates 11 bits.
+                                                                                                                                            : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2758 |                                 mresp_lb <= seed_issue_from_scan ?
+      |                                          ^~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:2822:76: Operator EQ expects 32 bits on the LHS, but LHS's REPLICATE generates 5 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 2822 |                                         if ((sp != 0) && ({1'b0,a_req_idx} == (LOOKAHEAD_SHOTS-1))) begin
+      |                                                                            ^~
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:3063:45: Operator FUNCREF 'memo_addr_of' expects 3 bits on the Function Argument, but Function Argument's SUB generates 4 bits.
+                                                                                                                                            : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy'
+ 3063 |                             memo_wr_addr <= memo_addr_of(f_req_idx[sp]-1'b1,
+      |                                             ^~~~~~~~~~~~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_checkpoint.v:1099:25: Operator LT expects 32 bits on the LHS, but LHS's VARREF 'idx' generates 3 bits.
+                                                                                                                                                 : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.u_ckpt_executor'
+ 1099 |         begin bj_at=(idx<SLOTS)?boundary_j_q[idx*7+:7]:0;end
+      |                         ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_checkpoint.v:1103:25: Operator LT expects 32 bits on the LHS, but LHS's VARREF 'idx' generates 3 bits.
+                                                                                                                                                 : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.u_ckpt_executor'
+ 1103 |         begin bs_at=(idx<SLOTS)?boundary_slot_q[idx*SLOT_W+:SLOT_W]:0;end
+      |                         ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_checkpoint.v:1218:58: Operator ASSIGNDLY expects 32 bits on the Assign RHS, but Assign RHS's VARREF 'delta16' generates 16 bits.
+                                                                                                                                                 : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.u_ckpt_executor'
+ 1218 |                                     physical_iter_issued <= delta16;
+      |                                                          ^~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_checkpoint.v:1245:74: Operator ADD expects 32 bits on the RHS, but RHS's VARREF 'bridge_remaining' generates 16 bits.
+                                                                                                                                                 : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.u_ckpt_executor'
+ 1245 |                             physical_iter_issued <= physical_iter_issued + bridge_remaining;
+      |                                                                          ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:3229:28: Operator ADD expects 32 bits on the RHS, but RHS's VARREF 'cand8' generates 8 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_shadow_j'
+ 3229 |         L_after_accept = L + cand8;
+      |                            ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:3267:37: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'out_idx' generates 4 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_shadow_j'
+ 3267 |                         if (out_idx == (FUTURE_COUNT-1)) begin
+      |                                     ^~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_checkpoint.v:322:40: Operator LT expects 32 bits on the LHS, but LHS's VARREF 'commit_slot' generates 2 bits.
+                                                                                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.u_ckpt_meta'
+  322 |             if(commit_en && commit_slot<CHECKPOINT_CAPACITY) valid_next[commit_slot]=1;
+      |                                        ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_checkpoint.v:329:40: Operator LT expects 32 bits on the LHS, but LHS's VARREF 'commit_slot' generates 2 bits.
+                                                                                                                                                : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.u_ckpt_meta'
+  329 |             if(commit_en && commit_slot<CHECKPOINT_CAPACITY && !invalidate_all)
+      |                                        ^
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:3348:27: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'level' generates 3 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_plan_queue'
+ 3348 |     assign full  = (level == DEPTH);
+      |                           ^~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:3369:35: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'wptr' generates 2 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_plan_queue'
+ 3369 |                     wptr <= (wptr == DEPTH-1) ? {PTR_W{1'b0}} : wptr + 1'b1;
+      |                                   ^~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:3375:35: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'rptr' generates 2 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_plan_queue'
+ 3375 |                     rptr <= (rptr == DEPTH-1) ? {PTR_W{1'b0}} : rptr + 1'b1;
+      |                                   ^~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:3380:35: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'wptr' generates 2 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_plan_queue'
+ 3380 |                     wptr <= (wptr == DEPTH-1) ? {PTR_W{1'b0}} : wptr + 1'b1;
+      |                                   ^~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:3381:35: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'rptr' generates 2 bits.
+                                                                                                                                             : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.u_plan_queue'
+ 3381 |                     rptr <= (rptr == DEPTH-1) ? {PTR_W{1'b0}} : rptr + 1'b1;
+      |                                   ^~
+%Warning-WIDTHEXPAND: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_loader.v:89:51: Operator LTE expects 32 bits on the LHS, but LHS's VARREF 'expected_count' generates 15 bits.
+                                                                                                                                           : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip.u_loader'
+   89 |                                   (expected_count <= N);
+      |                                                   ^~
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/bbht_grover_main_ip.v:868:10: Logical operator LOGNOT expects 1 bit on the LHS, but LHS's VARREF 'USE_GENERALIZED' generates 32 bits.
+                                                                                                                                                 : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip'
+  868 |         (!USE_GENERALIZED || (!policy_active_stale && !plan_epoch_advance));
+      |          ^
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/bbht_grover_main_ip.v:881:36: Logical operator LOGNOT expects 1 bit on the LHS, but LHS's VARREF 'USE_GENERALIZED' generates 32 bits.
+                                                                                                                                                 : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip'
+  881 |                                   (!USE_GENERALIZED || !policy_active_stale || !auto_policy_busy);
+      |                                    ^
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/bbht_grover_main_ip.v:924:24: Logical operator LOGNOT expects 1 bit on the LHS, but LHS's VARREF 'USE_GENERALIZED' generates 32 bits.
+                                                                                                                                                 : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip'
+  924 |                       (!USE_GENERALIZED || (!policy_active_stale && !plan_epoch_advance)) &&
+      |                        ^
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/bbht_grover_main_ip.v:1084:69: Logical operator COND expects 1 bit on the Conditional Test, but Conditional Test's VARREF 'USE_GENERALIZED' generates 32 bits.
+                                                                                                                                                  : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip'
+ 1084 |                         auto_sort_count          <= USE_GENERALIZED ? ckpt_sorted_count : ckpt_sort_count_now;
+      |                                                                     ^
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/bbht_grover_main_ip.v:1101:21: Logical operator IF expects 1 bit on the If, but If's VARREF 'USE_GENERALIZED' generates 32 bits.
+                                                                                                                                                  : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip'
+ 1101 |                     if(USE_GENERALIZED) begin
+      |                     ^~
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/bbht_grover_main_ip.v:1180:46: Logical operator LOGAND expects 1 bit on the LHS, but LHS's VARREF 'USE_GENERALIZED' generates 32 bits.
+                                                                                                                                                  : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip'
+ 1180 |                             (USE_GENERALIZED && policy_active_stale)) begin
+      |                                              ^~
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/bbht_grover_main_ip.v:1404:18: Logical operator LOGNOT expects 1 bit on the LHS, but LHS's VARREF 'USE_GENERALIZED' generates 32 bits.
+                                                                                                                                                  : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip'
+ 1404 |                 (!USE_GENERALIZED || (!policy_active_stale && !plan_epoch_advance))) begin
+      |                  ^
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/adapter.v:278:12: Logical operator LOGNOT expects 1 bit on the LHS, but LHS's VARREF 'monitor_fd' generates 32 bits.
+                                                                                                                                     : ... note: In instance 'bbht_rvx_wrapper.u_core'
+  278 |         if(!monitor_fd) $fatal(1,"cannot open policy observer file");
+      |            ^
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/adapter.v:302:27: Logical operator LOGAND expects 1 bit on the RHS, but RHS's VARREF 'monitor_fault' generates 32 bits.
+                                                                                                                                     : ... note: In instance 'bbht_rvx_wrapper.u_core'
+  302 |         end else if(rstnn && monitor_fault && !monitor_injected &&
+      |                           ^~
+%Warning-WIDTHTRUNC: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/adapter.v:312:18: Logical operator LOGAND expects 1 bit on the RHS, but RHS's VARREF 'monitor_reuse' generates 32 bits.
+                                                                                                                                     : ... note: In instance 'bbht_rvx_wrapper.u_core'
+  312 |         if(rstnn && monitor_reuse) begin
+      |                  ^~
+%Warning-CMPCONST: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/bbht_grover_main_ip.v:684:47: Comparison is constant due to limited range
+                                                                                                                                               : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip'
+  684 |     wire [7:0] ckpt_sort_l1_2 = (ckpt_sort_i2 <= ckpt_sort_i3) ?
+      |                                               ^~
+%Warning-CMPCONST: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/bbht_grover_main_ip.v:686:47: Comparison is constant due to limited range
+                                                                                                                                               : ... note: In instance 'bbht_rvx_wrapper.u_core.u_main_ip'
+  686 |     wire [7:0] ckpt_sort_l1_3 = (ckpt_sort_i2 <= ckpt_sort_i3) ?
+      |                                               ^~
+%Warning-LATCH: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:1468:5: Latch inferred for signal 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy.sel_id' (not all control paths of combinational always assign a value)
+                                                                                                                                      : ... Suggest use of always_latch for intentional latches
+ 1468 |     always @* begin
+      |     ^~~~~~
+%Warning-LATCH: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:1468:5: Latch inferred for signal 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy.action_raw_child_count' (not all control paths of combinational always assign a value)
+                                                                                                                                      : ... Suggest use of always_latch for intentional latches
+ 1468 |     always @* begin
+      |     ^~~~~~
+%Warning-LATCH: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:1468:5: Latch inferred for signal 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy.action_raw0' (not all control paths of combinational always assign a value)
+                                                                                                                                      : ... Suggest use of always_latch for intentional latches
+ 1468 |     always @* begin
+      |     ^~~~~~
+%Warning-LATCH: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:1468:5: Latch inferred for signal 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy.action_raw1' (not all control paths of combinational always assign a value)
+                                                                                                                                      : ... Suggest use of always_latch for intentional latches
+ 1468 |     always @* begin
+      |     ^~~~~~
+%Warning-LATCH: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:1468:5: Latch inferred for signal 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy.action_raw2' (not all control paths of combinational always assign a value)
+                                                                                                                                      : ... Suggest use of always_latch for intentional latches
+ 1468 |     always @* begin
+      |     ^~~~~~
+%Warning-LATCH: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_policy.v:1468:5: Latch inferred for signal 'bbht_rvx_wrapper.u_core.u_main_ip.g_ckpt_plan_exec.g_auto_policy_k34.g_parameterized_policy.u_policy.g_production.u_policy.action_raw3' (not all control paths of combinational always assign a value)
+                                                                                                                                      : ... Suggest use of always_latch for intentional latches
+ 1468 |     always @* begin
+      |     ^~~~~~
+%Warning-UNOPTFLAT: /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_arithmetic.v:136:27: Signal unoptimizable: Circular combinational logic: 'bbht_rvx_wrapper.u_core.u_main_ip.g_intra_generalized.u_kernel.u_datapath.g_engine[0].u_partial.pre_node'
+  136 |     wire signed [PSW-1:0] pre_node [0:(CUT+1)*P-1];
+      |                           ^~~~~~~~
+                    /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_arithmetic.v:136:27:      Example path: bbht_rvx_wrapper.u_core.u_main_ip.g_intra_generalized.u_kernel.u_datapath.g_engine[0].u_partial.pre_node
+                    /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_arithmetic.v:147:40:      Example path: ASSIGNW
+                    /workspace/hardware_bram/results/2026-10-29_generalized_common500/optimized_profile_lint/source/grover_arithmetic.v:136:27:      Example path: bbht_rvx_wrapper.u_core.u_main_ip.g_intra_generalized.u_kernel.u_datapath.g_engine[0].u_partial.pre_node

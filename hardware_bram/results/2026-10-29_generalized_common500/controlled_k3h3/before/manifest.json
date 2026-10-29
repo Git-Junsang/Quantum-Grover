@@ -1,0 +1,19 @@
+{
+  "config": {
+    "schema": 2,
+    "k": 3,
+    "h": 3,
+    "e": 4,
+    "m": 2,
+    "policy_mode": 6,
+    "scan_lanes": 4,
+    "force_generic": true
+  },
+  "sha256": {
+    "/workspace/hardware_bram/results/2026-10-29_generalized_common500/k5h10_before/source/grover_policy_parameterized.sv": "272d9c9519de373747970fa2ad6dee8b0f21f4525d44e60c25ff502cb9ad1287",
+    "/workspace/hardware_bram/src/grover_policy.v": "2a3f066324b7be44aea5c90b0653bc9a10151edc29731d2623fba34366a79875",
+    "/workspace/hardware_bram/src/grover_param.vh": "f334d27683ec7660250a4c9ccefd90c1c82b9c7047d37bd4ca887fb29a11f2fd",
+    "/workspace/hardware_bram/testbench/tb_policy_replay.cpp": "e50a51920c7735bec349cc30ff793e70c1ce69df8fc17213b940d0ae41181cce"
+  },
+  "vectors_sha256": "840bcedf100730b56599bc6a5f9abf0e83679adcae193e3fbd3d655abf0b3a07"
+}

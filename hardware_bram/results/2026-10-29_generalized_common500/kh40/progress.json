@@ -1,0 +1,20 @@
+{
+  "cells": 40,
+  "completed": 0,
+  "failed": [
+    {
+      "cell": [
+        3,
+        3
+      ],
+      "error": "'hardware_bram/results/2026-10-29_generalized_common500/k3h3e4m2_fast' is not in the subpath of '/workspace'"
+    }
+  ],
+  "active": [
+    "k3h3e4m2",
+    "k1h1e4m2",
+    "k1h2e4m2"
+  ],
+  "elapsed_seconds": 0.0,
+  "workers": 2
+}

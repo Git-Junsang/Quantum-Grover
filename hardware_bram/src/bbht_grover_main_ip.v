@@ -162,6 +162,7 @@ module bbht_grover_main_ip #(
     localparam integer POLICY_WINDOW=(LOOKAHEAD_SHOTS>8)?LOOKAHEAD_SHOTS+1:9;
     localparam integer USE_GENERALIZED=(GENERALIZED_RTL!=0) || CHECKPOINT_CAPACITY>4 ||
         CHECKPOINT_CAPACITY<3 || LOOKAHEAD_SHOTS>8 ||
+        BUILD_ROWS_PER_CYCLE>4 ||
         (NUMBER_OF_PES!=1 && NUMBER_OF_PES!=2 && NUMBER_OF_PES!=4) ||
         (NUMBER_OF_PES!=4 && BUILD_ROWS_PER_CYCLE>1);
     localparam integer MEAS_ROWS=(USE_GENERALIZED || NUMBER_OF_PES==4)?BUILD_ROWS_PER_CYCLE:1;
@@ -171,10 +172,10 @@ module bbht_grover_main_ip #(
         if((CHECKPOINT_CAPACITY>4 || CHECKPOINT_CAPACITY<3 || LOOKAHEAD_SHOTS>8) &&
             POLICY_SEARCH_MODE!=5 && POLICY_SEARCH_MODE!=6 && CHECKPOINT_ENABLE!=0)
             $fatal(1,"extended checkpoint/lookahead requires exact policy mode 5 or 6");
-        if(CHECKPOINT_CAPACITY<1 || CHECKPOINT_CAPACITY>10 || LOOKAHEAD_SHOTS<1 || LOOKAHEAD_SHOTS>10 || NUMBER_OF_PES<1 || NUMBER_OF_PES>16)
-            $fatal(1,"Main IP requires capacity/lookahead 1..10 and iteration engines 1..16");
-        if (BUILD_ROWS_PER_CYCLE < 1 || BUILD_ROWS_PER_CYCLE > 4)
-            $fatal(1, "BUILD_ROWS_PER_CYCLE must be 1..4");
+        if(CHECKPOINT_CAPACITY<1 || CHECKPOINT_CAPACITY>10 || LOOKAHEAD_SHOTS<1 || LOOKAHEAD_SHOTS>10 || NUMBER_OF_PES<1 || NUMBER_OF_PES>`GP_MAX_INTRA_ENGINES)
+            $fatal(1,"Main IP requires capacity/lookahead 1..10 and iteration engines 1..20");
+        if (BUILD_ROWS_PER_CYCLE < 1 || BUILD_ROWS_PER_CYCLE > `GP_MAX_SQUARE_ENGINES)
+            $fatal(1, "BUILD_ROWS_PER_CYCLE must be 1..11");
     end
 `endif
 
@@ -1951,11 +1952,16 @@ module bbht_grover_main_ip #(
     wire [6:0] meas_amp_quad_rd_index;
     wire meas_amp_quad_rd_en;
 
+    wire [MEAS_ROWS-1:0] meas_parallel_en,meas_parallel_valid;
+    wire [MEAS_ROWS*`GP_ROW_W-1:0] meas_parallel_rows;
+    wire [MEAS_ROWS*AMP_ROW_BITS-1:0] meas_parallel_data;
+
     wire [`GP_TOTAL_WEIGHT_W-1:0] meas_total_weight;
     wire [`GP_TOTAL_WEIGHT_W-1:0] meas_threshold;
     wire [`GP_ROW_W-1:0] meas_selected_row;
 
     grover_measure_verify #(
+        .BUILD_ENGINES(MEAS_ROWS),
         // Read latency follows the amplitude memory that is instantiated:
         // checkpoint memories (E1 ckpt / E2 / E4) answer in two cycles, the
         // legacy single amp memory (E1 without checkpoint) in one.
@@ -1990,6 +1996,10 @@ module bbht_grover_main_ip #(
         .amp_quad_valid       (meas_amp_quad_valid),
         .amp_quad_rd_index    (meas_amp_quad_rd_index),
         .amp_quad_rd_en       (meas_amp_quad_rd_en),
+        .parallel_rd_en       (meas_parallel_en),
+        .parallel_rd_rows     (meas_parallel_rows),
+        .parallel_data        (meas_parallel_data),
+        .parallel_valid       (meas_parallel_valid),
         .data_verify_index    (data_verify_index),
         .data_verify_value    (data_verify_value),
         .busy                 (meas_busy),
@@ -2004,9 +2014,14 @@ module bbht_grover_main_ip #(
     );
 
     generate
+        if(!USE_GENERALIZED) begin : g_unused_parallel_measurement
+            assign meas_parallel_data=0;
+            assign meas_parallel_valid=0;
+        end
         if(USE_GENERALIZED) begin : g_intra_generalized
             grover_inner_parallel #(
-                .CHECKPOINT_CAPACITY(CHECKPOINT_CAPACITY),.INTRA_ENGINES(NUMBER_OF_PES),.SLOT_W(CKPT_SLOT_W)
+                .CHECKPOINT_CAPACITY(CHECKPOINT_CAPACITY),.INTRA_ENGINES(NUMBER_OF_PES),
+                .SQUARE_ENGINES(MEAS_ROWS),.SLOT_W(CKPT_SLOT_W)
             ) u_kernel (
                 .clk(clk),.rstn(rstn),.iter_start(physical_iter_start),.iter_do_init(physical_iter_do_init),
                 .iter_count(physical_iter_count),.src_slot(ckpt_exec_mode?ckpt_exec_src_slot:{CKPT_SLOT_W{1'b0}}),
@@ -2024,7 +2039,9 @@ module bbht_grover_main_ip #(
                 .meas_single_data(amp_mem_rdata),.meas_single_valid(ckpt_amp_rd_valid),
                 .meas_quad_en(meas_amp_quad_rd_en),.meas_quad_index(meas_amp_quad_rd_index),
                 .meas_quad0(meas_amp_quad0),.meas_quad1(meas_amp_quad1),.meas_quad2(meas_amp_quad2),.meas_quad3(meas_amp_quad3),
-                .meas_quad_valid(meas_amp_quad_valid),.amp_write_forbid(meas_amp_write_forbid)
+                .meas_quad_valid(meas_amp_quad_valid),.amp_write_forbid(meas_amp_write_forbid),
+                .meas_parallel_en(meas_parallel_en),.meas_parallel_rows(meas_parallel_rows),
+                .meas_parallel_data(meas_parallel_data),.meas_parallel_valid(meas_parallel_valid)
             );
         end else if (NUMBER_OF_PES == 4) begin : g_intra_e4
             // ---------------------------------------------------------------

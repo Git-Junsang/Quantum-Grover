@@ -1,0 +1,50 @@
+{
+  "record_date_kst": "2026-10-29",
+  "active_scope": {
+    "capacities": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "lookahead_shots": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "iteration_engines": 4,
+    "square_engines": 2,
+    "workloads": 500,
+    "workers": 2,
+    "cells": 40
+  },
+  "next_stages": [
+    {
+      "stage": 1,
+      "task": "Complete fixed-E/M forty-cell RTL heatmaps and report actual first-parallel ETA."
+    },
+    {
+      "stage": 2,
+      "task": "Estimate 200T LUT/FF/BRAM/DSP and memory port/banking growth for capacity/lookahead/iteration/square parameters."
+    },
+    {
+      "stage": 3,
+      "task": "Synthesize representative candidates and verify resource/timing; use actual results to calibrate the feasibility envelope."
+    },
+    {
+      "stage": 4,
+      "task": "Choose the best configurations by measured total accelerator cycles and exposed policy stall under resource/timing constraints."
+    },
+    {
+      "stage": 5,
+      "task": "Extend heatmaps over the calibrated feasible and promising parameter ranges."
+    }
+  ],
+  "separate_background_implementation": "Not queried or modified by this campaign."
+}

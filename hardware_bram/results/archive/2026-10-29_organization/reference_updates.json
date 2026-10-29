@@ -1,0 +1,17 @@
+[
+  {
+    "path": "documents/reports/23_policy_search_method_1.md",
+    "before_sha256": "47f7ecc350b99a786761650423dbd77ea50aa84b37efffa3f648c7d7b3780ee1",
+    "after_sha256": "0aa36f1db896a84a88d3efc10cdd151c2965a548b90e560032251442eb167ff1"
+  },
+  {
+    "path": "hardware_bram/results/2026-10-28_parameterized_rtl/evidence.md",
+    "before_sha256": "2564b8aed32659242b02a53bd89132fc469cc519e474783beb14aaa330f314c4",
+    "after_sha256": "4d90a7e1e9c8bcdf2fd1ad36e32b239181f421d3e8b058095a3e92344b4a9c9b"
+  },
+  {
+    "path": "hardware_bram/results/2026-10-28_policy_gap_bound_final/evidence.md",
+    "before_sha256": "7b03bf666fb707610a90e97f79a787ba38c4d5f85cf40de83573348b5a24b5c2",
+    "after_sha256": "23fb997ca694692f74d8beeb9ace777db3c28b33d44fa951892544af75fcfff1"
+  }
+]

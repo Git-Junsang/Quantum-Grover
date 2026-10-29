@@ -1,0 +1,8 @@
+PASS pattern=0 W=0 candidate=0 latencies=520,264,179,136
+PASS pattern=1 W=1 candidate=16383 latencies=1073,353,268,225
+PASS pattern=2 W=17592186044416 candidate=889 latencies=587,332,247,204
+PASS pattern=3 W=158240876755 candidate=16331 latencies=1068,348,263,220
+PASS pattern=4 W=288230238712774656 candidate=12343 latencies=943,316,231,188
+PASS pattern=5 W=13656275341018 candidate=8680 latencies=818,315,230,187
+PASS BUILD_ROWS=1..11 bit-exact Born equivalence cases=66 errors=0
+hardware_bram/testbench/tb_measure_build_rows.sv:149: $finish called at 50490000 (1ps)

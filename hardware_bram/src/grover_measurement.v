@@ -1686,6 +1686,7 @@ endmodule
 `include "grover_param.vh"
 
 module grover_measure_verify #(
+    parameter integer BUILD_ENGINES = 1,
     parameter integer AMP_READ_LATENCY = 1,
     parameter integer E4_DUAL_BUILD    = 0,
     parameter integer E4_TRIPLE_BUILD  = 0,
@@ -1722,6 +1723,13 @@ module grover_measure_verify #(
     output wire                                  amp_quad_rd_en,
 
     // data_mem Port-B verification interface.
+    // Parameter-sized development read interface. Legacy configurations keep
+    // the existing one/four-row sampler and leave these requests inactive.
+    output wire [BUILD_ENGINES-1:0] parallel_rd_en,
+    output wire [BUILD_ENGINES*`GP_ROW_W-1:0] parallel_rd_rows,
+    input wire [BUILD_ENGINES*`GP_P*`GP_AMP_W-1:0] parallel_data,
+    input wire [BUILD_ENGINES-1:0] parallel_valid,
+
     output wire [`GP_INDEX_W-1:0]                data_verify_index,
     input  wire signed [`GP_DATA_W-1:0]          data_verify_value,
 
@@ -1761,6 +1769,22 @@ module grover_measure_verify #(
     assign busy = (st != S_IDLE);
     assign amp_write_forbid = busy;
 
+    generate if(BUILD_ENGINES>4) begin : g_expanded_sampler
+        assign amp_rd_row=0;
+        assign amp_rd_en=0;
+        assign amp_quad_rd_index=0;
+        assign amp_quad_rd_en=0;
+        grover_born_sampler_parallel #(.SQUARE_ENGINES(BUILD_ENGINES)) u_born (
+            .clk(clk),.rstn(rstn),.start(born_start),.rnd(rnd),.rnd_draw(rnd_draw),
+            .rd_en(parallel_rd_en),.rd_rows(parallel_rd_rows),
+            .amp_data(parallel_data),.amp_valid(parallel_valid),
+            .busy(born_busy),.done(born_done),.zero_weight_error(born_zero_weight_error),
+            .candidate(born_candidate),.total_weight(total_weight),
+            .threshold(measurement_threshold),.selected_row(selected_row)
+        );
+    end else begin : g_legacy_sampler
+    assign parallel_rd_en=0;
+    assign parallel_rd_rows=0;
     grover_born_sampler #(
         .AMP_READ_LATENCY(AMP_READ_LATENCY),
         .E4_DUAL_BUILD   (E4_DUAL_BUILD),
@@ -1792,6 +1816,7 @@ module grover_measure_verify #(
         .selected_row      (selected_row)
     );
 
+    end endgenerate
     grover_verify u_verify (
         .clk               (clk),
         .rstn              (rstn),

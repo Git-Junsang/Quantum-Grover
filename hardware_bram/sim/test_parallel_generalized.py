@@ -4,17 +4,21 @@ from pathlib import Path
 import hashlib
 import json
 import subprocess
+import tempfile
 import unittest
 
 ROOT=Path(__file__).resolve().parents[2]
-OUT=ROOT/'hardware_bram/results/2026-10-28_parameterized_parallel'
+# Unit reruns write to a fresh temporary directory. The archived block results
+# remain evidence for the source revision that originally produced them.
+OUT=Path(tempfile.mkdtemp(prefix='bbht_parallel_unit_'))
 
 class ParallelDatapathTests(unittest.TestCase):
     def test_rows_and_arithmetic(self):
         sources=[ROOT/'hardware_bram/src'/name for name in
             ('grover_parallel.sv','grover_arithmetic.v','grover_measurement.v','grover_memories.v','grover_param.vh')]
         sources.append(ROOT/'hardware_bram/testbench/tb_parallel_generalized.sv')
-        for k,e,m in [(1,1,1),(3,1,4),(3,3,2),(3,4,3),(10,16,4)]:
+        for k,e,m in [(1,1,1),(3,1,4),(3,3,2),(3,4,3),(10,16,4),
+                      (10,20,11),(5,19,10),(1,1,11),(4,17,5)]:
             with self.subTest(k=k,e=e,m=m):
                 out=OUT/f'k{k}_e{e}_m{m}';out.mkdir(parents=True,exist_ok=True)
                 manifest={'k':k,'e':e,'m':m,'scope':'independent memory/iteration/square RTL blocks; no Main IP integration',

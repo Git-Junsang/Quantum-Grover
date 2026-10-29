@@ -1,0 +1,162 @@
+%Error: hardware_bram/src/bbht_rvx_wrapper.v:19:10: Cannot find include file: bbht_grover_csr.vh
+   19 | `include "bbht_grover_csr.vh"
+      |          ^~~~~~~~~~~~~~~~~~~~
+        ... Looked in:
+             hardware_bram/src/bbht_grover_csr.vh
+             hardware_bram/src/bbht_grover_csr.vh.v
+             hardware_bram/src/bbht_grover_csr.vh.sv
+             bbht_grover_csr.vh
+             bbht_grover_csr.vh.v
+             bbht_grover_csr.vh.sv
+             obj_dir/bbht_grover_csr.vh
+             obj_dir/bbht_grover_csr.vh.v
+             obj_dir/bbht_grover_csr.vh.sv
+%Error: hardware_bram/src/bbht_grover_mmio.v:25:10: Cannot find include file: bbht_grover_csr.vh
+   25 | `include "bbht_grover_csr.vh"
+      |          ^~~~~~~~~~~~~~~~~~~~
+%Error: hardware_bram/src/bbht_grover_mmio.v:133:21: Define or directive not defined: '`BBHT_CSR_IDX_BITS'
+  133 |     localparam IW = `BBHT_CSR_IDX_BITS;
+      |                     ^~~~~~~~~~~~~~~~~~
+%Error: hardware_bram/src/bbht_grover_mmio.v:133:39: syntax error, unexpected ';', expecting TYPE-IDENTIFIER
+  133 |     localparam IW = `BBHT_CSR_IDX_BITS;
+      |                                       ^
+%Error: hardware_bram/src/bbht_grover_mmio.v:137:62: Define or directive not defined: '`BBHT_CSR_NUM_REG'
+  137 |     wire          in_map  = (paddr[11:IW+2] == 0) && (ridx < `BBHT_CSR_NUM_REG);
+      |                                                              ^~~~~~~~~~~~~~~~~
+%Error: hardware_bram/src/bbht_grover_mmio.v:137:79: syntax error, unexpected ')', expecting TYPE-IDENTIFIER
+  137 |     wire          in_map  = (paddr[11:IW+2] == 0) && (ridx < `BBHT_CSR_NUM_REG);
+      |                                                                               ^
+%Error: hardware_bram/src/bbht_grover_mmio.v:151:37: Define or directive not defined: '`CSR_IDX_FIFO_DATA'
+  151 |     assign res_pop = rd && (ridx == `CSR_IDX_FIFO_DATA) && !res_empty;
+      |                                     ^~~~~~~~~~~~~~~~~~
+%Error: hardware_bram/src/bbht_grover_mmio.v:151:55: syntax error, unexpected ')', expecting TYPE-IDENTIFIER
+  151 |     assign res_pop = rd && (ridx == `CSR_IDX_FIFO_DATA) && !res_empty;
+      |                                                       ^
+%Error: hardware_bram/src/bbht_grover_mmio.v:166:40: Define or directive not defined: '`CSR_IDX_COMMAND'
+  166 |     wire cmd_wr_start = wr && (ridx == `CSR_IDX_COMMAND);
+      |                                        ^~~~~~~~~~~~~~~~
+%Error: hardware_bram/src/bbht_grover_mmio.v:166:56: syntax error, unexpected ')', expecting TYPE-IDENTIFIER
+  166 |     wire cmd_wr_start = wr && (ridx == `CSR_IDX_COMMAND);
+      |                                                        ^
+%Error: hardware_bram/src/bbht_grover_mmio.v:167:40: Define or directive not defined: '`CSR_IDX_DMA_COMMAND'
+  167 |     wire cmd_wr_dma   = wr && (ridx == `CSR_IDX_DMA_COMMAND);
+      |                                        ^~~~~~~~~~~~~~~~~~~~
+%Error: hardware_bram/src/bbht_grover_mmio.v:167:60: syntax error, unexpected ')', expecting TYPE-IDENTIFIER
+  167 |     wire cmd_wr_dma   = wr && (ridx == `CSR_IDX_DMA_COMMAND);
+      |                                                            ^
+%Error: hardware_bram/src/bbht_grover_mmio.v:201:38: Define or directive not defined: '`BBHT_PRED_LT'
+  201 |             cfg_predicate_mode    <= `BBHT_PRED_LT;
+      |                                      ^~~~~~~~~~~~~
+%Error: hardware_bram/src/bbht_grover_mmio.v:201:51: syntax error, unexpected ';', expecting TYPE-IDENTIFIER
+  201 |             cfg_predicate_mode    <= `BBHT_PRED_LT;
+      |                                                   ^
+%Error: hardware_bram/src/bbht_grover_mmio.v:205:38: Define or directive not defined: '`BBHT_N_ENTRIES'
+  205 |             cfg_data_count        <= `BBHT_N_ENTRIES;    
+      |                                      ^~~~~~~~~~~~~~~
+%Error: hardware_bram/src/bbht_grover_mmio.v:205:53: syntax error, unexpected ';', expecting TYPE-IDENTIFIER
+  205 |             cfg_data_count        <= `BBHT_N_ENTRIES;    
+      |                                                     ^
+%Error: hardware_bram/src/bbht_grover_mmio.v:221:17: Define or directive not defined: '`CSR_IDX_CONTROL'
+  221 |                 `CSR_IDX_CONTROL: begin
+      |                 ^~~~~~~~~~~~~~~~
+%Error: hardware_bram/src/bbht_grover_mmio.v:221:33: syntax error, unexpected :-begin, expecting endcase
+  221 |                 `CSR_IDX_CONTROL: begin
+      |                                 ^
+%Error: hardware_bram/src/bbht_grover_mmio.v:226:17: Define or directive not defined: '`CSR_IDX_J_TARGET'
+  226 |                 `CSR_IDX_J_TARGET   : cfg_j_target    <= pwdata[6:0];
+      |                 ^~~~~~~~~~~~~~~~~
+%Error-ENDLABEL: hardware_bram/src/bbht_grover_mmio.v:226:39: End label 'cfg_j_target' does not match begin label ''
+  226 |                 `CSR_IDX_J_TARGET   : cfg_j_target    <= pwdata[6:0];
+      |                                       ^~~~~~~~~~~~
+                 ... For error description see https://verilator.org/warn/ENDLABEL?v=5.020
+%Error: hardware_bram/src/bbht_grover_mmio.v:226:55: syntax error, unexpected <=
+  226 |                 `CSR_IDX_J_TARGET   : cfg_j_target    <= pwdata[6:0];
+      |                                                       ^~
+%Error: hardware_bram/src/bbht_grover_mmio.v:227:17: Define or directive not defined: '`CSR_IDX_THRESHOLD_A'
+  227 |                 `CSR_IDX_THRESHOLD_A: cfg_threshold_a <= pwdata[15:0];
+      |                 ^~~~~~~~~~~~~~~~~~~~
+%Error: hardware_bram/src/bbht_grover_mmio.v:228:17: Define or directive not defined: '`CSR_IDX_THRESHOLD_B'
+  228 |                 `CSR_IDX_THRESHOLD_B: cfg_threshold_b <= pwdata[15:0];
+      |                 ^~~~~~~~~~~~~~~~~~~~
+%Error: hardware_bram/src/bbht_grover_mmio.v:229:17: Define or directive not defined: '`CSR_IDX_DATA_COUNT'
+  229 |                 `CSR_IDX_DATA_COUNT : cfg_data_count  <= pwdata[14:0];
+      |                 ^~~~~~~~~~~~~~~~~~~
+%Error: hardware_bram/src/bbht_grover_mmio.v:230:17: Define or directive not defined: '`CSR_IDX_SHOT_CAP'
+  230 |                 `CSR_IDX_SHOT_CAP   : cfg_shot_cap    <= pwdata[15:0];
+      |                 ^~~~~~~~~~~~~~~~~
+%Error: hardware_bram/src/bbht_grover_mmio.v:231:17: Define or directive not defined: '`CSR_IDX_SEED_J'
+  231 |                 `CSR_IDX_SEED_J     : cfg_seed_j      <= pwdata;
+      |                 ^~~~~~~~~~~~~~~
+%Error: hardware_bram/src/bbht_grover_mmio.v:232:17: Define or directive not defined: '`CSR_IDX_SEED_MEAS'
+  232 |                 `CSR_IDX_SEED_MEAS  : cfg_seed_meas   <= pwdata;
+      |                 ^~~~~~~~~~~~~~~~~~
+%Error: hardware_bram/src/bbht_grover_mmio.v:233:17: Define or directive not defined: '`CSR_IDX_ENUM_CFG'
+  233 |                 `CSR_IDX_ENUM_CFG   : begin
+      |                 ^~~~~~~~~~~~~~~~~
+%Error: hardware_bram/src/bbht_grover_mmio.v:237:17: Define or directive not defined: '`CSR_IDX_DATA_ADDR'
+  237 |                 `CSR_IDX_DATA_ADDR  : cfg_data_addr   <= pwdata;
+      |                 ^~~~~~~~~~~~~~~~~~
+%Error-ENDLABEL: hardware_bram/src/bbht_grover_mmio.v:237:39: End label 'cfg_data_addr' does not match begin label ''
+  237 |                 `CSR_IDX_DATA_ADDR  : cfg_data_addr   <= pwdata;
+      |                                       ^~~~~~~~~~~~~
+%Error: hardware_bram/src/bbht_grover_mmio.v:237:55: syntax error, unexpected <=
+  237 |                 `CSR_IDX_DATA_ADDR  : cfg_data_addr   <= pwdata;
+      |                                                       ^~
+%Error: hardware_bram/src/bbht_grover_mmio.v:249:24: Define or directive not defined: '`BBHT_ST_BUSY'
+  249 |     assign status_word[`BBHT_ST_BUSY]              = st_busy;
+      |                        ^~~~~~~~~~~~~
+%Error: hardware_bram/src/bbht_grover_mmio.v:249:37: syntax error, unexpected ']', expecting TYPE-IDENTIFIER
+  249 |     assign status_word[`BBHT_ST_BUSY]              = st_busy;
+      |                                     ^
+%Error: hardware_bram/src/bbht_grover_mmio.v:250:24: Define or directive not defined: '`BBHT_ST_LOAD_BUSY'
+  250 |     assign status_word[`BBHT_ST_LOAD_BUSY]         = st_load_busy;
+      |                        ^~~~~~~~~~~~~~~~~~
+%Error: hardware_bram/src/bbht_grover_mmio.v:250:42: syntax error, unexpected ']', expecting TYPE-IDENTIFIER
+  250 |     assign status_word[`BBHT_ST_LOAD_BUSY]         = st_load_busy;
+      |                                          ^
+%Error: hardware_bram/src/bbht_grover_mmio.v:251:24: Define or directive not defined: '`BBHT_ST_DONE_STICKY'
+  251 |     assign status_word[`BBHT_ST_DONE_STICKY]       = done_sticky;
+      |                        ^~~~~~~~~~~~~~~~~~~~
+%Error: hardware_bram/src/bbht_grover_mmio.v:251:44: syntax error, unexpected ']', expecting TYPE-IDENTIFIER
+  251 |     assign status_word[`BBHT_ST_DONE_STICKY]       = done_sticky;
+      |                                            ^
+%Error: hardware_bram/src/bbht_grover_mmio.v:252:24: Define or directive not defined: '`BBHT_ST_RESULT_VALID'
+  252 |     assign status_word[`BBHT_ST_RESULT_VALID]      = st_result_valid;
+      |                        ^~~~~~~~~~~~~~~~~~~~~
+%Error: hardware_bram/src/bbht_grover_mmio.v:252:45: syntax error, unexpected ']', expecting TYPE-IDENTIFIER
+  252 |     assign status_word[`BBHT_ST_RESULT_VALID]      = st_result_valid;
+      |                                             ^
+%Error: hardware_bram/src/bbht_grover_mmio.v:253:24: Define or directive not defined: '`BBHT_ST_CONFIG_ERROR'
+  253 |     assign status_word[`BBHT_ST_CONFIG_ERROR]      = st_config_error;
+      |                        ^~~~~~~~~~~~~~~~~~~~~
+%Error: hardware_bram/src/bbht_grover_mmio.v:253:45: syntax error, unexpected ']', expecting TYPE-IDENTIFIER
+  253 |     assign status_word[`BBHT_ST_CONFIG_ERROR]      = st_config_error;
+      |                                             ^
+%Error: hardware_bram/src/bbht_grover_mmio.v:254:24: Define or directive not defined: '`BBHT_ST_SHOT_LIMIT'
+  254 |     assign status_word[`BBHT_ST_SHOT_LIMIT]        = st_shot_limit;
+      |                        ^~~~~~~~~~~~~~~~~~~
+%Error: hardware_bram/src/bbht_grover_mmio.v:254:43: syntax error, unexpected ']', expecting TYPE-IDENTIFIER
+  254 |     assign status_word[`BBHT_ST_SHOT_LIMIT]        = st_shot_limit;
+      |                                           ^
+%Error: hardware_bram/src/bbht_grover_mmio.v:255:24: Define or directive not defined: '`BBHT_ST_BUDGET_LIMIT'
+  255 |     assign status_word[`BBHT_ST_BUDGET_LIMIT]      = st_budget_limit;
+      |                        ^~~~~~~~~~~~~~~~~~~~~
+%Error: hardware_bram/src/bbht_grover_mmio.v:255:45: syntax error, unexpected ']', expecting TYPE-IDENTIFIER
+  255 |     assign status_word[`BBHT_ST_BUDGET_LIMIT]      = st_budget_limit;
+      |                                             ^
+%Error: hardware_bram/src/bbht_grover_mmio.v:256:24: Define or directive not defined: '`BBHT_ST_AMP_OVERFLOW'
+  256 |     assign status_word[`BBHT_ST_AMP_OVERFLOW]      = st_amp_overflow;
+      |                        ^~~~~~~~~~~~~~~~~~~~~
+%Error: hardware_bram/src/bbht_grover_mmio.v:256:45: syntax error, unexpected ']', expecting TYPE-IDENTIFIER
+  256 |     assign status_word[`BBHT_ST_AMP_OVERFLOW]      = st_amp_overflow;
+      |                                             ^
+%Error: hardware_bram/src/bbht_grover_mmio.v:257:24: Define or directive not defined: '`BBHT_ST_ZERO_WEIGHT_ERROR'
+  257 |     assign status_word[`BBHT_ST_ZERO_WEIGHT_ERROR] = st_zero_weight_error;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~
+%Error: hardware_bram/src/bbht_grover_mmio.v:257:50: syntax error, unexpected ']', expecting TYPE-IDENTIFIER
+  257 |     assign status_word[`BBHT_ST_ZERO_WEIGHT_ERROR] = st_zero_weight_error;
+      |                                                  ^
+%Error: hardware_bram/src/bbht_grover_mmio.v:258:24: Define or directive not defined: '`BBHT_ST_LOAD_ERROR'
+  258 |     assign status_word[`BBHT_ST_LOAD_ERROR]        = st_load_error;
+      |                        ^~~~~~~~~~~~~~~~~~~
+%Error: Exiting due to too many errors encountered; --error-limit=50

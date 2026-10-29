@@ -1,0 +1,50 @@
+{
+  "status": "Planning notes only; no E/M sweep, synthesis or new implementation performed.",
+  "source_observations": {
+    "amplitude_memory": {
+      "banks": "max(iteration_engines,4)",
+      "rows_per_bank": "ceil(512/banks)",
+      "depth_per_bank": "checkpoint_capacity*rows_per_bank",
+      "word_bits": 736,
+      "mapping_note": "Account for width/depth rounding and actual read/write inference, not raw bits alone."
+    },
+    "dataset_memory": {
+      "replicas": "iteration_engines",
+      "logical_bits_per_replica": 262144,
+      "mapping_note": "Existing lane-level RAM write enables and per-replica verify-port pruning affect physical mapping."
+    },
+    "found_mask": {
+      "replicas": "iteration_engines",
+      "logical_bits_per_replica": 16384
+    },
+    "candidate_cache": {
+      "universe": "checkpoint_capacity+lookahead_shots+1",
+      "entries_per_frame": "sum(combinations(universe-1,i) for i in 0..checkpoint_capacity-1)",
+      "frames": "lookahead_shots+1",
+      "word_bits": "universe+count_width+11",
+      "port_note": "Four simultaneous candidate writes/reads need actual bank/port verification in synthesis."
+    },
+    "memo": {
+      "entries": 4096,
+      "tag_bits": "universe+4+16",
+      "cost_bits": 11
+    },
+    "measurement": {
+      "square_engines": "one 32-lane row squarer per engine",
+      "select": "16 groups x 32 rows"
+    }
+  },
+  "representative_calibration_questions": [
+    "Compare capacity 4 vs 5 at four iteration engines: a depth boundary can change BRAM packing.",
+    "Compare eight vs sixteen iteration engines: amplitude-bank padding and replicated dataset memories can dominate.",
+    "Check actual candidate-cache RAM inference before estimating larger capacity/lookahead arrays.",
+    "Calibrate square-engine DSP/LUT use with synthesis, preserving the 16x32 selection structure."
+  ],
+  "possible_later_solver_work_not_implemented": [
+    "Profile K2/H6..8: memo/evaluation/termination and candidate scan/replay dominate the remaining work.",
+    "Consider an independently proven exact three-request suffix for capacity two.",
+    "Consider cache prefetch and overlapping synchronous memo requests with independent work.",
+    "Check whether a larger exact suffix can replace search when remaining requests fit checkpoint capacity."
+  ],
+  "current_scope": "Keep E4/M2 unchanged for the forty-cell Common500 campaign."
+}

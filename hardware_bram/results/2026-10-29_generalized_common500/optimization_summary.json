@@ -1,0 +1,76 @@
+{
+  "baseline": {
+    "validated_workloads": 500,
+    "cycles": 5150965,
+    "iter": 9582,
+    "policy_cycles": 80719,
+    "policy_stall": 16363,
+    "policy_actions": 20949
+  },
+  "generic_fast": {
+    "validated_workloads": 500,
+    "cycles": 5148615,
+    "iter": 9582,
+    "policy_cycles": 67280,
+    "policy_stall": 14013,
+    "policy_actions": 20951
+  },
+  "unit_cases": 232,
+  "reference_exhaustive_crosschecks": 800,
+  "rtl_changes": [
+    "unique root before BUILD",
+    "unique interior child without SCAN or lower-bound pipeline",
+    "exact two-request suffix"
+  ],
+  "root_cost_contract": "Mode 6 single-action root keeps its established immediate-cost lower-bound telemetry.",
+  "policy_selection_and_tie_break": "unchanged",
+  "grid": {
+    "capacity": [
+      1,
+      5
+    ],
+    "lookahead": [
+      1,
+      8
+    ],
+    "iteration_engines": 4,
+    "square_engines": 2,
+    "cells": 40,
+    "workloads_per_cell": 500,
+    "workers": 2
+  },
+  "background_physical_implementation": "not queried",
+  "resource_next_step": "Estimate and calibrate the 200T feasible parameter envelope after the fixed-E/M heatmaps.",
+  "disabled_fast_path_unit_cases": 29,
+  "default_optimized_observer_lint": "passed",
+  "campaign_completed": 40,
+  "campaign_workload_pairs": 20000,
+  "policy_target_satisfied_cells": 36,
+  "policy_target_exceeded_cells": [
+    [
+      2,
+      6
+    ],
+    [
+      2,
+      7
+    ],
+    [
+      2,
+      8
+    ],
+    [
+      3,
+      8
+    ]
+  ],
+  "best_fixed_parallelism": {
+    "k": 5,
+    "h": 7,
+    "e": 4,
+    "m": 2,
+    "cycles": 4900210,
+    "policy_cycles": 106099,
+    "policy_stall": 15373
+  }
+}

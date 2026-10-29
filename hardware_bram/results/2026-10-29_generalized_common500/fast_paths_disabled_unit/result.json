@@ -1,0 +1,16 @@
+{
+  "config": {
+    "schema": 2,
+    "k": 3,
+    "h": 3,
+    "e": 4,
+    "m": 2,
+    "policy_mode": 6,
+    "scan_lanes": 4,
+    "force_generic": false
+  },
+  "fast_paths": 0,
+  "cases": 29,
+  "summary": "SUMMARY parameterized capacity=3 lookahead=3 cases=29 errors=0 total_cycles=968",
+  "errors": 0
+}

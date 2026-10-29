@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 module tb_policy_parameterized #(
-    parameter integer K=3,H=3,MODE=6,FORCE_GENERIC=1,LANES=4,MEMO_ADDR_W=5
+    parameter integer K=3,H=3,MODE=6,FORCE_GENERIC=1,LANES=4,MEMO_ADDR_W=5,FAST_PATHS=1
 );
     localparam integer CW=$clog2(K+1);
     reg clk=0; always #5 clk=~clk;
@@ -16,7 +16,7 @@ module tb_policy_parameterized #(
     wire [31:0] policy_cycles_last,policy_actions_last,policy_memo_hit_last,policy_memo_miss_last;
     grover_ckpt_policy_parameterized #(.CHECKPOINT_CAPACITY(K),.LOOKAHEAD_SHOTS(H),
         .EXACT_PRUNE(MODE),.FORCE_GENERIC(FORCE_GENERIC),.SCAN_LANES(LANES),
-        .MEMO_ADDR_W(MEMO_ADDR_W),.EPOCH_W(2)) dut (.*);
+        .MEMO_ADDR_W(MEMO_ADDR_W),.EPOCH_W(2),.FAST_PATHS(FAST_PATHS)) dut (.*);
     string trace_path;
     integer fd,rc,es,ec,ev,eg,rows=0,elapsed,actual_cycles,total_cycles=0;
     reg [K*7-1:0] expected_tuple;

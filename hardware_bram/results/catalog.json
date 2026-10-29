@@ -1,0 +1,428 @@
+{
+  "date": "2026-10-29",
+  "timezone": "Asia/Seoul",
+  "scope": "directory organization; no experiment rerun or PPA status query",
+  "navigation": "documents/reports/index.md",
+  "experiments": [
+    {
+      "name": "2026-09-08_publication_6stage",
+      "path": "hardware_bram/results/2026-09-08_publication_6stage",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": "hardware_bram/results/2026-09-08_publication_6stage/evidence.md"
+    },
+    {
+      "name": "2026-09-08_resource_ablation_5config",
+      "path": "hardware_bram/results/2026-09-08_resource_ablation_5config",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": "hardware_bram/results/2026-09-08_resource_ablation_5config/evidence.md"
+    },
+    {
+      "name": "2026-09-09_kh_isolated_e1",
+      "path": "hardware_bram/results/2026-09-09_kh_isolated_e1",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": "hardware_bram/results/2026-09-09_kh_isolated_e1/evidence.md"
+    },
+    {
+      "name": "2026-10-07_bench500_6models",
+      "path": "hardware_bram/results/2026-10-07_bench500_6models",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": "hardware_bram/results/2026-10-07_bench500_6models/evidence.md"
+    },
+    {
+      "name": "2026-10-07_impl_6models",
+      "path": "hardware_bram/results/2026-10-07_impl_6models",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": "hardware_bram/results/2026-10-07_impl_6models/evidence.md"
+    },
+    {
+      "name": "2026-10-08_board500_6models",
+      "path": "hardware_bram/results/2026-10-08_board500_6models",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": "hardware_bram/results/2026-10-08_board500_6models/evidence.md"
+    },
+    {
+      "name": "2026-10-08_board_predicate500_6models",
+      "path": "hardware_bram/results/2026-10-08_board_predicate500_6models",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": "hardware_bram/results/2026-10-08_board_predicate500_6models/evidence.md"
+    },
+    {
+      "name": "2026-10-08_predicate500_rtl_6models",
+      "path": "hardware_bram/results/2026-10-08_predicate500_rtl_6models",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": "hardware_bram/results/2026-10-08_predicate500_rtl_6models/evidence.md"
+    },
+    {
+      "name": "2026-10-26_kh_sweep",
+      "path": "hardware_bram/results/2026-10-26_kh_sweep",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": "hardware_bram/results/2026-10-26_kh_sweep/evidence.md"
+    },
+    {
+      "name": "2026-10-26_kh_sweep_method1",
+      "path": "hardware_bram/results/archive/policy_search/2026-10-26_kh_sweep_method1",
+      "archived": true,
+      "category": "policy_search",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-26_policy_memo_compact",
+      "path": "hardware_bram/results/2026-10-26_policy_memo_compact",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": "hardware_bram/results/2026-10-26_policy_memo_compact/evidence.md"
+    },
+    {
+      "name": "2026-10-26_policy_search_full40_seedfull",
+      "path": "hardware_bram/results/2026-10-26_policy_search_full40_seedfull",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-26_policy_search_method1",
+      "path": "hardware_bram/results/2026-10-26_policy_search_method1",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-26_policy_search_method1_bound2_seed1",
+      "path": "hardware_bram/results/archive/policy_search/2026-10-26_policy_search_method1_bound2_seed1",
+      "archived": true,
+      "category": "policy_search",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-26_policy_search_method1_depth1",
+      "path": "hardware_bram/results/archive/policy_search/2026-10-26_policy_search_method1_depth1",
+      "archived": true,
+      "category": "policy_search",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-26_policy_search_method1_depth1_bound",
+      "path": "hardware_bram/results/archive/policy_search/2026-10-26_policy_search_method1_depth1_bound",
+      "archived": true,
+      "category": "policy_search",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-26_policy_search_method1_depth2",
+      "path": "hardware_bram/results/archive/policy_search/2026-10-26_policy_search_method1_depth2",
+      "archived": true,
+      "category": "policy_search",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-26_policy_search_method1_depth2_bound",
+      "path": "hardware_bram/results/archive/policy_search/2026-10-26_policy_search_method1_depth2_bound",
+      "archived": true,
+      "category": "policy_search",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-26_policy_search_method1_seed1",
+      "path": "hardware_bram/results/archive/policy_search/2026-10-26_policy_search_method1_seed1",
+      "archived": true,
+      "category": "policy_search",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-26_policy_search_method1_seedfull",
+      "path": "hardware_bram/results/archive/policy_search/2026-10-26_policy_search_method1_seedfull",
+      "archived": true,
+      "category": "policy_search",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-27_200t_dse",
+      "path": "hardware_bram/results/2026-10-27_200t_dse",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": "hardware_bram/results/2026-10-27_200t_dse/evidence.md"
+    },
+    {
+      "name": "2026-10-27_200t_kh_smoke",
+      "path": "hardware_bram/results/2026-10-27_200t_kh_smoke",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": "hardware_bram/results/2026-10-27_200t_kh_smoke/evidence.md"
+    },
+    {
+      "name": "2026-10-27_kh_sweep_m2_m3",
+      "path": "hardware_bram/results/2026-10-27_kh_sweep_m2_m3",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": "hardware_bram/results/2026-10-27_kh_sweep_m2_m3/evidence.md"
+    },
+    {
+      "name": "2026-10-27_policy_seed_first",
+      "path": "hardware_bram/results/2026-10-27_policy_seed_first",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": "hardware_bram/results/2026-10-27_policy_seed_first/evidence.md"
+    },
+    {
+      "name": "2026-10-27_policy_unpipeline",
+      "path": "hardware_bram/results/archive/policy_unpipeline/2026-10-27_policy_unpipeline",
+      "archived": true,
+      "category": "policy_unpipeline",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-27_policy_unpipeline_final",
+      "path": "hardware_bram/results/archive/policy_unpipeline/2026-10-27_policy_unpipeline_final",
+      "archived": true,
+      "category": "policy_unpipeline",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-27_policy_unpipeline_v2",
+      "path": "hardware_bram/results/archive/policy_unpipeline/2026-10-27_policy_unpipeline_v2",
+      "archived": true,
+      "category": "policy_unpipeline",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-27_policy_unpipeline_v3",
+      "path": "hardware_bram/results/archive/policy_unpipeline/2026-10-27_policy_unpipeline_v3",
+      "archived": true,
+      "category": "policy_unpipeline",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-28_generalized_configuration",
+      "path": "hardware_bram/results/archive/parameterized_blocks/2026-10-28_generalized_configuration",
+      "archived": true,
+      "category": "parameterized_blocks",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-28_generalized_configuration_production",
+      "path": "hardware_bram/results/archive/parameterized_blocks/2026-10-28_generalized_configuration_production",
+      "archived": true,
+      "category": "parameterized_blocks",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-28_generalized_main_integration",
+      "path": "hardware_bram/results/2026-10-28_generalized_main_integration",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": "hardware_bram/results/2026-10-28_generalized_main_integration/evidence.md"
+    },
+    {
+      "name": "2026-10-28_k3h3_e4_m2_policy6_board",
+      "path": "hardware_bram/results/2026-10-28_k3h3_e4_m2_policy6_board",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": "hardware_bram/results/2026-10-28_k3h3_e4_m2_policy6_board/evidence.md"
+    },
+    {
+      "name": "2026-10-28_k3h3_performance_recheck",
+      "path": "hardware_bram/results/2026-10-28_k3h3_performance_recheck",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": "hardware_bram/results/2026-10-28_k3h3_performance_recheck/evidence.md"
+    },
+    {
+      "name": "2026-10-28_parameterized_parallel",
+      "path": "hardware_bram/results/archive/parameterized_blocks/2026-10-28_parameterized_parallel",
+      "archived": true,
+      "category": "parameterized_blocks",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-28_parameterized_parallel_final",
+      "path": "hardware_bram/results/archive/parameterized_blocks/2026-10-28_parameterized_parallel_final",
+      "archived": true,
+      "category": "parameterized_blocks",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-28_parameterized_policy",
+      "path": "hardware_bram/results/archive/parameterized_blocks/2026-10-28_parameterized_policy",
+      "archived": true,
+      "category": "parameterized_blocks",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-28_parameterized_policy_final",
+      "path": "hardware_bram/results/archive/parameterized_blocks/2026-10-28_parameterized_policy_final",
+      "archived": true,
+      "category": "parameterized_blocks",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-28_parameterized_policy_registered",
+      "path": "hardware_bram/results/archive/parameterized_blocks/2026-10-28_parameterized_policy_registered",
+      "archived": true,
+      "category": "parameterized_blocks",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-28_parameterized_rtl",
+      "path": "hardware_bram/results/2026-10-28_parameterized_rtl",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": "hardware_bram/results/2026-10-28_parameterized_rtl/evidence.md"
+    },
+    {
+      "name": "2026-10-28_policy_bottleneck",
+      "path": "hardware_bram/results/2026-10-28_policy_bottleneck",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": "hardware_bram/results/2026-10-28_policy_bottleneck/evidence.md"
+    },
+    {
+      "name": "2026-10-28_policy_certified_suffix",
+      "path": "hardware_bram/results/archive/policy_optimization/2026-10-28_policy_certified_suffix",
+      "archived": true,
+      "category": "policy_optimization",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-28_policy_early_build",
+      "path": "hardware_bram/results/archive/policy_optimization/2026-10-28_policy_early_build",
+      "archived": true,
+      "category": "policy_optimization",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-28_policy_gap_bound",
+      "path": "hardware_bram/results/archive/policy_optimization/2026-10-28_policy_gap_bound",
+      "archived": true,
+      "category": "policy_optimization",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-28_policy_gap_bound_final",
+      "path": "hardware_bram/results/2026-10-28_policy_gap_bound_final",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": "hardware_bram/results/2026-10-28_policy_gap_bound_final/evidence.md"
+    },
+    {
+      "name": "2026-10-28_policy_kh_cycles",
+      "path": "hardware_bram/results/2026-10-28_policy_kh_cycles",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-28_policy_parallel_paths",
+      "path": "hardware_bram/results/archive/policy_optimization/2026-10-28_policy_parallel_paths",
+      "archived": true,
+      "category": "policy_optimization",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-28_policy_parallel_paths_final",
+      "path": "hardware_bram/results/archive/policy_optimization/2026-10-28_policy_parallel_paths_final",
+      "archived": true,
+      "category": "policy_optimization",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-28_policy_parallel_paths_verified",
+      "path": "hardware_bram/results/2026-10-28_policy_parallel_paths_verified",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": "hardware_bram/results/2026-10-28_policy_parallel_paths_verified/evidence.md"
+    },
+    {
+      "name": "2026-10-28_policy_pause",
+      "path": "hardware_bram/results/2026-10-28_policy_pause",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-28_policy_rank_timing",
+      "path": "hardware_bram/results/2026-10-28_policy_rank_timing",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": "hardware_bram/results/2026-10-28_policy_rank_timing/evidence.md"
+    },
+    {
+      "name": "2026-10-28_policy_scan_cache",
+      "path": "hardware_bram/results/archive/policy_optimization/2026-10-28_policy_scan_cache",
+      "archived": true,
+      "category": "policy_optimization",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-28_policy_scan_parallel",
+      "path": "hardware_bram/results/archive/policy_optimization/2026-10-28_policy_scan_parallel",
+      "archived": true,
+      "category": "policy_optimization",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-28_policy_scan_parallel_final",
+      "path": "hardware_bram/results/archive/policy_optimization/2026-10-28_policy_scan_parallel_final",
+      "archived": true,
+      "category": "policy_optimization",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-28_policy_scan_parallel_verified",
+      "path": "hardware_bram/results/2026-10-28_policy_scan_parallel_verified",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": "hardware_bram/results/2026-10-28_policy_scan_parallel_verified/evidence.md"
+    },
+    {
+      "name": "2026-10-28_policy_seed_skip",
+      "path": "hardware_bram/results/archive/policy_optimization/2026-10-28_policy_seed_skip",
+      "archived": true,
+      "category": "policy_optimization",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-28_policy_single_action",
+      "path": "hardware_bram/results/2026-10-28_policy_single_action",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": "hardware_bram/results/2026-10-28_policy_single_action/evidence.md"
+    },
+    {
+      "name": "2026-10-28_policy_unpipeline_final",
+      "path": "hardware_bram/results/2026-10-28_policy_unpipeline_final",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-28_policy_unpipeline_timingfix",
+      "path": "hardware_bram/results/2026-10-28_policy_unpipeline_timingfix",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": null
+    },
+    {
+      "name": "2026-10-29_generalized_common500",
+      "path": "hardware_bram/results/2026-10-29_generalized_common500",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": "hardware_bram/results/2026-10-29_generalized_common500/evidence.md"
+    },
+    {
+      "name": "2026-10-29_generalized_e20_m11",
+      "path": "hardware_bram/results/2026-10-29_generalized_e20_m11",
+      "archived": false,
+      "category": "primary_or_reference",
+      "evidence": "hardware_bram/results/2026-10-29_generalized_e20_m11/evidence.md"
+    }
+  ]
+}

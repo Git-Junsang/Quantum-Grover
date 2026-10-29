@@ -11,13 +11,14 @@ module tb_measure_build_rows;
     always #5 clk=~clk;
     reg rstn=0, start=0;
     integer pattern=0;
-    wire [3:0] done;
-    reg [3:0] finished=0;
-    wire [59:0] weight[0:3], threshold[0:3];
-    wire [13:0] candidate[0:3];
-    wire [3:0] zero_error;
-    integer draws[0:3];
-    integer latency[0:3];
+    localparam integer CONFIGS=11;
+    wire [CONFIGS-1:0] done;
+    reg [CONFIGS-1:0] finished=0;
+    wire [59:0] weight[0:CONFIGS-1], threshold[0:CONFIGS-1];
+    wire [13:0] candidate[0:CONFIGS-1];
+    wire [CONFIGS-1:0] zero_error;
+    integer draws[0:CONFIGS-1];
+    integer latency[0:CONFIGS-1];
     integer ticks=0;
 
     function automatic [31:0] next_rng(input [31:0] s);
@@ -48,7 +49,7 @@ module tb_measure_build_rows;
     endfunction
 
     genvar g;
-    generate for (g=0;g<4;g=g+1) begin : sampler
+    generate for (g=0;g<CONFIGS;g=g+1) begin : sampler
         wire rd_en, quad_en, rnd_draw;
         wire [8:0] rd_row;
         wire [6:0] quad_index;
@@ -80,6 +81,7 @@ module tb_measure_build_rows;
                 latency[g]<=ticks;
             end else if (start) finished[g]<=0;
         end
+        if(g<4) begin : legacy
         grover_born_sampler #(
             .AMP_READ_LATENCY(2), .E4_DUAL_BUILD(g>=1),
             .E4_TRIPLE_BUILD(g==2), .E4_QUAD_BUILD(g==3),
@@ -94,6 +96,27 @@ module tb_measure_build_rows;
             .zero_weight_error(zero_error[g]), .candidate(candidate[g]),
             .total_weight(weight[g]), .threshold(threshold[g]), .selected_row()
         );
+        end else begin : expanded
+            localparam integer M=g+1;
+            wire [M-1:0] enables;
+            wire [M*9-1:0] rows;
+            reg [M-1:0] enables1=0,enables2=0;
+            reg [M*736-1:0] data1=0,data2=0;
+            always @(posedge clk) begin
+                enables1<=enables;enables2<=enables1;
+                for(integer lane=0;lane<M;lane=lane+1)
+                    if(enables[lane]) data1[lane*736+:736]<=row_data(rows[lane*9+:9]);
+                data2<=data1;
+            end
+            // The legacy response path above remains idle for this client.
+            assign rd_en=0;assign rd_row=0;assign quad_en=0;assign quad_index=0;
+            grover_born_sampler_parallel #(.SQUARE_ENGINES(M)) dut (
+                .clk(clk),.rstn(rstn),.start(start),.rnd(rng),.rnd_draw(rnd_draw),
+                .rd_en(enables),.rd_rows(rows),.amp_data(data2),.amp_valid(enables2),
+                .busy(),.done(done[g]),.zero_weight_error(zero_error[g]),
+                .candidate(candidate[g]),.total_weight(weight[g]),.threshold(threshold[g]),.selected_row()
+            );
+        end
     end endgenerate
 
     integer p, s;
@@ -106,12 +129,12 @@ module tb_measure_build_rows;
             start=1;
             @(negedge clk);
             start=0;
-            while (finished!=4'b1111) begin
+            while (finished!={CONFIGS{1'b1}}) begin
                 @(negedge clk);
                 ticks=ticks+1;
                 if (ticks>5000) $fatal(1,"sampler timeout pattern=%0d",p);
             end
-            for (s=1;s<4;s=s+1)
+            for (s=1;s<CONFIGS;s=s+1)
                 if (weight[s]!==weight[0] || zero_error[s]!==zero_error[0] ||
                     draws[s]!=draws[0] ||
                     (p!=0 && (threshold[s]!==threshold[0] || candidate[s]!==candidate[0])))
@@ -122,7 +145,7 @@ module tb_measure_build_rows;
                      p,weight[0],candidate[0],latency[0],latency[1],latency[2],latency[3]);
             repeat(4) @(negedge clk);
         end
-        $display("PASS BUILD_ROWS=1,2,3,4 bit-exact Born equivalence");
+        $display("PASS BUILD_ROWS=1..11 bit-exact Born equivalence cases=66 errors=0");
         $finish;
     end
 endmodule

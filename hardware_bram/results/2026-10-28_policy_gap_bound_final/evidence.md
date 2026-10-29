@@ -15,7 +15,7 @@ Scan은 lower bound가 가장 작은 후보를 seed로 고르고, SEED는 그 �
 
 Scan의 running minimum과 함께 deposit/retention 생성 위치를 보존하고, 선택된 위치는 DFS frame별로 저장합니다. CANON에서 해당 위치를 만나면 generator만 전진하고 bound·memo table은 발행하지 않습니다. root의 segment/tuple 동점 규칙은 seed를 처음 정확히 평가할 때 이미 적용됩니다. child search에서 복귀하면 부모의 seed 위치도 복구하며, 다른 오래된 후보의 miss 때문에 flush되는 경우에도 같은 위치를 안전하게 다시 생략합니다.
 
-이 변경만 적용한 중간 revision은 `../2026-10-28_policy_seed_skip/`입니다. 단독 Common500은 236,054 → 235,241 cycles로 0.3444% 줄고, policy actions는 26,104 → 22,093으로 15.3655% 줄었습니다. 후보 수 감소가 그대로 cycle 감소로 이어지지는 않으므로 이 수정만으로 충분하다고 판단하지 않았습니다.
+이 변경만 적용한 중간 revision은 `../archive/policy_optimization/2026-10-28_policy_seed_skip/`입니다. 단독 Common500은 236,054 → 235,241 cycles로 0.3444% 줄고, policy actions는 26,104 → 22,093으로 15.3655% 줄었습니다. 후보 수 감소가 그대로 cycle 감소로 이어지지는 않으므로 이 수정만으로 충분하다고 판단하지 않았습니다.
 
 ## 2. Lookahead request들의 순차 lower bound를 checkpoint segment별로 병렬 계산
 
@@ -167,4 +167,4 @@ Common500은 같은 source snapshot에 기존 exhaustive `policy_trace.txt`와 w
 
 DFS의 방문 state 수, Scan 전체 후보 재생성, Build, memo table clear는 남아 있습니다. 특히 a Checkpoint-Capacity of 3 and 3-shot Lookahead 이외 memo table은 255 solve마다 Lookahead-Shots × 1,093 data words를 clear하며, 8-shot Lookahead는 1회 8,744 cycles입니다. 8-shot Lookahead에서도 총 policy를 300,000 이내로 유지하려면 이 비용을 함께 개선해야 합니다. 이번 변경만으로 큰 Checkpoint-Capacity · Lookahead-Shots의 전체 cycles가 300,000 이내가 되었다고 주장하지 않습니다.
 
-이번 RTL의 전체 RVX SoC Questa verification은 완료했으며 200T implementation·board benchmark와 commit은 미실시입니다. 기존 background placement · routing의 상태나 결과를 조회하지 않았고 새 Vivado도 시작하지 않았습니다. `../2026-10-28_policy_gap_bound/`는 최종 revision과 같은 논리의 중간 실행입니다. 최종 revision은 Verilator가 array 전체를 한 단위로 보면서 내는 false-feedback 경고를 피하도록 `split_var` 주석을 추가한 뒤 새 snapshot으로 재검증했습니다.
+이번 RTL의 전체 RVX SoC Questa verification은 완료했으며 200T implementation·board benchmark와 commit은 미실시입니다. 기존 background placement · routing의 상태나 결과를 조회하지 않았고 새 Vivado도 시작하지 않았습니다. `../archive/policy_optimization/2026-10-28_policy_gap_bound/`는 최종 revision과 같은 논리의 중간 실행입니다. 최종 revision은 Verilator가 array 전체를 한 단위로 보면서 내는 false-feedback 경고를 피하도록 `split_var` 주석을 추가한 뒤 새 snapshot으로 재검증했습니다.

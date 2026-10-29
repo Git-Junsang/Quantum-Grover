@@ -1,0 +1,5 @@
+확인  데이터셋 5벌 -- 각 32768 바이트, sha256 캠페인 값과 일치
+확인  시드 로스터 100쌍 파싱
+확인  로스터 == results/2026-09-08_publication_6stage/seeds.csv (100/100)
+확인  앞 100쌍이 100쌍의 부분집합 (bench250 ⊂ bench500)
+데이터셋 5벌 + 시드 100쌍 -> /workspace/hardware_bram/results/2026-10-29_generalized_common500/kh40_final/k4h8e4m2/workload

@@ -27,7 +27,7 @@
 
 ## 검증
 
-`../2026-10-28_parameterized_policy_final/`의 9개 구성, 477건이 독립 exhaustive memoized DP와 일치했습니다.
+`../archive/parameterized_blocks/2026-10-28_parameterized_policy_final/`의 9개 구성, 477건이 독립 exhaustive memoized DP와 일치했습니다.
 capacity 1/2/3/4/5/10, lookahead 3/4/8/9/10, mode 5/6, lane 1/2/4의 선택된 경계를 포함합니다.
 start 후 입력 변경, 빈 집합, 물리 슬롯 순열·빈 슬롯, zero/127 request, 반복 request,
 작은 hash memo의 충돌, epoch wrap과 reset을 검사합니다. 반환 cycle counter는 실제 start-to-done
@@ -38,13 +38,13 @@ clock edge 수와도 비교했습니다. 이는 Common500 성능 측정이 아�
 `analytic_reference.json`에 하한 증명과 exact tuple, `simulation.log`에 원자료가 있습니다.
 이 한 건을 Common500 합계나 일반적인 큰 configuration 성능으로 외삽하면 안 됩니다.
 
-`../2026-10-28_parameterized_parallel/`의 5개 구성은 모든 슬롯·512 rows,
+`../archive/parameterized_blocks/2026-10-28_parameterized_parallel/`의 5개 구성은 모든 슬롯·512 rows,
 제곱의 모든 lane, 네 predicate의 Oracle/global sum/mean/diffusion을 비교했습니다.
 iteration engines가 3개인 불완전 그룹과 iteration 1 / square 4의 독립 병렬도를 포함합니다.
-`../2026-10-28_generalized_configuration/`은 JSON 하나로 policy와 블록 검증을 함께 통과했습니다.
-이 구성과 `../2026-10-28_parameterized_parallel_final/`의 iteration 16 / square 4에서는
+`../archive/parameterized_blocks/2026-10-28_generalized_configuration/`은 JSON 하나로 policy와 블록 검증을 함께 통과했습니다.
+이 구성과 `../archive/parameterized_blocks/2026-10-28_parameterized_parallel_final/`의 iteration 16 / square 4에서는
 최대 진폭의 양·음 값을 섞어 saturation 경로도 추가 검사했습니다.
-`../2026-10-28_generalized_configuration_production/`은 기본 설정으로 production backend 선택을 확인했습니다.
+`../archive/parameterized_blocks/2026-10-28_generalized_configuration_production/`은 기본 설정으로 production backend 선택을 확인했습니다.
 
 Verilator는 parameterized solver와 iteration 16개 블록을 elaboration했습니다.
 새 조합 loop·latch·multiple driver·범위 초과·오류는 없습니다. generic solver에는 명시적 정수/폭 변환에

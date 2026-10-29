@@ -1,0 +1,38 @@
+{
+  "cells_passed": 40,
+  "workloads_per_cell": 500,
+  "total_workload_pairs": 20000,
+  "raw_result_rows": 40000,
+  "completed_solver_jobs_checked": 316120,
+  "accepted_plans_checked": 296120,
+  "per_cell_source_snapshot_hash_checks": 880,
+  "all_normal_mode_rows_equal_baseline": true,
+  "all_workload_bytes_equal_baseline": true,
+  "fixed_iteration_engines": 4,
+  "fixed_square_engines": 2,
+  "forced_generic_backend": true,
+  "protected_firmware_unchanged": 17,
+  "live_campaign_rtl_and_tools_match": true,
+  "scope": "actual Main-IP RTL; no full-SoC, synthesis, physical timing or board validation",
+  "rtl_fast_path_unit_cases": 232,
+  "disabled_fast_path_unit_cases": 29,
+  "software_exact_reference_crosschecks": 800,
+  "controlled_old_new_jobs_each": 7903,
+  "scheduler_injection_runs": 2,
+  "errors": 0,
+  "document_checks": {
+    "documents": 198,
+    "errors": 0,
+    "warnings": 0
+  },
+  "csr_check": "passed",
+  "port_contract_check": "wrapper 19 + core 61 passed",
+  "python_compile": "passed",
+  "heatmap_visual_review": "passed",
+  "auxiliary_tool_sha256": {
+    "hardware_bram/sim/analyze_generalized_campaign.py": "e2a027483dbb2e20ea3315fa0a0a8418a7ab48a1f460ff37ce04307718f8570f",
+    "hardware_bram/sim/policy_replay_compare.py": "9f8482ec81a897581a62142969c3913120c9d27addcac52efb942bdfc6241572",
+    "hardware_bram/testbench/tb_policy_replay.cpp": "e50a51920c7735bec349cc30ff793e70c1ce69df8fc17213b940d0ae41181cce",
+    "hardware_bram/sim/test_generalize_reference.py": "e73f606df83d1d5672864de7d01c38605fb059dbf3f41e006a635b1433276524"
+  }
+}

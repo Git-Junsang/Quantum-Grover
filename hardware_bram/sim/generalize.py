@@ -23,7 +23,7 @@ def config(path):
     required={'schema','k','h','e','m','policy_mode','scan_lanes','force_generic'}
     if set(data)!=required or data['schema']!=2:
         raise ValueError(f'schema 2 requires exactly {sorted(required)}')
-    for key,low,high in [('k',1,10),('h',1,10),('e',1,16),('m',1,4)]:
+    for key,low,high in [('k',1,10),('h',1,10),('e',1,20),('m',1,11)]:
         if type(data[key]) is not int or not low<=data[key]<=high:
             raise ValueError(f'{key} must be an integer in {low}..{high}')
     if data['policy_mode'] not in (5,6) or type(data['policy_mode']) is not int:
@@ -34,7 +34,7 @@ def config(path):
         raise ValueError('force_generic must be boolean')
     return data
 
-def oracle(held,window,k,mode):
+def oracle_exhaustive(held,window,k,mode):
     """Independent exhaustive memoized DP, including the frozen root tie-break."""
     held=tuple(sorted(held));pool=tuple(dict.fromkeys(window))
     @functools.cache
@@ -49,6 +49,47 @@ def oracle(held,window,k,mode):
         child=children[0];return source,child,request-source,1
     cost,segments,child=min((request-source+tail(child,1),
         1+sum(source<v<request for v in child),child) for child in children)
+    return source,child,cost,segments
+
+@functools.lru_cache(maxsize=32768)
+def oracle(held,window,k,mode):
+    """Exact reference DP with an independently expressed admissible bound.
+
+    Every gap between checkpoints must be traversed at least as far as the
+    greatest requested offset in that gap. Summing these offsets assumes
+    unlimited retention and can only underestimate the capacity-limited cost.
+    Pruning uses completed exact incumbents; incomplete bounds are never memo
+    values. The original exhaustive oracle remains available for cross-checks.
+    """
+    held=tuple(sorted(held));pool=tuple(dict.fromkeys(window));length=len(window)
+    @functools.cache
+    def lower(state,depth):
+        gaps={}
+        for request in window[depth:]:
+            source=max((0,*(v for v in state if v<=request)))
+            gaps[source]=max(gaps.get(source,0),request-source)
+        return sum(gaps.values())
+    @functools.cache
+    def tail(state,depth):
+        if depth==length:return 0
+        request=window[depth];source=max((0,*(v for v in state if v<=request)))
+        if depth==length-1:return request-source
+        children=reference.next_states(k,state,source,request,pool)
+        best=2047
+        for bound,child in sorted((lower(child,depth+1),child) for child in children):
+            if bound>=best:break
+            best=min(best,tail(child,depth+1))
+        return request-source+best
+    request=window[0];source=max((0,*(v for v in held if v<=request)))
+    children=reference.next_states(k,held,source,request,pool)
+    if mode==6 and len(children)==1:return source,children[0],request-source,1
+    best=(2047,2047,())
+    candidates=sorted((request-source+lower(child,1),1+sum(source<v<request for v in child),child)
+                      for child in children)
+    for bound,segments,child in candidates:
+        if (bound,segments,child)>=best:break
+        best=min(best,(request-source+tail(child,1),segments,child))
+    cost,segments,child=best
     return source,child,cost,segments
 
 def pack(values):return sum(v<<(7*i) for i,v in enumerate(values))

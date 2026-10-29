@@ -4,6 +4,8 @@
 
 `BUILD_ROWS_PER_CYCLE` = 4(Quad-Row Build) 경로와 200T 실험용 설정 생성은
 [실험 27](../reports/27_200t_parameter_automation.md)에 있습니다. 이 장의 Dual-Row Build · Two-Level Select는 Board-Verified Build에 들어 있는 구성입니다.
+simulation development에서 square engines를 11개까지 지정하는 가변 BUILD와 기존 선택 절차의
+동일성 검증은 [실험 37](../reports/37_expanded_iteration_and_measurement_engines.md)에 있습니다.
 
 ---
 

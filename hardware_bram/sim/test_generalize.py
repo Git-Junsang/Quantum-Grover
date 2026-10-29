@@ -2,10 +2,14 @@
 """Directed width, search, hash collision, and production-backend checks."""
 from pathlib import Path
 import json
+import tempfile
 import unittest
 import generalize
 
-OUT=generalize.ROOT/'hardware_bram/results/2026-10-28_parameterized_policy_final'
+# Keep each invocation separate from the immutable evidence in results/archive.
+# A fresh directory also prevents a rerun with newer RTL from reusing an old
+# manifest or overwriting the source snapshot of the historical experiment.
+OUT=Path(tempfile.mkdtemp(prefix='bbht_policy_unit_'))
 
 class ParameterizedPolicyTests(unittest.TestCase):
     def test_exact_backends(self):

@@ -29,6 +29,12 @@
 `define GP_ROW_W              (`GP_Q - `GP_LOGP)   // 9
 `define GP_ROWS               (1 << `GP_ROW_W)     // 512
 
+// Simulation-development bounds. These limits describe supported parameter
+// values, not a promise that every combination fits the target FPGA. Arrays
+// and engine instances use the selected values rather than these maxima.
+`define GP_MAX_INTRA_ENGINES   20
+`define GP_MAX_SQUARE_ENGINES  11
+
 `define GP_DATA_W             16
 `define GP_DATA_COUNT_W       (`GP_Q + 1)           // 15, represents 1..N
 

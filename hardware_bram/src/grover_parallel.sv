@@ -29,8 +29,9 @@ module grover_ckpt_mem_parallel #(
     reg [BW-1:0] read_bank[0:READ_PORTS-1];
     initial begin
         if(CHECKPOINT_CAPACITY<1 || CHECKPOINT_CAPACITY>10 ||
-            READ_PORTS<1 || READ_PORTS>16 || WRITE_PORTS<1 || WRITE_PORTS>16)
-            $fatal(1,"parallel memory requires capacity 1..10 and ports 1..16");
+            READ_PORTS<1 || READ_PORTS>`GP_MAX_INTRA_ENGINES ||
+            WRITE_PORTS<1 || WRITE_PORTS>`GP_MAX_INTRA_ENGINES)
+            $fatal(1,"parallel memory requires capacity 1..10 and ports 1..20");
         if(SLOT_W<((CHECKPOINT_CAPACITY<2)?1:$clog2(CHECKPOINT_CAPACITY)))
             $fatal(1,"slot address cannot represent capacity");
     end
@@ -80,6 +81,213 @@ module grover_ckpt_mem_parallel #(
 `endif
 endmodule
 
+// Expanded measurement frontend. Arithmetic precision and the ordered Born
+// sampling procedure are the same as the legacy sampler: exact row weights,
+// 16 global group CDFs, a scan within one 32-row group, then a 32-lane scan.
+// Only BUILD bandwidth is parameterized. This simulation-first implementation
+// deliberately retains every row weight; resource-specific packing is a later
+// step once a feasible checkpoint/lookahead/engine configuration is selected.
+module grover_born_sampler_parallel #(
+    parameter integer SQUARE_ENGINES=5
+) (
+    input wire clk,rstn,start,
+    input wire [31:0] rnd,
+    output wire rnd_draw,
+    output reg [SQUARE_ENGINES-1:0] rd_en,
+    output reg [SQUARE_ENGINES*`GP_ROW_W-1:0] rd_rows,
+    input wire [SQUARE_ENGINES*`GP_P*`GP_AMP_W-1:0] amp_data,
+    input wire [SQUARE_ENGINES-1:0] amp_valid,
+    output wire busy,
+    output reg done,zero_weight_error,
+    output reg [`GP_INDEX_W-1:0] candidate,
+    output reg [`GP_TOTAL_WEIGHT_W-1:0] total_weight,threshold,
+    output reg [`GP_ROW_W-1:0] selected_row
+);
+    localparam integer M=SQUARE_ENGINES,TW=`GP_TOTAL_WEIGHT_W,RSW=`GP_ROW_SUM_W;
+    localparam integer SQW=`GP_SQUARE_W,ROWS=`GP_ROWS,BANK_ROWS=(ROWS+M-1)/M;
+    localparam [3:0] IDLE=0,BUILD=1,CHECK_WEIGHT=2,RND_HI=3,RND_LO=4,
+        RND_MAP=5,RND_CHECK=6,GROUP_SCAN=7,ROW_SCAN=8,LANE_REQ=9,
+        LANE_WAIT=10,LANE_SCAN=11,FINISH=12,ZERO_WEIGHT=13;
+    reg [3:0] state;
+    reg [9:0] issued,row_issue,row_limit;
+    reg [M*9-1:0] tags1,tags2;
+    wire [M-1:0] square_in_valid=amp_valid & {M{state==BUILD || state==LANE_WAIT}};
+    wire [M-1:0] square_valid;
+    wire [M*9-1:0] square_rows;
+    wire [M*32*SQW-1:0] squares;
+    wire [M*RSW-1:0] row_sums;
+    grover_born_square_parallel #(.SQUARE_ENGINES(M)) u_squares (
+        .clk(clk),.rstn(rstn),.in_valid(square_in_valid),.in_rows(tags2),.in_amp(amp_data),
+        .out_valid(square_valid),.out_rows(square_rows),.out_sq(squares),.out_row_sum(row_sums)
+    );
+    initial if(M<1 || M>`GP_MAX_SQUARE_ENGINES)
+        $fatal(1,"parallel sampler requires 1..11 square engines");
+    assign busy=(state!=IDLE);
+    assign rnd_draw=(state==RND_HI || state==RND_LO);
+
+    // Requests and response tags retain the physical kernel's two-cycle read
+    // contract. The final incomplete batch is masked before memory access.
+    always @* begin
+        rd_en=0;rd_rows=0;
+        for(integer p=0;p<M;p=p+1) begin
+            if(state==BUILD && integer'(issued)+p<ROWS) begin
+                rd_en[p]=1;rd_rows[p*9+:9]=9'(integer'(issued)+p);
+            end
+        end
+        if(state==LANE_REQ) begin rd_en[0]=1;rd_rows[0+:9]=selected_row;end
+    end
+    always @(posedge clk) begin
+        if(!rstn) begin tags1<=0;tags2<=0;end
+        else begin tags1<=rd_rows;tags2<=tags1;end
+    end
+
+    reg [TW-1:0] build_total;
+    wire [TW-1:0] prefix[0:M] /* verilator split_var */;
+    assign prefix[0]=build_total;
+    genvar p;
+    generate for(p=0;p<M;p=p+1) begin : g_prefix
+        wire [TW-1:0] previous_sum,sum;
+        if(p==0) assign previous_sum=build_total;
+        else assign previous_sum=g_prefix[p-1].sum;
+        assign sum=previous_sum+(square_valid[p] ?
+            {{(TW-RSW){1'b0}},row_sums[p*RSW+:RSW]} : {TW{1'b0}});
+        assign prefix[p+1]=sum;
+    end endgenerate
+    reg [TW-1:0] group_cdf[0:15];
+    reg [3:0] group_index;
+    reg [TW-1:0] group_previous,row_cumulative,local_threshold;
+
+    // Lane p owns BUILD rows with row modulo M equal to p. Each bank therefore
+    // has one write port even for odd M. All banks provide synchronous reads;
+    // the delayed bank selector and row tag identify the single scan response.
+    wire row_read=(state==ROW_SCAN && row_issue<row_limit);
+    wire [M*RSW-1:0] bank_weights;
+    reg [$clog2(M+1)-1:0] read_bank;
+    reg [8:0] read_row;
+    reg read_valid;
+    generate for(p=0;p<M;p=p+1) begin : g_row_weight
+        (* ram_style="block" *) reg [RSW-1:0] mem[0:BANK_ROWS-1];
+        reg [RSW-1:0] q;
+        always @(posedge clk) begin
+            if(state==BUILD && square_valid[p])
+                mem[integer'(square_rows[p*9+:9])/M]<=row_sums[p*RSW+:RSW];
+            if(row_read) q<=mem[integer'(row_issue)/M];
+        end
+        assign bank_weights[p*RSW+:RSW]=q;
+    end endgenerate
+    always @(posedge clk) begin
+        if(!rstn) begin read_bank<=0;read_row<=0;read_valid<=0;end
+        else begin
+            read_valid<=row_read;
+            if(row_read) begin
+                read_bank<=$clog2(M+1)'(integer'(row_issue)%M);
+                read_row<=row_issue[8:0];
+            end
+        end
+    end
+    wire [RSW-1:0] scan_weight=bank_weights[integer'(read_bank)*RSW+:RSW];
+    wire [TW:0] row_next={1'b0,row_cumulative}+{{(TW+1-RSW){1'b0}},scan_weight};
+    reg [32*SQW-1:0] lane_squares;
+    reg [4:0] lane_index;
+    reg [TW-1:0] lane_cumulative;
+    wire [SQW-1:0] lane_weight=lane_squares[integer'(lane_index)*SQW+:SQW];
+    wire [TW:0] lane_next={1'b0,lane_cumulative}+{{(TW+1-SQW){1'b0}},lane_weight};
+
+    // Reuse the established registered rejection mapper and its HI then LO
+    // draw protocol. Rejections consume a fresh pair; weights zero and one
+    // consume no random draw. BUILD width cannot alter the PRNG trajectory.
+    reg [31:0] random_hi,random_lo;
+    wire [5:0] reject_bits;
+    wire [TW-1:0] reject_candidate;
+    wire reject_accept,reject_one,reject_zero;
+    grover_born_reject64 u_reject (
+        .clk(clk),.rstn(rstn),.load_weight(state==CHECK_WEIGHT && total_weight>1),
+        .map_candidate(state==RND_MAP),.total_weight(total_weight),.rnd64({random_hi,random_lo}),
+        .k_bits(reject_bits),.candidate(reject_candidate),.accept(reject_accept),
+        .direct_one(reject_one),.zero_weight(reject_zero)
+    );
+
+    always @(posedge clk) begin
+        if(!rstn) begin
+            state<=IDLE;issued<=0;row_issue<=0;row_limit<=0;done<=0;zero_weight_error<=0;
+            candidate<=0;total_weight<=0;threshold<=0;selected_row<=0;build_total<=0;
+            group_index<=0;group_previous<=0;row_cumulative<=0;local_threshold<=0;
+            random_hi<=0;random_lo<=0;lane_squares<=0;lane_index<=0;lane_cumulative<=0;
+        end else begin
+            done<=0;
+            zero_weight_error<=0;
+            case(state)
+                IDLE: if(start) begin
+                    issued<=0;build_total<=0;zero_weight_error<=0;candidate<=0;
+                    total_weight<=0;threshold<=0;selected_row<=0;state<=BUILD;
+                end
+                BUILD: begin
+                    if(|rd_en) issued<=issued+10'(M);
+                    if(|square_valid) build_total<=prefix[M];
+                    for(integer s=0;s<M;s=s+1) if(square_valid[s]) begin
+                        // A 32-row boundary may occur on any square lane.
+                        if(square_rows[s*9+:5]==5'd31)
+                            group_cdf[square_rows[s*9+5+:4]]<=prefix[s+1];
+                        if(square_rows[s*9+:9]==9'd511) begin
+                            total_weight<=prefix[M];state<=CHECK_WEIGHT;
+                        end
+                    end
+                end
+                CHECK_WEIGHT: begin
+                    if(total_weight==0) state<=ZERO_WEIGHT;
+                    else if(total_weight==1) begin
+                        threshold<=0;group_index<=0;group_previous<=0;state<=GROUP_SCAN;
+                    end else state<=RND_HI;
+                end
+                RND_HI: begin random_hi<=rnd;state<=RND_LO;end
+                RND_LO: begin random_lo<=rnd;state<=RND_MAP;end
+                RND_MAP: state<=RND_CHECK;
+                RND_CHECK: begin
+                    if(reject_accept) begin
+                        threshold<=reject_candidate;group_index<=0;group_previous<=0;state<=GROUP_SCAN;
+                    end else state<=RND_HI;
+                end
+                GROUP_SCAN: begin
+                    if(group_cdf[group_index]>threshold) begin
+                        row_issue<={1'b0,group_index,5'b0};
+                        row_limit<={1'b0,group_index,5'b0}+10'd32;
+                        row_cumulative<=group_previous;state<=ROW_SCAN;
+                    end else begin group_previous<=group_cdf[group_index];group_index<=group_index+1'b1;end
+                end
+                ROW_SCAN: begin
+                    if(row_read) row_issue<=row_issue+1'b1;
+                    if(read_valid) begin
+                        if(row_next>{1'b0,threshold}) begin
+                            selected_row<=read_row;local_threshold<=threshold-row_cumulative;state<=LANE_REQ;
+                        end else row_cumulative<=row_next[TW-1:0];
+                    end
+                end
+                LANE_REQ: state<=LANE_WAIT;
+                LANE_WAIT: if(square_valid[0]) begin
+                    lane_squares<=squares[0+:32*SQW];lane_index<=0;lane_cumulative<=0;state<=LANE_SCAN;
+                end
+                LANE_SCAN: begin
+                    if(lane_next>{1'b0,local_threshold}) begin
+                        candidate<={selected_row,lane_index};state<=FINISH;
+                    end else begin lane_cumulative<=lane_next[TW-1:0];lane_index<=lane_index+1'b1;end
+                end
+                FINISH: begin done<=1;state<=IDLE;end
+                ZERO_WEIGHT: begin zero_weight_error<=1;done<=1;state<=IDLE;end
+                default: state<=IDLE;
+            endcase
+        end
+    end
+`ifndef SYNTHESIS
+    always @(posedge clk) if(rstn) begin
+        for(integer s=0;s<M;s=s+1)
+            if(state==BUILD && square_valid[s] && integer'(square_rows[s*9+:9])%M!=s)
+                $fatal(1,"measurement response row does not belong to its square bank");
+        if(state==GROUP_SCAN && group_index==15 && group_cdf[15]<=threshold)
+            $fatal(1,"measurement group CDF does not cover threshold");
+    end
+`endif
+endmodule
+
 // The measurement parallelism is the number of complete 32-lane row squarers.
 // Each instance retains the existing square/reduction pipeline and row tag.
 // This port is independent of iteration parallelism: memory arbitration will
@@ -96,8 +304,8 @@ module grover_born_square_parallel #(
     output wire [SQUARE_ENGINES*`GP_P*`GP_SQUARE_W-1:0] out_sq,
     output wire [SQUARE_ENGINES*`GP_ROW_SUM_W-1:0] out_row_sum
 );
-    initial if(SQUARE_ENGINES<1 || SQUARE_ENGINES>4)
-        $fatal(1,"SQUARE_ENGINES must be 1..4");
+    initial if(SQUARE_ENGINES<1 || SQUARE_ENGINES>`GP_MAX_SQUARE_ENGINES)
+        $fatal(1,"SQUARE_ENGINES must be 1..11");
     genvar g;
     generate for(g=0;g<SQUARE_ENGINES;g=g+1) begin : g_square
         grover_born_square32 u_square (
@@ -149,7 +357,7 @@ module grover_iter_datapath_parallel #(
         if(!rstn) two_mean<=0;
         else if(op==MEAN) two_mean<=mean_comb;
     end
-    initial if(E<1 || E>16) $fatal(1,"INTRA_ENGINES must be 1..16");
+    initial if(E<1 || E>`GP_MAX_INTRA_ENGINES) $fatal(1,"INTRA_ENGINES must be 1..20");
     assign global_sum=sum_tree[1];
     assign sum_commit=|committed;
     assign sat_event=|saturated;
@@ -320,6 +528,7 @@ endmodule
 // the existing two-cycle checkpoint-memory contract.
 module grover_inner_parallel #(
     parameter integer CHECKPOINT_CAPACITY=3,INTRA_ENGINES=4,
+    parameter integer SQUARE_ENGINES=2,
     parameter integer SLOT_W=(CHECKPOINT_CAPACITY<2)?1:$clog2(CHECKPOINT_CAPACITY)
 ) (
     input wire clk,rstn,iter_start,iter_do_init,
@@ -355,9 +564,17 @@ module grover_inner_parallel #(
     input wire [6:0] meas_quad_index,
     output wire [`GP_P*`GP_AMP_W-1:0] meas_quad0,meas_quad1,meas_quad2,meas_quad3,
     output wire meas_quad_valid,
+    // The expanded sampler uses one independently tagged row per square
+    // engine. Legacy one/four-row clients retain their existing interface.
+    input wire [SQUARE_ENGINES-1:0] meas_parallel_en,
+    input wire [SQUARE_ENGINES*`GP_ROW_W-1:0] meas_parallel_rows,
+    output wire [SQUARE_ENGINES*`GP_P*`GP_AMP_W-1:0] meas_parallel_data,
+    output wire [SQUARE_ENGINES-1:0] meas_parallel_valid,
     input wire amp_write_forbid
 );
-    localparam integer E=INTRA_ENGINES,RP=(E>4)?E:4,W=`GP_P*`GP_AMP_W,DW=`GP_P*`GP_DATA_W;
+    localparam integer E=INTRA_ENGINES,M=SQUARE_ENGINES;
+    localparam integer CLIENT_ROWS=(M>4)?M:4,RP=(E>CLIENT_ROWS)?E:CLIENT_ROWS;
+    localparam integer W=`GP_P*`GP_AMP_W,DW=`GP_P*`GP_DATA_W;
     wire [E-1:0] read_mask,dp_valid,out_valid;
     wire [E*9-1:0] read_rows,dp_rows,out_rows;
     wire [1:0] dp_op;
@@ -377,10 +594,14 @@ module grover_inner_parallel #(
     reg [RP*W-1:0] amp_aligned;
     reg [RP-1:0] amp_aligned_valid;
     reg quad_request1,quad_request2,single_request1,single_request2;
+    reg [M-1:0] parallel_request1,parallel_request2;
     always @* begin
         amp_read=0;amp_rows=0;
         if(meas_busy) begin
-            if(meas_single_en) begin amp_read[0]=1;amp_rows[0+:9]=meas_single_row;end
+            if(M>4) begin
+                amp_read[M-1:0]=meas_parallel_en;
+                amp_rows[M*9-1:0]=meas_parallel_rows;
+            end else if(meas_single_en) begin amp_read[0]=1;amp_rows[0+:9]=meas_single_row;end
             else if(meas_quad_en) begin
                 for(integer r=0;r<4;r=r+1) begin amp_read[r]=1;amp_rows[9*r+:9]={meas_quad_index,2'(r)};end
             end
@@ -394,16 +615,21 @@ module grover_inner_parallel #(
     always @(posedge clk) begin
         if(!rstn) begin
             amp_aligned<=0;amp_aligned_valid<=0;quad_request1<=0;quad_request2<=0;single_request1<=0;single_request2<=0;
+            parallel_request1<=0;parallel_request2<=0;
         end else begin
             amp_aligned<=amp_raw;amp_aligned_valid<=amp_raw_valid;
             quad_request1<=meas_busy && meas_quad_en && !meas_single_en;quad_request2<=quad_request1;
             single_request1<=meas_busy && meas_single_en;single_request2<=single_request1;
+            parallel_request1<=meas_busy?meas_parallel_en:0;
+            parallel_request2<=parallel_request1;
         end
     end
     assign meas_single_data=amp_aligned[0+:W];
     assign meas_single_valid=single_request2 && amp_aligned_valid[0];
     assign {meas_quad3,meas_quad2,meas_quad1,meas_quad0}=amp_aligned[4*W-1:0];
     assign meas_quad_valid=quad_request2 && (&amp_aligned_valid[3:0]);
+    assign meas_parallel_data=amp_aligned[M*W-1:0];
+    assign meas_parallel_valid=parallel_request2 & amp_aligned_valid[M-1:0];
     wire [E*DW-1:0] data_aligned;
     wire [E*`GP_P-1:0] masks_aligned;
     wire [E-1:0] mask_busy,mask_clear,mask_set;

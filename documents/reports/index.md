@@ -19,6 +19,31 @@
 
 ---
 
+## results 탐색
+
+2026-10-29 정리 시점에 `hardware_bram/results/`의 중간 개발 묶음 28개를 `archive/` 아래로 이동했습니다.
+최상위의 실험 묶음은 59개에서 31개로 줄였고, 최신 verification과 과거 benchmark의 대표 근거는
+기존 위치에 유지했습니다. 전체 경로는 [catalog.json](../../hardware_bram/results/catalog.json),
+이동 전후 경로와 파일 보존 확인은
+[정리 기록](../../hardware_bram/results/archive/2026-10-29_organization/evidence.md)에 있습니다.
+
+| 찾을 결과 | 입구 |
+|---|---|
+| iteration / measurement engine 확장 verification | [실험 37 evidence](../../hardware_bram/results/2026-10-29_generalized_e20_m11/evidence.md) |
+| 최신 full Common500 · policy heatmap | [실험 36 evidence](../../hardware_bram/results/2026-10-29_generalized_common500/evidence.md) |
+| Main IP integration · 경계와 복구 verification | [실험 35 evidence](../../hardware_bram/results/2026-10-28_generalized_main_integration/evidence.md) |
+| 독립 parameterized RTL block verification | [실험 34 evidence](../../hardware_bram/results/2026-10-28_parameterized_rtl/evidence.md) |
+| 직전 production policy optimization | [실험 31 evidence](../../hardware_bram/results/2026-10-28_policy_scan_parallel_verified/evidence.md) |
+| 기존 200T implementation pipeline 기록 | [timing evidence](../../hardware_bram/results/2026-10-28_policy_rank_timing/evidence.md) |
+
+`archive/`의 `policy_search/`, `policy_unpipeline/`, `policy_optimization/`,
+`parameterized_blocks/`는 중간 개발 결과를 주제별로 묶습니다. 묶음의 날짜·이름과 원자료는
+유지합니다. 과거 log·CSV·JSON 안의 실행 경로는 당시 기록이므로 수정하지 않았습니다.
+독립 block unit test의 새 출력은 `/tmp/`에 생성하여 과거 evidence를 덮어쓰지 않습니다.
+이번 정리에서 background implementation의 상태는 조회하지 않았습니다.
+
+---
+
 ## 실험 목록
 
 ### 설계 근거 실험 (01~11)
@@ -41,7 +66,7 @@
 | 10 | [Two-Track Execution과 Pass 2–Build Fusion: 채택하지 않은 두 시도](10_two_track_execution_and_pass2_build_fusion.md) | request 열 분할 Two-Track Execution과 Pass 2–Build Fusion을 채택하지 않음 |
 | 11 | [채택하지 않은 확장과 variant](11_rejected_extensions.md) | 15 qubits · 16 qubits · 64 lanes 확장과 그 밖의 variant를 채택하지 않음 |
 
-### benchmark · 비교 실험 (12~25)
+### benchmark · 비교 실험 (12~37)
 
 확정 설계를 실물 board와 baseline에 맞대 확인한 실험입니다. 시간순입니다.
 
@@ -69,9 +94,10 @@
 | 31 | [policy 최적성 조기 종료와 병렬 Scan](31_policy_optimality_early_exit_and_parallel_scan.md) | 2026-10-28 | seed 최적성 증명, suffix 직접 계산, 4개 Scan과 cache 선행 읽기 |
 | 32 | [a Checkpoint-Capacity of 3 and 3-shot Lookahead 전체 실행 성능 재확인](32_capacity_3_lookahead_3_performance_recheck.md) | 2026-10-28 | Common500 재실행, policy 계산량과 실제 stall·전체 실행 이득 비교 |
 | 33 | [최신 policy Two-Level Select 구성의 200T·board pipeline](33_latest_policy_two_level_select_200t_board_pipeline.md) | 2026-10-28 | 기존 Dual-Row Build · Two-Level Select 구성에 최신 policy search mode(Seed-First Branch and Bound with Single-Action Exit) 연결, 단일 구성의 simulation·implementation·board verification 제출 |
-
 | 34 | [Parameterized RTL 개발](34_parameterized_rtl_development.md) | 2026-10-28 | 단일 설정의 parameter 폭 policy와 독립 memory/iteration/square 블록 검증; 후속 Main IP 통합은 실험 35 |
 | 35 | [Parameterized Main IP integration](35_parameterized_main_ip_scheduler_integration.md) | 2026-10-29 | Scheduler · Planner · Executor와 실제 연산 경로 연결, 선택 조합 · checkpoint/FIFO 경계 · warm restart · flush 복구 검증 |
+| 36 | [Generalized Common500과 policy heatmap](36_generalized_common500_and_policy_heatmaps.md) | 2026-10-29 | generic solver 단축, 동일 입력 old/new RTL 검증, 고정 병렬도 full Common500 parameter campaign |
+| 37 | [Iteration / measurement engine 범위 확장](37_expanded_iteration_and_measurement_engines.md) | 2026-10-29 | 가변 BUILD, 임의 정수 engine 수, 최대 parameter의 Main IP 검증과 후속 memory · resource 선정 순서 |
 
 ---
 

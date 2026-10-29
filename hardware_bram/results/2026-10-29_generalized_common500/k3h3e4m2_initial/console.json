@@ -1,0 +1,22 @@
+{
+  "enum_indices": [
+    8685,
+    2852,
+    507,
+    4724
+  ],
+  "policy_replay": {
+    "solver_jobs": 255,
+    "completed_solver_jobs": 255,
+    "accepted_plans": 245,
+    "fifo_accepted_plans": 235,
+    "injected_mismatches": 0,
+    "flushes": 17,
+    "inflight_job_at_end": false,
+    "epoch_reuse_injections": 0,
+    "same_oracle_restarts": 8,
+    "warm_same_oracle_restarts": 3,
+    "errors": 0
+  },
+  "errors": 0
+}
