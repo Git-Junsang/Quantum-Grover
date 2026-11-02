@@ -1,0 +1,11 @@
+{
+  "h": 8,
+  "k": 4,
+  "rtl_actions_per_decision": 24.85,
+  "rtl_cycles_per_decision": 467.775,
+  "rtl_decisions": 40,
+  "rtl_exact_prune": 6,
+  "rtl_max_latency": 8808,
+  "rtl_policy_actions": 994,
+  "rtl_policy_cycles": 18711
+}

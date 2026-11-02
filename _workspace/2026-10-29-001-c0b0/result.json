@@ -1,0 +1,246 @@
+{
+  "status": "complete",
+  "preservation": "pass",
+  "new_gate_failures": 0,
+  "files": [
+    {
+      "file": "documents/study_references/01_qubits_and_states.md",
+      "run_dir": "_workspace/2026-10-29-001-c0b0/.artifacts/01_qubits_and_states",
+      "route": "light",
+      "change_rate": 0.0188,
+      "grade": "B",
+      "self_check": "6/6",
+      "finalizer_status": "accept",
+      "baseline_golden_warnings": 2,
+      "gate_exit_code": 1
+    },
+    {
+      "file": "documents/study_references/04_measurement.md",
+      "run_dir": "_workspace/2026-10-29-001-c0b0/.artifacts/04_measurement",
+      "route": "standard",
+      "change_rate": 0.0176,
+      "grade": "B",
+      "self_check": "6/6",
+      "finalizer_status": "corrected",
+      "baseline_golden_warnings": 1,
+      "gate_exit_code": 1
+    },
+    {
+      "file": "documents/study_references/07_oracle_and_phase_kickback.md",
+      "run_dir": "_workspace/2026-10-29-001-c0b0/.artifacts/07_oracle_and_phase_kickback",
+      "route": "light",
+      "change_rate": 0.0133,
+      "grade": "B",
+      "self_check": "6/6",
+      "finalizer_status": "corrected",
+      "baseline_golden_warnings": 0,
+      "gate_exit_code": 0
+    },
+    {
+      "file": "documents/study_references/10_glossary_and_cheat_sheet.md",
+      "run_dir": "_workspace/2026-10-29-001-c0b0/.artifacts/10_glossary_and_cheat_sheet",
+      "route": "heavy",
+      "change_rate": 0.0056,
+      "grade": "B",
+      "self_check": "6/6",
+      "finalizer_status": "corrected",
+      "baseline_golden_warnings": 4,
+      "gate_exit_code": 1
+    },
+    {
+      "file": "documents/study_references/13_oracle_diffusion_measurement_datapath.md",
+      "run_dir": "_workspace/2026-10-29-001-c0b0/.artifacts/13_oracle_diffusion_measurement_datapath",
+      "route": "heavy",
+      "change_rate": 0.0131,
+      "grade": "B",
+      "self_check": "6/6",
+      "finalizer_status": "accept",
+      "baseline_golden_warnings": 3,
+      "gate_exit_code": 1
+    },
+    {
+      "file": "documents/study_references/16_iteration_control_and_checkpoints.md",
+      "run_dir": "_workspace/2026-10-29-001-c0b0/.artifacts/16_iteration_control_and_checkpoints",
+      "route": "heavy",
+      "change_rate": 0.0123,
+      "grade": "B",
+      "self_check": "6/6",
+      "finalizer_status": "corrected",
+      "baseline_golden_warnings": 0,
+      "gate_exit_code": 0
+    },
+    {
+      "file": "documents/study_references/A_math_review.md",
+      "run_dir": "_workspace/2026-10-29-001-c0b0/.artifacts/A_math_review",
+      "route": "light",
+      "change_rate": 0.0068,
+      "grade": "B",
+      "self_check": "6/6",
+      "finalizer_status": "accept",
+      "baseline_golden_warnings": 0,
+      "gate_exit_code": 0
+    },
+    {
+      "file": "documents/study_references/02_dirac_notation_and_linear_algebra.md",
+      "run_dir": "_workspace/2026-10-29-001-c0b0/.artifacts/02_dirac_notation_and_linear_algebra",
+      "route": "light",
+      "change_rate": 0.0106,
+      "grade": "A",
+      "self_check": "6/6",
+      "finalizer_status": "accept",
+      "baseline_golden_warnings": 0,
+      "gate_exit_code": 0
+    },
+    {
+      "file": "documents/study_references/05_multiple_qubits_and_entanglement.md",
+      "run_dir": "_workspace/2026-10-29-001-c0b0/.artifacts/05_multiple_qubits_and_entanglement",
+      "route": "light",
+      "change_rate": 0.0096,
+      "grade": "A",
+      "self_check": "6/6",
+      "finalizer_status": "corrected",
+      "baseline_golden_warnings": 0,
+      "gate_exit_code": 0
+    },
+    {
+      "file": "documents/study_references/08_deutsch_jozsa_algorithm.md",
+      "run_dir": "_workspace/2026-10-29-001-c0b0/.artifacts/08_deutsch_jozsa_algorithm",
+      "route": "light",
+      "change_rate": 0.014,
+      "grade": "A",
+      "self_check": "6/6",
+      "finalizer_status": "accept",
+      "baseline_golden_warnings": 16,
+      "gate_exit_code": 1
+    },
+    {
+      "file": "documents/study_references/11_state_vector_emulator.md",
+      "run_dir": "_workspace/2026-10-29-001-c0b0/.artifacts/11_state_vector_emulator",
+      "route": "heavy",
+      "change_rate": 0.0169,
+      "grade": "A",
+      "self_check": "6/6",
+      "finalizer_status": "corrected",
+      "baseline_golden_warnings": 0,
+      "gate_exit_code": 0
+    },
+    {
+      "file": "documents/study_references/14_multiple_solutions_and_minimum_search.md",
+      "run_dir": "_workspace/2026-10-29-001-c0b0/.artifacts/14_multiple_solutions_and_minimum_search",
+      "route": "heavy",
+      "change_rate": 0.0105,
+      "grade": "A",
+      "self_check": "6/6",
+      "finalizer_status": "corrected",
+      "baseline_golden_warnings": 1,
+      "gate_exit_code": 1
+    },
+    {
+      "file": "documents/study_references/17_rvx_soc_integration.md",
+      "run_dir": "_workspace/2026-10-29-001-c0b0/.artifacts/17_rvx_soc_integration",
+      "route": "heavy",
+      "change_rate": 0.0095,
+      "grade": "A",
+      "self_check": "6/6",
+      "finalizer_status": "corrected",
+      "baseline_golden_warnings": 0,
+      "gate_exit_code": 0
+    },
+    {
+      "file": "documents/study_references/index.md",
+      "run_dir": "_workspace/2026-10-29-001-c0b0/.artifacts/index",
+      "route": "heavy",
+      "change_rate": 0.0109,
+      "grade": "A",
+      "self_check": "6/6",
+      "finalizer_status": "accept",
+      "baseline_golden_warnings": 0,
+      "gate_exit_code": 0
+    },
+    {
+      "file": "documents/study_references/03_single_qubit_gates.md",
+      "run_dir": "_workspace/2026-10-29-001-c0b0/.artifacts/03_single_qubit_gates",
+      "route": "light",
+      "change_rate": 0.0077,
+      "grade": "B",
+      "self_check": "6/6",
+      "finalizer_status": "corrected",
+      "baseline_golden_warnings": 0,
+      "gate_exit_code": 0
+    },
+    {
+      "file": "documents/study_references/06_quantum_circuit_model_and_universality.md",
+      "run_dir": "_workspace/2026-10-29-001-c0b0/.artifacts/06_quantum_circuit_model_and_universality",
+      "route": "light",
+      "change_rate": 0.0122,
+      "grade": "B",
+      "self_check": "6/6",
+      "finalizer_status": "corrected",
+      "baseline_golden_warnings": 4,
+      "gate_exit_code": 1
+    },
+    {
+      "file": "documents/study_references/09_grover_algorithm.md",
+      "run_dir": "_workspace/2026-10-29-001-c0b0/.artifacts/09_grover_algorithm",
+      "route": "heavy",
+      "change_rate": 0.0079,
+      "grade": "B",
+      "self_check": "6/6",
+      "finalizer_status": "corrected",
+      "baseline_golden_warnings": 1,
+      "gate_exit_code": 1
+    },
+    {
+      "file": "documents/study_references/12_fixed_point_and_precision.md",
+      "run_dir": "_workspace/2026-10-29-001-c0b0/.artifacts/12_fixed_point_and_precision",
+      "route": "heavy",
+      "change_rate": 0.0091,
+      "grade": "B",
+      "self_check": "6/6",
+      "finalizer_status": "corrected",
+      "baseline_golden_warnings": 0,
+      "gate_exit_code": 0
+    },
+    {
+      "file": "documents/study_references/15_paper_map_and_design_decisions.md",
+      "run_dir": "_workspace/2026-10-29-001-c0b0/.artifacts/15_paper_map_and_design_decisions",
+      "route": "heavy",
+      "change_rate": 0.007,
+      "grade": "B",
+      "self_check": "6/6",
+      "finalizer_status": "corrected",
+      "baseline_golden_warnings": 0,
+      "gate_exit_code": 0
+    },
+    {
+      "file": "documents/study_references/18_reference_model_verification.md",
+      "run_dir": "_workspace/2026-10-29-001-c0b0/.artifacts/18_reference_model_verification",
+      "route": "heavy",
+      "change_rate": 0.0085,
+      "grade": "B",
+      "self_check": "6/6",
+      "finalizer_status": "corrected",
+      "baseline_golden_warnings": 0,
+      "gate_exit_code": 0
+    },
+    {
+      "file": "documents/study_references/papers/paper_outline.md",
+      "run_dir": "_workspace/2026-10-29-001-c0b0/.artifacts/paper_outline",
+      "route": "light",
+      "change_rate": 0.0004,
+      "grade": "B",
+      "self_check": "6/6",
+      "finalizer_status": "accept",
+      "baseline_golden_warnings": 0,
+      "gate_exit_code": 0
+    }
+  ],
+  "repository_validation": {
+    "check_docs": {
+      "documents": 207,
+      "errors": 0,
+      "warnings": 0
+    },
+    "git_diff_check": "pass"
+  }
+}

@@ -1,0 +1,89 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 9/11이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 18_reference_model_verification.md 진단
+
+## 장르·레지스터와 보존 조건
+
+학부생용 기술 해설서(report). 본문은 친근한 존댓말(합니다/입니다, 일부 해요체 설명), 수식 풀이·표·요약은 압축형입니다. 문장 격식을 올리지 않습니다. 영어 용어와 영어 토큰은 번역·삭제·교체·대소문자 변경하지 않습니다. glossary 기준은 `documents/design_references/22_appendix_glossary_and_retired_specs.md` §22.2입니다. 수치·수식·code·제목·link·직접 인용·기존 콜아웃/이모지·문단 구조는 보존합니다. 실제 주장, 부정/긍정, 인과, 조건, 확신도도 보존합니다. 보고서용 서식 축약·영어 순화 규칙은 적용하지 않습니다. 본문에 사실을 추가하거나 현행 설계와 대조해 기술 내용을 고치지 않습니다.
+
+## 정량 근거
+
+입력의 정량 블록을 확인했습니다. risk_band는 low이고, 장문 파일의 heavy 권고는 문서 길이에서 나옵니다. 영어 기술 term 반복은 장르상 필수이므로 lexical_diversity의 낮은 값만으로 수정하지 않습니다. 아래 수치는 탐지 보조이며 개별 문맥과 함께 판단합니다.
+
+## 겨냥 순서의 지배 패턴
+
+1. **D-14·D-5 — 시험·설계를 사람처럼 서술하는 표현**: "규칙이 여기서 처음 일합니다", "종료 규칙이 일해야", "FSM이 매달리지 않고", "이 발판 위", "circuit은 … 조용히 틀립니다", "끝까지 정직하게 계산" 등이 직접적인 동작 설명을 흐립니다. 조건과 보장 수준을 보존하고 구체적인 서술로 정리합니다.
+
+2. **A-18·A-7 — 장문·have 직역**: 정량 relative_clause_nesting=7, have_make_literal_count=1. 도입의 두 근거, 18.2절 ladder, 18.4절 예제, 18.7절 checkpoint 경로, 18.8절 비교 조건의 문장을 검토합니다. "오류를 갖고" 등 소유 직역과 여러 층의 수식을 겹친 문장만 국소 수정합니다.
+
+3. **D-8·C-8 — 핵심 강조·부정 대구의 반복**: "이 목록에서 얻을 교훈은 목록 그 자체가 아니라 태도", "주는 것은 속도가 아니라", "묻는 것은", "근사적으로 같은 정도가 아니라" 등이 반복됩니다. equivalence와 distribution, algorithm과 circuit, bit-exact와 오차 허용 구분처럼 기술적으로 필요한 대조는 반드시 보존합니다.
+
+4. **D-2·F-1 — 과한 중요성·평가 표현**: "공짜가 아닙니다", "영원히 일치하지 않고", "이보다 좋은 출발점은 없습니다", "실행된 적 없는 code가 옳을 probability는 낮습니다" 등 단정·평가의 수사만 줄입니다. 원문 사실이나 기준을 새로 해석하지 않습니다.
+
+5. **J-2·J-3·C-11 — 대시·따옴표·쉼표로 끊긴 설명**: 연속된 대시 부연과 수사형 따옴표를 확인합니다. 표·목록의 교육적 구조와 기존 콜아웃·강조를 보존하고 산문에서 불필요한 쉼표·감싸는 표현만 정리합니다.
+
+## 비적용·잔존 처리
+
+교육적 질문·표·연습문제·단계 목록·기존 비유는 그 자체로 결함이 아닙니다. 자연스러운 문장은 그대로 두고 확인된 구간만 보수적으로 다듬습니다. 수치/기술 주장에 의문이 있어도 이번 윤문에서는 보존합니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 3818
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.51  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.78  (z=-0.03 vs report 인간 baseline)
+- ending_comma_rate: 0.36  (n/a vs report 인간 baseline)
+- comma_segment_length: 8.39  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 1  (lexicon 매치: '그러므로')
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.004  (z=-1.88 vs report 인간 baseline)
+- lexical_diversity: 0.72  (z=+1.36 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 1
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 1
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 18.8 잰 수치와 그 조건
+
+초판의 이 절은 "다시 재야 하는 수치"의 목록이었습니다. 이제 그 수치들을 쟀고, 무엇을 어떤 조건에서 쟀는지 표로 정리합니다. 값의 source of truth는 [15.4절](15_paper_map_and_design_decisions.md#154-우리-project의-좌표--확정-설계-결정표)입니다.
+
+| 수치 | 값 | benchmark 조건 | 상세 |
+|---|---|---|:-:|
+| fraction bits 충분성 | 모든 실행에서 amplitude·probability·success probability·norm error $< 10^{-3}$. 14 qubits는 22 fraction bits에서 probability $\ell_2 \le 10^{-5}$ | 같은 arithmetic(14 qubits · Q1.22)의 reference model 671,600회 campaign과 precision 분석 | [12.7](12_fixed_point_and_precision.md#127-몇-bit면-되나--minimum-fraction-bits-공식과-그-전제) |
+| saturation | BBHT 1,000회당 2.67번, 기능 결과 불일치 0 | 같은 campaign | [12.3](12_fixed_point_and_precision.md#123-integer-bits는-몇-bit인가--재는-대상이-셋이다) |
+| mean shot count | 22.7 (median 23) | 1 solution, 500 workloads RTL campaign 중 100개 | [16.3](16_iteration_control_and_checkpoints.md#163-shot-통계--mean이-20-shots를-넘는-이유) |
+| executed iterations | 31,424 → 9,582 (−69.5%) | 500 workloads, Restart mode → a Checkpoint-Capacity of 3 and 3-shot Lookahead | [16.5](16_iteration_control_and_checkpoints.md#165-checkpoint--measurement가-읽기-전용이라는-사실에서) |
+| RTL cycle | 42,308,335 → 6,890,470 (6.1401×) | 같은 500 workloads, Six-Stage Ablation | [15.5](15_paper_map_and_design_decisions.md#155-확정-platform과-resource-예산) |
+| board wall-clock time | 425,502 µs → 55,798 µs (7.626×) | 같은 500 workloads, search 호출 interval만 | [15.5](15_paper_map_and_design_decisions.md#155-확정-platform과-resource-예산) |
+| 같은 board 순수 software 대비 | 116,426× (wall-clock time) | 같은 chip·같은 workload·같은 seed, RISC-V core 하나. 32 lanes 병렬과 clock 두 배 때문이지 algorithm 우위가 아님 | [15.5](15_paper_map_and_design_decisions.md#155-확정-platform과-resource-예산) |
+| resource · timing | LUT 45,284 · BRAM 116 · DSP 132, 100 MHz WNS +0.126 ns | 2026-09-07 implementation report (board 전체) | [15.5](15_paper_map_and_design_decisions.md#155-확정-platform과-resource-예산) |
+| reference model ↔ board | BBHT trajectory 500/500, executed iterations 500/500 | Common500 비교 | [18.2](#182-3단-verification-ladder) |
+
+아직 재지 않은 것도 적어 둡니다. software reference model은 cycle을 흉내 내지 않습니다 — policy가 결정을 내리는 latency, Plan Queue stall, 4 PEs와 Measurement Microarchitecture의 timing은 hardware의 몫이라, cycle은 언제나 RTL이나 board에서 인용합니다. iteration마다의 amplitude를 DRAM에 저장하는 두 번째 variant(DRAM Variant)는 동작 model 위의 RTL regression까지만 있고 board 수치가 없습니다.
+
+**비교 실험의 공정성 기준**도 여기서 정합니다. 비교 대상은 **Qiskit AerSimulator와 NumPy state vector simulator**, 그리고 같은 board의 순수 software baseline입니다. classical linear scan과는 비교하지 않습니다 — emulation 비용이 $O(\text{number of states}\sqrt{\text{number of states}/\text{number of solutions}})$ 이라 $O(\text{number of states})$ scan보다 느린 것이 당연하고, algorithm의 $\sqrt{\text{number of states}}$ 이득은 실제 quantum computer의 이야기입니다. 이 비교로 보이려는 것은 속도 우위가 아니라, **같은 algorithm을 같은 순서로 돌렸을 때 전용 hardware가 어느 지점에서 이득을 내는가**입니다.
+
+같게 두어야 할 것은 다음과 같습니다. number of qubits, data array(같은 seed로 생성한 같은 `value[]`), predicate와 threshold, random number seed, 그리고 **BBHT schedule 전체** — 같은 growth factor, 같은 sampling range 수열, 같은 Iteration-Count LFSR random number. shot마다 뽑히는 iteration이 다르면 전체 iteration이 달라지고, 그러면 무엇을 비교한 것인지 알 수 없게 됩니다. 성공 판정도 같은 기준(solution check 한 칸)으로 통일합니다. Common500 비교 실험이 정확히 이 조건으로, board와 같은 다섯 dataset과 seed 100쌍에 NumPy·Qiskit·fixed-point model을 걸었습니다.
+
+재는 것은 둘로 나눕니다. **wall-clock time**은 무엇을 포함했는지를 반드시 밝힙니다. NumPy는 state vector 계산 core만, Qiskit은 Aer 실행만, board는 명령 발행부터 결과까지를 쟀습니다. 예를 들어 1 solution의 median이 NumPy 약 9 ms, Qiskit Aer 약 1.8 s, board의 final configuration 약 0.21 ms였는데, 경계가 서로 달라 이 비율은 참고값입니다. 성능 주장에 쓰는 것은 같은 경계 안의 비교 — board configuration끼리의 speedup — 입니다. 그리고 마지막으로 밝혀 둘 것 — Aer는 double-precision complex number로 amplitude 하나에 16 bytes를 쓰고 우리는 23-bit real number를 씁니다. **같은 수 표현으로 같은 문제를 푸는 것이 아닙니다.** 그러므로 정확도를 나란히 놓고 우열을 논하지 말고, "같은 algorithm·같은 shot sequence를 도는 데 걸리는 시간"만 비교하십시오.
+
+---
+[원문 끝]

@@ -1,0 +1,80 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 2/12이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 09_grover_algorithm.md 진단
+
+## 장르·레지스터와 보존 조건
+
+학부생용 기술 해설서(report). 본문은 친근한 존댓말(합니다/입니다, 일부 해요체 설명), 수식 풀이·표·요약은 압축형입니다. 문장 격식을 올리지 않습니다. 영어 용어와 영어 토큰은 번역·삭제·교체·대소문자 변경하지 않습니다. glossary 기준은 `documents/design_references/22_appendix_glossary_and_retired_specs.md` §22.2입니다. 수치·수식·code·제목·link·직접 인용·기존 콜아웃/이모지·문단 구조는 보존합니다. 실제 주장, 부정/긍정, 인과, 조건, 확신도도 보존합니다. 보고서용 서식 축약·영어 순화 규칙은 적용하지 않습니다. 본문에 사실을 추가하거나 현행 설계와 대조해 기술 내용을 고치지 않습니다.
+
+## 정량 근거
+
+입력의 정량 블록을 확인했습니다. risk_band는 low이고, 장문 파일의 heavy 권고는 문서 길이에서 나옵니다. 영어 기술 term 반복은 장르상 필수이므로 lexical_diversity의 낮은 값만으로 수정하지 않습니다. 아래 수치는 탐지 보조이며 개별 문맥과 함께 판단합니다.
+
+## 겨냥 순서의 지배 패턴
+
+1. **D-14·D-5 — 설명용 비유가 본문까지 관통하는 반복**: "Grover가 실제로 사는 곳", "손끝 하나 바꾸지 않습니다", "function을 먹인 것", "전부 헛수고", "hardware에서 한층 더 날카로워집니다" 등은 동작 설명에 어색한 행위 술어를 붙입니다. 막대·reflection·rotation의 교육적 비유와 기존 비유 상자는 유지하고 과장된 연결 표현만 구체화합니다.
+
+2. **D-2·F-1 — 지나친 감탄과 확언**: "말로만 하면 안 믿기니", "소수점 끝까지 한 치도 어긋나지", "축하합니다 … 완주했습니다" 등 독자를 대신 평가하는 표현을 완화합니다. 수학적으로 정확히 같다는 주장은 그대로 보존합니다.
+
+3. **A-18 — 긴 관형절·삽입 설명**: 정량 relative_clause_nesting=3. 도입의 절 안내, 9.1절 emulator 비용, 9.6절 BBHT, 9.8절 real number 전용 논증, 9.9절 hardware 안내가 장문입니다. 조건·한계와 모든 수식·수치를 보존하며 필요한 문장만 분리합니다.
+
+4. **C-8·D-8 — 반복적인 부정 대구·정의 강조**: "대상의 성질이지 … 성능 지표가 아닙니다", "표준 문제라서가 아닙니다", "고장이 아니라", "신비로운 constant가 아니라" 등 반복을 확인합니다. algorithm과 emulator의 구분처럼 기술적으로 필요한 대조는 유지하고 감탄용 대조만 줄입니다.
+
+5. **C-11·I-3 — 연결어미 쉼표·설명 끝의 군더더기**: 연결어미 뒤 쉼표와 "것뿐이에요", "것이죠", "뜻인데" 등으로 결론을 감싸는 문장을 국소 검토합니다. 정량 conclusion_pivot_count=1은 과다 기준 미달이므로 삭제 목표로 삼지 않습니다.
+
+## 비적용·잔존 처리
+
+교육적 질문·표·연습문제·단계 목록·기존 비유는 그 자체로 결함이 아닙니다. 자연스러운 문장은 그대로 두고 확인된 구간만 보수적으로 다듬습니다. 수치/기술 주장에 의문이 있어도 이번 윤문에서는 보존합니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 1516
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.26  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.37  (z=-0.50 vs report 인간 baseline)
+- ending_comma_rate: 0.67  (n/a vs report 인간 baseline)
+- comma_segment_length: 9.46  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.000  (z=-2.00 vs report 인간 baseline)
+- lexical_diversity: 0.82  (z=+3.45 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 1
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 9.1 무슨 문제를 푸는가
+
+100개의 상자 중 하나에 민트 초콜릿이 들어 있습니다. 상자를 하나씩 열어봅니다.
+
+- **운이 좋으면**: 첫 상자에 있음 → 1번.
+- **운이 나쁘면**: 99개를 열어도 없어 100번째에서 발견 → 100번.
+
+mean으로 봐도 최악으로 봐도 상자 수에 비례합니다. search는 **$O(\text{number of states})$**. 상자를 열어 "이게 내가 찾는 거냐"를 확인하는 게 곧 oracle 호출이에요([7장](07_oracle_and_phase_kickback.md)).
+
+data가 **정렬**돼 있으면 binary search로 $O(\log \text{number of states})$ 에 찾지만, 정렬은 강한 전제이고 정렬이 불가능한 경우도 많습니다. Grover는 **정렬 안 된** data에서 **$O(\sqrt{\text{number of states}})$** 를 달성합니다 — binary search만큼 극적이진 않아도(quadratic speedup), 정렬 없이 얻는 확실한 이득이고, 이 $O(\sqrt{\text{number of states}})$ 가 **최적**임이 증명돼 있습니다.
+
+> 🔑 숫자로 느껴봅시다: 항목이 100만 개면 classical search는 최악 100만 번, Grover는 약 $\sqrt{10^6} = 1{,}000$ 번. 항목이 많을수록 격차가 벌어집니다.
+
+여기서 하나 못 박아 둘 것이 있습니다. 방금의 $O(\text{number of states})$ 대 $O(\sqrt{\text{number of states}})$ 비교는 **진짜 quantum hardware**에서 성립하는 이야기입니다. 이 project가 만드는 것은 quantum computer가 아니라 Grover를 classical circuit으로 흉내 내는 **emulator**이고, emulator는 iteration 한 번마다 모든 state의 amplitude를 전부 훑어야 하므로 총비용이 $O\!\left(\text{number of states}\cdot\sqrt{\text{number of states}/\text{number of solutions}}\right)$ 입니다. 즉 우리 circuit은 **classical linear scan보다 오히려 느립니다.** 그래서 이 해설서는 우리 accelerator를 classical search와 비교하지 않습니다. 비교 대상은 같은 일을 하는 software state vector simulator — Qiskit AerSimulator나 NumPy로 짠 것 — 이고, 이 accelerator의 값어치는 속도 우위가 아니라 **quantum algorithm의 동작을 결정적이고 재현 가능하게 재현·검증하는 전용 hardware**라는 데 있습니다. algorithm의 $\sqrt{\text{number of states}}$ 는 우리가 흉내 내는 **대상의 성질**이지 우리 circuit의 성능 지표가 아닙니다.
+
+---
+[원문 끝]

@@ -1,0 +1,8 @@
+#### Part 8. shot 바깥 — 제어·system·verification
+
+| 장 | file | 무엇을 배우나 |
+|----|------|--------------|
+| 16 | [몇 번 돌릴지 모를 때 — BBHT shot loop와 checkpoint](16_iteration_control_and_checkpoints.md) | 왜 solution이 몇 개인지 모르는 채 시작하는가(속도가 아니라 실기 충실도), BBHT(sampling range 1에서 시작 · growth factor 6/5), mean shot count가 스무 번을 넘는 이유, 바깥 FSM과 solution check, **a Checkpoint-Capacity of 3과 3-shot Lookahead policy**, 그 정당성, 무효화는 hardware가 한다 |
+| 17 | [RVX SoC에 붙이기 — APB CSR · AHB DMA · UART](17_rvx_soc_integration.md) | accelerator는 혼자 서지 않는다, RVX(`rvc_orca`·`munoc`)가 무엇인가, APB와 AHB를 같이 쓰는 이유, CSR map, AHB master로 data load, host UART protocol, hardware와 firmware의 경계 |
+| 18 | [무엇을 어떻게 증명하나 — 3단 reference model과 bit-exact](18_reference_model_verification.md) | 왜 verification이 설계의 일부인가, float64 → bit-exact fixed-point model → RTL의 3단 verification ladder, bit-exact가 성립하기 위한 조건, 9.4절 손계산이 첫 test vector, Born sampler와 checkpoint를 어떻게 검증하나, 잰 수치와 그 조건, toolchain과 directory |
+

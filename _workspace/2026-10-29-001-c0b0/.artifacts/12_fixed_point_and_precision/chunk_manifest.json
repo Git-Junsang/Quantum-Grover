@@ -1,0 +1,173 @@
+{
+  "version": 1,
+  "created": "2026-10-29",
+  "source_file": "01_input.txt",
+  "source_chars": 25593,
+  "source_sha256": "656a51dd78ee5a990569912d1c831f5562e30744733d5902c9cd820b955e7c67",
+  "genre": "report",
+  "target_chunk_chars": 7000,
+  "max_chunk_chars": 9000,
+  "route_hint": "heavy",
+  "route_reason": "25,593자 초장문(>15,000) — 진단 + 청킹 권장",
+  "chunk_count": 14,
+  "body_chunk_count": 14,
+  "passthrough_chunk_count": 0,
+  "lossless_check": "ok",
+  "warnings": [],
+  "chunks": [
+    {
+      "index": 1,
+      "start": 0,
+      "end": 1307,
+      "char_count": 1307,
+      "starts_with_heading": true,
+      "heading": "# 12장. amplitude를 숫자로 — fixed-point와 Q1.22",
+      "passthrough": false,
+      "input_file": "01_chunk_01_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_01_rewritten.txt"
+    },
+    {
+      "index": 2,
+      "start": 1307,
+      "end": 2392,
+      "char_count": 1085,
+      "starts_with_heading": true,
+      "heading": "## 12.1 왜 floating-point를 안 쓰는가",
+      "passthrough": false,
+      "input_file": "01_chunk_02_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_02_rewritten.txt"
+    },
+    {
+      "index": 3,
+      "start": 2392,
+      "end": 4815,
+      "char_count": 2423,
+      "starts_with_heading": true,
+      "heading": "## 12.2 fixed-point와 Q format 명명 규약",
+      "passthrough": false,
+      "input_file": "01_chunk_03_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_03_rewritten.txt"
+    },
+    {
+      "index": 4,
+      "start": 4815,
+      "end": 8678,
+      "char_count": 3863,
+      "starts_with_heading": true,
+      "heading": "## 12.3 integer bits는 몇 bit인가 — 재는 대상이 셋이다",
+      "passthrough": false,
+      "input_file": "01_chunk_04_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_04_rewritten.txt"
+    },
+    {
+      "index": 5,
+      "start": 8678,
+      "end": 8861,
+      "char_count": 183,
+      "starts_with_heading": true,
+      "heading": "## 12.4 rounding — 왜 half-to-even인가",
+      "passthrough": false,
+      "input_file": "01_chunk_05_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_05_rewritten.txt"
+    },
+    {
+      "index": 6,
+      "start": 8861,
+      "end": 11563,
+      "char_count": 2702,
+      "starts_with_heading": true,
+      "heading": "1. **initialization** — uniform amplitude $1/\\sqrt{\\text{number of states}}$ 를 유한 bit로 표현할 때. loop 시작 전 **한 번**. 다만 우리 14 qubits에서는 $1/\\sqrt{\\text{number of states}} = 2^{-7}$ 이라 **버리는 bit가 없습니다**(12.2절).",
+      "passthrough": false,
+      "input_file": "01_chunk_06_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_06_rewritten.txt"
+    },
+    {
+      "index": 7,
+      "start": 11563,
+      "end": 13309,
+      "char_count": 1746,
+      "starts_with_heading": true,
+      "heading": "## 12.5 overflow policy — saturation·wraparound 금지·renormalization 없음",
+      "passthrough": false,
+      "input_file": "01_chunk_07_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_07_rewritten.txt"
+    },
+    {
+      "index": 8,
+      "start": 13309,
+      "end": 15653,
+      "char_count": 2344,
+      "starts_with_heading": true,
+      "heading": "## 12.6 error는 어떻게 자라나",
+      "passthrough": false,
+      "input_file": "01_chunk_08_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_08_rewritten.txt"
+    },
+    {
+      "index": 9,
+      "start": 15653,
+      "end": 16583,
+      "char_count": 930,
+      "starts_with_heading": true,
+      "heading": "## 12.7 몇 bit면 되나 — minimum fraction bits 공식과 그 전제",
+      "passthrough": false,
+      "input_file": "01_chunk_09_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_09_rewritten.txt"
+    },
+    {
+      "index": 10,
+      "start": 16583,
+      "end": 18100,
+      "char_count": 1517,
+      "starts_with_heading": true,
+      "heading": "1. **rounding이 truncation입니다.** error가 매 iteration 같은 방향으로 쌓이는 것이 square 누적의 근거인데, 우리는 round-half-to-even으로 그 편향을 없앴습니다(12.4절).",
+      "passthrough": false,
+      "input_file": "01_chunk_10_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_10_rewritten.txt"
+    },
+    {
+      "index": 11,
+      "start": 18100,
+      "end": 19991,
+      "char_count": 1891,
+      "starts_with_heading": true,
+      "heading": "## 12.8 data word와 BRAM 환산",
+      "passthrough": false,
+      "input_file": "01_chunk_11_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_11_rewritten.txt"
+    },
+    {
+      "index": 12,
+      "start": 19991,
+      "end": 21833,
+      "char_count": 1842,
+      "starts_with_heading": true,
+      "heading": "## 12.9 반론 — \"fixed-point는 부정확하다\"",
+      "passthrough": false,
+      "input_file": "01_chunk_12_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_12_rewritten.txt"
+    },
+    {
+      "index": 13,
+      "start": 21833,
+      "end": 23019,
+      "char_count": 1186,
+      "starts_with_heading": true,
+      "heading": "## 12.10 우리 project의 결정",
+      "passthrough": false,
+      "input_file": "01_chunk_13_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_13_rewritten.txt"
+    },
+    {
+      "index": 14,
+      "start": 23019,
+      "end": 25593,
+      "char_count": 2574,
+      "starts_with_heading": true,
+      "heading": "## 12.11 이 장의 요약",
+      "passthrough": false,
+      "input_file": "01_chunk_14_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_14_rewritten.txt"
+    }
+  ]
+}

@@ -1,0 +1,208 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+-------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version     : Vivado v.2026.1 (lin64) Build 6511674 Tue Jun 16 11:01:26 MDT 2026
+| Date             : Fri Sep 25 12:44:03 2026
+| Host             : Dev-Ubuntu running 64-bit Ubuntu 24.04.4 LTS
+| Command          : report_power -file /opt/rvx/platform/bbht_grover_dram/imp_arty-100t_2026-09-25/imp_result/route_power.rpt
+| Design           : BBHT_GROVER_DRAM_FPGA
+| Device           : xc7a100tcsg324-1
+| Design State     : routed
+| Grade            : commercial
+| Process          : typical
+| Characterization : Production
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+Power Report
+
+Table of Contents
+-----------------
+1. Summary
+1.1 On-Chip Components
+1.2 Power Supply Summary
+1.3 Confidence Level
+2. Settings
+2.1 Environment
+2.2 Clock Constraints
+3. Detailed Reports
+3.1 By Hierarchy
+
+1. Summary
+----------
+
++--------------------------+--------------+
+| Total On-Chip Power (W)  | 1.030        |
+| Design Power Budget (W)  | Unspecified* |
+| Power Budget Margin (W)  | NA           |
+| Dynamic (W)              | 0.919        |
+| Device Static (W)        | 0.111        |
+| Effective TJA (C/W)      | 4.6          |
+| Max Ambient (C)          | 80.3         |
+| Junction Temperature (C) | 29.7         |
+| Confidence Level         | Low          |
+| Setting File             | ---          |
+| Simulation Activity File | ---          |
+| Design Nets Matched      | NA           |
++--------------------------+--------------+
+* Specify Design Power Budget using, set_operating_conditions -design_power_budget <value in Watts>
+
+
+1.1 On-Chip Components
+----------------------
+
++--------------------------+-----------+----------+-----------+-----------------+
+| On-Chip                  | Power (W) | Used     | Available | Utilization (%) |
++--------------------------+-----------+----------+-----------+-----------------+
+| Clocks                   |     0.102 |       27 |       --- |             --- |
+| Slice Logic              |     0.040 |    71457 |       --- |             --- |
+|   LUT as Logic           |     0.036 |    26863 |     63400 |           42.37 |
+|   CARRY4                 |     0.003 |     2232 |     15850 |           14.08 |
+|   Register               |    <0.001 |    34152 |    126800 |           26.93 |
+|   LUT as Distributed RAM |    <0.001 |      320 |     19000 |            1.68 |
+|   F7/F8 Muxes            |    <0.001 |     1819 |     63400 |            2.87 |
+|   LUT as Shift Register  |    <0.001 |      196 |     19000 |            1.03 |
+|   Others                 |    <0.001 |      847 |       --- |             --- |
+| Signals                  |     0.053 |    60445 |       --- |             --- |
+| Block RAM                |     0.036 |       81 |       135 |           60.00 |
+| MMCM                     |     0.187 |        2 |         6 |           33.33 |
+| PLL                      |     0.110 |        1 |         6 |           16.67 |
+| DSPs                     |     0.013 |       74 |       240 |           30.83 |
+| I/O                      |     0.271 |       57 |       210 |           27.14 |
+| PHASER                   |     0.106 |       14 |       --- |             --- |
+| Static Power             |     0.111 |          |           |                 |
+| Total                    |     1.030 |          |           |                 |
++--------------------------+-----------+----------+-----------+-----------------+
+
+
+1.2 Power Supply Summary
+------------------------
+
++-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
+| Source    | Voltage (V) | Total (A) | Dynamic (A) | Static (A) | Powerup (A) | Budget (A)  | Margin (A) |
++-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
+| Vccint    |       1.000 |     0.301 |       0.281 |      0.021 |       NA    | Unspecified | NA         |
+| Vccaux    |       1.800 |     0.282 |       0.264 |      0.018 |       NA    | Unspecified | NA         |
+| Vcco33    |       3.300 |     0.004 |       0.000 |      0.004 |       NA    | Unspecified | NA         |
+| Vcco25    |       2.500 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
+| Vcco18    |       1.800 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
+| Vcco15    |       1.500 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
+| Vcco135   |       1.350 |     0.123 |       0.119 |      0.004 |       NA    | Unspecified | NA         |
+| Vcco12    |       1.200 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
+| Vccaux_io |       1.800 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
+| Vccbram   |       1.000 |     0.005 |       0.003 |      0.002 |       NA    | Unspecified | NA         |
+| MGTAVcc   |       1.000 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
+| MGTAVtt   |       1.200 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
+| Vccadc    |       1.800 |     0.020 |       0.000 |      0.020 |       NA    | Unspecified | NA         |
++-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
+
+
+1.3 Confidence Level
+--------------------
+
++-----------------------------+------------+--------------------------------------------------------+------------------------------------------------------------------------------------------------------------+
+| User Input Data             | Confidence | Details                                                | Action                                                                                                     |
++-----------------------------+------------+--------------------------------------------------------+------------------------------------------------------------------------------------------------------------+
+| Design implementation state | High       | Design is routed                                       |                                                                                                            |
+| Clock nodes activity        | High       | User specified more than 95% of clocks                 |                                                                                                            |
+| I/O nodes activity          | Low        | More than 75% of inputs are missing user specification | Provide missing input activity with simulation results or by editing the "By Resource Type -> I/Os" view   |
+| Internal nodes activity     | Medium     | User specified less than 25% of internal nodes         | Provide missing internal nodes activity with simulation results or by editing the "By Resource Type" views |
+| Device models               | High       | Device models are Production                           |                                                                                                            |
+|                             |            |                                                        |                                                                                                            |
+| Overall confidence level    | Low        |                                                        |                                                                                                            |
++-----------------------------+------------+--------------------------------------------------------+------------------------------------------------------------------------------------------------------------+
+
+
+2. Settings
+-----------
+
+2.1 Environment
+---------------
+
++-----------------------+--------------------------+
+| Ambient Temp (C)      | 25.0                     |
+| ThetaJA (C/W)         | 4.6                      |
+| Airflow (LFM)         | 250                      |
+| Heat Sink             | medium (Medium Profile)  |
+| ThetaSA (C/W)         | 4.6                      |
+| Board Selection       | medium (10"x10")         |
+| # of Board Layers     | 12to15 (12 to 15 Layers) |
+| Board Temperature (C) | 25.0                     |
++-----------------------+--------------------------+
+
+
+2.2 Clock Constraints
+---------------------
+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-----------------+
+| Clock                                                                                                                                                     | Domain                                                                                                                                                                                                                                      | Constraint (ns) |
++-----------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-----------------+
+| clk_150000000_xilinx_clock_pll_0                                                                                                                          | i_platform/i_pll0/i_xilinx_clock_pll_0/inst/clk_150000000_xilinx_clock_pll_0                                                                                                                                                                |             6.7 |
+| clk_300000000_xilinx_clock_pll_0                                                                                                                          | i_platform/i_pll0/i_xilinx_clock_pll_0/inst/clk_300000000_xilinx_clock_pll_0                                                                                                                                                                |             3.3 |
+| clk_50000000_xilinx_clock_pll_0                                                                                                                           | i_platform/i_pll0/i_xilinx_clock_pll_0/inst/clk_50000000_xilinx_clock_pll_0                                                                                                                                                                 |            20.0 |
+| clk_pll_i                                                                                                                                                 | i_platform/i_system_ddr/nolabel_line70/u_xilinx_ddr3_ctrl_axi32_mig/u_ddr3_infrastructure/clk_pll_i                                                                                                                                         |             6.7 |
+| clkfbout_xilinx_clock_pll_0                                                                                                                               | i_platform/i_pll0/i_xilinx_clock_pll_0/inst/clkfbout_xilinx_clock_pll_0                                                                                                                                                                     |            10.0 |
+| freq_refclk                                                                                                                                               | i_platform/i_system_ddr/nolabel_line70/u_xilinx_ddr3_ctrl_axi32_mig/u_ddr3_infrastructure/freq_refclk                                                                                                                                       |             1.7 |
+| iserdes_clkdiv                                                                                                                                            | i_platform/i_system_ddr/nolabel_line70/u_xilinx_ddr3_ctrl_axi32_mig/u_memc_ui_top_axi/mem_intfc0/ddr_phy_top0/u_ddr_mc_phy_wrapper/u_ddr_mc_phy/ddr_phy_4lanes_0.u_ddr_phy_4lanes/ddr_byte_lane_C.ddr_byte_lane_C/iserdes_clkdiv            |            13.3 |
+| iserdes_clkdiv_1                                                                                                                                          | i_platform/i_system_ddr/nolabel_line70/u_xilinx_ddr3_ctrl_axi32_mig/u_memc_ui_top_axi/mem_intfc0/ddr_phy_top0/u_ddr_mc_phy_wrapper/u_ddr_mc_phy/ddr_phy_4lanes_0.u_ddr_phy_4lanes/ddr_byte_lane_D.ddr_byte_lane_D/iserdes_clkdiv            |            13.3 |
+| mem_refclk                                                                                                                                                | i_platform/i_system_ddr/nolabel_line70/u_xilinx_ddr3_ctrl_axi32_mig/u_ddr3_infrastructure/mem_refclk                                                                                                                                        |             3.3 |
+| oserdes_clk                                                                                                                                               | i_platform/i_system_ddr/nolabel_line70/u_xilinx_ddr3_ctrl_axi32_mig/u_memc_ui_top_axi/mem_intfc0/ddr_phy_top0/u_ddr_mc_phy_wrapper/u_ddr_mc_phy/ddr_phy_4lanes_0.u_ddr_phy_4lanes/ddr_byte_lane_A.ddr_byte_lane_A/oserdes_clk               |             3.3 |
+| oserdes_clk_1                                                                                                                                             | i_platform/i_system_ddr/nolabel_line70/u_xilinx_ddr3_ctrl_axi32_mig/u_memc_ui_top_axi/mem_intfc0/ddr_phy_top0/u_ddr_mc_phy_wrapper/u_ddr_mc_phy/ddr_phy_4lanes_0.u_ddr_phy_4lanes/ddr_byte_lane_B.ddr_byte_lane_B/oserdes_clk               |             3.3 |
+| oserdes_clk_2                                                                                                                                             | i_platform/i_system_ddr/nolabel_line70/u_xilinx_ddr3_ctrl_axi32_mig/u_memc_ui_top_axi/mem_intfc0/ddr_phy_top0/u_ddr_mc_phy_wrapper/u_ddr_mc_phy/ddr_phy_4lanes_0.u_ddr_phy_4lanes/ddr_byte_lane_C.ddr_byte_lane_C/oserdes_clk               |             3.3 |
+| oserdes_clk_3                                                                                                                                             | i_platform/i_system_ddr/nolabel_line70/u_xilinx_ddr3_ctrl_axi32_mig/u_memc_ui_top_axi/mem_intfc0/ddr_phy_top0/u_ddr_mc_phy_wrapper/u_ddr_mc_phy/ddr_phy_4lanes_0.u_ddr_phy_4lanes/ddr_byte_lane_D.ddr_byte_lane_D/oserdes_clk               |             3.3 |
+| oserdes_clkdiv                                                                                                                                            | i_platform/i_system_ddr/nolabel_line70/u_xilinx_ddr3_ctrl_axi32_mig/u_memc_ui_top_axi/mem_intfc0/ddr_phy_top0/u_ddr_mc_phy_wrapper/u_ddr_mc_phy/ddr_phy_4lanes_0.u_ddr_phy_4lanes/ddr_byte_lane_A.ddr_byte_lane_A/oserdes_clkdiv            |             6.7 |
+| oserdes_clkdiv_1                                                                                                                                          | i_platform/i_system_ddr/nolabel_line70/u_xilinx_ddr3_ctrl_axi32_mig/u_memc_ui_top_axi/mem_intfc0/ddr_phy_top0/u_ddr_mc_phy_wrapper/u_ddr_mc_phy/ddr_phy_4lanes_0.u_ddr_phy_4lanes/ddr_byte_lane_B.ddr_byte_lane_B/oserdes_clkdiv            |             6.7 |
+| oserdes_clkdiv_2                                                                                                                                          | i_platform/i_system_ddr/nolabel_line70/u_xilinx_ddr3_ctrl_axi32_mig/u_memc_ui_top_axi/mem_intfc0/ddr_phy_top0/u_ddr_mc_phy_wrapper/u_ddr_mc_phy/ddr_phy_4lanes_0.u_ddr_phy_4lanes/ddr_byte_lane_C.ddr_byte_lane_C/oserdes_clkdiv            |             6.7 |
+| oserdes_clkdiv_3                                                                                                                                          | i_platform/i_system_ddr/nolabel_line70/u_xilinx_ddr3_ctrl_axi32_mig/u_memc_ui_top_axi/mem_intfc0/ddr_phy_top0/u_ddr_mc_phy_wrapper/u_ddr_mc_phy/ddr_phy_4lanes_0.u_ddr_phy_4lanes/ddr_byte_lane_D.ddr_byte_lane_D/oserdes_clkdiv            |             6.7 |
+| pjtag_rclk                                                                                                                                                | pjtag_rtck                                                                                                                                                                                                                                  |           100.0 |
+| pll_clk3_out                                                                                                                                              | i_platform/i_system_ddr/nolabel_line70/u_xilinx_ddr3_ctrl_axi32_mig/u_ddr3_infrastructure/pll_clk3_out                                                                                                                                      |             6.7 |
+| pll_clkfbout                                                                                                                                              | i_platform/i_system_ddr/nolabel_line70/u_xilinx_ddr3_ctrl_axi32_mig/u_ddr3_infrastructure/pll_clkfbout                                                                                                                                      |             6.7 |
+| sync_pulse                                                                                                                                                | i_platform/i_system_ddr/nolabel_line70/u_xilinx_ddr3_ctrl_axi32_mig/u_ddr3_infrastructure/sync_pulse                                                                                                                                        |            53.3 |
+| sys_clk_pin                                                                                                                                               | external_clk_0                                                                                                                                                                                                                              |            10.0 |
+| sys_clk_pin                                                                                                                                               | external_clk_0_IBUF_BUFG                                                                                                                                                                                                                    |            10.0 |
+| u_memc_ui_top_axi/mem_intfc0/ddr_phy_top0/u_ddr_mc_phy_wrapper/u_ddr_mc_phy/ddr_phy_4lanes_0.u_ddr_phy_4lanes/ddr_byte_lane_C.ddr_byte_lane_C/iserdes_clk | i_platform/i_system_ddr/nolabel_line70/u_xilinx_ddr3_ctrl_axi32_mig/u_memc_ui_top_axi/mem_intfc0/ddr_phy_top0/u_ddr_mc_phy_wrapper/u_ddr_mc_phy/ddr_phy_4lanes_0.u_ddr_phy_4lanes/ddr_byte_lane_C.ddr_byte_lane_C/phaser_in_gen.phaser_in_0 |             3.3 |
+| u_memc_ui_top_axi/mem_intfc0/ddr_phy_top0/u_ddr_mc_phy_wrapper/u_ddr_mc_phy/ddr_phy_4lanes_0.u_ddr_phy_4lanes/ddr_byte_lane_D.ddr_byte_lane_D/iserdes_clk | i_platform/i_system_ddr/nolabel_line70/u_xilinx_ddr3_ctrl_axi32_mig/u_memc_ui_top_axi/mem_intfc0/ddr_phy_top0/u_ddr_mc_phy_wrapper/u_ddr_mc_phy/ddr_phy_4lanes_0.u_ddr_phy_4lanes/ddr_byte_lane_D.ddr_byte_lane_D/phaser_in_gen.phaser_in_0 |             3.3 |
++-----------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-----------------+
+
+
+3. Detailed Reports
+-------------------
+
+3.1 By Hierarchy
+----------------
+
++------------------------------------------+-----------+
+| Name                                     | Power (W) |
++------------------------------------------+-----------+
+| BBHT_GROVER_DRAM_FPGA                    |     0.919 |
+|   i_platform                             |     0.914 |
+|     i_bbht                               |     0.091 |
+|       u_bridge                           |     0.006 |
+|       u_top                              |     0.084 |
+|     i_pll0                               |     0.103 |
+|       i_xilinx_clock_pll_0               |     0.103 |
+|     i_rtl                                |     0.072 |
+|       default_slave                      |     0.003 |
+|       external_peri_group                |     0.002 |
+|       i_inter_router_fifo00              |     0.001 |
+|       i_main_core                        |     0.012 |
+|       i_mnim_i_grover_dma_master         |     0.002 |
+|       i_mnim_i_grover_dram_master        |     0.003 |
+|       i_mnim_i_main_core_data            |     0.003 |
+|       i_mnim_i_main_core_inst            |     0.002 |
+|       i_mnim_platform_controller_master  |     0.002 |
+|       i_snim_common_peri_group_no_name   |     0.003 |
+|       i_snim_external_peri_group_no_name |     0.003 |
+|       i_snim_i_grover_csr_slave          |     0.004 |
+|       i_snim_i_system_ddr_no_name        |     0.006 |
+|       i_snim_i_system_sram_no_name       |     0.005 |
+|       i_snim_platform_controller_no_name |     0.004 |
+|       i_system_router                    |     0.002 |
+|       i_user_router                      |     0.003 |
+|       platform_controller                |     0.011 |
+|     i_system_ddr                         |     0.640 |
+|       nolabel_line70                     |     0.640 |
+|     i_system_sram                        |     0.007 |
+|       generate_cell[0].i_cell            |     0.005 |
+|       i_controller                       |     0.002 |
++------------------------------------------+-----------+
+
+

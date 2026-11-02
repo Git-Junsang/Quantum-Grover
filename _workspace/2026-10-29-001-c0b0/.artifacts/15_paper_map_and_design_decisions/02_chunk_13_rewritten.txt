@@ -1,0 +1,12 @@
+## 15.10 이 장의 요약
+
+- 여섯 논문의 지형은 **04번이 중심**입니다. 05·06은 그 위성이고, 07은 반대 진영의 대조군, 08은 이론 배경, 09는 oracle을 predicate 판정으로 넓힌 **확장 참고 사례**입니다. iteration schedule의 근거는 09번이 아니라 BBHT 원전(1998)입니다.
+- 논문들이 갈라지는 자리를 여덟 개의 축으로 정리했고, 그중 **H축("shot 사이에 state를 버리는가 남기는가")은 여섯 논문 어디에도 없는 우리 고유의 축**입니다. 우리 답은 a Checkpoint-Capacity of 3과 3-shot Lookahead policy입니다.
+- [15.4절](#154-우리-project의-좌표--확정-설계-결정표)이 해설서 안에서 **이 project 숫자의 source of truth**입니다. board에서 검증된 final configuration을 따르고, 근거는 표의 각 줄이 가리키는 뒤 장들에 있습니다.
+- platform은 **Arty A7-100T · 14 qubits · accelerator 100 MHz** 입니다. Accelerator Core가 84 BRAM tiles · 128 DSPs(전부 Measurement Unit), board 전체가 BRAM 116 / 135 · DSP 132 / 240이고 timing은 닫혔습니다. 성능은 RTL cycle 6.1401×와 board wall-clock time 7.626×로 **축을 나눠** 적습니다.
+- [15.6절](#156-인용-시-주의--논문의-오류와-모호점)은 인용 전에 반드시 펼쳐 볼 정오표입니다. **1차 자료도 틀립니다.**
+- 초판의 미정 아홉 가지는 **전부 정해졌습니다**([15.8절](#158-되돌아보며)). 남은 큰 결정은 BRAM Variant와 DRAM Variant 중 하나를 고르는 일입니다.
+
+---
+
+> [← 14장 multiple solutions — Born-rule sampling과 enumeration](14_multiple_solutions_and_minimum_search.md) · [index](index.md) · [16장 몇 번 돌릴지 모를 때 →](16_iteration_control_and_checkpoints.md)

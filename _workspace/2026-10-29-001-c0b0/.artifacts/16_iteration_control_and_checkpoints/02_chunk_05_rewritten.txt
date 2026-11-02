@@ -1,0 +1,24 @@
+## 16.3 shot 통계 — mean이 20 shots를 넘는 이유
+
+"한 shot success probability가 $1/4$ 이상이니 mean 네 번쯤 던지면 되겠네"는 이 장에서 가장 흔한 오해입니다. 실제 수치는 이렇습니다. board benchmark와 같은 500 workloads(1 · 4 · 16 · 64 · 256 solutions마다 100 seeds)를 RTL simulation으로 돌린 Six-Stage Ablation campaign의 mean입니다(값의 source of truth는 [15.4절](15_paper_map_and_design_decisions.md#154-우리-project의-좌표--확정-설계-결정표)).
+
+| number of solutions | mean shots | requested iterations | executed iterations (Restart mode) | executed iterations (a Checkpoint-Capacity of 3 and 3-shot Lookahead) | 줄어든 몫 | mean cycles (Stage 1 → final configuration) |
+|:-:|--:|--:|--:|--:|--:|--:|
+| 1 | **22.7** | 173.5 | 173.5 | 51.9 | 70% | 209,277 → 25,345 |
+| 4 | 18.5 | 78.9 | 78.9 | 23.9 | 70% | 106,128 → 16,368 |
+| 16 | 15.1 | 40.0 | 40.0 | 12.1 | 70% | 61,458 → 11,993 |
+| 64 | 10.6 | 15.9 | 15.9 | 5.5 | 65% | 30,498 → 8,590 |
+| 256 | 7.2 | 6.0 | 6.0 | 2.5 | 59% | 15,723 → 6,610 |
+
+여기서 executed iterations는 datapath가 실제로 돈 Grover iteration의 개수입니다. 매 shot 처음부터 도는 Restart mode에서는 requested iterations와 같고, checkpoint를 쓰면 줄어듭니다(16.5절). number of shots와 requested iterations는 두 mode에서 같습니다 — 같은 seed면 같은 number of iterations 수열을 요청하기 때문입니다(16.6절).
+
+mean이 22.7 shots까지 올라가는 이유는 sampling range의 성장 곡선에 있습니다. sampling range는 1에서 출발해 1.2×씩 커지므로 처음 열 shot쯤은 아주 좁습니다 — 16.2절의 ROM 수열 그대로 $1, 2, 2, 2, 3, 3, 3, 4, 5, 6, \dots$ 입니다. 그 동안 number of iterations는 0에서 5 사이에서만 뽑히는데, 위 표에서 10 iterations일 때조차 success probability가 2.7%였습니다. 즉 **초반 shot은 거의 전부 실패하도록 설계되어 있습니다.** 실제로 답을 얻기 쉬워지는 것은 number of iterations가 75~100 근처(success probability 85~100%)에 닿을 만큼 sampling range가 커진 뒤이고, ROM 수열에서 그 자리가 스물다섯 번째 항 안팎입니다. 관측된 mean 22.7 shots(median 23)이 정확히 그 지점입니다.
+
+BBHT의 "$1/4$ 이상" 보장은 **sampling range가 충분히 커진 뒤의 lower bound**이지 첫 shot부터 성립하는 값이 아니라는 것 — 이 구분이 4~5 shots와 22.7 shots를 가릅니다.
+
+이 사실이 곧바로 **measurement를 싸게 만들어야 하는 동기**가 됩니다. shot이 22.7번이면 measurement도 22.7번이니까요. 1 solution에서 final configuration의 mean 25,345 cycles을 11.8절의 직선으로 쪼개 보면, executed iterations가 $51.9 \times 268 \approx 13{,}900$ cycles, shot마다의 measurement·verification이 $22.7 \times 354 \approx 8{,}000$ cycles, 나머지 고정비가 3,400 cycles 남짓입니다. checkpoint가 iteration을 70% 줄이고 나니 measurement가 전체의 3분의 1을 차지하게 된 것이고, 그래서 Measurement Unit을 줄인 Dual-Row Build와 Two-Level Select가 총 cycle을 각각 18% 넘게 더 줄였습니다(14.5절). **checkpoint와 measurement 최적화는 따로 고를 수 있는 option이 아니라 한 쌍입니다** — 한쪽을 줄이면 다른 쪽이 병목으로 드러납니다.
+
+shot이 끝없이 이어지지 않도록 보호 한도가 둘 있습니다. number of shots가 shot cap(`SHOT_CAP`, 기본 100)에 닿거나, 실패한 shot 뒤에 $1 + \text{requested iterations}$ 가 **BBHT budget 576**에 닿으면 search를 끝내고 각각 `shot_limit` · `budget_limit` status bit를 세웁니다. solution이 하나도 없는 search는 이 둘 중 하나로 끝납니다.
+
+---
+

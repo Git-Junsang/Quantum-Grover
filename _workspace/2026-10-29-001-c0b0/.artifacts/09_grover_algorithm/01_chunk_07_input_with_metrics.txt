@@ -1,0 +1,98 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 7/12이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 09_grover_algorithm.md 진단
+
+## 장르·레지스터와 보존 조건
+
+학부생용 기술 해설서(report). 본문은 친근한 존댓말(합니다/입니다, 일부 해요체 설명), 수식 풀이·표·요약은 압축형입니다. 문장 격식을 올리지 않습니다. 영어 용어와 영어 토큰은 번역·삭제·교체·대소문자 변경하지 않습니다. glossary 기준은 `documents/design_references/22_appendix_glossary_and_retired_specs.md` §22.2입니다. 수치·수식·code·제목·link·직접 인용·기존 콜아웃/이모지·문단 구조는 보존합니다. 실제 주장, 부정/긍정, 인과, 조건, 확신도도 보존합니다. 보고서용 서식 축약·영어 순화 규칙은 적용하지 않습니다. 본문에 사실을 추가하거나 현행 설계와 대조해 기술 내용을 고치지 않습니다.
+
+## 정량 근거
+
+입력의 정량 블록을 확인했습니다. risk_band는 low이고, 장문 파일의 heavy 권고는 문서 길이에서 나옵니다. 영어 기술 term 반복은 장르상 필수이므로 lexical_diversity의 낮은 값만으로 수정하지 않습니다. 아래 수치는 탐지 보조이며 개별 문맥과 함께 판단합니다.
+
+## 겨냥 순서의 지배 패턴
+
+1. **D-14·D-5 — 설명용 비유가 본문까지 관통하는 반복**: "Grover가 실제로 사는 곳", "손끝 하나 바꾸지 않습니다", "function을 먹인 것", "전부 헛수고", "hardware에서 한층 더 날카로워집니다" 등은 동작 설명에 어색한 행위 술어를 붙입니다. 막대·reflection·rotation의 교육적 비유와 기존 비유 상자는 유지하고 과장된 연결 표현만 구체화합니다.
+
+2. **D-2·F-1 — 지나친 감탄과 확언**: "말로만 하면 안 믿기니", "소수점 끝까지 한 치도 어긋나지", "축하합니다 … 완주했습니다" 등 독자를 대신 평가하는 표현을 완화합니다. 수학적으로 정확히 같다는 주장은 그대로 보존합니다.
+
+3. **A-18 — 긴 관형절·삽입 설명**: 정량 relative_clause_nesting=3. 도입의 절 안내, 9.1절 emulator 비용, 9.6절 BBHT, 9.8절 real number 전용 논증, 9.9절 hardware 안내가 장문입니다. 조건·한계와 모든 수식·수치를 보존하며 필요한 문장만 분리합니다.
+
+4. **C-8·D-8 — 반복적인 부정 대구·정의 강조**: "대상의 성질이지 … 성능 지표가 아닙니다", "표준 문제라서가 아닙니다", "고장이 아니라", "신비로운 constant가 아니라" 등 반복을 확인합니다. algorithm과 emulator의 구분처럼 기술적으로 필요한 대조는 유지하고 감탄용 대조만 줄입니다.
+
+5. **C-11·I-3 — 연결어미 쉼표·설명 끝의 군더더기**: 연결어미 뒤 쉼표와 "것뿐이에요", "것이죠", "뜻인데" 등으로 결론을 감싸는 문장을 국소 검토합니다. 정량 conclusion_pivot_count=1은 과다 기준 미달이므로 삭제 목표로 삼지 않습니다.
+
+## 비적용·잔존 처리
+
+교육적 질문·표·연습문제·단계 목록·기존 비유는 그 자체로 결함이 아닙니다. 자연스러운 문장은 그대로 두고 확인된 구간만 보수적으로 다듬습니다. 수치/기술 주장에 의문이 있어도 이번 윤문에서는 보존합니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 2765
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.31  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.33  (z=-0.54 vs report 인간 baseline)
+- ending_comma_rate: 0.50  (n/a vs report 인간 baseline)
+- comma_segment_length: 7.85  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.000  (z=-2.00 vs report 인간 baseline)
+- lexical_diversity: 0.67  (z=+0.48 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 0
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 9.5 왜 여러 번? · 왜 $\sqrt{\text{number of states}}$ 번? · 왜 $\pi$?
+
+state가 많으면 solution이 그 많은 state 가운데 딱 하나 묻혀 있어, 처음 막대가 $\frac{1}{\sqrt{\text{number of states}}}$ 로 아주 작습니다. 한 번 흔들어선 충분히 안 커져요. 그래서 Grover iteration을 여러 번 돌리는데, **몇 번**이 적당한지를 알려면 Grover를 **rotation**으로 보는 게 제일 깔끔합니다.
+
+<img src="diagrams/09_geometric_rotation.svg" width="560" alt="Grover geometric rotation">
+
+**state를 화살표로.** 전체 space는 state마다 축이 하나씩 있는 고차원이지만, Grover가 실제로 사는 곳은 딱 **2차원 평면**이에요. 두 방향만 잡으면 됩니다:
+
+- **solution 방향** $|\omega\rangle$ — 우리가 가고 싶은 곳.
+- **non-solution 방향** $|s'\rangle$ — solution을 뺀 나머지 전부.
+
+초기 uniform superposition은 이 평면 안의 화살표인데, 거의 **non-solution 방향**을 가리키고 solution 방향에서 살짝 기울어 있어요(solution 성분이 $\frac{1}{\sqrt{\text{number of states}}}$ 로 작으니까). 그 기울어진 각을 $\theta$ 라 하면 $\sin\theta = \frac{1}{\sqrt{\text{number of states}}}$, state가 많으면 $\theta$ 는 아주 작습니다.
+
+**한 번 흔들 때마다 $2\theta$ rotation.** 놀랍게도 "oracle + diffusion operator" 한 번은, 이 화살표를 solution 방향으로 **정확히 $2\theta$ 만큼 돌립니다**(왜 딱 rotation인지는 **9.7절**에서). 그러니 반복할수록 화살표가 non-solution 방향에서 solution 방향으로 조금씩 돌아가요. solution 방향에 화살표가 정렬되면, measurement 시 solution이 나올 probability가 (거의) 1이 됩니다.
+
+**그래서 몇 번? — 여기서 $\pi$ 가 나옵니다.** solution 방향은 non-solution 방향과 **직각(90°)** 입니다. 화살표를 거기까지 돌리는 건 원의 **4분의 1 바퀴**, 각도로는 **$\frac{\pi}{2}$** 예요 (π 는 "반 바퀴 = π, 4분의 1 바퀴 = π/2"인 그 원의 숫자입니다). 한 번에 $2\theta$ 씩 도니까, 필요한 횟수는:
+
+$$
+\text{number of iterations} \approx \frac{\text{돌아야 할 각}}{\text{한 번에 도는 각}} = \frac{\pi/2}{2\theta} = \frac{\pi}{4\theta}
+$$
+
+solution이 하나면 $\theta \approx \frac{1}{\sqrt{\text{number of states}}}$ 이므로:
+
+$$
+\boxed{\text{number of iterations} \approx \frac{\pi}{4}\sqrt{\text{number of states}}}
+$$
+
+$\frac{\pi}{4}$ 의 4는 "직각이라 $\pi$ 의 **절반**(=π/2)" × "한 번에 $2\theta$ 라 **2×**" 가 겹쳐 나온 것뿐이에요. solution이 여러 개면 $\sin\theta = \sqrt{\text{number of solutions}/\text{number of states}}$ 가 되어 $\text{number of iterations} \approx \frac{\pi}{4}\sqrt{\text{number of states}/\text{number of solutions}}$. 이것이 **$O(\sqrt{\text{number of states}})$** 의 정확한 근원입니다. (solution이 여러 개일 때 이 $\sqrt{\text{number of states}/\text{number of solutions}}$ 가 hardware에서 무엇을 뜻하는지는 [14.1절](14_multiple_solutions_and_minimum_search.md#141-solution이-여럿이면--oracle에서는-공짜)에서 다룹니다 — multiple solutions는 oracle과 diffusion operator에서는 공짜이고, 값을 치르는 곳은 iteration 제어와 measurement입니다.)
+
+**운전대 비유**: 목표가 옆으로 90° 방향에 있고, 운전대를 한 번 꺾으면 일정 각도씩 돈다고 해봐요. 몇 번 꺾어야 하냐? "90°(=π/2) ÷ 한 번에 도는 각도"죠. $\pi$ 는 그저 "90°를 각도(radian)로 쓰면 π/2"라서 등장한 겁니다 — 신비로운 constant가 아니라 **rotation의 기하학**이에요.
+
+✏️ **연습 9-1**: 64 states 가운데 solution이 4개일 때, iteration을 대략 몇 번 돌리는 것이 최적일까요? *(답: $\text{number of iterations} \approx \frac{\pi}{4}\sqrt{64/4} = \frac{\pi}{4}\sqrt{16} = \pi \approx 3$ 회. [10장](10_glossary_and_cheat_sheet.md#106-연습문제-답)에 풀이.)*
+
+---
+[원문 끝]

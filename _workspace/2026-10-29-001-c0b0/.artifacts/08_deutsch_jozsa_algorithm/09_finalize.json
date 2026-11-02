@@ -1,0 +1,96 @@
+{
+  "status": "accept",
+  "genre": "report",
+  "review": "원문·윤문본·진단·게이트를 직접 대조한 의미 및 자연성 검토",
+  "correction_count": 0,
+  "corrections": [],
+  "fidelity_violations_remaining": [],
+  "overediting": [],
+  "residual_findings": [],
+  "baseline_gate_warnings": [
+    {
+      "code": "footnote_anchor",
+      "message": "각주 1)이 원위치를 벗어났습니다 (인접 수치 앵커 '2' → 'None'): 인용 출처 변조 위험"
+    },
+    {
+      "code": "footnote_anchor",
+      "message": "각주 1)이 원위치를 벗어났습니다 (인접 수치 앵커 '2' → 'None'): 인용 출처 변조 위험"
+    },
+    {
+      "code": "footnote_anchor",
+      "message": "각주 1)이 원위치를 벗어났습니다 (인접 수치 앵커 '2' → 'None'): 인용 출처 변조 위험"
+    },
+    {
+      "code": "footnote_anchor",
+      "message": "각주 1)이 원위치를 벗어났습니다 (인접 수치 앵커 '2' → 'None'): 인용 출처 변조 위험"
+    },
+    {
+      "code": "footnote_anchor",
+      "message": "각주 1)이 원위치를 벗어났습니다 (인접 수치 앵커 '1' → 'None'): 인용 출처 변조 위험"
+    },
+    {
+      "code": "footnote_anchor",
+      "message": "각주 1)이 원위치를 벗어났습니다 (인접 수치 앵커 '2' → 'None'): 인용 출처 변조 위험"
+    },
+    {
+      "code": "footnote_anchor",
+      "message": "각주 1)이 원위치를 벗어났습니다 (인접 수치 앵커 '2' → 'None'): 인용 출처 변조 위험"
+    },
+    {
+      "code": "footnote_anchor",
+      "message": "각주 1)이 원위치를 벗어났습니다 (인접 수치 앵커 '2' → 'None'): 인용 출처 변조 위험"
+    },
+    {
+      "code": "footnote_anchor",
+      "message": "각주 1)이 원위치를 벗어났습니다 (인접 수치 앵커 '2' → 'None'): 인용 출처 변조 위험"
+    },
+    {
+      "code": "footnote_anchor",
+      "message": "각주 1)이 원위치를 벗어났습니다 (인접 수치 앵커 '2' → 'None'): 인용 출처 변조 위험"
+    },
+    {
+      "code": "footnote_anchor",
+      "message": "각주 1)이 원위치를 벗어났습니다 (인접 수치 앵커 '0' → 'None'): 인용 출처 변조 위험"
+    },
+    {
+      "code": "footnote_anchor",
+      "message": "각주 1)이 원위치를 벗어났습니다 (인접 수치 앵커 '1' → 'None'): 인용 출처 변조 위험"
+    },
+    {
+      "code": "footnote_anchor",
+      "message": "각주 1)이 원위치를 벗어났습니다 (인접 수치 앵커 '2' → 'None'): 인용 출처 변조 위험"
+    },
+    {
+      "code": "footnote_anchor",
+      "message": "각주 1)이 원위치를 벗어났습니다 (인접 수치 앵커 '2' → 'None'): 인용 출처 변조 위험"
+    },
+    {
+      "code": "footnote_anchor",
+      "message": "각주 1)이 원위치를 벗어났습니다 (인접 수치 앵커 '0' → 'None'): 인용 출처 변조 위험"
+    },
+    {
+      "code": "footnote_anchor",
+      "message": "각주 1)이 원위치를 벗어났습니다 (인접 수치 앵커 '2' → 'None'): 인용 출처 변조 위험"
+    }
+  ],
+  "self_check": {
+    "passed": 6,
+    "total": 6
+  },
+  "grade": "A",
+  "categories": [
+    "C-8",
+    "D-14",
+    "D-2",
+    "D-5",
+    "D-8"
+  ],
+  "preservation_check": "PASS: 영어 token·영어 구·수치·수식·code·제목·link·콜아웃",
+  "final_gate": {
+    "exit_code": 1,
+    "change_rate": 0.014,
+    "new_warnings": [],
+    "baseline_warning_count": 16,
+    "note": "각주 경고는 원문끼리 대조해도 발생하는 기존 오탐과 동일"
+  }
+}

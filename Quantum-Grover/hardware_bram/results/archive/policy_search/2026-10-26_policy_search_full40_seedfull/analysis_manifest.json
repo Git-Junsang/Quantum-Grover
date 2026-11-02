@@ -1,0 +1,33 @@
+{
+  "policy_changed": false,
+  "choice_mismatches": 0,
+  "workloads": 500,
+  "decisions": 7403,
+  "cycle_model": {
+    "formula": "a*optimized_actions + b*optimized_states + c*decisions",
+    "a": 0.8871065707917634,
+    "b": 15.199166094626362,
+    "c": 21.520000287020697,
+    "fit_cells": "unoptimized standalone RTL K3/K4, H1..8",
+    "r_squared": 0.9998863317354449,
+    "low_storage_replay": "core + bound_candidates + 2*bound_fill_cycles"
+  },
+  "system_model": {
+    "measured_reference": "K3H3-E4-M2 Common500",
+    "reference_total": 5328877,
+    "reference_iterations": 9582,
+    "reference_stall": 172066,
+    "iteration_cycles": 268,
+    "fixed_cycles": 2588835,
+    "stall_exposure": 0.14541100034817647,
+    "warning": "aggregate estimate; integrated RTL is required for final stall"
+  },
+  "pipeline_resource_model": {
+    "universe": "U=K+H+1",
+    "lut": "H*(24*U+32), report +/-25%",
+    "ff": "H*(2*U+14)",
+    "scope": "bound pipeline only; excludes controller, action generator and memo",
+    "vivado_status": "not synthesized: valid Vivado license unavailable"
+  },
+  "fair_reference_total_fullbound_k3h3": 5242686
+}

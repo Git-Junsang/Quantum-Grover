@@ -1,0 +1,6 @@
+## 14.9 확장 — threshold를 낮추면 minimum search
+
+여기까지 오면 최적화 문제로 가는 길이 한 줄로 보입니다. `value < thr_a` predicate로 solution을 하나 찾을 때마다 `thr_a ← value[cand]` 로 threshold를 낮추고 다시 search하면, 기준이 계단처럼 내려가며 minimum에 수렴합니다 — 이것이 **Dürr–Høyer algorithm**이고, 09번 논문(Habibie 외, IEEE IoT J. 2024)이 무선 IoT의 사용자 탐지에 적용한 것이 이 구조입니다. 우리 accelerator는 이 loop를 hardware에 넣지 않습니다. 넣을 필요가 없기 때문입니다 — `THRESHOLD_A` 는 host가 CSR에 쓰는 값이고 결과는 어차피 host로 돌아가므로, RVX 위의 RISC-V app이 while loop 한 개를 도는 것만으로 같은 algorithm이 됩니다([17.7절](17_rvx_soc_integration.md#177-hardware와-firmware의-경계)). hardware가 제공해야 할 것은 "threshold를 받아 solution 하나를 돌려주는" 원자적 연산 하나뿐이고, 그것은 이미 있습니다. 09번을 인용할 때 주의할 오류 두 가지는 [15.6절](15_paper_map_and_design_decisions.md#156-인용-시-주의--논문의-오류와-모호점)에 정리해 두었습니다.
+
+---
+

@@ -1,0 +1,39 @@
+== AXI 모델 기본 지연 (AR_LAT=20, B_LAT=8, 백프레셔 없음, MAX_BEATS=16)
+# AXI wr_bursts=195776 rd_bursts=3165536 mem_err=0 axi_error=0 frontier_j=10
+# AXI wr_bursts=153824 rd_bursts=3029376 mem_err=0 axi_error=0 frontier_j=7
+# AXI wr_bursts=180320 rd_bursts=3141248 mem_err=0 axi_error=0 frontier_j=7
+# AXI wr_bursts=186208 rd_bursts=3128000 mem_err=0 axi_error=0 frontier_j=6
+Predicate500 dram RTL 대 SW 기준모델 (software/experiments/predicate500_benchmark/expected/predicate500_expected.csv)
+술어     모드         실행  rc            result_index  predicate     trial_count   L_BBHT        actual_iter 
+LT     normal    500  500/500       500/500       500/500       500/500       500/500       500/500     
+GT     normal    500  500/500       500/500       500/500       500/500       500/500       500/500     
+EQ     normal    500  500/500       500/500       500/500       500/500       500/500       500/500     
+RANGE  normal    500  500/500       500/500       500/500       500/500       500/500       500/500     
+
+사이클 합 (clk_accel 100 MHz)
+  LT     normal 60268229 cyc / iter 253
+  GT     normal 61099761 cyc / iter 266
+  EQ     normal 60376263 cyc / iter 245
+  RANGE  normal 58002373 cyc / iter 209
+
+판정: PASS
+
+== AXI 모델 백프레셔 (STALL_EN=1, MAX_BEATS=16)
+# AXI wr_bursts=195776 rd_bursts=3165536 mem_err=0 axi_error=0 frontier_j=10
+# AXI wr_bursts=180320 rd_bursts=3141248 mem_err=0 axi_error=0 frontier_j=7
+# AXI wr_bursts=153824 rd_bursts=3029376 mem_err=0 axi_error=0 frontier_j=7
+# AXI wr_bursts=186208 rd_bursts=3128000 mem_err=0 axi_error=0 frontier_j=6
+Predicate500 dram RTL 대 SW 기준모델 (software/experiments/predicate500_benchmark/expected/predicate500_expected.csv)
+술어     모드         실행  rc            result_index  predicate     trial_count   L_BBHT        actual_iter 
+LT     normal    500  500/500       500/500       500/500       500/500       500/500       500/500     
+GT     normal    500  500/500       500/500       500/500       500/500       500/500       500/500     
+EQ     normal    500  500/500       500/500       500/500       500/500       500/500       500/500     
+RANGE  normal    500  500/500       500/500       500/500       500/500       500/500       500/500     
+
+사이클 합 (clk_accel 100 MHz)
+  LT     normal 79929941 cyc / iter 253
+  GT     normal 81114978 cyc / iter 266
+  EQ     normal 80016593 cyc / iter 245
+  RANGE  normal 76619462 cyc / iter 209
+
+판정: PASS

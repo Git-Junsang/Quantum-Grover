@@ -1,0 +1,35 @@
+{
+  "config": {
+    "schema": 2,
+    "k": 3,
+    "h": 3,
+    "e": 4,
+    "m": 2,
+    "policy_mode": 6,
+    "scan_lanes": 4,
+    "force_generic": false
+  },
+  "binary_sha256": "9fcebe2b216c622f0fb97ebdd294ea98d34210b01915d4684d0dcb50c30bd7e5",
+  "source_manifest": "/workspace/hardware_bram/results/2026-10-28_generalized_main_integration/k3h3e4m2_final/manifest.json",
+  "observed_prediction_mismatches": 0,
+  "rtl_metrics": {
+    "validated_workloads": 2,
+    "cycles": 35355,
+    "iter": 79,
+    "policy_cycles": 820,
+    "policy_stall": 461,
+    "policy_actions": 125
+  },
+  "policy_replay": {
+    "solver_jobs": 43,
+    "completed_solver_jobs": 43,
+    "accepted_plans": 40,
+    "fifo_accepted_plans": 37,
+    "injected_mismatches": 0,
+    "flushes": 6,
+    "inflight_job_at_end": false,
+    "epoch_reuse_injections": 1,
+    "errors": 0
+  },
+  "errors": 0
+}

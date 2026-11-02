@@ -1,0 +1,12 @@
+## 14.6 기각한 대안들
+
+measurement를 hardware로 만드는 길은 여럿이고, 우리가 고르지 않은 셋을 왜 안 골랐는지 남겨 둡니다. 셋 다 나름의 논리가 있어서, 이유를 알아야 나중에 같은 대안을 다시 검토하는 일을 줄일 수 있습니다.
+
+**argmax.** 가장 싸고 가장 매력적입니다. comparator 하나로 array를 훑으면 끝이고, $|a|$ 의 최대와 $a^2$ 의 최대가 같으니 squarer조차 필요 없으며, absolute value도 sign bit로 조건부 negate 한 번입니다. solution이 하나라고 확신할 수 있다면 지금도 맞는 선택입니다 — optimal number of iterations만큼 돈 뒤에는 그 한 칸이 압도적으로 크니까요. 우리가 버린 이유는 정확히 하나, **14.3절의 동률**입니다. predicate search는 solution이 몇 개인지 모르는 문제이고 solution이 둘 이상이면 argmax가 index 하나에 영원히 고착됩니다. 성능이 아니라 **기능**이 안 되는 것이라 절충의 여지가 없습니다.
+
+**04번의 직렬 prefix sum + linear approximation.** 04번 논문은 squarer와 divider를 피하려고 근사를 3중으로 쌓습니다 — solution probability를 $2|\alpha|-1$ 로 linear approximation하고, 나머지 probability를 geometric series shift로 배분하고, prefix sum을 병렬로 구한 뒤 weighted random number generator로 뽑습니다. 정교하지만 전제가 있습니다: **solution 하나가 probability를 거의 다 차지한다**는 것. multiple solutions에서는 이 전제가 깨집니다. 앞의 8 states · 3 solutions · 1 iteration 예에서 solution amplitude는 $0.53033$ 인데, $2|\alpha|-1 = 0.0607$ 인 반면 참값은 $0.2812$ 입니다 — 4.6× 어긋납니다. non-solution 쪽은 $2(0.17678)-1 = -0.646$ 으로 아예 음수가 나옵니다. probability로 쓸 수 없는 수치입니다. 우리는 근사를 버리고 정확한 integer square를 택했습니다. Artix-7의 DSP에는 여유가 있고(128 / 240), 근사 error와 달리 square는 검증할 수 있습니다.
+
+**von Neumann식 collapse 후 renormalization.** Pilch–Długopolski(2018)의 범용 emulator는 진짜 measurement를 circuit으로 합니다 — qubit별로 0이 나올 probability를 계산하고, LFSR random number와 비교해 state를 collapse시킨 뒤, 살아남은 amplitude를 sum of squares의 square root로 나눠 **renormalization**합니다([4.4절](04_measurement.md#44-measurement는-state를-collapse시킨다)). 범용 simulator에는 필수입니다. measurement 뒤에도 circuit이 이어지니 collapse 후 state가 정확해야 하니까요. 우리는 다릅니다. **measurement는 한 shot의 마지막 단계이고 그 뒤에 gate가 없습니다.** collapse된 state를 쓸 일이 없으므로 square-root unit과 divider를 통째로 생략할 수 있습니다. 게다가 renormalization은 amplitude array를 **덮어씁니다** — 그러면 방금 확인한 "measurement는 읽기 전용"이 깨지고 checkpoint가 성립하지 않습니다. renormalization을 안 하는 것이 circuit을 줄이는 데서 그치지 않고 checkpoint도 사용할 수 있게 합니다.
+
+---
+

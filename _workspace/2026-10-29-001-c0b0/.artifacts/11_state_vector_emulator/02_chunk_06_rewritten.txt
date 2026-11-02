@@ -1,0 +1,21 @@
+## 11.5 register의 진짜 대가
+
+04번 논문은 qubit를 늘리며 FPGA resource 사용량을 실측했습니다. Kintex UltraScale+ board 기준으로, 4 qubits에서 6 qubits로 갈 때 두 resource가 이렇게 움직입니다:
+
+| resource | 4 qubits | 6 qubits | 배율 |
+|---|---:|---:|:---:|
+| **FF**(flip-flop = 저장) | 16,606 | 19,852 | **1.20×** |
+| **LUT**(lookup table = 연산 logic) | 15,386 | 303,993 | **19.8×** |
+
+이 결과에서 원인을 구분할 수 있습니다. 만약 resource 폭발의 원인이 "amplitude를 register에 저장하는 것"이라면, **저장을 담당하는 FF가 폭증해야 합니다.** 그런데 FF는 겨우 1.2× 늘었습니다. 폭증한 것은 **LUT** — 즉 **연산 logic**입니다.
+
+원인은 저장이 아니라 **병렬 연산 unit**입니다. 04번 논문은 $O(\text{number of states})$ 짜리 연산(amplitude 전체를 더하는 accumulation, 전체를 비교하는 measurement 등)을 **한두 cycle에 끝내려고** adder·comparator·shifter를 number of states에 비례해 통째로 펼쳐 놓습니다. qubit가 하나 늘면 number of states가 두 배가 되고, 그만큼 연산 unit도 두 배가 되어 LUT 사용량이 지수적으로 늘어납니다. 논문 스스로 "늘어난 연산 부담을 실행 시간이 아니라 hardware resource로 떠넘겼다"고 밝힙니다(이 맞바꿈은 11.7절에서 우리 선택과 나란히 놓고 다시 봅니다).
+
+<img src="diagrams/11_lut_ff_growth.svg" width="560" alt="04번 논문 자원 증가: FF는 평평, LUT는 급등">
+
+06번 논문(같은 연구실의 QAOA emulator)이 이 현상을 더 선명하게 보여줍니다. 8~9 qubits에서 한계에 부딪히는데, 그 시점에 **DSP(multiplier)는 전체의 3.8%밖에 안 쓰고** LUT가 먼저 100%를 넘겨 버립니다. multiplication resource에는 여유가 있는데 연산 logic routing이 한계에 이른 것입니다.
+
+이 구분이 왜 중요할까요? 우리가 만약 "register 대신 BRAM에 두면 resource가 해결된다"고 착각하면 원인을 잘못 판단하기 때문입니다. BRAM에 두는 진짜 효과는 **저장 압박 해소**가 아니라, amplitude를 한꺼번에 병렬 접근할 수 없게 만들어 **연산을 순차화하도록 강제**하는 것입니다 — 그래서 병렬 unit이 줄고 LUT가 회수됩니다. 대가는 속도(cycle 증가)이고요. 즉 저장 위치 선택은 **저장 용량 문제가 아니라 병렬성 예산 문제**입니다. 우리 IP의 resource 기록이 이것을 그대로 보여 줍니다 — iteration 한 번에 협력하는 PE를 1 PE에서 4 PEs로 늘렸을 때(16장), memory는 그대로인데 Accelerator Core의 LUT가 13,804에서 30,294로 2.2× 뛰었습니다(synthesis 기준). 병렬도를 높이면 logic 사용량도 늘어납니다.
+
+---
+

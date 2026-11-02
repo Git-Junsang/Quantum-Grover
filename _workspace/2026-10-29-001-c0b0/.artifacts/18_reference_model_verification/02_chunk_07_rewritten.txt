@@ -1,0 +1,18 @@
+## 18.6 Born sampler를 어떻게 검증하나
+
+measurement는 확률적입니다. 그런데 앞에서 합격 기준을 bit-exact로 잡았습니다. 모순처럼 보이지만 아닙니다 — **서로 다른 두 가지를 검사하는 것**이고, 둘을 섞으면 verification이 무너집니다.
+
+**첫째, equivalence check.** seed를 고정하면 sampler는 완전히 결정적인 circuit입니다. 같은 amplitude array와 같은 seed를 reference model과 RTL에 넣으면 두 implementation은 **같은 후보 index sequence**를 내야 하고, 여기에는 허용 error가 없습니다. 이것은 distribution에 관한 시험이 아니라 두 implementation이 같은 function인지 보는 시험입니다. 18.3절의 random number 규약이 확정돼야 성립하는 것이 바로 이 검사이고, 지금은 500 workloads 전부에서 성립합니다.
+
+**둘째, distribution test.** equivalence check는 두 implementation이 **똑같이 틀렸을** 가능성을 배제하지 못합니다. 그래서 distribution이 정말 $a_i^2 / \text{total weight}$ 인지는 따로 봐야 합니다. 방법은 statistical test입니다 — seed를 바꿔 가며 sample을 많이 뽑고, empirical distribution과 theoretical distribution의 chi-square goodness-of-fit test를 합니다.
+
+이때 조심할 것이 둘 있습니다. 하나는 **cell 개수**입니다. 14 qubits면 index가 16,384개라 웬만한 sample 수로는 대부분의 cell의 expected frequency가 1 미만이 되어 chi-square 근사가 성립하지 않습니다. cell을 묶어야 합니다 — 16 groups 단위로 묶으면 degrees of freedom 15가 되고, solution/non-solution 두 group으로 묶으면 success rate test가 됩니다. 다른 하나는 **판정 방식**입니다. significance level 0.05로 test하면 정상인 circuit도 스무 번에 한 번은 기각됩니다. 한 번의 $p < 0.05$ 로 실패를 선언하면 regression test가 무작위로 실패를 보고하게 됩니다. test를 여러 번 되풀이해 $p$ 값들이 $[0,1]$ 에 균등하게 흩어지는지 보는 편이 훨씬 안정적입니다.
+
+또 하나 — **test 대상을 좁혀야 합니다.** 여기서 보려는 것은 "sampler가 주어진 amplitude array에서 Born distribution을 내는가"이지 "Grover가 맞는가"가 아닙니다. 그래서 amplitude array를 Grover로 만들지 말고 **알려진 값으로 직접 채워 넣고** sampler만 떼어 시험하는 것이 깔끔합니다. 극단적인 array(한 칸만 0이 아닌 경우, 전부 같은 값인 경우, 두 칸만 크고 나머지가 아주 작은 경우)을 넣어 보면 경계 처리의 실수가 빨리 드러납니다.
+
+**Two-Level Select가 distribution을 바꾸지 않는다는 것은 증명보다 강하게 확인할 수 있습니다.** 14.5절에 대수적 증명이 있지만, 증명이 보장하는 것은 **의도한 절차**이지 **implementation**이 아닙니다. 다행히 우리 sampler는 전부 integer로 자르지 않고 계산하므로, 같은 random number에 대해 "group → row → lane으로 좁혀 가며 찾은 index"와 "0번부터 차례로 prefix sum을 쌓아 처음 그 random number를 넘는 index"가 **정확히 같아야** 합니다. statistical test가 아니라 random number 하나하나에 대한 일치 검사가 가능하다는 뜻입니다. group prefix sum의 경계, row 안 잔여값 계산, 엄격한 `>` — 이 셋 중 하나만 어긋나도 경계 근처의 random number에서 이웃 칸이 나오고, 이 검사가 그것을 바로 잡습니다.
+
+마지막으로 **드문 경로도 직접 시험해야 합니다.** rejection sampling은 후보가 total weight 이상일 때만 다시 뽑는데, 받아들여질 probability가 늘 절반을 넘으므로 여러 번 연달아 rejection되는 경로는 정상 simulation에서 거의 나오지 않습니다. total weight 0(`zero_weight_error`)은 정상 동작에서 아예 나오지 않습니다. 이런 경로는 random number나 amplitude를 강제로 주입해 **직접 밟아 봐야** 합니다. 실행된 적 없는 code의 정확성을 높은 probability로 기대하기는 어렵습니다. 같은 방식으로 $\text{number of iterations} \sim U[0, \text{sampling range})$ 의 균등성도 histogram으로 확인합니다 — sampling range가 2의 거듭제곱이 아닐 때 rejection sampling이 제대로 동작하지 않으면 distribution이 기울고, 그 기울기가 BBHT의 "success probability $\ge 1/4$" 보장을 약화시킵니다.
+
+---
+

@@ -1,0 +1,309 @@
+{
+  "seed_mode5": {
+    "parameters": {},
+    "command": [
+      "iverilog",
+      "-g2012",
+      "-I/workspace/hardware_bram/results/2026-10-28_policy_scan_parallel_verified/source",
+      "-s",
+      "tb_policy_seed_replay",
+      "-o"
+    ],
+    "summary": [
+      "SUMMARY seed_replay cases=323 errors=0 skips=0 nested=0 seed_hits=0 seed_misses=646 canonical_misses=0 root_equal_bounds=0 skip_during_miss=0 max_universe=7 checked_bounds=1769 cached_bounds=0 max_pruned_batch=0 max_scan_count=15",
+      "CERTIFICATES root=323 inner=323 suffix=323 overlapped_reads=0 scan_lanes=4"
+    ]
+  },
+  "seed_mode6": {
+    "parameters": {
+      "EXACT_PRUNE": 6
+    },
+    "command": [
+      "iverilog",
+      "-g2012",
+      "-I/workspace/hardware_bram/results/2026-10-28_policy_scan_parallel_verified/source",
+      "-s",
+      "tb_policy_seed_replay",
+      "-Ptb_policy_seed_replay.EXACT_PRUNE=6",
+      "-o"
+    ],
+    "summary": [
+      "SUMMARY seed_replay cases=323 errors=0 skips=0 nested=0 seed_hits=0 seed_misses=392 canonical_misses=0 root_equal_bounds=0 skip_during_miss=0 max_universe=7 checked_bounds=1361 cached_bounds=0 max_pruned_batch=0 max_scan_count=15",
+      "CERTIFICATES root=196 inner=196 suffix=196 overlapped_reads=0 scan_lanes=4"
+    ]
+  },
+  "lanes1": {
+    "parameters": {
+      "CANON_LANES": 1
+    },
+    "command": [
+      "iverilog",
+      "-g2012",
+      "-I/workspace/hardware_bram/results/2026-10-28_policy_scan_parallel_verified/source",
+      "-s",
+      "tb_policy_seed_replay",
+      "-Ptb_policy_seed_replay.CANON_LANES=1",
+      "-o"
+    ],
+    "summary": [
+      "SUMMARY seed_replay cases=323 errors=0 skips=0 nested=0 seed_hits=0 seed_misses=646 canonical_misses=0 root_equal_bounds=0 skip_during_miss=0 max_universe=7 checked_bounds=1769 cached_bounds=0 max_pruned_batch=0 max_scan_count=15",
+      "CERTIFICATES root=323 inner=323 suffix=323 overlapped_reads=0 scan_lanes=1"
+    ]
+  },
+  "lanes2": {
+    "parameters": {
+      "CANON_LANES": 2
+    },
+    "command": [
+      "iverilog",
+      "-g2012",
+      "-I/workspace/hardware_bram/results/2026-10-28_policy_scan_parallel_verified/source",
+      "-s",
+      "tb_policy_seed_replay",
+      "-Ptb_policy_seed_replay.CANON_LANES=2",
+      "-o"
+    ],
+    "summary": [
+      "SUMMARY seed_replay cases=323 errors=0 skips=0 nested=0 seed_hits=0 seed_misses=646 canonical_misses=0 root_equal_bounds=0 skip_during_miss=0 max_universe=7 checked_bounds=1769 cached_bounds=0 max_pruned_batch=0 max_scan_count=15",
+      "CERTIFICATES root=323 inner=323 suffix=323 overlapped_reads=0 scan_lanes=2"
+    ]
+  },
+  "scan1_canon4": {
+    "parameters": {
+      "SCAN_LANES": 1
+    },
+    "command": [
+      "iverilog",
+      "-g2012",
+      "-I/workspace/hardware_bram/results/2026-10-28_policy_scan_parallel_verified/source",
+      "-s",
+      "tb_policy_seed_replay",
+      "-Ptb_policy_seed_replay.SCAN_LANES=1",
+      "-o"
+    ],
+    "summary": [
+      "SUMMARY seed_replay cases=323 errors=0 skips=0 nested=0 seed_hits=0 seed_misses=646 canonical_misses=0 root_equal_bounds=0 skip_during_miss=0 max_universe=7 checked_bounds=1769 cached_bounds=0 max_pruned_batch=0 max_scan_count=15",
+      "CERTIFICATES root=323 inner=323 suffix=323 overlapped_reads=0 scan_lanes=1"
+    ]
+  },
+  "horizon1": {
+    "parameters": {
+      "H_FUTURE": 1,
+      "RANDOM_CASES": 32,
+      "REQUIRE_COVERAGE": 0,
+      "EXACT_PRUNE": 6
+    },
+    "command": [
+      "iverilog",
+      "-g2012",
+      "-I/workspace/hardware_bram/results/2026-10-28_policy_scan_parallel_verified/source",
+      "-s",
+      "tb_policy_seed_replay",
+      "-Ptb_policy_seed_replay.H_FUTURE=1",
+      "-Ptb_policy_seed_replay.RANDOM_CASES=32",
+      "-Ptb_policy_seed_replay.REQUIRE_COVERAGE=0",
+      "-Ptb_policy_seed_replay.EXACT_PRUNE=6",
+      "-o"
+    ],
+    "summary": [
+      "SUMMARY seed_replay cases=35 errors=0 skips=0 nested=0 seed_hits=15 seed_misses=0 canonical_misses=0 root_equal_bounds=0 skip_during_miss=0 max_universe=5 checked_bounds=42 cached_bounds=0 max_pruned_batch=0 max_scan_count=6",
+      "CERTIFICATES root=15 inner=0 suffix=0 overlapped_reads=0 scan_lanes=4"
+    ]
+  },
+  "horizon2": {
+    "parameters": {
+      "H_FUTURE": 2,
+      "RANDOM_CASES": 64,
+      "REQUIRE_COVERAGE": 0
+    },
+    "command": [
+      "iverilog",
+      "-g2012",
+      "-I/workspace/hardware_bram/results/2026-10-28_policy_scan_parallel_verified/source",
+      "-s",
+      "tb_policy_seed_replay",
+      "-Ptb_policy_seed_replay.H_FUTURE=2",
+      "-Ptb_policy_seed_replay.RANDOM_CASES=64",
+      "-Ptb_policy_seed_replay.REQUIRE_COVERAGE=0",
+      "-o"
+    ],
+    "summary": [
+      "SUMMARY seed_replay cases=67 errors=0 skips=0 nested=0 seed_hits=0 seed_misses=67 canonical_misses=0 root_equal_bounds=0 skip_during_miss=0 max_universe=6 checked_bounds=168 cached_bounds=0 max_pruned_batch=0 max_scan_count=10",
+      "CERTIFICATES root=67 inner=0 suffix=67 overlapped_reads=0 scan_lanes=4"
+    ]
+  },
+  "k3h4": {
+    "parameters": {
+      "H_FUTURE": 4,
+      "RANDOM_CASES": 64
+    },
+    "command": [
+      "iverilog",
+      "-g2012",
+      "-I/workspace/hardware_bram/results/2026-10-28_policy_scan_parallel_verified/source",
+      "-s",
+      "tb_policy_seed_replay",
+      "-Ptb_policy_seed_replay.H_FUTURE=4",
+      "-Ptb_policy_seed_replay.RANDOM_CASES=64",
+      "-o"
+    ],
+    "summary": [
+      "SUMMARY seed_replay cases=67 errors=0 skips=12 nested=0 seed_hits=7 seed_misses=214 canonical_misses=13 root_equal_bounds=6 skip_during_miss=0 max_universe=8 checked_bounds=698 cached_bounds=86 max_pruned_batch=4 max_scan_count=15",
+      "CERTIFICATES root=53 inner=154 suffix=73 overlapped_reads=10 scan_lanes=4"
+    ]
+  },
+  "k4h4": {
+    "parameters": {
+      "CKPT_K": 4,
+      "H_FUTURE": 4,
+      "RANDOM_CASES": 64
+    },
+    "command": [
+      "iverilog",
+      "-g2012",
+      "-I/workspace/hardware_bram/results/2026-10-28_policy_scan_parallel_verified/source",
+      "-s",
+      "tb_policy_seed_replay",
+      "-Ptb_policy_seed_replay.CKPT_K=4",
+      "-Ptb_policy_seed_replay.H_FUTURE=4",
+      "-Ptb_policy_seed_replay.RANDOM_CASES=64",
+      "-o"
+    ],
+    "summary": [
+      "SUMMARY seed_replay cases=67 errors=0 skips=0 nested=0 seed_hits=0 seed_misses=201 canonical_misses=0 root_equal_bounds=0 skip_during_miss=0 max_universe=9 checked_bounds=729 cached_bounds=0 max_pruned_batch=0 max_scan_count=20",
+      "CERTIFICATES root=67 inner=134 suffix=67 overlapped_reads=0 scan_lanes=4"
+    ]
+  },
+  "k4h8_mode5": {
+    "parameters": {
+      "CKPT_K": 4,
+      "H_FUTURE": 8,
+      "RANDOM_CASES": 32
+    },
+    "command": [
+      "iverilog",
+      "-g2012",
+      "-I/workspace/hardware_bram/results/2026-10-28_policy_scan_parallel_verified/source",
+      "-s",
+      "tb_policy_seed_replay",
+      "-Ptb_policy_seed_replay.CKPT_K=4",
+      "-Ptb_policy_seed_replay.H_FUTURE=8",
+      "-Ptb_policy_seed_replay.RANDOM_CASES=32",
+      "-o"
+    ],
+    "summary": [
+      "SUMMARY seed_replay cases=37 errors=0 skips=69 nested=54 seed_hits=83 seed_misses=388 canonical_misses=103 root_equal_bounds=7 skip_during_miss=0 max_universe=13 checked_bounds=4165 cached_bounds=2134 max_pruned_batch=4 max_scan_count=220",
+      "CERTIFICATES root=20 inner=377 suffix=57 overlapped_reads=409 scan_lanes=4"
+    ]
+  },
+  "k4h8_mode6": {
+    "parameters": {
+      "CKPT_K": 4,
+      "H_FUTURE": 8,
+      "RANDOM_CASES": 32,
+      "EXACT_PRUNE": 6
+    },
+    "command": [
+      "iverilog",
+      "-g2012",
+      "-I/workspace/hardware_bram/results/2026-10-28_policy_scan_parallel_verified/source",
+      "-s",
+      "tb_policy_seed_replay",
+      "-Ptb_policy_seed_replay.CKPT_K=4",
+      "-Ptb_policy_seed_replay.H_FUTURE=8",
+      "-Ptb_policy_seed_replay.RANDOM_CASES=32",
+      "-Ptb_policy_seed_replay.EXACT_PRUNE=6",
+      "-o"
+    ],
+    "summary": [
+      "SUMMARY seed_replay cases=37 errors=0 skips=68 nested=53 seed_hits=83 seed_misses=290 canonical_misses=103 root_equal_bounds=7 skip_during_miss=0 max_universe=13 checked_bounds=3911 cached_bounds=2108 max_pruned_batch=4 max_scan_count=220",
+      "CERTIFICATES root=8 inner=294 suffix=43 overlapped_reads=403 scan_lanes=4"
+    ]
+  },
+  "single_action": {
+    "parameters": {},
+    "command": [
+      "iverilog",
+      "-g2012",
+      "-I/workspace/hardware_bram/results/2026-10-28_policy_scan_parallel_verified/source",
+      "-s",
+      "tb_policy_single_action",
+      "-o"
+    ],
+    "summary": [
+      "SUMMARY single_action cases=268 errors=0 clears=3"
+    ]
+  },
+  "k4h8_lanes1": {
+    "parameters": {
+      "CKPT_K": 4,
+      "H_FUTURE": 8,
+      "RANDOM_CASES": 8,
+      "CANON_LANES": 1
+    },
+    "command": [
+      "iverilog",
+      "-g2012",
+      "-I/workspace/hardware_bram/results/2026-10-28_policy_scan_parallel_verified/source",
+      "-s",
+      "tb_policy_seed_replay",
+      "-Ptb_policy_seed_replay.CKPT_K=4",
+      "-Ptb_policy_seed_replay.H_FUTURE=8",
+      "-Ptb_policy_seed_replay.RANDOM_CASES=8",
+      "-Ptb_policy_seed_replay.CANON_LANES=1",
+      "-o"
+    ],
+    "summary": [
+      "SUMMARY seed_replay cases=13 errors=0 skips=28 nested=23 seed_hits=16 seed_misses=120 canonical_misses=20 root_equal_bounds=1 skip_during_miss=0 max_universe=13 checked_bounds=1646 cached_bounds=1067 max_pruned_batch=1 max_scan_count=220",
+      "CERTIFICATES root=8 inner=98 suffix=17 overlapped_reads=1039 scan_lanes=1"
+    ]
+  },
+  "k4h8_lanes2": {
+    "parameters": {
+      "CKPT_K": 4,
+      "H_FUTURE": 8,
+      "RANDOM_CASES": 8,
+      "CANON_LANES": 2
+    },
+    "command": [
+      "iverilog",
+      "-g2012",
+      "-I/workspace/hardware_bram/results/2026-10-28_policy_scan_parallel_verified/source",
+      "-s",
+      "tb_policy_seed_replay",
+      "-Ptb_policy_seed_replay.CKPT_K=4",
+      "-Ptb_policy_seed_replay.H_FUTURE=8",
+      "-Ptb_policy_seed_replay.RANDOM_CASES=8",
+      "-Ptb_policy_seed_replay.CANON_LANES=2",
+      "-o"
+    ],
+    "summary": [
+      "SUMMARY seed_replay cases=13 errors=0 skips=28 nested=23 seed_hits=16 seed_misses=120 canonical_misses=20 root_equal_bounds=1 skip_during_miss=0 max_universe=13 checked_bounds=1646 cached_bounds=1087 max_pruned_batch=2 max_scan_count=220",
+      "CERTIFICATES root=8 inner=98 suffix=17 overlapped_reads=506 scan_lanes=2"
+    ]
+  },
+  "k4h8_scan1_canon4": {
+    "parameters": {
+      "CKPT_K": 4,
+      "H_FUTURE": 8,
+      "RANDOM_CASES": 8,
+      "SCAN_LANES": 1
+    },
+    "command": [
+      "iverilog",
+      "-g2012",
+      "-I/workspace/hardware_bram/results/2026-10-28_policy_scan_parallel_verified/source",
+      "-s",
+      "tb_policy_seed_replay",
+      "-Ptb_policy_seed_replay.CKPT_K=4",
+      "-Ptb_policy_seed_replay.H_FUTURE=8",
+      "-Ptb_policy_seed_replay.RANDOM_CASES=8",
+      "-Ptb_policy_seed_replay.SCAN_LANES=1",
+      "-o"
+    ],
+    "summary": [
+      "SUMMARY seed_replay cases=13 errors=0 skips=28 nested=23 seed_hits=16 seed_misses=120 canonical_misses=20 root_equal_bounds=1 skip_during_miss=0 max_universe=13 checked_bounds=1646 cached_bounds=1107 max_pruned_batch=4 max_scan_count=220",
+      "CERTIFICATES root=8 inner=98 suffix=17 overlapped_reads=240 scan_lanes=1"
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "independent_exhaustive_dp_cases": 800,
+  "capacities": [
+    1,
+    10
+  ],
+  "horizons": [
+    1,
+    10
+  ],
+  "seconds": 0.1070090290158987,
+  "errors": 0
+}

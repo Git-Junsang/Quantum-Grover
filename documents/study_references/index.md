@@ -11,7 +11,7 @@ quantum computer를 처음 배울 때 가장 먼저 드는 질문은 "이게 대
 
 ## 1. computer는 어디서 왔는가
 
-오늘날 우리가 쓰는 모든 computer의 뿌리는 1936년 영국 수학자 **Alan Turing** 입니다. Turing은 애초에 편리한 기계를 만들려던 게 아니라, 독일 수학자 Hilbert가 던진 질문 — *"어떤 수학 명제가 증명 가능한지 판별하는 일반적인 algorithm이 존재하는가?"* — 에 답하려 했습니다.
+오늘날 우리가 쓰는 모든 computer의 기원은 1936년 영국 수학자 **Alan Turing**의 연구로 거슬러 올라갑니다. Turing은 애초에 편리한 기계를 만들려던 게 아니라, 독일 수학자 Hilbert가 던진 질문 — *"어떤 수학 명제가 증명 가능한지 판별하는 일반적인 algorithm이 존재하는가?"* — 에 답하려 했습니다.
 
 이 질문에 답하려면 먼저 "**algorithm이란 무엇인가**"를 엄밀히 정의해야 했습니다. Turing은 사람이 종이와 연필로 계산할 때 하는 동작을 분석해, 그 모든 것을 흉내 낼 수 있는 하나의 가상 기계 — **Turing machine** — 을 제안했습니다. "algorithm이란 Turing machine이 수행할 수 있는 것"이라는 이 정의가 현대 computing의 토대가 되었고, 이후 수십억 대의 computer가 이 model 위에 만들어졌습니다.
 
@@ -33,17 +33,17 @@ Turing의 논증에는 미묘한 허점이 있었습니다. "사람이 종이에
 
 ## 3. classical computer가 quantum을 흉내 내기 힘든 이유
 
-핵심만 짚어봅시다. 입자 여러 개로 이루어진 분자를 simulation한다고 합시다. 각 입자를 qubit라고 (사실은 아니지만) 단순화하면, 이 system을 기술하는 데 **$2^{\text{number of qubits}}$개의 숫자(amplitude)** 가 필요합니다. 입자 하나가 늘 때마다 필요한 memory가 **두 배**로 뜁니다.
+핵심만 짚어봅시다. 입자 여러 개로 이루어진 분자를 simulation한다고 합시다. 각 입자가 qubit인 것은 아니지만, 설명을 위해 그렇게 단순화하면, 이 system을 기술하는 데 **$2^{\text{number of qubits}}$개의 숫자(amplitude)** 가 필요합니다. 입자 하나가 늘 때마다 필요한 memory가 **두 배**로 뜁니다.
 
 왜 하필 2의 거듭제곱일까요? 입자(qubit) 하나는 0과 1, 두 가지 state를 가집니다. 둘이 되면 가능한 조합은 00·01·10·11 — 네 가지이고, 이 **조합 하나하나마다 amplitude(숫자)가 한 개씩** 필요합니다. 셋이면 000…111로 여덟 가지죠. 입자를 하나 더 붙일 때마다 기존 조합이 각각 "새 입자가 0인 경우"와 "1인 경우"로 둘씩 쪼개지므로, 조합의 수가 정확히 두 배가 됩니다($2 \to 4 \to 8 \to \cdots \to 2^{\text{number of qubits}}$). 그래서 필요한 숫자의 개수가 곧 조합의 총 개수, 즉 $2^{\text{number of qubits}}$인 것입니다.
 
-그런데 여기서 자연스러운 반문이 떠오릅니다. "입자마다 숫자 2개씩이면, 입자 수의 두 배만큼만 있으면 충분하지 않나?" 안타깝게도 안 됩니다. 바로 이 지점이 quantum의 진짜 핵심입니다. state에는 "A는 이 state, B는 저 state"처럼 입자별로 따로 나눠 적을 수 **없는** 경우가 있습니다 — 예컨대 두 입자를 아무리 멀리 떨어뜨려 놓아도 측정하면 늘 똑같은 값이 나오도록 서로 묶인 state가 그렇습니다. 이 묶임을 **entanglement** 라 하는데, 이 상관관계를 온전히 담으려면 모든 조합의 숫자를 하나도 빠짐없이 들고 있어야 합니다. 그래서 압축이 원리적으로 불가능하고, 지수적 크기를 피할 수 없습니다. (entanglement는 [5장](05_multiple_qubits_and_entanglement.md)에서 제대로 배웁니다.)
+그런데 여기서 자연스러운 반문이 떠오릅니다. "입자마다 숫자 2개씩이면, 입자 수의 두 배만큼만 있으면 충분하지 않나?" 항상 그렇게 쓸 수는 없습니다. quantum의 중요한 성질이 여기서 드러납니다. state에는 "A는 이 state, B는 저 state"처럼 입자별로 따로 나눠 적을 수 **없는** 경우가 있습니다 — 예컨대 두 입자를 아무리 멀리 떨어뜨려 놓아도 측정하면 늘 똑같은 값이 나오도록 서로 묶인 state가 그렇습니다. 이 묶임을 **entanglement** 라 하는데, 이 상관관계를 온전히 담으려면 모든 조합의 숫자를 하나도 빠짐없이 들고 있어야 합니다. 그래서 압축이 원리적으로 불가능하고, 지수적 크기를 피할 수 없습니다. (entanglement는 [5장](05_multiple_qubits_and_entanglement.md)에서 제대로 배웁니다.)
 
 - 입자 10개 → $2^{10} \approx 1{,}000$개 숫자
 - 입자 50개 → $2^{50} \approx 10^{15}$개 (천조 개)
 - 입자 300개 → $2^{300}$ → 우주의 원자 수보다 많음
 
-실제 원자는 qubit보다 복잡해서 더 많은 숫자가 필요합니다. 그래서 작은 분자를 빼면 classical computer로는 quantum simulation이 사실상 불가능합니다. 반면 **quantum computer는 입자가 하나 늘 때마다 qubit 몇 개만 추가하면 됩니다** — 지수적 폭발이 선형 증가로 바뀝니다.
+실제 원자는 qubit보다 복잡해서 더 많은 숫자가 필요합니다. 그래서 작은 분자를 빼면 classical computer로는 quantum simulation이 사실상 불가능합니다. 반면 **quantum computer는 입자가 하나 늘 때마다 qubit 몇 개만 추가하면 됩니다** — 필요한 자원이 지수적 증가 대신 선형 증가에 그칩니다.
 
 > 🔑 **quantum computer의 근본 강점**: "$2^{\text{number of qubits}}$개의 amplitude"를 classical computer는 memory에 일일이 저장해야 하지만, quantum computer는 그만큼의 qubit만으로 그 state를 **자연스럽게 담습니다**. 이 "지수적으로 많은 amplitude를 다루는 능력"이 [1장](01_qubits_and_states.md)의 superposition에서 시작됩니다.
 
@@ -60,7 +60,7 @@ quantum computer가 **모든** 문제를 빠르게 푸는 마법 상자는 아�
 | **Deutsch-Jozsa** | function이 constant/balanced인지 판별  | $O(2^{\text{number of qubits}})$      | $O(1)$        | 지수적 (교육적 예제)   |
 | quantum simulation         | 분자·물질 simulation      | 지수적으로 느림 | 효율적          | 지수적                 |
 
-이 표에서 **Grover와 Deutsch-Jozsa** 가 이 해설서의 종착지입니다. Shor algorithm은 더 복잡해서 다루지 않지만, Grover를 이해하면 quantum algorithm의 핵심 아이디어 — **interference로 solution의 probability를 키우는 것** — 을 완전히 체득하게 됩니다.
+이 표에서 **Grover와 Deutsch-Jozsa** 가 이 해설서의 종착지입니다. Shor algorithm은 더 복잡해서 다루지 않지만, Grover를 이해하면 quantum algorithm의 핵심 아이디어 — **interference로 solution의 probability를 키우는 것** — 을 익힐 수 있습니다.
 
 ---
 
@@ -72,11 +72,11 @@ quantum computer가 **모든** 문제를 빠르게 푸는 마법 상자는 아�
 
 1. **algorithm이 단순하면서도 깊다.** Shor처럼 복잡한 number theory 없이, gate 몇 개를 되풀이하는 것만으로 동작합니다. 그런데도 quantum algorithm의 핵심 — amplitude amplification·interference — 을 온전히 담고 있어 hardware로 구현하기에 이상적입니다.
 2. **적용 범위가 넓다.** "정렬되지 않은 data에서 predicate를 만족하는 항목 찾기"는 곧 **threshold 비교 질의**입니다. sensor log에서 기준치를 넘는 이상치를 골라내기, 어떤 interval에 드는 값들만 뽑아내는 range query, 조건에 걸리는 후보를 하나씩 전부 열거하기 — 위에 적은 predicate 네 가지가 정확히 이 질의들에 대응합니다. threshold를 찾을 때마다 더 낮춰 가면 같은 circuit으로 minimum 찾기도 됩니다. (project의 `4. Grover 응용 논문` directory가 이런 응용의 예입니다.)
-3. **다만 "이차 향상"은 우리 것이 아니다.** 여기서 오해 하나를 미리 끊어 두겠습니다. 앞 절 표의 $O(\sqrt{\text{number of states}})$ 은 **진짜 quantum computer**가 oracle을 몇 번 부르는지를 센 값입니다. 우리처럼 classical circuit으로 흉내 내면 iteration 한 번마다 amplitude array 전체를 처음부터 끝까지 훑어야 하고 그 iteration을 $\sqrt{\text{number of states}}$ 번쯤 되풀이하므로, 총비용은 오히려 $\text{number of states} \times \sqrt{\text{number of states}}$ 만큼이 됩니다. 같은 문제를 array 한 번 훑어 푸는 평범한 classical program보다 **느립니다.** 이 해설서 어디에도 "우리 IP가 classical linear scan보다 빠르다"는 문장은 없습니다.
+3. **다만 "이차 향상"은 우리 것이 아니다.** 여기서 한 가지를 구분해야 합니다. 앞 절 표의 $O(\sqrt{\text{number of states}})$ 은 **진짜 quantum computer**가 oracle을 몇 번 부르는지를 센 값입니다. 우리처럼 classical circuit으로 흉내 내면 iteration 한 번마다 amplitude array 전체를 처음부터 끝까지 훑어야 하고 그 iteration을 $\sqrt{\text{number of states}}$ 번쯤 되풀이하므로, 총비용은 오히려 $\text{number of states} \times \sqrt{\text{number of states}}$ 만큼이 됩니다. 같은 문제를 array 한 번 훑어 푸는 평범한 classical program보다 **느립니다.** 이 해설서 어디에도 "우리 IP가 classical linear scan보다 빠르다"는 문장은 없습니다.
 
-그러면 왜 만드느냐 — 겨룰 상대를 제대로 고르면 이야기가 달라집니다. 우리와 **같은 일**을 하는 것, 즉 amplitude array를 memory에 펼쳐 놓고 매 iteration 전부 훑는 것은 classical linear scan이 아니라 **state vector simulator**입니다. 구체적으로는 Qiskit의 `AerSimulator` 나 NumPy로 짠 state vector code가 우리의 상대입니다. 그리고 이 IP의 값어치는 애초에 속도 우위가 아니라, quantum algorithm이 실제로 어떻게 동작하는지를 **결정적이고 재현 가능하게 재현·검증하는 전용 hardware**라는 데 있습니다. 같은 random number seed를 주면 언제나 같은 결과가 나오고, 계산 도중의 amplitude array를 통째로 꺼내 손계산이나 software model과 한 bit씩 대조할 수 있습니다. 진짜 quantum hardware에서는 둘 다 불가능한 일입니다 — 들여다보는 순간 state가 무너지니까요.
+그렇다면 왜 만들까요? 비교 대상을 살펴보면 이 작업의 목적을 알 수 있습니다. 우리와 **같은 일**을 하는 것, 즉 amplitude array를 memory에 펼쳐 놓고 매 iteration 전부 훑는 것은 classical linear scan이 아니라 **state vector simulator**입니다. 구체적으로는 Qiskit의 `AerSimulator` 나 NumPy로 짠 state vector code가 우리의 비교 대상입니다. 그리고 이 IP의 값어치는 애초에 속도 우위가 아니라, quantum algorithm이 실제로 어떻게 동작하는지를 **결정적이고 재현 가능하게 재현·검증하는 전용 hardware**라는 데 있습니다. 같은 random number seed를 주면 언제나 같은 결과가 나오고, 계산 도중의 amplitude array를 통째로 꺼내 손계산이나 software model과 한 bit씩 대조할 수 있습니다. 진짜 quantum hardware에서는 둘 다 불가능한 일입니다 — 관측하는 순간 state가 바뀌기 때문입니다.
 
-대신 대가가 있습니다. 모든 state의 amplitude를 memory에 하나하나 펼쳐 놓아야 하므로 **qubit를 하나 늘릴 때마다 필요한 memory가 두 배**로 뜁니다. 14 qubits라는 숫자는 야심이 부족해서 고른 것이 아니라, amplitude array를 여러 벌 들고 계산하는 우리 구조를 이 board에 실을 수 있는 천장이 거기이기 때문입니다.
+대신 대가가 있습니다. 모든 state의 amplitude를 memory에 하나하나 펼쳐 놓아야 하므로 **qubit를 하나 늘릴 때마다 필요한 memory가 두 배**로 뜁니다. 14 qubits는 amplitude array를 여러 벌 저장하며 계산하는 우리 구조를 이 board에 구현할 수 있는 상한입니다.
 
 > ❓ **emulation? 실제 quantum computer가 아니고?**: 그렇습니다. 진짜 quantum hardware는 비싸고 불안정합니다. 대신 FPGA로 quantum state vector의 진화를 **classical 방식으로 계산**해 algorithm의 동작을 재현·검증합니다. 그러려면 state vector를 숫자 array로 펼쳐 놓고, gate가 그 array에 하는 일 — predicate를 만족하는 칸의 **sign 반전**과 모든 칸의 **inversion about the mean** — 과 measurement를 수치로 정확히 구현해야 하고, 그 수학이 바로 이 해설서의 내용입니다. (project의 `2. Grover 논문 (LPSoC)`, `3. QCE-FPGA 논문` 이 이 emulation 기법을 다룹니다.)
 
@@ -84,7 +84,7 @@ quantum computer가 **모든** 문제를 빠르게 푸는 마법 상자는 아�
 
 ## 6. 앞으로의 여정 — 장 목록과 읽는 법
 
-이 해설서는 algorithm의 수학적 model — qubit·superposition·gate·measurement·oracle·amplitude amplification — 을 밑바닥부터 쌓아 올린 뒤(0~10장), 같은 개념이 memory map·fixed-point data word·FSM·bus interface로 내려앉는 과정을 따라갑니다(11~18장). 확정된 숫자(board, number of qubits, amplitude 형식, final configuration 등)의 source of truth는 [15.4절 설계 결정표](15_paper_map_and_design_decisions.md#154-우리-project의-좌표--확정-설계-결정표)이며, 해설서 어느 장에 같은 값이 적혀 있든 어긋나면 15.4절이 이깁니다.
+이 해설서는 algorithm의 수학적 model — qubit·superposition·gate·measurement·oracle·amplitude amplification — 을 기초부터 배운 뒤(0~10장), 같은 개념이 memory map·fixed-point data word·FSM·bus interface로 구현되는 과정을 따라갑니다(11~18장). 확정된 숫자(board, number of qubits, amplitude 형식, final configuration 등)의 source of truth는 [15.4절 설계 결정표](15_paper_map_and_design_decisions.md#154-우리-project의-좌표--확정-설계-결정표)이며, 해설서 어느 장에 같은 값이 적혀 있든 어긋나면 15.4절을 기준으로 삼습니다.
 
 ### 장 목록
 
@@ -130,7 +130,7 @@ quantum computer가 **모든** 문제를 빠르게 푸는 마법 상자는 아�
 | 부록 A | [수학 빠른 복습](A_math_review.md) | 이 해설서가 쓰는 complex number(conjugate·absolute value·$e^{i\theta}$)·linear algebra(vector·matrix multiplication·dagger) 최소 정리 |
 
 
-> 여기서부터(Part 5~8)가 이 project가 **실제로 만드는 물건**입니다. 여섯 편의 논문(`papers/` 2·3·4번 directory)을 설계 질문별로 **가로질러** 읽으면서, 확정된 설계 결정을 하나씩 세워 나갑니다. 04·05·06은 이 project 지도교수 연구실(중앙대) 논문입니다.
+> 여기서부터(Part 5~8)가 이 project가 **실제로 만드는 물건**입니다. 여섯 편의 논문(`papers/` 2·3·4번 directory)을 설계 질문별로 **함께** 읽으면서, 확정된 설계 결정을 하나씩 세워 나갑니다. 04·05·06은 이 project 지도교수 연구실(중앙대) 논문입니다.
 
 #### Part 5. 이론에서 hardware로 — 뼈대
 
@@ -165,7 +165,7 @@ quantum computer가 **모든** 문제를 빠르게 푸는 마법 상자는 아�
 
 ### 읽는 순서
 
-각 장은 바로 앞 장의 개념 위에 세워집니다. 순서대로 읽는 것을 강력히 권합니다. 특히 **superposition(1장) → gate(3장) → measurement(4장) → phase kickback(7장)** 은 Grover를 이해하는 4개의 기둥입니다. 0~10장이 quantum 이론이고, 11장부터는 그 이론을 실제 circuit으로 옮기는 이야기라 FPGA 기초(LUT·FF·BRAM·DSP)를 함께 가정합니다. 이론만 필요하다면 10장에서 멈춰도 됩니다.
+각 장은 바로 앞 장의 개념을 바탕으로 설명합니다. 순서대로 읽기를 권합니다. 특히 **superposition(1장) → gate(3장) → measurement(4장) → phase kickback(7장)** 은 Grover를 이해하는 데 필요한 4개의 기본 개념입니다. 0~10장이 quantum 이론이고, 11장부터는 그 이론을 실제 circuit으로 옮기는 이야기라 FPGA 기초(LUT·FF·BRAM·DSP)를 함께 가정합니다. 이론만 필요하다면 10장에서 멈춰도 됩니다.
 
 ```
 처음 배우는 사람:               1장 → 2장 → ... → 9장  (순서대로)
@@ -175,11 +175,11 @@ hardware까지 갈 사람:           9장까지 마치고 → 11 → 12 → 13 �
                                 (FPGA 배경이 있으면 11.5·11.6절은 훑고 넘어가도 됩니다)
 ```
 
-**12장을 13장 앞에 두는 것은 취향이 아닙니다.** 13장은 amplitude 한 칸이 Q1.22 fixed-point라는 것, round-half-to-even이 어느 지점에서 일어난다는 것, 넘치면 saturation이 걸린다는 것을 전부 12장의 결정으로 **전제하고** 씁니다. 12장을 건너뛰면 13장의 shift 위치와 data word 폭이 근거 없는 숫자로 보입니다.
+**13장을 읽기 전에 12장의 내용이 필요합니다.** 13장은 amplitude 한 칸이 Q1.22 fixed-point라는 것, round-half-to-even이 어느 지점에서 일어난다는 것, 넘치면 saturation이 걸린다는 것을 전부 12장의 결정으로 **전제하고** 씁니다. 12장을 건너뛰면 13장의 shift 위치와 data word 폭이 근거 없는 숫자로 보입니다.
 
 15장은 순서에 넣지 않았습니다. 참조용이라 11~14장을 읽은 뒤 아무 때나 펼치면 되고, 확정된 수치가 필요할 때마다 [15.4절](15_paper_map_and_design_decisions.md#154-우리-project의-좌표--확정-설계-결정표)로 돌아오게 됩니다. 다만 논문을 **인용하기 전에는** 반드시 [15.6절 정오표](15_paper_map_and_design_decisions.md#156-인용-시-주의--논문의-오류와-모호점)를 먼저 보세요.
 
-각 장은 시작 부분에 **"이 장을 읽기 위한 준비"** 로 필요한 배경 지식을 링크합니다. 개념은 앞 장에서 뒤 장으로 단조롭게 쌓이도록 배치했습니다.
+각 장은 시작 부분에 **"이 장을 읽기 위한 준비"** 로 필요한 배경 지식을 링크합니다. 앞 장에서 배운 개념을 뒤 장에서 쓰도록 배치했습니다.
 
 ### 독자에게 가정하는 것
 
@@ -203,7 +203,7 @@ hardware까지 갈 사람:           9장까지 마치고 → 11 → 12 → 13 �
 
 ### 다루지 않는 것
 
-classical linear scan과의 속도 경쟁은 이 해설서의 주제가 아닙니다(5절). 그 밖에 둘을 더 못 박아 둡니다. **minimum search는 주제가 아니라 확장입니다.** threshold를 계단처럼 낮춰 가며 minimum에 수렴시키는 Dürr–Høyer loop는 hardware에 넣지 않고 host firmware의 `while` 한 줄로 처리하기로 했습니다. 그래서 해설서에서도 [14.9절](14_multiple_solutions_and_minimum_search.md#149-확장--threshold를-낮추면-minimum-search) 한 절 분량입니다. superconducting·trapped-ion 같은 **quantum hardware의 물리**도 범위 밖입니다 — amplitude라는 숫자만 다루면 충분하다는 것이 [1.7절](01_qubits_and_states.md#17-물리적-실체는-잊어도-된다)의 결론입니다.
+classical linear scan과의 속도 경쟁은 이 해설서의 주제가 아닙니다(5절). 그 밖에 두 가지 범위를 더 정해 둡니다. **minimum search는 주제가 아니라 확장입니다.** threshold를 계단처럼 낮춰 가며 minimum에 수렴시키는 Dürr–Høyer loop는 hardware에 넣지 않고 host firmware의 `while` 한 줄로 처리하기로 했습니다. 그래서 해설서에서도 [14.9절](14_multiple_solutions_and_minimum_search.md#149-확장--threshold를-낮추면-minimum-search) 한 절 분량입니다. superconducting·trapped-ion 같은 **quantum hardware의 물리**도 범위 밖입니다 — amplitude라는 숫자만 다루면 충분하다는 것이 [1.7절](01_qubits_and_states.md#17-물리적-실체는-잊어도-된다)의 결론입니다.
 
 ### 함께 보는 자료와 원문 출처
 
@@ -235,7 +235,7 @@ Part 5~8은 아래 여섯 편을 설계 질문별로 가로질러 다룹니다. 
 - **[08] Generalized Grover's Algorithm for Multiple Phase Inversion States** — Byrnes, Forster, Tessler, PRL 120, 060501, 2018. diffusion operator 일반화. → [11.10절](11_state_vector_emulator.md#1110-emulator가-숨기는-것)(실기에서는 이득이지만 emulator에서는 손해가 되는 일반화) · [14.0절](14_multiple_solutions_and_minimum_search.md#140-기호-충돌-주의)(기호 충돌 주의).
 - **[09] Quantum Minimum Searching for AUD in Wireless IoT** — Habibie 외 (INSA Lyon), IEEE IoT J. 11(12), 2024. Dürr–Høyer minimum search의 응용 사례. → [14.9절](14_multiple_solutions_and_minimum_search.md#149-확장--threshold를-낮추면-minimum-search) · [15장](15_paper_map_and_design_decisions.md)(**확장 참고 사례**로 강등 — 남는 것은 "oracle은 predicate를 판정한다"는 관점과 응용 사례 하나입니다).
 
-여섯 편의 계보 바깥에서 설계 결정 하나를 통째로 떠받치는 논문이 한 편 더 있습니다.
+여섯 편의 계보 바깥에서 설계 결정 하나의 근거가 되는 논문이 한 편 더 있습니다.
 
 - **[BBHT] Tight bounds on quantum searching** — Boyer, Brassard, Høyer, Tapp (1998). solution이 몇 개인지 모르는 채 Grover를 돌리는 표준 절차(sampling range를 1에서 시작해 실패할 때마다 growth factor 6/5 = 1.2×로 키움)와 success probability lower bound의 **원전**. → [16.2절](16_iteration_control_and_checkpoints.md#162-bbht--무작위로-뽑는-number-of-iterations와-12-growth-factor). 09번 논문의 Algorithm 1·2도 이 절차를 옮겨 온 것이므로, **iteration schedule을 인용할 때는 09번이 아니라 1998년 원전을 인용하십시오.** 원문 PDF는 `papers/` 에 없습니다.
 
@@ -247,9 +247,9 @@ Part 5~8은 아래 여섯 편을 설계 질문별로 가로질러 다룹니다. 
 
 > quantum computing을 이해하려면 반드시 **수학적 model에 익숙해져야 한다.** 화려한 비유 영상만으로는 몇 년을 봐도 진짜로 이해하지 못한다. 농구 이야기를 듣는 것과 실제로 농구를 하는 것이 다르듯이.
 
-겁먹을 필요는 없습니다. 필요한 수학은 **complex number와 linear algebra(vector·matrix)** 뿐이고, 이 해설서는 계산을 한 줄씩 따라갑니다. 다만 눈으로만 읽지 말고, 종이에 직접 $H|0\rangle$ 을 계산해 보는 습관이 결정적입니다.
+겁먹을 필요는 없습니다. 필요한 수학은 **complex number와 linear algebra(vector·matrix)** 뿐이고, 이 해설서는 계산을 한 줄씩 따라갑니다. 다만 눈으로만 읽지 말고, 종이에 직접 $H|0\rangle$ 을 계산해 보는 습관이 중요합니다.
 
-💡 **비유**: 질문(연습문제)을 틀리는 것은 실패가 아니라 **가장 빠르게 배우는 순간**입니다. 어디를 모르는지 정확히 짚어주기 때문입니다. 틀리면 "좋았어!"라고 외치세요.
+💡 **비유**: 질문(연습문제)을 틀리는 것은 실패가 아니라 **가장 빠르게 배우는 순간**입니다. 어디를 모르는지 정확히 짚어주기 때문입니다. 틀린 부분을 찾아 다시 계산해 보세요.
 
 ---
 
@@ -257,7 +257,7 @@ Part 5~8은 아래 여섯 편을 설계 질문별로 가로질러 다룹니다. 
 
 - **computer의 기원**: Turing(1936)이 "algorithm=Turing machine이 하는 것"으로 정의 → 현대 computing의 토대.
 - **Deutsch의 질문**: "모든 물리 system을 효율적으로 simulation하는 범용 장치가 있는가?" → classical computer는 quantum을 못 흉내 냄 → quantum computer의 탄생.
-- **근본 강점**: 입자가 하나 늘 때마다 amplitude는 두 배. classical은 지수적 폭발, quantum은 입자 수만큼의 qubit로 자연스럽게 담음.
+- **근본 강점**: 입자가 하나 늘 때마다 amplitude는 두 배. classical은 지수적으로 증가, quantum은 입자 수만큼의 qubit로 자연스럽게 담음.
 - **잘하는 문제**: Shor(소인수분해, 지수적)·Grover(search, 이차)·quantum simulation. 만능은 아님.
 - **이 project**: BRAM에 올린 data array에서 네 가지 predicate($<$·$>$·$=$·interval)를 만족하는 index를 찾아 주는 **Grover emulator IP**(Arty A7-100T + RVX SoC, 14 qubits). 하나를 돌려주거나 호출을 되풀이해 전부 enumeration합니다.
 - **속도가 값어치가 아니다**: $O(\sqrt{\text{number of states}})$ 은 실제 quantum computer의 이야기이고, classical circuit으로 흉내 내면 classical linear scan보다 **느립니다.** 상대는 Qiskit `AerSimulator`·NumPy state vector code며, 이 IP의 값어치는 **결정적·재현 가능한 재현과 verification**에 있습니다.

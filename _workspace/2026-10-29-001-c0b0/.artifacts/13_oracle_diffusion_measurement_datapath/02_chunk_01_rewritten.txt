@@ -1,0 +1,15 @@
+# 13장. oracle과 diffusion operator — multiplier 없는 산술
+
+> [← 12장 amplitude를 숫자로 — fixed-point와 Q1.22](12_fixed_point_and_precision.md) · [index](index.md) · [14장 multiple solutions — Born-rule sampling과 enumeration →](14_multiple_solutions_and_minimum_search.md)
+> **이 장을 읽기 위한 준비**: [9.4절 4 states 손계산](09_grover_algorithm.md#94-진짜로-한-번-돌려보기--4-states), [9.7절 두 개의 반사](09_grover_algorithm.md#97-이제-수식으로--두-개의-reflection), [11.7절 병렬도와 banking](11_state_vector_emulator.md#117-병렬도와-banking), [11.8절 cycle 비용 model](11_state_vector_emulator.md#118-cycle-비용-model), [12장 fixed-point와 Q1.22](12_fixed_point_and_precision.md).
+
+---
+
+11장에서 state vector를 세 개의 array로 펼쳤고, 12장에서 그 array의 한 칸을 Q1.22 fixed-point로 정했습니다. 이 장은 그 array 위에서 **Grover iteration 한 바퀴**가 실제로 어떤 circuit이 되는지를 봅니다.
+
+범위를 먼저 좁혀 두겠습니다. 이 장이 다루는 것은 **한 iteration 안쪽**뿐입니다. 몇 번 돌릴지 정하는 shot loop, 뽑힌 후보를 확인하는 solution check, amplitude array를 재활용할지 정하는 checkpoint는 전부 [16장](16_iteration_control_and_checkpoints.md)의 소관입니다. amplitude array에서 답 하나를 뽑는 measurement는 [14장](14_multiple_solutions_and_minimum_search.md)이고요. 여기서는 "목표 number of iterations를 받아 그만큼 돌고 빠져나오는" 안쪽 FSM만 봅니다.
+
+이 장에서 확인할 성질은 다음과 같습니다 — **initialization·oracle·diffusion operator 경로에는 multiplier가 한 개도 없습니다.** 9장에서 배운 inversion about the mean이 어떤 연산으로 구현되는지 살펴보겠습니다. 동시에 multiplier가 정말로 필요한 곳이 어디인지도 13.8절에서 정확히 짚습니다. "0 multipliers"라고만 쓰면 어느 경로를 가리키는지 알 수 없어 부정확하기 때문입니다.
+
+---
+

@@ -1,0 +1,14 @@
+[
+  {
+    "before": "지금은 RTL과 software reference model이 같은 규칙으로 확정했습니다.",
+    "after": "지금은 RTL과 software reference model의 규칙을 동일하게 맞췄습니다."
+  },
+  {
+    "before": "각 number of iterations의 amplitude를",
+    "after": "number of iterations별 amplitude를"
+  },
+  {
+    "before": "reference model과 RTL이 **bit-exact가 성립하지 않는데**",
+    "after": "reference model과 RTL 사이에 **bit-exact가 성립하지 않는데**"
+  }
+]

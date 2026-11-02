@@ -1,0 +1,958 @@
+diff --git a/hardware_bram/results/2026-10-28_policy_gap_bound_final/source/grover_policy.v b/hardware_bram/results/2026-10-28_policy_parallel_paths_verified/source/grover_policy.v
+index 201efc1..64203e5 100755
+--- a/hardware_bram/results/2026-10-28_policy_gap_bound_final/source/grover_policy.v
++++ b/hardware_bram/results/2026-10-28_policy_parallel_paths_verified/source/grover_policy.v
+@@ -318,6 +318,38 @@ endmodule
+ // Outputs are logical only.  grover_ckpt_planner remains responsible for
+ // deterministic physical slot allocation.
+ //------------------------------------------------------------------------------
++// Banked scan-result store. SCAN writes one candidate per clock; canonical
++// replay reads a group of LANES candidates together. Frames occupy disjoint
++// address ranges, so child recursion never overwrites an unfinished parent.
++module grover_policy_action_cache #(
++    parameter integer LANES = 4,
++    parameter integer ADDR_W = 5,
++    parameter integer DEPTH = 32
++) (
++    input wire clk,
++    input wire wr_en,
++    input wire [ADDR_W-1:0] wr_addr,
++    input wire [((LANES<=1)?1:$clog2(LANES))-1:0] wr_lane,
++    input wire [31:0] wr_data,
++    input wire rd_en,
++    input wire [ADDR_W-1:0] rd_addr,
++    output wire [32*LANES-1:0] rd_data
++);
++    localparam integer WR_LANE_W = LANES<=1 ? 1 : $clog2(LANES);
++    genvar bank;
++    generate
++        for (bank=0; bank<LANES; bank=bank+1) begin : g_bank
++            (* ram_style = "block" *) reg [31:0] mem [0:DEPTH-1];
++            reg [31:0] q;
++            always @(posedge clk) begin
++                if (wr_en && wr_lane == bank[WR_LANE_W-1:0]) mem[wr_addr] <= wr_data;
++                if (rd_en) q <= mem[rd_addr];
++            end
++            assign rd_data[32*bank +: 32] = q;
++        end
++    endgenerate
++endmodule
++
+ module grover_ckpt_policy_rolling #(
+     parameter integer ACTION_LIMIT = 0,
+     // Method 1: exact one-step branch-and-bound.  A memo miss descends only
+@@ -337,7 +369,10 @@ module grover_ckpt_policy_rolling #(
+     // Default parameters preserve the frozen K4/H4 behavior.  The E4/K3H3
+     // branch overrides these to CKPT_K=3, H_FUTURE=3.
+     parameter integer CKPT_K       = 4,
+-    parameter integer H_FUTURE     = 4
++    parameter integer H_FUTURE     = 4,
++    // Independent canonical-bound filters per clock. Only the first surviving
++    // action uses the single synchronous memo port. 1/2/4 retain exact order.
++    parameter integer CANON_LANES  = 4
+ ) (
+     input  wire                         clk,
+     input  wire                         rstn,
+@@ -388,6 +423,35 @@ module grover_ckpt_policy_rolling #(
+     // choose or execute a plan. Multi-action roots still report exact DP cost.
+     localparam ROOT_FORCED = (EXACT_PRUNE == 6);
+     localparam integer UB = U_MAX;
++    function integer cache_action_bound;
++        input integer n, k;
++        integer i, combination, total;
++        begin
++            combination=1; total=1;
++            for (i=1; i<=k; i=i+1) begin
++                combination=combination*(n-i+1)/i;
++                total=total+combination;
++            end
++            cache_action_bound=total;
++        end
++    endfunction
++    // Every child contains the endpoint, leaving at most K-1 choices from
++    // U-1 other values. This bounds every SCAN, including partially full sets.
++    localparam integer CACHE_MAX_ACTIONS = cache_action_bound(U_MAX-1,CKPT_K-1);
++    localparam integer CACHE_LANE_BITS = (CANON_LANES<=1) ? 0 : $clog2(CANON_LANES);
++    localparam integer CACHE_INDEX_W = ($clog2(CACHE_MAX_ACTIONS+1) > CACHE_LANE_BITS+1) ?
++        $clog2(CACHE_MAX_ACTIONS+1) : CACHE_LANE_BITS+1;
++    localparam integer CACHE_GROUP_W = CACHE_INDEX_W-CACHE_LANE_BITS;
++    localparam integer CACHE_FRAME_W = $clog2(H_FUTURE+1);
++    localparam integer CACHE_ADDR_W = CACHE_FRAME_W+CACHE_GROUP_W;
++    localparam integer CACHE_GROUPS = 1 << CACHE_GROUP_W;
++    localparam integer CACHE_DEPTH = (H_FUTURE+1)*CACHE_GROUPS;
++    localparam [2:0] ROOT_CAPACITY = CKPT_K[2:0];
++    localparam [CACHE_INDEX_W:0] CACHE_LIMIT_COUNT = CACHE_MAX_ACTIONS[CACHE_INDEX_W:0];
++`ifndef SYNTHESIS
++    initial if (CANON_LANES != 1 && CANON_LANES != 2 && CANON_LANES != 4)
++        $fatal(1,"CANON_LANES must be 1, 2 or 4");
++`endif
+     // Per-frame search phase.  SCAN feeds every legal child through the bound
+     // pipeline only to find the seed; SEED evaluates that one child exactly;
+     // CANON is the canonical action walk with bound pruning.
+@@ -701,6 +765,90 @@ module grover_ckpt_policy_rolling #(
+     reg [4*`GP_J_W-1:0] in_slot_j_flat;
+     reg [9*`GP_J_W-1:0] in_window_flat;
+ 
++    // Detect a forced root directly from the input snapshot. No universe IDs,
++    // ranks or memo data are needed when every old checkpoint fits beside the
++    // endpoint and no request-pool deposit lies on the source->endpoint path.
++    // This reuses the first BUILD edge as the decision edge instead of paying
++    // the whole BUILD/ROOT_INIT/PREP path for a unique plan.
++    reg [2:0] early_root_count;
++    reg early_root_has_endpoint, early_root_duplicate, early_root_extra;
++    reg [6:0] early_root_pred;
++    reg [6:0] early_root_values [0:3];
++    reg [6:0] early_root_pair0, early_root_pair1;
++    reg [6:0] early_root_p0, early_root_p1, early_root_p2, early_root_p3;
++    reg [6:0] early_root_s0, early_root_s1, early_root_s2, early_root_s3;
++    reg [27:0] early_root_flat;
++    reg early_pool_held;
++    reg [6:0] early_pool_value;
++    reg [6:0] early_pred_candidates [0:3];
++    integer er_i, er_j;
++    wire [6:0] early_root_j = in_window_flat[0 +: `GP_J_W];
++    wire [2:0] early_root_next_count = early_root_count + {2'd0,!early_root_has_endpoint};
++    wire early_root_single = ROOT_FORCED && !early_root_duplicate &&
++                             !early_root_extra &&
++                             (early_root_count <= ROOT_CAPACITY) &&
++                             (early_root_next_count <= ROOT_CAPACITY);
++    always @* begin
++        early_root_count = 3'd0;
++        early_root_has_endpoint = 1'b0;
++        early_root_duplicate = 1'b0;
++        for (er_i=0; er_i<4; er_i=er_i+1) begin
++            early_root_values[er_i] = 7'h7f;
++            early_pred_candidates[er_i] =
++                (in_slot_valid[er_i] && in_slot_j_flat[7*er_i +: 7] <= early_root_j) ?
++                in_slot_j_flat[7*er_i +: 7] : 7'd0;
++            if (in_slot_valid[er_i]) begin
++                early_root_values[early_root_count[1:0]] = in_slot_j_flat[7*er_i +: 7];
++                early_root_count = early_root_count + 1'b1;
++                if (in_slot_j_flat[7*er_i +: 7] == early_root_j)
++                    early_root_has_endpoint = 1'b1;
++                for (er_j=0; er_j<er_i; er_j=er_j+1)
++                    if (in_slot_valid[er_j] &&
++                        in_slot_j_flat[7*er_i +: 7] == in_slot_j_flat[7*er_j +: 7])
++                        early_root_duplicate = 1'b1;
++            end
++        end
++        early_root_pair0 = early_pred_candidates[0] > early_pred_candidates[1] ?
++                           early_pred_candidates[0] : early_pred_candidates[1];
++        early_root_pair1 = early_pred_candidates[2] > early_pred_candidates[3] ?
++                           early_pred_candidates[2] : early_pred_candidates[3];
++        early_root_pred = early_root_pair0 > early_root_pair1 ? early_root_pair0 : early_root_pair1;
++        early_root_extra = 1'b0;
++        early_pool_held = 1'b0;
++        early_pool_value = 7'd0;
++        for (er_i=1; er_i<WINDOW_LEN; er_i=er_i+1) begin
++            early_pool_value = in_window_flat[7*er_i +: 7];
++            early_pool_held = 1'b0;
++            for (er_j=0; er_j<4; er_j=er_j+1)
++                if (in_slot_valid[er_j] && in_slot_j_flat[7*er_j +: 7] == early_pool_value)
++                    early_pool_held = 1'b1;
++            if (!early_pool_held && early_pool_value > early_root_pred && early_pool_value < early_root_j)
++                early_root_extra = 1'b1;
++        end
++        if (!early_root_has_endpoint && early_root_count < 4)
++            early_root_values[early_root_count[1:0]] = early_root_j;
++        if (early_root_values[0] <= early_root_values[1]) begin
++            early_root_p0=early_root_values[0]; early_root_p1=early_root_values[1];
++        end else begin early_root_p0=early_root_values[1]; early_root_p1=early_root_values[0]; end
++        if (early_root_values[2] <= early_root_values[3]) begin
++            early_root_p2=early_root_values[2]; early_root_p3=early_root_values[3];
++        end else begin early_root_p2=early_root_values[3]; early_root_p3=early_root_values[2]; end
++        if (early_root_p0 <= early_root_p2) begin early_root_s0=early_root_p0; early_root_s2=early_root_p2; end
++        else begin early_root_s0=early_root_p2; early_root_s2=early_root_p0; end
++        if (early_root_p1 <= early_root_p3) begin early_root_s1=early_root_p1; early_root_s3=early_root_p3; end
++        else begin early_root_s1=early_root_p3; early_root_s3=early_root_p1; end
++    end
++    // Keep packing separate from the count/endpoint computation. Otherwise
++    // treating the entire always block as one node creates a false feedback
++    // dependency through the derived early_root_next_count in Verilator.
++    always @* begin
++        early_root_flat = 28'd0;
++        if (early_root_next_count > 0) early_root_flat[0 +: 7] = early_root_s0;
++        if (early_root_next_count > 1) early_root_flat[7 +: 7] = early_root_s1 <= early_root_s2 ? early_root_s1 : early_root_s2;
++        if (early_root_next_count > 2) early_root_flat[14 +: 7] = early_root_s1 <= early_root_s2 ? early_root_s2 : early_root_s1;
++        if (early_root_next_count > 3) early_root_flat[21 +: 7] = early_root_s3;
++    end
++
+     reg [6:0] univ_val [0:12];
+     reg [3:0] univ_count;
+     reg [3:0] req_id [0:8];
+@@ -949,19 +1097,17 @@ module grover_ckpt_policy_rolling #(
+     reg [2:0]  scan_cnt;
+     reg [15:0] scan_ids;
+     reg [2:0]  scan_seg;
+-    reg [22:0] scan_pre;
+-    // The seed has already been evaluated exactly before PH_CANON starts.
+-    // Remember its generator position, rather than comparing child tuples on
+-    // the action datapath. Each position identifies the complete deposit and
+-    // retention choice, including the root segment/tuple tie-break metadata.
+-    // Preserve it across DFS descent just like the frame's generator state.
+-    reg [22:0] f_seed_pre [0:8];
+-    reg [22:0] a_seed_pre;
++    // Cache positions identify complete canonical actions, including segment
++    // count. Preserve the selected seed and resume position across recursion.
++    reg [CACHE_INDEX_W:0] a_cache_count, a_cache_next, scan_seed_index;
++    reg [CACHE_INDEX_W:0] a_seed_index, mresp_cache_next;
++    reg [CACHE_INDEX_W:0] f_cache_count [0:8];
++    reg [CACHE_INDEX_W:0] f_cache_next [0:8];
++    reg [CACHE_INDEX_W:0] f_seed_index [0:8];
+     // scan_issued/scan_multi: the SCAN has issued one / more than one child.
+     // A single-child frame needs no canonical walk after its seed.
+     reg        scan_issued;
+     reg        scan_multi;
+-    reg        f_multi [0:8];
+     // Active pending-action mirror.  f_pipe_* remains the architectural copy
+     // that survives recursion, but the evaluation datapath never variable-
+     // indexes that 9-frame array.  On a memo miss return, ST_RETURN restores
+@@ -1633,12 +1779,8 @@ module grover_ckpt_policy_rolling #(
+     // also clears the pipeline because the next ST_RUN belongs to a new frame.
+     wire bp_flush = (fsm_state != ST_RUN) ||
+                     (mresp_valid && !memo_pipe_hit);
+-    wire canonical_seed_repeat = SEED_MODE && (a_phase == PH_CANON) &&
+-                                  a_gen_valid &&
+-                                  ({a_rmask, a_rsize, a_dmask, a_dsize} == a_seed_pre);
+     wire bound_capture = busy && (fsm_state == ST_RUN) && !top_terminal &&
+-                         a_gen_valid && !root_single_action && !canonical_seed_repeat &&
+-                         ((a_phase == PH_SCAN) || (a_phase == PH_CANON));
++                         a_gen_valid && !root_single_action && (a_phase == PH_SCAN);
+     wire bp_busy  = bo_v || (|bp_v);
+ 
+     // The packet at the output is the frame's last SCAN packet: the generator
+@@ -1649,23 +1791,112 @@ module grover_ckpt_policy_rolling #(
+     wire [10:0] scan_fin_total = scan_take ? bo_total : scan_total;
+     wire [2:0]  scan_fin_cnt   = scan_take ? bo_cnt   : scan_cnt;
+     wire [15:0] scan_fin_ids   = scan_take ? bo_ids   : scan_ids;
+-    wire [22:0] scan_fin_pre   = scan_take ? bo_pre[22:0] : scan_pre;
++    wire [CACHE_INDEX_W:0] scan_fin_index = scan_take ? a_cache_count : scan_seed_index;
+     wire [2:0]  scan_fin_seg   = scan_take ?
+         ({1'b0,bo_pre[1:0]} + 1'b1) : scan_seg;
+     wire scan_exact_finish = (sp != 0) && ({1'b0,a_req_idx} == (H_FUTURE-1));
+-    wire bo_pruned = bo_v && !bo_kind &&
+-                     (((sp != 0) && f_best_valid[sp] &&
+-                       (bo_total >= f_best_cost[sp])) ||
+-                      ((sp == 0) && root_best_valid &&
+-                       (bo_total > root_best_cost)));
+     wire seed_issue_from_scan = scan_last && !scan_exact_finish;
+-    wire seed_issue_from_bound = bo_v && !bo_kind && !bo_pruned;
++    // SCAN stores the same canonical packet the bound has just produced.
++    // The bounded per-frame count replaces epoch tags/clears for this store:
++    // every entry below that count was written by this frame's current SCAN.
++    wire cache_write_en = SEED_MODE && busy && (fsm_state == ST_RUN) &&
++                          (a_phase == PH_SCAN) && bo_v && bo_kind && !bp_flush;
++    localparam integer CACHE_WR_LANE_W = CANON_LANES<=1 ? 1 : CACHE_LANE_BITS;
++    wire [CACHE_WR_LANE_W-1:0] cache_wr_lane = (CANON_LANES==1) ?
++        {CACHE_WR_LANE_W{1'b0}} : a_cache_count[CACHE_WR_LANE_W-1:0];
++    wire [CACHE_ADDR_W-1:0] cache_wr_addr =
++        {sp[CACHE_FRAME_W-1:0],a_cache_count[CACHE_INDEX_W-1:CACHE_LANE_BITS]};
++    wire [CACHE_ADDR_W-1:0] cache_rd_addr =
++        {sp[CACHE_FRAME_W-1:0],a_cache_next[CACHE_INDEX_W-1:CACHE_LANE_BITS]};
++    wire [32*CANON_LANES-1:0] cache_rd_data;
++    reg cache_group_valid;
++    reg [CACHE_INDEX_W:0] cache_group_base;
++    wire cache_read_en = SEED_MODE && busy && (fsm_state == ST_RUN) &&
++                         (a_phase == PH_CANON) && !bp_flush && !cache_group_valid &&
++                         (a_cache_next < a_cache_count);
++    wire cache_walk_fire = SEED_MODE && busy && (fsm_state == ST_RUN) &&
++                           (a_phase == PH_CANON) && cache_group_valid &&
++                           (a_cache_next < a_cache_count) &&
++                           (!mresp_valid || memo_pipe_hit);
++    reg cache_choice_valid;
++    reg [31:0] cache_choice;
++    reg [CACHE_INDEX_W:0] cache_walk_next;
++    reg [CANON_LANES-1:0] cache_prune_mask, cache_seed_mask;
++    reg [2:0] cache_pruned_count;
++    reg [31:0] cache_lane_data;
++    reg [CACHE_INDEX_W:0] cache_lane_index;
++    reg [10:0] cache_lane_total;
++    integer cl;
++
++    grover_policy_action_cache #(.LANES(CANON_LANES),.ADDR_W(CACHE_ADDR_W),.DEPTH(CACHE_DEPTH)) u_action_cache (
++        .clk(clk), .wr_en(cache_write_en), .wr_addr(cache_wr_addr), .wr_lane(cache_wr_lane),
++        .wr_data({bo_cnt,bo_ids,bo_pre[1:0],bo_tail}),
++        .rd_en(cache_read_en), .rd_addr(cache_rd_addr), .rd_data(cache_rd_data)
++    );
++
++    // Compare independent bounds in parallel and select the earliest survivor.
++    // Equality is kept at the root for segment/tuple tie-breaks. Only entries
++    // before the survivor are consumed; later entries remain for the next edge.
++    always @* begin
++        cache_choice_valid=1'b0; cache_choice=32'd0;
++        cache_walk_next=a_cache_next;
++        cache_prune_mask={CANON_LANES{1'b0}};
++        cache_seed_mask={CANON_LANES{1'b0}};
++        cache_pruned_count=3'd0;
++        cache_lane_data=32'd0; cache_lane_index=0; cache_lane_total=0;
++        for (cl=0; cl<CANON_LANES; cl=cl+1) begin
++            cache_lane_data=cache_rd_data[32*cl +: 32];
++            cache_lane_index=cache_group_base+cl[CACHE_INDEX_W:0];
++            cache_lane_total=cache_lane_data[10:0]+{4'd0,a_ctx_imm};
++            if (cache_walk_fire && !cache_choice_valid &&
++                cache_lane_index>=a_cache_next && cache_lane_index<a_cache_count) begin
++                if (cache_lane_index==a_seed_index) begin
++                    cache_seed_mask[cl]=1'b1;
++                end else if (((sp!=0) && f_best_valid[sp] && cache_lane_total>=f_best_cost[sp]) ||
++                             ((sp==0) && root_best_valid && cache_lane_total>root_best_cost)) begin
++                    cache_prune_mask[cl]=1'b1;
++                    cache_pruned_count=cache_pruned_count+1'b1;
++                end else begin
++                    cache_choice_valid=1'b1;
++                    cache_choice=cache_lane_data;
++                end
++                cache_walk_next=cache_lane_index+1'b1;
++                // Nonzero action budgets retain one-action accounting per
++                // clock, including seed skips, just like the serial engine.
++                if (ACTION_LIMIT!=0) cache_choice_valid=1'b1;
++            end
++        end
++    end
++    // With a work limit, a pruned/seed-only step must not issue a memo read.
++    wire cache_has_survivor = cache_choice_valid && (cache_choice[31:29]!=0);
++    wire canonical_seed_repeat = |cache_seed_mask;
++    always @(posedge clk) begin
++        if (!rstn || fsm_state!=ST_RUN || a_phase!=PH_CANON || bp_flush) begin
++            cache_group_valid<=1'b0;
++            cache_group_base<=0;
++        end else if (cache_read_en) begin
++            cache_group_valid<=1'b1;
++            cache_group_base<=(a_cache_next >> CACHE_LANE_BITS) << CACHE_LANE_BITS;
++        end else if (cache_walk_fire &&
++                     ((cache_walk_next>=a_cache_count) ||
++                      ((cache_walk_next >> CACHE_LANE_BITS)!=(cache_group_base >> CACHE_LANE_BITS)))) begin
++            cache_group_valid<=1'b0;
++        end
++    end
++`ifndef SYNTHESIS
++    always @(posedge clk) if (cache_write_en && a_cache_count>=CACHE_LIMIT_COUNT)
++        $fatal(1,"policy SCAN cache capacity exceeded: %0d",a_cache_count);
++`endif
++
++    // Replay goes straight to the synchronous memo port: no repeated bound
++    // pipeline, tuple compaction, or generator walk is needed in PH_CANON.
++    wire seed_issue_from_bound = cache_walk_fire && cache_has_survivor;
+     assign seed_memo_issue = SEED_MODE &&
+                              (seed_issue_from_scan || seed_issue_from_bound);
+-    wire [2:0] seed_issue_count = seed_issue_from_scan ? scan_fin_cnt : bo_cnt;
+-    wire [15:0] seed_issue_ids = seed_issue_from_scan ? scan_fin_ids : bo_ids;
++    wire [2:0] seed_issue_count = seed_issue_from_scan ? scan_fin_cnt : cache_choice[31:29];
++    wire [15:0] seed_issue_ids = seed_issue_from_scan ? scan_fin_ids : cache_choice[28:13];
+     wire [2:0] seed_issue_seg = seed_issue_from_scan ? scan_fin_seg :
+-        ({1'b0,bo_pre[1:0]} + 1'b1);
++        ({1'b0,cache_choice[12:11]} + 1'b1);
+     assign seed_memo_addr = memo_addr_of(a_req_idx[2:0],
+         rank_state(seed_issue_count, seed_issue_ids[3:0], seed_issue_ids[7:4],
+                    seed_issue_ids[11:8], seed_issue_ids[15:12]));
+@@ -1927,23 +2158,6 @@ module grover_ckpt_policy_rolling #(
+         end
+     endtask
+ 
+-    // EXACT_PRUNE=5: re-arm the active frame's generator at its first
+-    // canonical action, exactly as ST_PREP does on frame entry.
+-    task reset_generator_to_first;
+-        reg [2:0] rs;
+-        begin
+-            if (a_ctx_keep_count < (CKPT_K-1)) rs = a_ctx_keep_count;
+-            else                               rs = CKPT_K-1;
+-            a_dsize <= 2'd0;  f_dsize[sp] <= 2'd0;
+-            a_dmask <= 9'd0;  f_dmask[sp] <= 9'd0;
+-            a_rsize <= rs;    f_rsize[sp] <= rs;
+-            a_rmask <= first_comb9(rs);
+-            f_rmask[sp] <= first_comb9(rs);
+-            a_gen_valid <= 1'b1;
+-            f_gen_valid[sp] <= 1'b1;
+-        end
+-    endtask
+-
+     // Main sequential engine.
+     always @(posedge clk) begin
+         if (!rstn) begin
+@@ -1980,7 +2194,8 @@ module grover_ckpt_policy_rolling #(
+             a_dsize<=2'd0; a_dmask<=9'd0; a_rsize<=3'd0; a_rmask<=9'd0; a_gen_valid<=1'b0;
+             a_phase<=PH_SCAN;
+             scan_valid<=1'b0; scan_total<=INF_COST; scan_cnt<=3'd0; scan_ids<=16'd0; scan_seg<=3'd0;
+-            scan_pre<=23'd0; a_seed_pre<=23'd0;
++            a_cache_count<=0; a_cache_next<=0; scan_seed_index<=0;
++            a_seed_index<=0; mresp_cache_next<=0;
+             scan_issued<=1'b0; scan_multi<=1'b0;
+             mresp_direct<=1'b0;
+             mresp_lb<=10'd0;
+@@ -2020,8 +2235,7 @@ module grover_ckpt_policy_rolling #(
+                 f_ctx_extra_count[si]<=4'd0; f_ctx_extra_ids[si]<=36'd0;
+                 f_ctx_keep_count[si]<=3'd0; f_ctx_keep_ids[si]<=16'd0;
+                 f_phase[si]<=PH_SCAN;
+-                f_multi[si]<=1'b0;
+-                f_seed_pre[si]<=23'd0;
++                f_cache_count[si]<=0; f_cache_next[si]<=0; f_seed_index[si]<=0;
+             end
+             for (si=0; si<13; si=si+1) begin
+                 univ_val[si] <= 7'd0;
+@@ -2036,6 +2250,12 @@ module grover_ckpt_policy_rolling #(
+             if (busy)
+                 cyc_ctr <= cyc_ctr + 1'b1;
+ 
++            if (cache_write_en) begin
++                a_cache_count<=a_cache_count+1'b1;
++                f_cache_count[sp]<=a_cache_count+1'b1;
++                if (scan_take) scan_seed_index<=a_cache_count;
++            end
++
+             case (fsm_state)
+                 ST_IDLE: begin
+                     busy <= 1'b0;
+@@ -2088,6 +2308,26 @@ module grover_ckpt_policy_rolling #(
+                 end
+ 
+                 ST_BUILD: begin
++                    if ((build_idx == 0) && early_root_single) begin
++                        source_j <= early_root_pred;
++                        next_count <= early_root_next_count;
++                        next_j_flat <= early_root_flat;
++                        root_cost <= {4'd0,early_root_j - early_root_pred};
++                        root_segment_count <= 3'd1;
++                        a_gen_valid <= 1'b0;
++                        mresp_valid <= 1'b0;
++                        busy <= 1'b0;
++                        done <= 1'b1;
++                        policy_cycles_last <= cyc_ctr + 1'b1;
++                        policy_actions_last <= 32'd1;
++                        policy_memo_hit_last <= 32'd0;
++                        policy_memo_miss_last <= 32'd0;
++                        policy_cycles_total <= policy_cycles_total + cyc_ctr + 1'b1;
++                        policy_actions_total <= policy_actions_total + 1'b1;
++                        if ((cyc_ctr + 1'b1) > policy_max_latency)
++                            policy_max_latency <= cyc_ctr + 1'b1;
++                        fsm_state <= ST_IDLE;
++                    end else begin
+                     if (build_sel_valid) begin
+                         if (build_idx >= 4)
+                             req_val[build_idx-4] <= build_sel_value;
+@@ -2162,6 +2402,7 @@ module grover_ckpt_policy_rolling #(
+                     end else if (!build_commit_abort) begin
+                         build_idx <= build_idx + 1'b1;
+                     end
++                    end
+                 end
+ 
+                 ST_ROOT_INIT: begin
+@@ -2194,6 +2435,8 @@ module grover_ckpt_policy_rolling #(
+ 
+                 ST_PREP: begin
+                     mresp_valid <= 1'b0;
++                    a_cache_count<=0; a_cache_next<=0; scan_seed_index<=0;
++                    f_cache_count[sp]<=0; f_cache_next[sp]<=0;
+                     if (sp == 0)
+                         source_j <= prep_pred;
+                     f_ctx_j[sp] <= prep_j;
+@@ -2304,16 +2547,19 @@ module grover_ckpt_policy_rolling #(
+                                 a_pipe_r2 <= issue_rank2; a_pipe_r3 <= issue_rank3;
+                                 a_pipe_pred <= a_ctx_pred;
+                                 a_pipe_j <= a_ctx_j;
+-                                mresp_pre_dsize <= seed_issue_from_scan ? 2'd0 : bo_pre[1:0];
+-                                mresp_pre_dmask <= seed_issue_from_scan ? 9'd0 : bo_pre[10:2];
+-                                mresp_pre_rsize <= seed_issue_from_scan ? 3'd0 : bo_pre[13:11];
+-                                mresp_pre_rmask <= seed_issue_from_scan ? 9'd0 : bo_pre[22:14];
+-                                mresp_pre_gen_valid <= seed_issue_from_scan ? 1'b0 : bo_pre[23];
++                                // Canonical replay resumes by cache index;
++                                // generator masks no longer need restoring.
++                                mresp_pre_dsize <= 2'd0;
++                                mresp_pre_dmask <= 9'd0;
++                                mresp_pre_rsize <= 3'd0;
++                                mresp_pre_rmask <= 9'd0;
++                                mresp_pre_gen_valid <= !seed_issue_from_scan;
++                                mresp_cache_next <= seed_issue_from_scan ? 0 : cache_walk_next;
+                                 mresp_direct <= (seed_issue_from_scan && !scan_multi &&
+                                                  ROOT_FORCED && (sp == 0)) ||
+                                                 ({1'b0,a_req_idx} == (H_FUTURE-1));
+                                 mresp_lb <= seed_issue_from_scan ?
+-                                    (scan_fin_total - {4'd0,a_ctx_imm}) : bo_tail[9:0];
++                                    (scan_fin_total - {4'd0,a_ctx_imm}) : cache_choice[9:0];
+                             end
+                         end else begin
+                             mresp_valid <= legacy_memo_issue;
+@@ -2349,28 +2595,9 @@ module grover_ckpt_policy_rolling #(
+                         // any same-cycle phase-control update.
+                         if (SEED_MODE) begin
+                             // ---- bound-pipeline output ----
+-                            // Evaluation packets: prune or forward to the memo
+-                            // pipeline.  SCAN packets update the running seed;
+-                            // the last SCAN packet is consumed by the phase
+-                            // control below in the same cycle.
+-                            if (bo_v && !bo_kind) begin
+-                                if (((sp != 0) && f_best_valid[sp] &&
+-                                     (bo_total >= f_best_cost[sp])) ||
+-                                    ((sp == 0) && root_best_valid &&
+-                                     (bo_total > root_best_cost))) begin
+-                                    // The child's exact value is at least
+-                                    // bo_total, so it cannot strictly beat the
+-                                    // incumbent.  The root keeps equal-cost
+-                                    // children for the segment/tuple tie-break.
+-                                    // A stale (not yet reduced) incumbent is
+-                                    // only larger, which prunes less: still exact.
+-                                    // Not counted when an older packet misses in
+-                                    // this cycle: this one is then flushed and
+-                                    // regenerated after the child returns.
+-                                    if (!(mresp_valid && !memo_pipe_hit))
+-                                        prune_ctr <= prune_ctr + 1'b1;
+-                                end
+-                            end else if (bo_v && !scan_last) begin
++                            // Only SCAN emits bound packets. CANON prunes
++                            // cached bounds without refilling this pipe.
++                            if (bo_v && !scan_last) begin
+                                 // SCAN: keep the first child with the
+                                 // smallest bound as the seed.
+                                 if (!scan_valid || (bo_total < scan_total)) begin
+@@ -2379,7 +2606,6 @@ module grover_ckpt_policy_rolling #(
+                                     scan_cnt   <= bo_cnt;
+                                     scan_ids   <= bo_ids;
+                                     scan_seg   <= {1'b0,bo_pre[1:0]} + 1'b1;
+-                                    scan_pre   <= bo_pre[22:0];
+                                 end
+                             end
+ 
+@@ -2408,9 +2634,8 @@ module grover_ckpt_policy_rolling #(
+                                             // that exact seed before the walk.
+                                             a_phase <= PH_SEED;
+                                             f_phase[sp] <= PH_SEED;
+-                                            f_multi[sp] <= scan_multi;
+-                                            a_seed_pre <= scan_fin_pre;
+-                                            f_seed_pre[sp] <= scan_fin_pre;
++                                            a_seed_index<=scan_fin_index;
++                                            f_seed_index[sp]<=scan_fin_index;
+                                         end
+                                     end
+                                 end
+@@ -2418,17 +2643,14 @@ module grover_ckpt_policy_rolling #(
+                                     // Memo hit or child return advances phase.
+                                 end
+                                 default: begin
+-                                    if (a_gen_valid) begin
+-                                        // Advance over the solved seed too,
+-                                        // but do not send it through bound or
+-                                        // memo again. If an older packet misses
+-                                        // on this edge, its saved pre-state is
+-                                        // restored and this skip is safely
+-                                        // repeated after that child returns.
+-                                        advance_generator;
+-                                    end else if (!bp_busy && !mresp_valid) begin
+-                                        if (sp == 0) fsm_state <= ST_ROOT_DRAIN;
+-                                        else         fsm_state <= ST_FINISH;
++                                    if (cache_walk_fire) begin
++                                        a_cache_next<=cache_walk_next;
++                                        prune_ctr<=prune_ctr+{29'd0,cache_pruned_count};
++                                    end else if ((a_cache_next>=a_cache_count) && !mresp_valid && !bp_busy) begin
++                                        // All memo/evaluation updates already
++                                        // committed; no empty root-drain edge
++                                        // is needed for the cache replay path.
++                                        fsm_state <= ST_FINISH;
+                                     end
+                                 end
+                             endcase
+@@ -2471,6 +2693,7 @@ module grover_ckpt_policy_rolling #(
+                                 f_rsize[sp] <= mresp_pre_rsize;
+                                 f_rmask[sp] <= mresp_pre_rmask;
+                                 f_gen_valid[sp] <= mresp_pre_gen_valid;
++                                f_cache_next[sp]<=mresp_cache_next;
+ 
+                                 sp <= sp + 1'b1;
+                                 f_req_idx[sp+1] <= f_req_idx[sp] + 1'b1;
+@@ -2507,12 +2730,8 @@ module grover_ckpt_policy_rolling #(
+                                 act_ctr <= act_ctr + 1'b1;
+                                 eval_pending(memo_child_cost);
+                                 if (SEED_MODE && (a_phase == PH_SEED)) begin
+-                                    if (f_multi[sp])
+-                                        reset_generator_to_first;
+-                                    else begin
+-                                        a_gen_valid <= 1'b0;
+-                                        f_gen_valid[sp] <= 1'b0;
+-                                    end
++                                    a_gen_valid<=1'b0; f_gen_valid[sp]<=1'b0;
++                                    a_cache_next<=(a_cache_count==1) ? a_cache_count : 0;
+                                     a_phase <= PH_CANON;
+                                     f_phase[sp] <= PH_CANON;
+                                 end
+@@ -2558,7 +2777,9 @@ module grover_ckpt_policy_rolling #(
+                     a_pipe_pred <= f_pipe_pred[sp];
+                     a_pipe_j <= f_pipe_j[sp];
+                     a_phase <= f_phase[sp];
+-                    a_seed_pre <= f_seed_pre[sp];
++                    a_cache_count<=f_cache_count[sp];
++                    a_cache_next<=f_cache_next[sp];
++                    a_seed_index<=f_seed_index[sp];
+                     fsm_state <= ST_RETURN_EVAL;
+                 end
+ 
+@@ -2567,14 +2788,13 @@ module grover_ckpt_policy_rolling #(
+                     // Commit that action exactly once after the child returns.
+                     eval_pending(return_cost);
+                     f_pipe_valid[sp] <= 1'b0;
+-                    // EXACT_PRUNE=5: only the injected seed carries an exhausted
+-                    // saved generator (canonical packets are captured while the
+-                    // generator is valid).  A returning seed therefore restarts
+-                    // the canonical walk from its first action -- any younger
+-                    // canonical packets were flushed by the seed's miss.
+-                    if (SEED_MODE && !a_gen_valid) begin
+-                        if (f_multi[sp])
+-                            reset_generator_to_first;
++                    // A seed return starts cache replay; other returns resume
++                    // immediately after the selected candidate. A one-action
++                    // frame is complete already and needs no replay at all.
++                    if (SEED_MODE) begin
++                        if (a_phase==PH_SEED)
++                            a_cache_next<=(a_cache_count==1) ? a_cache_count : 0;
++                        a_gen_valid<=1'b0; f_gen_valid[sp]<=1'b0;
+                         a_phase <= PH_CANON;
+                         f_phase[sp] <= PH_CANON;
+                     end else begin
+diff --git a/hardware_bram/results/2026-10-28_policy_gap_bound_final/source/bbht_grover_main_ip.v b/hardware_bram/results/2026-10-28_policy_parallel_paths_verified/source/bbht_grover_main_ip.v
+index 80376ef..1b4c342 100755
+--- a/hardware_bram/results/2026-10-28_policy_gap_bound_final/source/bbht_grover_main_ip.v
++++ b/hardware_bram/results/2026-10-28_policy_parallel_paths_verified/source/bbht_grover_main_ip.v
+@@ -30,6 +30,7 @@ module bbht_grover_main_ip #(
+     // This changes search work only; policy action space/objective/tie-break
+     // and the selected checkpoint tuple remain bit-exact.
+     parameter integer POLICY_EXACT_PRUNE = 4,
++    parameter integer POLICY_CANON_LANES = 4,
+     // 1 keeps the Phase-4B manual checkpoint-policy injection path.
+     // 0 compile-time removes that verification-only path and its wide
+     // manual/auto select cone from the production autonomous K4/H6 build.
+@@ -584,6 +585,63 @@ module bbht_grover_main_ip #(
+     reg [`GP_SHOT_CAP_W-1:0] auto_trial_after_current;
+     reg [2:0] auto_input_s_count;
+     reg [4*`GP_J_W-1:0] auto_input_s_flat;
++    // Accepted plan registers precede all procedural references for Verilog
++    // compiler portability, including the committed canonical-state mirror.
++    reg auto_current_plan_valid;
++    reg [`GP_J_W-1:0] auto_current_plan_source_j;
++    reg [2:0] auto_current_plan_next_count;
++    reg [4*`GP_J_W-1:0] auto_current_plan_next_j_flat;
++    reg [10:0] auto_current_plan_root_cost;
++    reg [2:0] auto_current_plan_root_segment_count;
++    // Logical S is already canonical in a completed exact policy plan. Keep
++    // that committed set instead of sorting physical slot metadata on every
++    // demand. Preserve it across BBHT segment/search restarts that preserve
++    // the physical checkpoints; only the same metadata invalidate clears it.
++    reg auto_canonical_s_valid;
++    reg [2:0] auto_canonical_s_count;
++    reg [4*`GP_J_W-1:0] auto_canonical_s_flat;
++    always @(posedge clk) begin
++        if (!rstn || cache_invalidate) begin
++            auto_canonical_s_valid<=1'b1;
++            auto_canonical_s_count<=3'd0;
++            auto_canonical_s_flat<=0;
++        end else if (ckpt_exec_done) begin
++            if (run_ckpt_auto_mode && auto_current_plan_valid) begin
++                auto_canonical_s_valid<=1'b1;
++                auto_canonical_s_count<=auto_current_plan_next_count;
++                auto_canonical_s_flat<=auto_current_plan_next_j_flat;
++            end else begin
++                auto_canonical_s_valid<=1'b0;
++            end
++        end
++    end
++
++`ifndef SYNTHESIS
++    // Check the logical mirror against actual physical metadata at every
++    // demand, including repeated RUN and Enumeration segment restarts.
++    integer cs_i, cs_j, cs_count;
++    reg cs_found;
++    always @(posedge clk) begin
++        if (rstn && !cache_invalidate && CKPT_MANUAL_ENABLE==0 &&
++            run_ckpt_auto_mode && bbht_iter_start && auto_canonical_s_valid) begin
++            cs_count=0;
++            for (cs_i=0; cs_i<4; cs_i=cs_i+1)
++                if (ckpt_slot_valid[cs_i]) cs_count=cs_count+1;
++            if (cs_count!={29'd0,auto_canonical_s_count})
++                $fatal(1,"canonical checkpoint mirror count mismatch");
++            for (cs_i=0; cs_i<4; cs_i=cs_i+1) begin
++                if (cs_i<auto_canonical_s_count) begin
++                    cs_found=1'b0;
++                    for (cs_j=0; cs_j<4; cs_j=cs_j+1)
++                        if (ckpt_slot_valid[cs_j] &&
++                            ckpt_slot_j_flat[7*cs_j +: 7]==auto_canonical_s_flat[7*cs_i +: 7])
++                            cs_found=1'b1;
++                    if (!cs_found) $fatal(1,"canonical checkpoint mirror value mismatch");
++                end
++            end
++        end
++    end
++`endif
+ 
+     // Checkpoint-set sorting pipeline.
+     // Level-1 pairwise compare results are captured at bbht_iter_start.
+@@ -641,15 +699,6 @@ module bbht_grover_main_ip #(
+         {2'b00,((CKPT_K > 2) && ckpt_slot_valid[2])} +
+         {2'b00,((CKPT_K > 3) && ckpt_slot_valid[3])};
+ 
+-    // Current plan is always latched before Planner/Executor use.  This lets
+-    // the single policy engine immediately begin the next speculative solve.
+-    reg auto_current_plan_valid;
+-    reg [`GP_J_W-1:0] auto_current_plan_source_j;
+-    reg [2:0] auto_current_plan_next_count;
+-    reg [4*`GP_J_W-1:0] auto_current_plan_next_j_flat;
+-    reg [10:0] auto_current_plan_root_cost;
+-    reg [2:0] auto_current_plan_root_segment_count;
+-
+     // Timing-fix1: registered Planner -> Executor packet for autonomous K4/H6.
+     // This breaks the long auto_current_j -> combinational Planner -> Executor
+     // launch cone without changing any Planner/Executor semantics.
+@@ -750,12 +799,13 @@ module bbht_grover_main_ip #(
+                                   spec_start_context_ok &&
+                                   !auto_policy_busy && !auto_policy_start_cold;
+     wire auto_policy_start = auto_policy_start_cold | auto_policy_start_spec;
+-    // Timing-fix1: the autonomous Planner result is first captured in a
+-    // dedicated plan-packet register stage.  Executor launch therefore occurs
+-    // one cycle after AP_EXEC_REQ and depends only on registered plan fields.
++    // Production launch consumes Planner Stage-2 directly. The manual
++    // compatibility configuration retains its previous plan-packet register.
+     wire auto_exec_start = run_ckpt_auto_mode &&
+-                           (auto_policy_state == AP_EXEC_LAUNCH) &&
+-                           auto_plan_pipe_valid && !auto_plan_pipe_error;
++        ((CKPT_MANUAL_ENABLE==0) ?
++            ((auto_policy_state==AP_EXEC_PLAN_WAIT) && auto_current_plan_valid &&
++             ckpt_plan_valid && !ckpt_plan_error) :
++            ((auto_policy_state==AP_EXEC_LAUNCH) && auto_plan_pipe_valid && !auto_plan_pipe_error));
+ 
+     wire [3:0] auto_policy_slot_valid_in = auto_policy_start_spec ?
+                                             spec_policy_slot_valid : ckpt_slot_valid;
+@@ -790,6 +840,19 @@ module bbht_grover_main_ip #(
+                             (planq_head_input_s_count == auto_input_s_count) &&
+                             (planq_head_input_s_flat == auto_input_s_flat);
+ 
++    // Production Planner Stage-1 captures the incoming logical plan on the
++    // same edge that the controller accepts it. This removes the request-only
++    // AP_EXEC_REQ cycle while retaining the planner's actual work boundary.
++    wire auto_accept_fifo = run_ckpt_auto_mode && (AUTO_SPEC_ENABLE!=0) &&
++        ((auto_policy_state==AP_DEMAND_CHECK) || (auto_policy_state==AP_WAIT_LATE_SPEC)) &&
++        planq_head_match;
++    wire auto_accept_cold = run_ckpt_auto_mode && (auto_policy_state==AP_COLD_POLICY_WAIT) &&
++        auto_policy_done && !auto_policy_error;
++    wire auto_accept_plan = auto_accept_fifo || auto_accept_cold;
++    wire [6:0] auto_incoming_source = auto_accept_fifo ? planq_head_source_j : auto_policy_source_j;
++    wire [2:0] auto_incoming_count = auto_accept_fifo ? planq_head_next_count : auto_policy_next_count;
++    wire [27:0] auto_incoming_flat = auto_accept_fifo ? planq_head_next_flat : auto_policy_next_j_flat;
++
+     wire spec_generation_active_raw = (auto_spec_state != SP_IDLE) ||
+                                       (auto_policy_busy && policy_active_is_spec);
+     // An Oracle/Enumeration epoch advance deliberately makes an in-flight old
+@@ -1001,7 +1064,13 @@ module bbht_grover_main_ip #(
+                         auto_sort_count          <= ckpt_sort_count_now;
+ 
+                         auto_current_plan_valid  <= 1'b0;
+-                        auto_policy_state        <= AP_INPUT_SORT;
++                        if ((CKPT_MANUAL_ENABLE==0) && auto_canonical_s_valid) begin
++                            auto_input_s_count<=auto_canonical_s_count;
++                            auto_input_s_flat<=auto_canonical_s_flat;
++                            auto_policy_state<=AP_DEMAND_CHECK;
++                        end else begin
++                            auto_policy_state<=AP_INPUT_SORT;
++                        end
+                     end
+                 end
+ 
+@@ -1033,7 +1102,7 @@ module bbht_grover_main_ip #(
+                         auto_current_plan_root_cost          <= planq_head_root_cost;
+                         auto_current_plan_root_segment_count <= planq_head_segment_count;
+                         planq_hit_run <= planq_hit_run + 1'b1;
+-                        auto_policy_state <= AP_EXEC_REQ;
++                        auto_policy_state <= (CKPT_MANUAL_ENABLE==0) ? AP_EXEC_PLAN_WAIT : AP_EXEC_REQ;
+                     end else if ((AUTO_SPEC_ENABLE != 0) && !planq_empty) begin
+                         // Nonempty-but-wrong head is never consumed.
+                         planq_mismatch_run <= planq_mismatch_run + 1'b1;
+@@ -1060,7 +1129,7 @@ module bbht_grover_main_ip #(
+                         auto_current_plan_root_cost          <= planq_head_root_cost;
+                         auto_current_plan_root_segment_count <= planq_head_segment_count;
+                         planq_hit_run <= planq_hit_run + 1'b1;
+-                        auto_policy_state <= AP_EXEC_REQ;
++                        auto_policy_state <= (CKPT_MANUAL_ENABLE==0) ? AP_EXEC_PLAN_WAIT : AP_EXEC_REQ;
+                     end else if (!planq_empty) begin
+                         planq_mismatch_run <= planq_mismatch_run + 1'b1;
+                         auto_policy_state <= AP_COLD_WAIT_SHADOW;
+@@ -1093,7 +1162,7 @@ module bbht_grover_main_ip #(
+                             auto_current_plan_next_j_flat        <= auto_policy_next_j_flat;
+                             auto_current_plan_root_cost          <= auto_policy_root_cost;
+                             auto_current_plan_root_segment_count <= auto_policy_root_segment_count;
+-                            auto_policy_state <= AP_EXEC_REQ;
++                            auto_policy_state <= (CKPT_MANUAL_ENABLE==0) ? AP_EXEC_PLAN_WAIT : AP_EXEC_REQ;
+                         end
+                     end
+                 end
+@@ -1127,6 +1196,17 @@ module bbht_grover_main_ip #(
+                 end
+ 
+                 AP_EXEC_PLAN_WAIT: begin
++                    if (CKPT_MANUAL_ENABLE==0) begin
++                        // Planner Stage-2 drives Executor directly on this
++                        // edge; do not copy it through a redundant Main-IP
++                        // packet register and an additional launch state.
++                        if (!auto_current_plan_valid || !ckpt_plan_valid || ckpt_plan_error) begin
++                            auto_controller_error<=1'b1;
++                            auto_policy_state<=AP_ERROR;
++                        end else begin
++                            auto_policy_state<=AP_EXEC_WAIT;
++                        end
++                    end else begin
+                     // Stage-2 of grover_ckpt_planner_pipe is now stable
+                     // from registered Stage-1 data.  Capture the complete packet.
+                     auto_plan_pipe_valid               <= auto_current_plan_valid &&
+@@ -1145,6 +1225,7 @@ module bbht_grover_main_ip #(
+                     auto_plan_pipe_boundary_slot_flat  <= ckpt_plan_boundary_slot_flat;
+                     auto_plan_pipe_endpoint_slot       <= ckpt_plan_endpoint_slot;
+                     auto_policy_state                  <= AP_EXEC_LAUNCH;
++                    end
+                 end
+ 
+                 AP_EXEC_LAUNCH: begin
+@@ -1314,100 +1395,95 @@ module bbht_grover_main_ip #(
+     wire [4*`GP_J_W-1:0] selected_policy_next_j_flat =
+         run_ckpt_manual_active ? run_policy_next_j_flat : auto_current_plan_next_j_flat;
+ 
+-    // The production autonomous planner captures its Stage-1 packet
+-    // only on AP_EXEC_REQ.  CKPT_MANUAL_ENABLE=1 keeps the original
+-    // combinational Phase-4B planner and does not use this capture pulse.
+-    wire auto_planner_capture =
+-        (CKPT_MANUAL_ENABLE == 0) &&
+-        run_ckpt_auto_mode &&
+-        (auto_policy_state == AP_EXEC_REQ) &&
+-        auto_current_plan_valid &&
+-        !auto_controller_error;
+-
+-    // Registered planner boundary:
+-    //   * CKPT_MANUAL_ENABLE=1: preserve the verified Phase-4B manual path.
+-    //   * CKPT_MANUAL_ENABLE=0: compile-time remove every direct
+-    //     combinational Planner -> Executor path.  The production K4/H6
+-    //     Executor can observe only the registered autonomous plan packet.
++    // Capture Stage-1 on plan acceptance, in parallel with the current-plan
++    // register. Manual compatibility uses the original combinational planner.
++    wire auto_planner_capture = (CKPT_MANUAL_ENABLE==0) && auto_accept_plan &&
++                                !auto_controller_error;
++
++    // The production planner already owns a Stage-1 register containing its
++    // immutable plan and metadata snapshot. Feed its Stage-2 allocation
++    // directly to Executor, retaining the actual work boundary while removing
++    // the redundant Main-IP packet copy. The manual compatibility path keeps
++    // its previous register/select behavior.
+     //
+     // Using the compile-time parameter here (not run_ckpt_auto_mode) is
+     // intentional: Vivado can constant-fold the manual branch completely.
+     wire exec_plan_valid =
+         (CKPT_MANUAL_ENABLE != 0) ?
+             (run_ckpt_auto_mode ? auto_plan_pipe_valid : ckpt_plan_valid) :
+-            auto_plan_pipe_valid;
++            ckpt_plan_valid;
+ 
+     wire exec_plan_exact_hit =
+         (CKPT_MANUAL_ENABLE != 0) ?
+             (run_ckpt_auto_mode ? auto_plan_pipe_exact_hit : ckpt_plan_exact_hit) :
+-            auto_plan_pipe_exact_hit;
++            ckpt_plan_exact_hit;
+ 
+     wire exec_plan_source_is_anchor =
+         (CKPT_MANUAL_ENABLE != 0) ?
+             (run_ckpt_auto_mode ? auto_plan_pipe_source_is_anchor :
+                                   ckpt_plan_source_is_anchor) :
+-            auto_plan_pipe_source_is_anchor;
++            ckpt_plan_source_is_anchor;
+ 
+     wire exec_plan_source_materialized =
+         (CKPT_MANUAL_ENABLE != 0) ?
+             (run_ckpt_auto_mode ? auto_plan_pipe_source_materialized :
+                                   ckpt_plan_source_materialized) :
+-            auto_plan_pipe_source_materialized;
++            ckpt_plan_source_materialized;
+ 
+     wire exec_plan_source_retain =
+         (CKPT_MANUAL_ENABLE != 0) ?
+             (run_ckpt_auto_mode ? auto_plan_pipe_source_retain :
+                                   ckpt_plan_source_retain) :
+-            auto_plan_pipe_source_retain;
++            ckpt_plan_source_retain;
+ 
+     wire [1:0] exec_plan_source_slot =
+         (CKPT_MANUAL_ENABLE != 0) ?
+             (run_ckpt_auto_mode ? auto_plan_pipe_source_slot :
+                                   ckpt_plan_source_slot) :
+-            auto_plan_pipe_source_slot;
++            ckpt_plan_source_slot;
+ 
+ 
+     wire [`GP_J_W-1:0] exec_plan_source_j =
+         (CKPT_MANUAL_ENABLE != 0) ?
+             (run_ckpt_auto_mode ? auto_plan_pipe_source_j :
+                                   selected_policy_source_j) :
+-            auto_plan_pipe_source_j;
++            auto_current_plan_source_j;
+ 
+     wire [`GP_J_W-1:0] exec_plan_j_req =
+         (CKPT_MANUAL_ENABLE != 0) ?
+             (run_ckpt_auto_mode ? auto_plan_pipe_j_req :
+                                   selected_plan_j_req) :
+-            auto_plan_pipe_j_req;
++            auto_current_j;
+ 
+     wire [3:0] exec_plan_clear_mask =
+         (CKPT_MANUAL_ENABLE != 0) ?
+             (run_ckpt_auto_mode ? auto_plan_pipe_clear_mask :
+                                   ckpt_plan_clear_mask) :
+-            auto_plan_pipe_clear_mask;
++            ckpt_plan_clear_mask;
+ 
+     wire [2:0] exec_plan_boundary_count =
+         (CKPT_MANUAL_ENABLE != 0) ?
+             (run_ckpt_auto_mode ? auto_plan_pipe_boundary_count :
+                                   ckpt_plan_boundary_count) :
+-            auto_plan_pipe_boundary_count;
++            ckpt_plan_boundary_count;
+ 
+     wire [4*`GP_J_W-1:0] exec_plan_boundary_j_flat =
+         (CKPT_MANUAL_ENABLE != 0) ?
+             (run_ckpt_auto_mode ? auto_plan_pipe_boundary_j_flat :
+                                   ckpt_plan_boundary_j_flat) :
+-            auto_plan_pipe_boundary_j_flat;
++            ckpt_plan_boundary_j_flat;
+ 
+     wire [7:0] exec_plan_boundary_slot_flat =
+         (CKPT_MANUAL_ENABLE != 0) ?
+             (run_ckpt_auto_mode ? auto_plan_pipe_boundary_slot_flat :
+                                   ckpt_plan_boundary_slot_flat) :
+-            auto_plan_pipe_boundary_slot_flat;
++            ckpt_plan_boundary_slot_flat;
+ 
+     wire [1:0] exec_plan_endpoint_slot =
+         (CKPT_MANUAL_ENABLE != 0) ?
+             (run_ckpt_auto_mode ? auto_plan_pipe_endpoint_slot :
+                                   ckpt_plan_endpoint_slot) :
+-            auto_plan_pipe_endpoint_slot;
++            ckpt_plan_endpoint_slot;
+ 
+     generate
+         if (CHECKPOINT_ENABLE != 0) begin : g_ckpt_plan_exec
+@@ -1451,7 +1527,8 @@ module bbht_grover_main_ip #(
+                 grover_ckpt_policy_rolling #(
+                     .CKPT_K      (CKPT_K),
+                     .H_FUTURE    (POLICY_H_FUTURE),
+-                    .EXACT_PRUNE (POLICY_EXACT_PRUNE)
++                    .EXACT_PRUNE (POLICY_EXACT_PRUNE),
++                    .CANON_LANES (POLICY_CANON_LANES)
+                 ) u_auto_policy (
+                     .clk                  (clk),
+                     .rstn                 (rstn),
+@@ -1581,13 +1658,13 @@ module bbht_grover_main_ip #(
+                     .clk                   (clk),
+                     .rstn                  (rstn),
+                     .capture               (auto_planner_capture),
+-                    .policy_valid          (auto_current_plan_valid),
++                    .policy_valid          (auto_accept_plan),
+                     .slot_valid            (ckpt_slot_valid),
+                     .slot_j_flat           (ckpt_slot_j_flat),
+                     .j_req                 (auto_current_j),
+-                    .policy_source_j       (auto_current_plan_source_j),
+-                    .policy_next_count     (auto_current_plan_next_count),
+-                    .policy_next_j_flat    (auto_current_plan_next_j_flat),
++                    .policy_source_j       (auto_incoming_source),
++                    .policy_next_count     (auto_incoming_count),
++                    .policy_next_j_flat    (auto_incoming_flat),
+                     .plan_valid            (ckpt_plan_valid),
+                     .plan_error            (ckpt_plan_error),
+                     .exact_hit             (ckpt_plan_exact_hit),

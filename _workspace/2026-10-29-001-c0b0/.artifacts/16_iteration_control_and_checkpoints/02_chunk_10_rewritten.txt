@@ -1,0 +1,18 @@
+## 16.8 기각한 대안
+
+checkpoint에 도달하기까지 검토한 안들입니다. 왜 버렸는지가 왜 택했는지만큼 중요합니다.
+
+**1칸 checkpoint (초판).** 직전 shot의 state 한 벌만 남기는 안입니다. 추가 memory가 0이라는 이점이 있었지만 request가 직전보다 작아지면 Init부터 다시 해야 하고 중간 state를 남길 자리도 없습니다. 여러 벌의 checkpoint slot과 policy를 둔 a Checkpoint-Capacity of 4 and 4-shot Lookahead가 board 250쌍에서 executed iterations를 71% 넘게 줄여 이 안을 대체했고, 최종 a Checkpoint-Capacity of 3 and 3-shot Lookahead가 그 뒤를 이었습니다.
+
+**되감기(양방향 이동).** $O$ 와 $D$ 는 각각 자기 자신이 inverse이므로 $G^{-1} = (DO)^{-1} = O D$ 입니다. 즉 이론상으로는 request가 지금 state보다 작을 때 initialization 없이 **뒤로 감을** 수도 있습니다. 그런데 fixed-point에서 $OD$ 는 $DO$ 의 **정확한** 역이 아닙니다(round-half-to-even과 saturation은 비가역이니까요). 되감은 state는 bit 단위로 원래 state와 달라져 16.6절의 등식이 깨집니다. 게다가 checkpoint slot이 여러 벌이면 앞선 state를 이미 들고 있으므로 되감을 이유 자체가 줄어듭니다.
+
+**더 많은 Lookahead-Shots(8-shot Lookahead).** 앞을 더 멀리 보면 iteration을 조금 더 아낄 수 있습니다. benchmark에서 8-shot Lookahead는 4-shot Lookahead보다 iteration을 2.7% 덜 썼지만, policy 때문에 search가 멈춘 cycle이 23×로 늘어 총 cycle에서 손해였습니다(2026-09-04 board benchmark). 이 관찰이 a Checkpoint-Capacity of 3 and 3-shot Lookahead로 가는 근거가 됐습니다(16.5절).
+
+**더 큰 Checkpoint-Capacity.** Checkpoint-Capacity를 늘리면 policy가 고를 여지가 늘지만, 16.5절의 단독 실험처럼 4에서 3으로 줄여도 cycle 차이가 0.21%에 그쳤고, 반대로 늘리는 쪽은 state 한 벌이 RAMB36 11개라 BRAM 예산(11.4절)에 막힙니다.
+
+**`hit[]` bit vector caching.** predicate 판정 결과를 bit vector로 저장해 두면 oracle을 다시 계산하지 않아도 되지 않을까 — 라는 발상입니다. cycle 절감이 **정확히 0**입니다. Predicate Unit은 subtractor 하나짜리 combinational logic이고(13.3절), `data_mem` 읽기가 amplitude 읽기와 **같은 cycle**에 나오기 때문에 아낄 시간이 애초에 없습니다. 무효화해야 할 대상만 하나 더 늘 뿐입니다.
+
+한 가지는 기각이 아니라 **보류**입니다. 각 number of iterations의 amplitude를 DRAM에 전량 저장해 두고 필요한 state를 burst 한 번에 가져오는 DRAM Variant(`hardware_dram`)는 Checkpoint-Capacity도 policy도 필요 없게 만드는 다른 답입니다. RTL 초안과 regression까지 있고 물리 DRAM 연결과 board verification은 아직이라, BRAM Variant와 DRAM Variant 중 어느 쪽을 최종으로 할지는 정해지지 않았습니다.
+
+---
+

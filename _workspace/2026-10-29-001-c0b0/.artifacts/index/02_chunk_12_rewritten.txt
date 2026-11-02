@@ -1,0 +1,9 @@
+#### Part 3. quantum algorithm (project 핵심)
+
+| 장 | file | 무엇을 배우나 |
+|----|------|--------------|
+| 7 | [oracle과 phase kickback](07_oracle_and_phase_kickback.md) | oracle $U_f$, black box, phase kickback, conditional sign 반전 |
+| 8 | [Deutsch–Jozsa algorithm](08_deutsch_jozsa_algorithm.md) | Balanced vs Constant, $H^{\otimes \text{number of qubits}}$ 수학, interference, 한 번에 판별 |
+| 9 | [**Grover algorithm**](09_grover_algorithm.md) | amplitude amplification, inversion about the mean, diffusion operator, geometric rotation, number of iterations $\frac{\pi}{4}\sqrt{\text{number of states}}$, amplitude가 real number뿐인 이유, 어느 개념이 어느 장으로 가는가 |
+
+

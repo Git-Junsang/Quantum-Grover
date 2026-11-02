@@ -1,0 +1,26 @@
+## 12.8 data word와 BRAM 환산
+
+amplitude 말고 폭을 정해야 할 것이 하나 더 있습니다. search 대상이 되는 data array `value[i]` 입니다. 확정값은 **16-bit signed** 입니다.
+
+여기에는 precision 이론이 필요 없습니다. `value` 는 계산되는 값이 아니라 host가 실어 주는 **입력 data**이고, oracle이 하는 일은 `value - thr` 의 최상위 bit 하나를 보는 것뿐이라(13.3절) truncation error가 누적될 자리가 아예 없습니다. 16 bits는 $-32{,}768 \sim 32{,}767$ 을 담아 sensor 값·pixel·index 같은 흔한 data를 그대로 받기에 자연스럽고, 32-bit bus data word 하나에 두 칸이 딱 들어가 load도 간단합니다(17.5절).
+
+**왜 폭이 개수를 정하는가.** 7 시리즈 FPGA의 BRAM은 RAMB18(18Kb)·RAMB36(36Kb) 단위로 잡히고, RAMB36은 한 port를 최대 **72-bit 폭 × 512 깊이**로 쓸 수 있습니다. 23-bit amplitude 셋이 69 bits라 그 폭에 들어가고, 우리 row 하나(32 lanes × 23-bit = 736 bits)는 3 lanes짜리 10개 + 2 lanes짜리 1개, 곧 **RAMB36 11개**에 담깁니다. 깊이 512도 우리 512 rows와 딱 맞습니다. 그래서 state 한 벌이 11개입니다.
+
+14 qubits(16,384 states)에서 array들의 예산입니다.
+
+| array | data word width | 용량 | 실제 BRAM (implementation report) |
+|---|--:|--:|--:|
+| amplitude state 한 벌 | 23b × 32 lanes = 736b × 512 rows | 368 Kb | RAMB36 11 |
+| amplitude · checkpoint memory (checkpoint slot 4벌) | | 1,472 Kb | RAMB36 44 |
+| `data_mem` (data) | 16b | 256 Kb | RAMB18 64 |
+| `found_mask` (enumeration mask) | 1b | 16 Kb | RAMB36 2 |
+| **Accelerator Core 계** (measurement·policy memory 포함) | | | **84 tile** |
+
+board는 Arty A7-100T(`xc7a100tcsg324-1`)이고 BRAM tile이 **135개** 있습니다. RVX SoC가 32 tile을 써서 board 전체가 116 / 135입니다. `data_mem` 이 용량(256 Kb)에 비해 BRAM을 많이 먹는 것은, oracle이 한 cycle에 4 rows 128칸을 읽어야 해서 폭이 개수를 정하기 때문입니다.
+
+만약 04번을 따라 amplitude를 **32 bits**로 잡았다면 어땠을까요. 32-bit lane은 72-bit 폭에 둘밖에 안 들어가서 state 한 벌이 RAMB36 16개, checkpoint slot 4벌이 64개가 됩니다. 지금보다 20개가 더 들어 board 전체가 136 / 135 — **넘칩니다.** 12.7절에서 본 대로 30 fraction bits는 이론적으로도 과잉이었으니, 우리가 04번의 data word width를 그대로 베끼지 않은 데에는 이론과 예산 양쪽의 이유가 있는 셈입니다.
+
+표를 읽을 때 한 가지 주의할 점이 있습니다. 용량 열은 bits만 센 것이고, 실제 BRAM 개수는 data word를 몇 개로 쪼개 동시에 읽느냐가 함께 정합니다. 그래서 qubit를 줄여도 개수가 그대로일 수 있습니다. 그 계산은 11.7절에 있습니다.
+
+---
+

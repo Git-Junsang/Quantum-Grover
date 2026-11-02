@@ -1,0 +1,13 @@
+# 18장. 무엇을 어떻게 증명하나 — 3단 reference model과 bit-exact
+
+> [← 17장 RVX SoC에 붙이기 — APB CSR · AHB DMA · UART](17_rvx_soc_integration.md) · [index](index.md)
+> **이 장을 읽기 위한 준비**: [9.4절 4-state 손계산](09_grover_algorithm.md#94-진짜로-한-번-돌려보기--4-states), [12장 amplitude를 숫자로](12_fixed_point_and_precision.md)의 Q1.22·round-half-to-even·saturation, [13장 oracle과 diffusion operator](13_oracle_diffusion_measurement_datapath.md)의 datapath, [14장 multiple solutions](14_multiple_solutions_and_minimum_search.md)의 Measurement Unit(14.5절), [16장 BBHT shot loop와 checkpoint](16_iteration_control_and_checkpoints.md), [17장 RVX SoC에 붙이기](17_rvx_soc_integration.md)의 CSR map.
+
+---
+
+앞의 일곱 장이 설계를 확정했습니다. 이 장은 그 설계가 맞다는 것을 **어떤 절차로 확인했는가**를 정리합니다.
+
+이 장이 필요한 이유가 두 군데에 이미 적혀 있습니다. 12.7절은 05번 논문의 minimum fraction bits 공식이 전제하는 조건 셋을 우리가 전부 벗어난다고 결론 내리면서, 22 fraction bits가 충분한지는 "이론으로 정하지 않고 직접 잰다"고 했습니다. 15.6절의 정오표는 여섯 편의 1차 자료 모두에 인용할 때 주의해야 할 오류가 있음을 보이면서 논문 수치는 직접 재현해 확인하라고 못 박았습니다. 두 결론 모두 **재는 절차**가 필요하다는 뜻입니다. 초판에서 계획이었던 그 절차가 이제 실제로 돌았고, 이 장은 그 절차와 결과를 함께 씁니다.
+
+---
+

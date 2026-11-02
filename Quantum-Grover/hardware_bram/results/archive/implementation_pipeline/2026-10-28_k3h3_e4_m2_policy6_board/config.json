@@ -1,0 +1,7 @@
+{
+  "schema": 1,
+  "target": {"part": "xc7a200tfbg484-2", "clock_ns": 10.0},
+  "grid": {"k": [3], "h": [3], "e": [4], "build_rows": [2], "prune": [6]},
+  "hier_select": true,
+  "workload_limit": 500
+}

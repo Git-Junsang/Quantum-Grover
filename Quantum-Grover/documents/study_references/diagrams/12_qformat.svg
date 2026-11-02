@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 830 330" font-family="'Helvetica Neue',Arial,'Malgun Gothic','Apple SD Gothic Neo',sans-serif">
+  <defs>
+    <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#444"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="830" height="330" rx="10" fill="#ffffff"/>
+  <rect x="0.5" y="0.5" width="799" height="329" rx="10" fill="none" stroke="#e3e3e3"/>
+  <text x="400.0" y="30" text-anchor="middle" font-size="15" font-weight="bold" fill="#222">23-bit Q1.22 — 저장 data word는 좁게, 중간값만 넓게</text>
+  <text x="400.0" y="49" text-anchor="middle" font-size="11.5" fill="#666">sign bit는 integer bits에 포함해 센다 (12.2절 규약)</text>
+  <text x="60" y="72" text-anchor="start" font-size="12.5" fill="#222" font-weight="bold">저장 amplitude · 23-bit · Q1.22</text>
+  <rect x="60" y="80" width="22" height="30" rx="2" fill="#f7c9b6" stroke="#e8663d"/>
+  <rect x="84" y="80" width="22" height="30" rx="2" fill="#fff1ea" stroke="#e8663d"/>
+  <rect x="108" y="80" width="22" height="30" rx="2" fill="#fff1ea" stroke="#e8663d"/>
+  <rect x="132" y="80" width="22" height="30" rx="2" fill="#fff1ea" stroke="#e8663d"/>
+  <rect x="156" y="80" width="22" height="30" rx="2" fill="#fff1ea" stroke="#e8663d"/>
+  <rect x="180" y="80" width="22" height="30" rx="2" fill="#fff1ea" stroke="#e8663d"/>
+  <rect x="204" y="80" width="22" height="30" rx="2" fill="#fff1ea" stroke="#e8663d"/>
+  <rect x="228" y="80" width="22" height="30" rx="2" fill="#fff1ea" stroke="#e8663d"/>
+  <rect x="252" y="80" width="22" height="30" rx="2" fill="#fff1ea" stroke="#e8663d"/>
+  <rect x="276" y="80" width="22" height="30" rx="2" fill="#fff1ea" stroke="#e8663d"/>
+  <rect x="300" y="80" width="22" height="30" rx="2" fill="#fff1ea" stroke="#e8663d"/>
+  <rect x="324" y="80" width="22" height="30" rx="2" fill="#fff1ea" stroke="#e8663d"/>
+  <rect x="348" y="80" width="22" height="30" rx="2" fill="#fff1ea" stroke="#e8663d"/>
+  <rect x="372" y="80" width="22" height="30" rx="2" fill="#fff1ea" stroke="#e8663d"/>
+  <rect x="396" y="80" width="22" height="30" rx="2" fill="#fff1ea" stroke="#e8663d"/>
+  <rect x="420" y="80" width="22" height="30" rx="2" fill="#fff1ea" stroke="#e8663d"/>
+  <rect x="444" y="80" width="22" height="30" rx="2" fill="#fff1ea" stroke="#e8663d"/>
+  <rect x="468" y="80" width="22" height="30" rx="2" fill="#fff1ea" stroke="#e8663d"/>
+  <rect x="492" y="80" width="22" height="30" rx="2" fill="#fff1ea" stroke="#e8663d"/>
+  <rect x="516" y="80" width="22" height="30" rx="2" fill="#fff1ea" stroke="#e8663d"/>
+  <rect x="540" y="80" width="22" height="30" rx="2" fill="#fff1ea" stroke="#e8663d"/>
+  <rect x="564" y="80" width="22" height="30" rx="2" fill="#fff1ea" stroke="#e8663d"/>
+  <rect x="588" y="80" width="22" height="30" rx="2" fill="#fff1ea" stroke="#e8663d"/>
+  <text x="71" y="100" text-anchor="middle" font-size="12" fill="#222" font-weight="bold">S</text>
+  <text x="95" y="100" text-anchor="middle" font-size="10" fill="#222">2⁻¹</text>
+  <text x="335" y="100" text-anchor="middle" font-size="12" fill="#222">…</text>
+  <text x="599" y="100" text-anchor="middle" font-size="9" fill="#222">2⁻²²</text>
+  <text x="60" y="130" text-anchor="start" font-size="11.5" fill="#444">대칭 범위 ±(1 − 2⁻²²) · 분해능 2⁻²² ≈ 2.38 × 10⁻⁷ · 초기 amplitude 2⁻⁷ = integer 32,768 (error 0)</text>
+  <text x="60" y="148" text-anchor="start" font-size="11.5" fill="#444">+1.0 은 담기지 않는다 (integer 4,194,304 가 필요한데 maximum은 4,194,303)</text>
+  <text x="60" y="172" text-anchor="start" font-size="12.5" fill="#222" font-weight="bold">diffusion operator 중간값 register · 25-bit (2·mean − amp)</text>
+  <rect x="60.0" y="180" width="20.080000000000002" height="30" rx="2" fill="#f7c9b6" stroke="#5b8def"/>
+  <rect x="82.08" y="180" width="20.080000000000002" height="30" rx="2" fill="#d9e6ff" stroke="#5b8def"/>
+  <rect x="104.16" y="180" width="20.080000000000002" height="30" rx="2" fill="#d9e6ff" stroke="#5b8def"/>
+  <rect x="126.24000000000001" y="180" width="20.080000000000002" height="30" rx="2" fill="#eef4ff" stroke="#5b8def"/>
+  <rect x="148.32" y="180" width="20.080000000000002" height="30" rx="2" fill="#eef4ff" stroke="#5b8def"/>
+  <rect x="170.4" y="180" width="20.080000000000002" height="30" rx="2" fill="#eef4ff" stroke="#5b8def"/>
+  <rect x="192.48000000000002" y="180" width="20.080000000000002" height="30" rx="2" fill="#eef4ff" stroke="#5b8def"/>
+  <rect x="214.56" y="180" width="20.080000000000002" height="30" rx="2" fill="#eef4ff" stroke="#5b8def"/>
+  <rect x="236.64000000000001" y="180" width="20.080000000000002" height="30" rx="2" fill="#eef4ff" stroke="#5b8def"/>
+  <rect x="258.72" y="180" width="20.080000000000002" height="30" rx="2" fill="#eef4ff" stroke="#5b8def"/>
+  <rect x="280.8" y="180" width="20.080000000000002" height="30" rx="2" fill="#eef4ff" stroke="#5b8def"/>
+  <rect x="302.88" y="180" width="20.080000000000002" height="30" rx="2" fill="#eef4ff" stroke="#5b8def"/>
+  <rect x="324.96000000000004" y="180" width="20.080000000000002" height="30" rx="2" fill="#eef4ff" stroke="#5b8def"/>
+  <rect x="347.04" y="180" width="20.080000000000002" height="30" rx="2" fill="#eef4ff" stroke="#5b8def"/>
+  <rect x="369.12" y="180" width="20.080000000000002" height="30" rx="2" fill="#eef4ff" stroke="#5b8def"/>
+  <rect x="391.2" y="180" width="20.080000000000002" height="30" rx="2" fill="#eef4ff" stroke="#5b8def"/>
+  <rect x="413.28000000000003" y="180" width="20.080000000000002" height="30" rx="2" fill="#eef4ff" stroke="#5b8def"/>
+  <rect x="435.36" y="180" width="20.080000000000002" height="30" rx="2" fill="#eef4ff" stroke="#5b8def"/>
+  <rect x="457.44" y="180" width="20.080000000000002" height="30" rx="2" fill="#eef4ff" stroke="#5b8def"/>
+  <rect x="479.52000000000004" y="180" width="20.080000000000002" height="30" rx="2" fill="#eef4ff" stroke="#5b8def"/>
+  <rect x="501.6" y="180" width="20.080000000000002" height="30" rx="2" fill="#eef4ff" stroke="#5b8def"/>
+  <rect x="523.6800000000001" y="180" width="20.080000000000002" height="30" rx="2" fill="#eef4ff" stroke="#5b8def"/>
+  <rect x="545.76" y="180" width="20.080000000000002" height="30" rx="2" fill="#eef4ff" stroke="#5b8def"/>
+  <rect x="567.84" y="180" width="20.080000000000002" height="30" rx="2" fill="#eef4ff" stroke="#5b8def"/>
+  <rect x="589.9200000000001" y="180" width="20.080000000000002" height="30" rx="2" fill="#eef4ff" stroke="#5b8def"/>
+  <text x="70" y="200" text-anchor="middle" font-size="12" fill="#222" font-weight="bold">S</text>
+  <text x="103.12" y="200" text-anchor="middle" font-size="7.5" fill="#222">integer bits</text>
+  <text x="347.04" y="200" text-anchor="middle" font-size="11" fill="#222">22 fraction bits</text>
+  <text x="60" y="230" text-anchor="start" font-size="11.5" fill="#444">상한 1 + 2/√(number of states) = 1.0156을 담을 여유. register 하나라 넓혀도 싸다</text>
+  <path d="M620,195 L690,195 L690,95 L622,95" fill="none" stroke="#444" stroke-width="1.3" marker-end="url(#ah)"/>
+  <text x="700" y="152" text-anchor="start" font-size="11" fill="#555">되쓰기 직전</text>
+  <text x="700" y="168" text-anchor="start" font-size="11" fill="#555">symmetric saturation으로</text>
+  <text x="700" y="184" text-anchor="start" font-size="11" fill="#555">23 bits에 붙임</text>
+  <rect x="60" y="262" width="580" height="44" rx="6" fill="#f5f5f5" stroke="#9a9a9a" stroke-width="1.3"/>
+  <text x="350.0" y="280.2625" text-anchor="middle" font-size="11.5" fill="#222" font-weight="bold">saturation이 한 번이라도 걸리면 amp_overflow (진단용 · 결과 무효 표시 아님)</text>
+  <text x="350.0" y="295.78749999999997" text-anchor="middle" font-size="11.5" fill="#333">671,600회 campaign에서 BBHT 1,000회당 2.67번, 기능 결과 불일치 0</text>
+</svg>

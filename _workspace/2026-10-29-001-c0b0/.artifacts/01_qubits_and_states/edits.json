@@ -1,0 +1,122 @@
+{
+  "edits": [
+    {
+      "rule": "D-14",
+      "before": "이 장이 이 해설서 전체의 출발점이며, 여기서 다지는 직관 위에",
+      "after": "이 장은 이 해설서의 출발점입니다. 여기서 익힌 개념을 바탕으로"
+    },
+    {
+      "rule": "D-14",
+      "before": "의 Grover가 세워집니다.",
+      "after": "의 Grover를 배웁니다."
+    },
+    {
+      "rule": "D-8",
+      "before": "핵심은 이것입니다: bit의 state는",
+      "after": "bit의 state는"
+    },
+    {
+      "rule": "A-7",
+      "before": "qubit도 state를 가집니다.",
+      "after": "qubit에도 state가 있습니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "이 vector가 사는 공간을",
+      "after": "이 vector가 속한 공간을"
+    },
+    {
+      "rule": "D-2",
+      "before": "인 어엿한 unit vector입니다.",
+      "after": "인 unit vector입니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "라는 풍부한 대상을 가리키듯,",
+      "after": "를 가리키듯,"
+    },
+    {
+      "rule": "C-11",
+      "before": "qubit가 흥미로운 이유는,",
+      "after": "qubit가 흥미로운 이유는"
+    },
+    {
+      "rule": "D-2",
+      "before": "다음은 완벽하게 정당한 qubit state입니다:",
+      "after": "다음도 가능한 qubit state입니다:"
+    },
+    {
+      "rule": "D-2",
+      "before": "하지만 여기에 큰 함정이 있습니다.",
+      "after": "다만 이 표현은 오해하기 쉽습니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "\"이 qubit가 몰래 0이거나 1인데 우리가 모르는 것\"이 아닙니다.",
+      "after": "\"qubit가 이미 0 또는 1로 정해져 있는데 우리가 그 값을 모르는 상태\"를 뜻하지 않습니다."
+    },
+    {
+      "rule": "D-2",
+      "before": "에서 결정적으로 드러납니다.",
+      "after": "에서 드러납니다."
+    },
+    {
+      "rule": "A-18",
+      "before": "에서 완전히 밝혀지지만, 미리 말하면:",
+      "after": "에서 설명하겠지만, 미리 살펴보면"
+    },
+    {
+      "rule": "D-14",
+      "before": "normalization이 묶는 것은 gate를 **끝낸 뒤**의 state이지, gate를 계산하는 **도중**에 스쳐 가는 중간값까지는 아닙니다.",
+      "after": "normalization은 gate를 **끝낸 뒤**의 state가 만족해야 하는 조건이며, gate를 계산하는 **도중**의 중간값에까지 적용되는 조건은 아닙니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "[7장 phase kickback](07_oracle_and_phase_kickback.md)의 무대가 됩니다.",
+      "after": "[7장 phase kickback](07_oracle_and_phase_kickback.md)을 이해하는 바탕이 됩니다."
+    },
+    {
+      "rule": "D-2",
+      "before": "**놀랍게도 불가능합니다.**",
+      "after": "**불가능합니다.**"
+    },
+    {
+      "rule": "D-14",
+      "before": "FPGA emulator는 이 금지에서 자유롭습니다 — amplitude가 BRAM에 숫자로 적혀 있으니 열어 보면 다 보이니까요.",
+      "after": "FPGA emulator에서는 이 제약이 없습니다 — amplitude가 BRAM에 숫자로 저장되어 있어 값을 직접 읽을 수 있기 때문입니다."
+    },
+    {
+      "rule": "D-8",
+      "before": "우리가 기억할 것은 이것뿐입니다:",
+      "after": "다음 정의를 기억해 두세요:"
+    },
+    {
+      "rule": "D-14",
+      "before": "그 vector가 사는 곳이",
+      "after": "그 vector가 속한 곳이"
+    },
+    {
+      "rule": "C-11",
+      "before": "qubit의 물리를 흉내 내는 것이 아니라,",
+      "after": "qubit의 물리를 흉내 내는 것이 아니라"
+    },
+    {
+      "rule": "A-18",
+      "before": "칸 수가 power of 2라서 mean도 arithmetic shift로 끝나므로,",
+      "after": "칸 수가 power of 2라서 mean도 arithmetic shift로 구할 수 있으므로"
+    },
+    {
+      "rule": "D-14",
+      "before": "Grover가 지나는 state에서만은",
+      "after": "Grover가 계산하는 state에서는"
+    }
+  ],
+  "self_check": {
+    "fidelity": true,
+    "conservative": true,
+    "genre": true,
+    "register": true,
+    "targeted_patterns_reviewed": true,
+    "no_new_metaphors_or_claims": true
+  }
+}

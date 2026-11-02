@@ -1,0 +1,8 @@
+#### Part 6. datapath — 한 shot 안에서 벌어지는 일
+
+| 장 | file | 무엇을 배우나 |
+|----|------|--------------|
+| 13 | [oracle과 diffusion operator — multiplier 없는 arithmetic](13_oracle_diffusion_measurement_datapath.md) | 한 iteration 안의 FSM, square-root unit 없이 $1/\sqrt{\text{number of states}}$ 만들기, predicate 4종이 subtractor 하나를 공유하는 방법, two's complement negate, $2\cdot\text{mean} - \text{amp}$ 가 circuit이 되는 순간, 2 passes의 필연성, 32 lanes accumulation 순서, multiplier가 있는 곳과 없는 곳 |
+| 14 | [multiple solutions — Born-rule sampling과 enumeration](14_multiple_solutions_and_minimum_search.md) | solution이 여럿이어도 oracle에는 공짜인 이유, oracle은 predicate를 판정하는 circuit라는 것, amplitude 동률로 argmax가 무너지는 지점, Born-rule sampling을 circuit으로, group·row·lane 순의 hierarchical measurement(Dual-Row Build · Two-Level Select), Found Mask로 중복 없이 enumeration, 역주행 등 두 함정 |
+
+

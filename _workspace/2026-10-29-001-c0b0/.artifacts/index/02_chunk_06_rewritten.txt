@@ -1,0 +1,6 @@
+## 5. 이 project가 Grover를 다루는 이유
+
+우리 project의 목표는 **Grover algorithm을 FPGA hardware로 emulation**하는 것입니다. 조금 더 구체적으로 말하면, FPGA 안의 memory에 data array `value[]` 를 올려 두고 **predicate를 만족하는 원소가 몇 번 칸에 있는지를 Grover 방식으로 찾아 주는 accelerator IP** 입니다. predicate는 네 가지를 지원합니다 — threshold보다 작은가($<$), 큰가($>$), 같은가($=$), 그리고 두 threshold 사이인가($a < x < b$). 한 번 호출하면 predicate를 만족하는 index **하나**를 돌려주고, 호출을 되풀이하면 predicate를 만족하는 원소를 **중복 없이 전부 enumeration**할 수도 있습니다. board는 Digilent **Arty A7-100T**(Xilinx Artix-7)이고, IP는 그 위에 올린 **RVX** RISC-V SoC에 붙습니다. host는 **UART** 너머에서 명령을 보내고 결과를 받아올 뿐이며, amplitude 계산은 전부 FPGA 안에서 끝납니다. 다루는 규모는 **14 qubits**, 곧 $2^{14} = 16{,}384$ states를 담는 array입니다.
+
+그러면 왜 하필 Grover일까요?
+

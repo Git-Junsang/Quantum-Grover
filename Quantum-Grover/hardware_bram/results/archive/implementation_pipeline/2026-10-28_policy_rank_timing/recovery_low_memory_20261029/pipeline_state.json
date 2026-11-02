@@ -1,0 +1,8 @@
+{
+  "stage": "failed",
+  "updated_utc": "2026-10-28T19:32:14.629266+00:00",
+  "pid": 1398345,
+  "platform": "bbht_grover_k3h3_e4_m2_rankfix_20261028",
+  "failed_stage": "implementation",
+  "error": "Serial synthesis/implementation did not pass the bitstream and timing gate; see attempt 4 logs."
+}

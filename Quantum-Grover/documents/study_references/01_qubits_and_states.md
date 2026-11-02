@@ -1,0 +1,148 @@
+# 1장. qubit와 state
+
+> [← index](index.md) · [index](index.md) · [2장 Dirac notation과 linear algebra →](02_dirac_notation_and_linear_algebra.md)
+> **이 장을 읽기 위한 준비**: complex number(magnitude $|\alpha|$, conjugate $\alpha^*$)와 2-dimensional vector. 이 기호들이 낯설면 [부록 A 수학 빠른 복습](A_math_review.md) 을 먼저 보세요. [0장](index.md)을 먼저 읽으면 좋습니다.
+
+---
+
+classical computer의 정보 단위가 **bit** 이듯, quantum computer의 정보 단위는 **qubit** 입니다. 이 장에서는 qubit의 state가 왜 "0 또는 1"이라는 숫자가 아니라 **vector**인지, 그 vector의 component(amplitude)가 무엇을 뜻하는지, 그리고 "superposition"이 정확히 무엇인지를 배웁니다. 이 장은 이 해설서의 출발점입니다. 여기서 익힌 개념을 바탕으로 [3장](03_single_qubit_gates.md)의 gate와 [9장](09_grover_algorithm.md)의 Grover를 배웁니다.
+
+---
+
+## 1.1 bit 복습 — state가 "숫자"인 세계
+
+classical bit의 state는 **0 또는 1**, 둘 중 하나의 숫자입니다. 물리적으로는 capacitor의 전하, 자기 방향 등으로 저장되지만, programmer는 그런 세부를 잊고 "이 bit는 0이다 / 1이다"라는 **추상적인 숫자**로만 다룹니다.
+
+bit의 state는 **하나의 값**이고, 언제든 들여다보면 그 값을 정확히 알 수 있습니다.
+
+---
+
+## 1.2 qubit — state가 "vector"인 세계
+
+qubit에도 state가 있습니다. 그런데 qubit의 state는 숫자가 아니라 **2-dimensional vector**입니다. 이 vector가 속한 공간을 **state space**라고 부릅니다.
+
+가장 먼저 알아야 할 두 개의 특별한 state가 있습니다. classical bit의 0, 1에 대응하는 state입니다.
+
+$$
+|0\rangle := \begin{bmatrix} 1 \\ 0 \end{bmatrix}, \qquad |1\rangle := \begin{bmatrix} 0 \\ 1 \end{bmatrix}
+$$
+
+이 둘을 **computational basis state**라고 합니다. $|0\rangle$ 은 classical bit의 0, $|1\rangle$ 은 1 역할을 합니다.
+
+> ⚠️ **함정 — $|0\rangle$ 은 "zero vector"가 아니다**: $|0\rangle$ 은 component가 $(1, 0)$ 인 unit vector입니다. 숫자 0이나 zero vector $(0,0)$ 과 전혀 다릅니다. $|0\rangle$ 은 그냥 "이 qubit는 0 state"라는 뜻의 **하나의 기호**로 보세요.
+
+### ket notation
+
+$|0\rangle$ 에서 세로줄 $|$ 과 꺾쇠 $\rangle$ 는 각각 따로 의미가 있는 게 아닙니다. **"이것은 state(vector)다"** 라고 표시하는 하나의 묶음 기호이고, 이를 **ket**이라 부릅니다. ket은 그냥 vector입니다. (notation 자체는 [2장](02_dirac_notation_and_linear_algebra.md)에서 더 다룹니다.)
+
+💡 **비유**: $|0\rangle$ 은 숫자 $0$ 처럼 "하나의 대상을 가리키는 이름표"입니다. 숫자 $0$ 이 실은 "additive identity"를 가리키듯, $|0\rangle$ 은 vector $(1,0)$ 을 가리킵니다.
+
+---
+
+## 1.3 superposition — qubit의 진짜 힘
+
+qubit가 흥미로운 이유는 state가 $|0\rangle$ 이나 $|1\rangle$ **만** 될 수 있는 게 아니기 때문입니다. 이 둘의 **linear combination**도 가능합니다.
+
+$$
+|\psi\rangle = \alpha|0\rangle + \beta|1\rangle = \begin{bmatrix} \alpha \\ \beta \end{bmatrix}
+$$
+
+여기서 $\alpha, \beta$ 는 **complex number**이고, **amplitude**라 부릅니다. 이렇게 여러 computational basis state가 동시에 섞인 state를 **superposition** 이라고 합니다.
+
+예를 들어 다음도 가능한 qubit state입니다:
+
+$$
+|\psi\rangle = \frac{1}{\sqrt{2}}|0\rangle + \frac{1}{\sqrt{2}}|1\rangle = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 1 \end{bmatrix}
+$$
+
+이 state는 "$|0\rangle$ 이기도 하고 $|1\rangle$ 이기도 한" state입니다. 다만 이 표현은 오해하기 쉽습니다.
+
+> ⚠️ **흔한 오해 — superposition은 "0.5는 0, 0.5는 1"이 아니다**: superposition은 "qubit가 이미 0 또는 1로 정해져 있는데 우리가 그 값을 모르는 상태"를 뜻하지 않습니다. qubit는 **정말로** $|0\rangle$ 과 $|1\rangle$ 이 동시에 존재하는 state에 있습니다. 이 차이는 [4장 measurement](04_measurement.md)와 [8장 interference](08_deutsch_jozsa_algorithm.md)에서 드러납니다. amplitude $\alpha, \beta$ 는 probability가 아니라 **complex number**라는 점도 중요합니다 (negative·imaginary 값도 가능 → interference의 근원).
+
+---
+
+## 1.4 normalization — amplitude가 지켜야 할 규칙
+
+아무 $\alpha, \beta$ 나 되는 것은 아닙니다. amplitude는 다음 **normalization condition**을 만족해야 합니다.
+
+$$
+|\alpha|^2 + |\beta|^2 = 1
+$$
+
+여기서 $|\alpha|^2$ 은 complex number $\alpha$ 의 magnitude의 square입니다 ($\alpha = a+bi$ 이면 $|\alpha|^2 = a^2 + b^2$). 기하학적으로 이 조건은 **state vector의 길이가 1** 이라는 뜻입니다.
+
+왜 이런 조건이 필요한지는 [4장 measurement](04_measurement.md)에서 설명하겠지만, 미리 살펴보면 $|\alpha|^2$ 은 measurement에서 0이 나올 **probability**이고 $|\beta|^2$ 은 1이 나올 probability입니다. probability의 sum은 1이어야 하므로 $|\alpha|^2 + |\beta|^2 = 1$ 입니다.
+
+🔍 **계산 따라가기 — 위 uniform superposition은 normalize되어 있는가?**
+
+$$
+\left|\frac{1}{\sqrt2}\right|^2 + \left|\frac{1}{\sqrt2}\right|^2 = \frac12 + \frac12 = 1 \quad ✓
+$$
+
+한 가지만 미리 새겨 두세요. normalization은 gate를 **끝낸 뒤**의 state가 만족해야 하는 조건이며, gate를 계산하는 **도중**의 중간값에까지 적용되는 조건은 아닙니다. 이 차이가 나중에 amplitude를 fixed-point로 적을 때 integer bits를 한 bit 더 쓰게 만듭니다([12.3절](12_fixed_point_and_precision.md#123-integer-bits는-몇-bit인가--재는-대상이-셋이다)).
+
+✏️ **연습 1-1**: $|\psi\rangle = \frac{1}{2}|0\rangle + c\,|1\rangle$ 이 normalize되려면 $|c|$ 는? *(answer: $\frac{\sqrt3}{2}$. $\frac14 + |c|^2 = 1$.)*
+
+---
+
+## 1.5 자주 등장하는 state들
+
+앞으로 계속 나올 두 superposition state에 이름이 붙어 있습니다.
+
+$$
+|+\rangle := \frac{|0\rangle + |1\rangle}{\sqrt2} = \frac{1}{\sqrt2}\begin{bmatrix} 1 \\ 1\end{bmatrix}, \qquad |-\rangle := \frac{|0\rangle - |1\rangle}{\sqrt2} = \frac{1}{\sqrt2}\begin{bmatrix} 1 \\ -1\end{bmatrix}
+$$
+
+둘 다 $|0\rangle$ 과 $|1\rangle$ 의 uniform superposition이지만, $|1\rangle$ 앞 sign이 각각 $+$ 와 $-$ 입니다. 이 **sign(phase)의 차이** 가 quantum algorithm의 핵심 재료입니다.
+
+> 🔑 **핵심**: $|+\rangle$ 과 $|-\rangle$ 은 measurement하면 둘 다 0과 1을 50:50으로 주지만, **서로 다른 state**입니다. 이 둘을 구별하는 능력이 [4장](04_measurement.md)에서 Hadamard gate로 드러나고, [7장 phase kickback](07_oracle_and_phase_kickback.md)을 이해하는 바탕이 됩니다.
+
+---
+
+## 1.6 measurement로 읽을 수 없는 정보 — amplitude는 숨어 있다
+
+Alice가 qubit를 $\alpha|0\rangle + \beta|1\rangle$ 로 준비해 Bob에게 주되 $\alpha, \beta$ 값은 말해주지 않았다고 합시다. Bob이 어떤 실험을 하면 $\alpha, \beta$ 를 알아낼 수 있을까요?
+
+**불가능합니다.** state는 직접 관측되지 않습니다. amplitude $\alpha, \beta$ 는 일종의 **숨은 정보(hidden information)** 입니다.
+
+이것이 고전적 직관과 크게 다른 점입니다. 자동차 engine은 정밀 장비로 내부 state를 알아낼 수 있지만, qubit의 amplitude는 물리 법칙이 관측을 금지합니다. Bob이 할 수 있는 것은 [4장](04_measurement.md)에서 배울 **measurement** 뿐이고, measurement는 확률적 결과 하나(0 또는 1)만 주고 그 순간 $\alpha, \beta$ 를 파괴합니다.
+
+> ❓ **그럼 qubit에 무한한 정보를 저장할 수 있나?**: $\alpha$ 가 complex number이니 그 decimal expansion에 무한한 bit를 넣고 싶겠지만, measurement로 $\alpha$ 를 정확히 읽을 방법이 없으므로 불가능합니다. qubit 하나에서 꺼낼 수 있는 classical information은 결국 1 bit뿐입니다.
+
+FPGA emulator에서는 이 제약이 없습니다 — amplitude가 BRAM에 숫자로 저장되어 있어 값을 직접 읽을 수 있기 때문입니다. 그렇다고 그중 **가장 큰 값을 그냥 집어내는 것이 measurement가 되지는 않습니다.** predicate를 만족하는 element가 둘 이상이면 그 amplitude들은 서로 정확히 같은 값이라, maximum comparator는 언제 돌려도 같은 index 하나만 내놓습니다([14.3절](14_multiple_solutions_and_minimum_search.md#143-amplitude-동률--argmax가-무너지는-지점)).
+
+---
+
+## 1.7 물리적 실체는 잊어도 된다
+
+qubit가 물리적으로 무엇인지 — electron의 spin, photon의 polarization, atom의 energy level — 는 이 해설서에서 중요하지 않습니다. classical programmer가 bit가 어떤 capacitor에 저장되는지 신경 쓰지 않듯이 말입니다.
+
+다음 정의를 기억해 두세요:
+
+> 🔑 **qubit의 정의 (4줄 요약)**
+>
+> - (a) qubit는 state를 가진다.
+> - (b) 그 state는 추상적인 수학적 대상이다.
+> - (c) bit의 state가 숫자(0/1)라면, qubit의 state는 **2-dimensional complex vector**다.
+> - (d) 그 vector가 속한 곳이 **state space**이며, vector의 길이는 항상 1이다.
+
+우리 project의 FPGA emulator도 정확히 이 관점을 따릅니다. qubit의 물리를 흉내 내는 것이 아니라 amplitude $2^{\text{number of qubits}}$ 칸을 **23-bit fixed-point 숫자로 BRAM에 펼쳐 놓습니다.** 그리고 gate를 matrix multiplication으로 계산하지 않습니다 — array를 훑는 두 가지 일로 계산합니다. 하나는 predicate를 만족하는 칸의 **sign을 뒤집는** pass, 다른 하나는 모든 칸을 `2 × mean − 자기 자신` 으로 바꾸는 pass입니다. sign 반전은 subtraction 하나, 2×는 left shift, 칸 수가 power of 2라서 mean도 arithmetic shift로 구할 수 있으므로 이 두 pass에는 **multiplier가 한 개도 들어가지 않습니다.**
+
+이 장의 개념이 hardware에서 각각 무엇이 되는지만 미리 적어 둡니다. **amplitude**는 BRAM 한 칸에 들어가는 23-bit fixed-point integer가 되고, 그 형식을 정하는 일이 [12장](12_fixed_point_and_precision.md)입니다. **normalization**은 circuit이 매 iteration 강제하는 조건이 아니라 algorithm이 저절로 지켜 주는 성질이어서, datapath에 renormalization 단계가 아예 없습니다([12.5절](12_fixed_point_and_precision.md#125-overflow-policy--saturationwraparound-금지renormalization-없음)). **superposition**을 만드는 일은 array 전체를 같은 constant 하나로 채우는 initialization 한 번으로 끝납니다([13.2절](13_oracle_diffusion_measurement_datapath.md#132-init--uniform-amplitude를-square-root-unit-없이)). amplitude가 일반적으로 complex number라는 이 장의 서술은 그대로지만, Grover가 계산하는 state에서는 amplitude가 real number를 벗어나지 않는다는 것이 [9.8절](09_grover_algorithm.md#98-전체-그림-정리--amplitude는-왜-real-number뿐인가)에서 밝혀집니다 — 그래서 우리 array에는 imaginary part 칸이 없습니다.
+
+---
+
+## 1.8 이 장의 요약
+
+- **bit vs qubit**: bit의 state는 숫자(0/1), qubit의 state는 2-dimensional complex vector.
+- **computational basis**: $|0\rangle = (1,0)^T$, $|1\rangle = (0,1)^T$. classical 0, 1에 대응하는 두 특별한 state.
+- **superposition**: $|\psi\rangle = \alpha|0\rangle + \beta|1\rangle$, amplitude $\alpha,\beta$ 는 **complex number**. "동시에 존재"이지 "모르는 것"이 아님.
+- **normalization**: $|\alpha|^2 + |\beta|^2 = 1$ (state vector 길이 1). measurement probability의 sum이 1이기 때문.
+- **$|+\rangle, |-\rangle$**: uniform superposition이지만 $|1\rangle$ sign이 다른 두 state. phase 차이가 algorithm의 재료.
+- **숨은 정보**: amplitude는 직접 measurement 불가. qubit에서 꺼내는 classical information은 1 bit.
+
+다음 장에서는 이 vector들을 능숙하게 다루기 위한 도구 — **Dirac notation과 inner product** — 을 배웁니다. 두 state가 얼마나 "닮았는지"를 재는 방법입니다.
+
+---
+
+> [← index](index.md) · [index](index.md) · [2장 Dirac 표기법과 linear algebra →](02_dirac_notation_and_linear_algebra.md)

@@ -1,0 +1,67 @@
+{
+  "edits": [
+    {
+      "rule": "D-14",
+      "before": "이 해설서는 두 가지 배경 지식에 기댑니다.",
+      "after": "이 해설서를 읽으려면 두 가지 배경 지식이 필요합니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "**linear algebra(vector·matrix)** 위에서 돌아가고,",
+      "after": "**linear algebra(vector·matrix)**를 이용하고"
+    },
+    {
+      "rule": "D-14",
+      "before": "algorithm의 핵심 동력이 되기 때문입니다.",
+      "after": "algorithm의 핵심 원리이기 때문입니다."
+    },
+    {
+      "rule": "A-18",
+      "before": "이것이 amplitude 한 칸을 fixed-point real number **하나**로 저장하는",
+      "after": "이 성질이 amplitude 한 칸을 fixed-point real number **하나**로 저장하는"
+    },
+    {
+      "rule": "D-14",
+      "before": "라는 수는 이 해설서에서 두 가지 일을 합니다.",
+      "after": "라는 수는 이 해설서에서 두 가지 맥락으로 쓰입니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "실제로 손을 움직이게 만드는 기호를",
+      "after": "실제로 계산에 쓰는 기호를"
+    },
+    {
+      "rule": "D-8",
+      "before": "그 integer를 어떻게 읽기로 약속했는지가 아래 다섯 가지입니다.",
+      "after": "그 integer를 읽고 계산하는 규약 다섯 가지를 아래에 정리했습니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "하나로 못 박습니다",
+      "after": "일관되게 정의합니다"
+    },
+    {
+      "rule": "D-14",
+      "before": "circuit 전체가 이 성질 위에 서 있습니다",
+      "after": "circuit 전체가 이 성질을 이용합니다"
+    },
+    {
+      "rule": "D-14",
+      "before": "값은 틀리지만 sign과 크기 순서는 살아남고 error가 그 칸에 머무릅니다",
+      "after": "값은 틀리지만 sign과 크기 순서는 유지되고 error는 그 칸에만 남습니다"
+    },
+    {
+      "rule": "D-14",
+      "before": "그 어긋남의 정체가 바로 이 전제입니다.",
+      "after": "이 차이는 위 공식의 전제가 성립하지 않기 때문에 생깁니다."
+    }
+  ],
+  "self_check": {
+    "fidelity": true,
+    "conservative": true,
+    "genre": true,
+    "register": true,
+    "targeted_patterns_reviewed": true,
+    "no_new_metaphors_or_claims": true
+  }
+}

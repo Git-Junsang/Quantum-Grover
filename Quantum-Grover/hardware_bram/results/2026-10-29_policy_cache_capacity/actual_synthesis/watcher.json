@@ -1,0 +1,11 @@
+{
+  "pid": 1864794,
+  "status": "stopped_delegated_to_other_worker",
+  "interval_seconds": 1800,
+  "targets": [
+    "k5h7e4m4",
+    "k6h8e4m4",
+    "k7h8e4m4"
+  ],
+  "stopped_at": "2026-10-29T16:52:28.759571+09:00"
+}

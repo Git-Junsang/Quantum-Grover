@@ -1,0 +1,77 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 7/14이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 12_fixed_point_and_precision.md 진단
+
+## 장르·레지스터와 보존 조건
+
+학부생용 기술 해설서(report). 본문은 친근한 존댓말(합니다/입니다, 일부 해요체 설명), 수식 풀이·표·요약은 압축형입니다. 문장 격식을 올리지 않습니다. 영어 용어와 영어 토큰은 번역·삭제·교체·대소문자 변경하지 않습니다. glossary 기준은 `documents/design_references/22_appendix_glossary_and_retired_specs.md` §22.2입니다. 수치·수식·code·제목·link·직접 인용·기존 콜아웃/이모지·문단 구조는 보존합니다. 실제 주장, 부정/긍정, 인과, 조건, 확신도도 보존합니다. 보고서용 서식 축약·영어 순화 규칙은 적용하지 않습니다. 본문에 사실을 추가하거나 현행 설계와 대조해 기술 내용을 고치지 않습니다.
+
+## 정량 근거
+
+입력의 정량 블록을 확인했습니다. risk_band는 low이고, 장문 파일의 heavy 권고는 문서 길이에서 나옵니다. 영어 기술 term 반복은 장르상 필수이므로 lexical_diversity의 낮은 값만으로 수정하지 않습니다. 아래 수치는 탐지 보조이며 개별 문맥과 함께 판단합니다.
+
+## 겨냥 순서의 지배 패턴
+
+1. **D-14·D-5 — 수치 동작에 의인화·과한 은유 부착**: "solution이 흐려지고", "몇 LSB 뿐", "solution 행세를 하고", "theorem은 … 두 번 일합니다", "전제로 서 있습니다", "formula는 … 나침반", "반대 진영의 목소리" 등이 반복됩니다. 내용 명사와 기술 term은 보존하고 동작·조건을 직접 설명합니다.
+
+2. **A-18 — 논거가 길게 누적된 문장**: 정량 relative_clause_nesting=7. 12.3절 저장 폭 결정, 12.4절 rounding 선택, 12.7절 공식 전제 비교, 12.9절 반론은 한 문장에 조건·평가·예시가 누적됩니다. 인과와 비교 범위를 보존하며 필요한 곳만 나눕니다.
+
+3. **D-2·D-8·F-1 — 평가성 도입·결론 반복**: "가장 실무적인 첫 결정", "정직하게 덧붙이면", "가장 값진 결과", "직관적으로 아름답습니다", "진짜 원하는 답" 등 내용에 덧붙인 평가가 많습니다. 설명을 직접 시작하되 전제·근거는 빼지 않습니다.
+
+4. **C-8 — 반복적인 부정 대구**: "정확도가 아니라 속도로", "공식이 준 답이 아니라 잰 답", "resolution이지 exponent 범위가 아님" 등은 핵심 개념 구분일 수 있습니다. 반복을 이유로 일괄 제거하지 않고 비유·평가성 대조만 선별합니다.
+
+5. **J-2·J-3 — 따옴표·대시 부연 밀집**: 강조용 따옴표와 대시가 설명을 자주 끊습니다. 발화자가 있는 실제 논문 인용은 보존하고, 필자 자신의 수사 표현만 평문으로 다듬습니다. 제목·수식·code·link와 기존 콜아웃은 손대지 않습니다.
+
+## 비적용·잔존 처리
+
+교육적 질문·표·연습문제·단계 목록·기존 비유는 그 자체로 결함이 아닙니다. 자연스러운 문장은 그대로 두고 확인된 구간만 보수적으로 다듬습니다. 수치/기술 주장에 의문이 있어도 이번 윤문에서는 보존합니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 1746
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.62  (n/a vs report 인간 baseline)
+- comma_usage_rate: 1.19  (z=+0.43 vs report 인간 baseline)
+- ending_comma_rate: 0.67  (n/a vs report 인간 baseline)
+- comma_segment_length: 6.70  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.000  (z=-2.00 vs report 인간 baseline)
+- lexical_diversity: 0.87  (z=+4.49 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 1
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 12.5 overflow policy — saturation·wraparound 금지·renormalization 없음
+
+12.3절에서 중간값만 넓게 잡고 되쓸 때 23 bits로 붙이기로 했습니다. 그러면 "붙인다"가 정확히 무엇인지 정해야 합니다.
+
+**wraparound는 금지입니다.** two's complement 산술에서 넘침을 방치하면 maximum 바로 위가 minimum이 됩니다 — $+0.99\ldots$ 에 조금 더하면 $-1$ 이 나옵니다. amplitude가 **sign까지 뒤집혀 정반대 값**이 되는 것입니다. Grover에서 sign은 장식이 아닙니다. oracle이 하는 일 전부가 sign 반전이고, diffusion operator는 sign이 뒤집힌 칸을 mean 위로 끌어올립니다(9장). 한 칸의 sign이 잘못 뒤집히면 그 칸은 다음 iteration부터 solution 행세를 하고, 오염된 값이 mean에 섞여 **모든 칸으로 번집니다.** 조용히 틀린 답을 내는 circuit이 되는 것이고, 이런 고장은 simulation에서 가장 찾기 어렵습니다.
+
+**그래서 symmetric saturation을 씁니다.** 25-bit 중간값이 $+4{,}194{,}303$ 을 넘으면 $+4{,}194{,}303$ 에, $-4{,}194{,}303$ 을 밑돌면 $-4{,}194{,}303$ 에 붙입니다. error는 남지만 sign과 크기 순서는 보존되고, 무엇보다 error가 그 칸에 **국소적으로** 머뭅니다. 비용은 comparator 하나와 mux 하나입니다. 아래쪽 끝을 $-4{,}194{,}304$ 가 아니라 $-4{,}194{,}303$ 으로 잡는 이유는 13.4절에서 보듯 **모든 합법 값의 sign 반전이 다시 합법 값**이 되게 하려는 것입니다.
+
+saturation이 한 번이라도 일어나면 `amp_overflow` bit가 서고, 다음 search가 시작될 때까지 내려가지 않습니다. saturation은 값을 상한에 붙일 뿐 아무 signal도 내지 않으므로, 이 bit가 없으면 saturation이 실제로 발동했는지 관측할 방법이 없습니다. 이 bit는 **진단용이고 결과 무효 표시가 아닙니다** — 12.3절의 benchmark대로 saturation이 기능 결과를 바꾼 경우는 없었고, 뽑힌 후보는 어차피 solution check를 통과해야 채택됩니다(16.4절).
+
+**norm renormalization은 하지 않습니다.** 매 iteration 끝에 $\sum_i \alpha_i^2$ 를 다시 1로 맞추는 것은 수치해석에서 흔한 처방이지만, 우리는 세 가지 이유로 하지 않습니다. 첫째, Grover iteration은 이론상 unitary라 norm이 보존되고 실제로 어긋나는 양은 rounding error 규모뿐입니다. 둘째, norm을 1로 되돌리려면 $1/\|a\|$ 를 곱해야 하는데 inverse square root와 multiplication이 들어옵니다 — 12.1절에서 확보한 "diffusion operator·oracle 경로에 0 multipliers"가 그 자리에서 무너집니다. 셋째, 애초에 필요가 없습니다. measurement가 Born-rule sampling이고, sampler는 amplitude square를 **전체 sum으로 나눈 상대 비율**만 쓰므로(14.4절) norm이 정확히 1이 아니어도 probability distribution은 제대로 정의됩니다.
+
+---
+[원문 끝]

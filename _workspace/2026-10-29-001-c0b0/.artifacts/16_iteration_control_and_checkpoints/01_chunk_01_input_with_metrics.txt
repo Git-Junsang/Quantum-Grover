@@ -1,0 +1,68 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 1/12이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 윤문 진단
+
+## 장르·레지스터
+- 학부생용 quantum algorithm·FPGA 해설서(report), 친근한 합쇼체 중심이며 독자에게 말을 거는 해요체가 일부 섞인 기존 학습서 말투입니다. 격식을 올리거나 설명을 학술 논문체로 바꾸지 않습니다.
+- 제목·절 번호·목록·표·수식·code·link·기존 콜아웃 및 이모지 형식은 보존합니다. 한국어 서술만 국소적으로 다듬습니다.
+- 영어 용어·영어 토큰은 번역, 교체, 삭제, 추가하지 않습니다. SSOT는 documents/design_references/22_appendix_glossary_and_retired_specs.md §22.2와 기존 glossary입니다.
+- 사실·수치·조건·부정·인과·추측/당위·인용을 보존합니다. 원문의 기술 주장을 새 해설이나 사실 교정으로 확장하지 않습니다.
+
+## 정량 앵커
+- 26,357자, risk_band low, route_hint heavy(길이 기준). A-7 have_make_literal_count=1, A-19 double_particle_count=1, A-18 relative_clause_nesting=7. conclusion_pivot_count=2(그러므로), lexical_diversity=0.52(z=-2.54). 전문용어 반복을 줄이기 위해 영어를 바꾸지 않습니다. ending_comma_rate=0.47.
+## 지배 패턴과 겨냥 순서
+1. D-14·D-5: “여러 번 던져야”, “datapath가 통째로 무너집니다”, “남는 장사가 아닙니다”, “array를 훔쳐보는 반칙”, “Grover처럼 생긴 무언가”, “승부가 나기 시작”, “하드웨어가 쥡니다”, “state를 떨궈 두는”, “반드시 새는 곳” 등 일상 비유·의인화가 알고리즘·설계 설명을 덮습니다. 영어 표현은 두고 한국어 설명을 구체적으로 정돈하는 것이 우선입니다.
+2. D-8·I-2: “정직하게 짚고 갈 것이 하나”, “답은 … 모양에”, “이제 이 장의 본론”, “이 절이 이 장에서 가장 중요” 등 설명의 중요도를 선언하는 문장이 반복됩니다. 실제 주장과 조건을 유지하면서 군더더기를 덜어낼 후보입니다.
+3. A-18·C-11: 16.1의 QPE 도입 비용, 16.2의 BBHT 보장, 16.5의 policy 선택, 16.6의 재현성 논증에 조건과 후속 결과가 긴 문장으로 연결됩니다. causal order와 독립성·bit-exact 조건을 보존하며 한국어 연결을 다듬습니다.
+4. C-8·J-2: “속도가 아니라 충실도”, “저장 공간이 아니라 결정 비용”, “algorithm 지표가 아니라 emulation 시간”처럼 대조가 반복됩니다. 지표의 실질적 차이를 지우지 말고 가상 인용·감정적 평가 표현을 우선 정돈합니다.
+5. A-7·A-19: “checkpoint slot을 들고 있다”, “number of iterations마다의 amplitude” 같은 표현은 한국어 동사·조사 손질 후보입니다. ‘각 checkpoint slot에 값이 저장됨’ 같은 본래 뜻을 넘어서 새로운 동작을 추가하지 않습니다.
+6. F-1·D-2: “영원히”, “반드시”, “가장 극적인”, “거짓말” 등 강한 평가어가 많이 나옵니다. 요구 조건이나 명제의 강도를 바꾸지 않도록 감상적 수식만 검토합니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 1164
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.38  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.62  (z=-0.22 vs report 인간 baseline)
+- ending_comma_rate: 0.43  (n/a vs report 인간 baseline)
+- comma_segment_length: 8.10  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.000  (z=-2.00 vs report 인간 baseline)
+- lexical_diversity: 0.87  (z=+4.38 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 0
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+# 16장. 몇 번 돌릴지 모를 때 — BBHT shot loop와 checkpoint
+
+> [← 15장 논문 지도와 설계 결정표](15_paper_map_and_design_decisions.md) · [index](index.md) · [17장 RVX SoC에 붙이기 — APB CSR · AHB DMA · UART →](17_rvx_soc_integration.md)
+> **이 장을 읽기 위한 준비**: [4장 measurement](04_measurement.md), [6.6절 circuit의 순효과는 하나의 unitary](06_quantum_circuit_model_and_universality.md#66-circuit의-순효과는-하나의-unitary), [9.6절 지나치면 안 된다](09_grover_algorithm.md#96-지나치면-안-된다), [13장 oracle과 diffusion operator](13_oracle_diffusion_measurement_datapath.md)의 안쪽 FSM(13.1절), [14장 multiple solutions](14_multiple_solutions_and_minimum_search.md).
+
+---
+
+13장은 한 번의 initialization에서 시작해 iteration을 몇 바퀴 돌고 measurement로 끝나는 **한 shot** 안을 들여다봤고, 14장은 그 shot의 마지막 단계인 measurement를 확률적으로 만들었습니다. 그런데 13장은 내내 "number of iterations는 정해져 있다"고 가정했습니다. 이 장은 그 가정을 풉니다.
+
+optimal number of iterations를 계산하려면 number of solutions가 필요한데, 우리 accelerator는 solution이 몇 개인지 모릅니다. 모르면 shot 하나로 끝나지 않고 **여러 번 던져야** 하고, 그러면 곧바로 다음 질문이 따라옵니다 — 실패한 shot이 남긴 amplitude array를 그냥 버릴 것인가? 이 장의 후반부는 그 array를 버리지 않고 몇 벌 남겨 두었다가 이어 돌리는 **checkpoint**를 다룹니다. 이 project가 기존 Grover emulator들과 갈라지는 지점이 바로 여기이고, board에서 잰 가속의 가장 큰 몫이 여기서 나옵니다.
+
+---
+[원문 끝]

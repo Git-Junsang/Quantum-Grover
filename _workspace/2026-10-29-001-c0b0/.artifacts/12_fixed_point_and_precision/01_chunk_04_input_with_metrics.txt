@@ -1,0 +1,107 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 4/14이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 12_fixed_point_and_precision.md 진단
+
+## 장르·레지스터와 보존 조건
+
+학부생용 기술 해설서(report). 본문은 친근한 존댓말(합니다/입니다, 일부 해요체 설명), 수식 풀이·표·요약은 압축형입니다. 문장 격식을 올리지 않습니다. 영어 용어와 영어 토큰은 번역·삭제·교체·대소문자 변경하지 않습니다. glossary 기준은 `documents/design_references/22_appendix_glossary_and_retired_specs.md` §22.2입니다. 수치·수식·code·제목·link·직접 인용·기존 콜아웃/이모지·문단 구조는 보존합니다. 실제 주장, 부정/긍정, 인과, 조건, 확신도도 보존합니다. 보고서용 서식 축약·영어 순화 규칙은 적용하지 않습니다. 본문에 사실을 추가하거나 현행 설계와 대조해 기술 내용을 고치지 않습니다.
+
+## 정량 근거
+
+입력의 정량 블록을 확인했습니다. risk_band는 low이고, 장문 파일의 heavy 권고는 문서 길이에서 나옵니다. 영어 기술 term 반복은 장르상 필수이므로 lexical_diversity의 낮은 값만으로 수정하지 않습니다. 아래 수치는 탐지 보조이며 개별 문맥과 함께 판단합니다.
+
+## 겨냥 순서의 지배 패턴
+
+1. **D-14·D-5 — 수치 동작에 의인화·과한 은유 부착**: "solution이 흐려지고", "몇 LSB 뿐", "solution 행세를 하고", "theorem은 … 두 번 일합니다", "전제로 서 있습니다", "formula는 … 나침반", "반대 진영의 목소리" 등이 반복됩니다. 내용 명사와 기술 term은 보존하고 동작·조건을 직접 설명합니다.
+
+2. **A-18 — 논거가 길게 누적된 문장**: 정량 relative_clause_nesting=7. 12.3절 저장 폭 결정, 12.4절 rounding 선택, 12.7절 공식 전제 비교, 12.9절 반론은 한 문장에 조건·평가·예시가 누적됩니다. 인과와 비교 범위를 보존하며 필요한 곳만 나눕니다.
+
+3. **D-2·D-8·F-1 — 평가성 도입·결론 반복**: "가장 실무적인 첫 결정", "정직하게 덧붙이면", "가장 값진 결과", "직관적으로 아름답습니다", "진짜 원하는 답" 등 내용에 덧붙인 평가가 많습니다. 설명을 직접 시작하되 전제·근거는 빼지 않습니다.
+
+4. **C-8 — 반복적인 부정 대구**: "정확도가 아니라 속도로", "공식이 준 답이 아니라 잰 답", "resolution이지 exponent 범위가 아님" 등은 핵심 개념 구분일 수 있습니다. 반복을 이유로 일괄 제거하지 않고 비유·평가성 대조만 선별합니다.
+
+5. **J-2·J-3 — 따옴표·대시 부연 밀집**: 강조용 따옴표와 대시가 설명을 자주 끊습니다. 발화자가 있는 실제 논문 인용은 보존하고, 필자 자신의 수사 표현만 평문으로 다듬습니다. 제목·수식·code·link와 기존 콜아웃은 손대지 않습니다.
+
+## 비적용·잔존 처리
+
+교육적 질문·표·연습문제·단계 목록·기존 비유는 그 자체로 결함이 아닙니다. 자연스러운 문장은 그대로 두고 확인된 구간만 보수적으로 다듬습니다. 수치/기술 주장에 의문이 있어도 이번 윤문에서는 보존합니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 3863
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.29  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.37  (z=-0.51 vs report 인간 baseline)
+- ending_comma_rate: 0.38  (n/a vs report 인간 baseline)
+- comma_segment_length: 9.61  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.003  (z=-1.90 vs report 인간 baseline)
+- lexical_diversity: 0.70  (z=+1.06 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.001
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 1
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 12.3 integer bits는 몇 bit인가 — 재는 대상이 셋이다
+
+integer bits를 몇 bit로 잡을지는 **표현할 수 있어야 하는 maximum**이 정합니다. 그런데 여기서 초보자가 거의 반드시 미끄러지는 지점이 있습니다. datapath가 만들어 내는 값이 **한 종류가 아니라 셋**이고, 셋의 maximum이 서로 다르다는 것입니다.
+
+**(a) array에 저장되는 amplitude.** 4장 Born rule에서 measurement probability는 $|\alpha_i|^2$ 이고 전체 probability의 sum이 1이므로, 어떤 amplitude도 $|\alpha_i|\le 1$ 입니다. 여기까지만 보면 integer bits는 $\pm 1$ 근방만 담으면 되니 **sign bit 하나로 충분**해 보입니다. 04번이 integer bits를 1-bit로 잡고 남는 30 bits를 전부 fraction bits로 몰아준 것이 이 논리입니다.
+
+**(b) diffusion operator 도중에 만들어지는 중간값 $2\bar a - \alpha_i$.** 그런데 amplitude는 memory에 가만히 있는 것이 아니라 매 iteration inversion about the mean을 거칩니다. 그 결과값의 상한을 재 보면 이렇습니다. Cauchy–Schwarz inequality로 mean의 크기는
+
+$$|\bar a| = \frac{1}{\text{number of states}}\left|\sum_i \alpha_i\right| \le \frac{1}{\text{number of states}}\sqrt{\text{number of states}}\sqrt{\sum_i \alpha_i^2} = \frac{1}{\sqrt{\text{number of states}}}$$
+
+이고 $|\alpha_i| \le 1$ 이므로
+
+$$\left|2\bar a - \alpha_i\right| \le 1 + \frac{2}{\sqrt{\text{number of states}}}$$
+
+**이 값은 1을 넘을 수 있습니다.** 넘는 폭이 크지는 않습니다 — 14 qubits면 $2/\sqrt{16384} = 2/128 = 0.0156$ 이니 상한이 1.0156입니다. 하지만 Q1.22의 천장은 $1 - 2^{-22}$ 이라, 이 값을 23-bit data word에 그대로 담을 수는 없습니다.
+
+**(c) 전체 sum을 담는 accumulator $\sum_i \alpha_i$.** mean을 구하려면 먼저 모든 amplitude를 더해야 합니다. 최악의 경우 자릿수가 $\log_2(\text{number of states}) = \text{number of qubits}$ bits만큼 늘어납니다.
+
+integer bits 폭을 하나만 정해서 셋에 다 쓰겠다는 발상이 틀린 것입니다. **재는 대상이 다르면 필요한 폭도 다릅니다.** 그래서 우리 datapath는 셋을 따로 잡습니다.
+
+| 값 | 폭 | 이유 |
+|---|--:|---|
+| 저장 amplitude (a) | **23 bits** (Q1.22) | 수학적으로 $\lvert\alpha\rvert \le 1$. memory에 들어가는 유일한 값 |
+| $2\bar a$ 와 diffusion operator 중간값 (b) | **25 bits** | 상한 1.0156 을 넉넉히 담는 register. 되쓸 때 23 bits로 symmetric saturation |
+| sum accumulator (c) | **39 bits** | data word width + number of qubits + 2 = 23 + 14 + 2 |
+
+(b)를 어떻게 처리하느냐가 이 절의 핵심 결정입니다. 길은 둘입니다. 저장 data word 자체에 integer bit를 하나 더 두는 길(Q2.22, 24 bits)과, 저장 data word는 Q1.22 로 두고 **중간값만 넓은 register에서 계산한 뒤 되쓸 때 saturation하는** 길입니다. 우리 RTL은 뒤를 택했습니다. 근거는 셋입니다.
+
+첫째, **되쓰는 값은 수학적으로 1을 넘지 않습니다.** $2\bar a - \alpha_i$ 의 상한 $1 + 2/\sqrt{\text{number of states}}$ 은 Cauchy–Schwarz inequality가 주는 느슨한 한계일 뿐이고, diffusion operator를 마친 값은 정확한 산술에서 여전히 unit vector의 성분입니다 — Grover iteration은 unitary이기 때문입니다(9장). 1을 넘는 양은 rounding이 만든 몇 LSB 뿐이고, 그것도 solution amplitude가 1에 거의 닿는 iteration에서만 생깁니다. 둘째, 중간값은 **register 하나**라 두 bit 넓히는 비용이 미미하지만, 저장 data word를 넓히면 그 비용이 amplitude array 전체와 checkpoint slot 전부에 곱해집니다. 셋째, 그리고 결정적으로 **benchmark가 뒷받침합니다.** 같은 산술(14 qubits · Q1.22 · 같은 rounding과 saturation 규칙)로 돌린 2026-08 reference model campaign 671,600 runs에서 saturation이 걸린 경우는 이렇습니다([실험 02 amplitude precision](../reports/02_amplitude_precision.md)).
+
+| search | run | saturation event | 1,000 runs당 |
+|---|--:|--:|--:|
+| number of iterations 수동 지정 (최적 근처를 일부러 포함) | 41,280 | 2,520 | 61.05 |
+| BBHT Restart mode | 137,600 | 368 | 2.67 |
+| BBHT Checkpoint mode | 137,600 | 368 | 2.67 |
+
+saturation이 일어나도 **기능 결과가 달라진 경우는 0**이었고, Restart mode와 Checkpoint mode에서 saturation event가 똑같이 368번 나왔다는 것은 두 경로가 같은 state를 지난다는 추가 증거입니다. saturation은 조용히 넘어가지 않고 `amp_overflow` 라는 sticky bit로 남습니다(12.5절). 진단용이지 결과 무효 표시가 아닙니다.
+
+정직하게 덧붙이면, 이 선택이 BRAM을 아낀 것은 아닙니다. 24-bit lane 셋은 72 bits로 RAMB36 한 port 폭에 정확히 들어가서, Q2.22로 잡았어도 state 한 벌이 RAMB36 11개로 같았을 것입니다(12.8절). 그러니 23 bits의 근거는 memory가 아니라 위의 셋 — 수학적 상한, register와 memory의 비용 차이, 그리고 benchmark입니다. (이 해설서의 옛 revision은 integer bits 2 bits를 결론으로 적었지만, 최종 RTL은 이 절의 길을 갔습니다.)
+
+(c)의 accumulator는 amplitude와 같은 data word에 담을 수 없으니 따로 잡습니다. Cauchy–Schwarz 상한만 보면 7 bits(number of qubits / 2)면 되지만 최악값인 14 bits(number of qubits)로 잡았는데, accumulator는 memory가 아니라 register라서 몇 bit 더 잡는 비용이 미미하기 때문입니다. 나머지 2 bits는 sign extension과 뒷단 연산을 위한 여유입니다. Measurement Unit에는 또 다른 accumulator(amplitude square의 sum)가 있는데, 그 폭은 measurement circuit의 구조와 함께 14장에서 정합니다.
+
+---
+[원문 끝]

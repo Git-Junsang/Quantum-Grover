@@ -1,0 +1,27 @@
+flowchart LR
+    HOST["host<br/>serial terminal<br/>ASCII line command"]
+    subgraph SOC["RVX SoC · 50 MHz"]
+        direction TB
+        UARTIP["UART · 115200 8N1"]
+        CORE["rvc_orca RV32 core<br/>console app · driver"]
+        NOC["munoc interconnect"]
+        SRAM["system SRAM 128 KB<br/>0xE0000000 ~ 0xE001FFFF"]
+        BR["RVX가 생성한 asynchronous bridge<br/>sni_apb_asynch · mni_ahbm_asynch"]
+        UARTIP --- CORE
+        CORE --- NOC
+        NOC --- SRAM
+        NOC --- BR
+    end
+    subgraph IP["accelerator · 100 MHz (clk_accel)"]
+        direction TB
+        CSR["bbht_grover_mmio<br/>APB slave · CSR 38개 · 4-byte 간격"]
+        DMA["bbht_ahb_loader<br/>AHB master · SINGLE"]
+        MAIN["Accelerator Core (final configuration)<br/>Shot Controller · Policy Engine · 4 PEs · Dual-Row Build · Two-Level Select · Result FIFO 256"]
+        MEM[("amplitude·checkpoint RAMB36 44<br/>data_mem RAMB18 64 · Found Mask 2")]
+        CSR --> MAIN
+        DMA --> MAIN
+        MAIN --- MEM
+    end
+    HOST <-->|UART| UARTIP
+    BR <-->|"APB — 설정 · state"| CSR
+    BR <-->|"AHB — array load"| DMA

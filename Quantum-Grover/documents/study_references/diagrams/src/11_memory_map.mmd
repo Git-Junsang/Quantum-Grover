@@ -1,0 +1,16 @@
+flowchart TD
+    IDX["index i · 14 bits<br/>상위 9-bit = row 번호 0…511 · 하위 5-bit = lane 0…31<br/>row 번호 하위 2-bit = bank 0…3"]
+    AMP["amplitude · checkpoint memory<br/>row = 32 lanes × 23-bit = 736-bit · state 한 벌 = 512 rows = RAMB36 11개<br/>bank 4 × checkpoint slot 4 · a Checkpoint-Capacity of 3은 3 checkpoint slots 사용"]
+    DAT["data_mem · 16-bit signed<br/>cycle당 4 rows 읽기 · host가 load"]
+    MSK["Found Mask · 16,384 states × 1 bit<br/>enumeration mode 전용"]
+    IDX --> AMP
+    IDX --> DAT
+    IDX --> MSK
+    AMP --> A2["RAMB36 44"]
+    DAT --> D2["RAMB18 64 = 32 tile"]
+    MSK --> M2["RAMB36 2"]
+    ETC["measurement row weight RAMB36 2 · policy memo table RAMB36 4"]
+    A2 --> TOT["Accelerator Core 84 tile + RVX SoC 32 tile<br/>= board 전체 116 / 135 tile"]
+    D2 --> TOT
+    M2 --> TOT
+    ETC --> TOT

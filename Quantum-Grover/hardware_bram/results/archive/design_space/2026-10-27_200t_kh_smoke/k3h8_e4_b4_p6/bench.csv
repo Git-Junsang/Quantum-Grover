@@ -1,0 +1,6 @@
+m,seed_idx,mode,result_index,trial,l_bbht,iter,cycles,policy_cycles,policy_stall,policy_actions,cold,spec,mismatch
+1,0,normal,507,25,308,308,90188,0,0,0,0,0,0
+1,0,k4,507,25,308,70,34116,13249,9956,319,1,25,0
+1,1,normal,507,15,23,23,11184,0,0,0,0,0,0
+1,1,k4,507,15,23,9,7907,4284,2163,396,1,15,0
+# DONE errors=0 workloads=2

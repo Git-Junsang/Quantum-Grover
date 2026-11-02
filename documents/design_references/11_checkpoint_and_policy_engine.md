@@ -207,3 +207,164 @@ policy algorithm을 고른 과정은 [실험 05](../reports/05_checkpoint_policy
 [실험 36](../reports/36_generalized_common500_and_policy_heatmaps.md)에서 별도로 기록합니다.
 후속 iteration / square engine 확장, 최종 구성 이후의 확장용 memory 정리와 resource 한도 내
 연산부 최적화 순서는 [실험 37](../reports/37_expanded_iteration_and_measurement_engines.md)에 있습니다.
+
+---
+
+## 11.8 checkpoint policy와 연산 병렬도의 관계
+
+이 절은 교수 검토와 algorithm 설명을 위한 개발 경로의 정리입니다. 앞 절의 Board-Verified Build와
+후속 parameterized RTL을 구분하며, 용어의 최종 일괄 변경은 수행하지 않습니다.
+개발 경로의 지원 범위와 검증 근거는 [실험 37](../reports/37_expanded_iteration_and_measurement_engines.md),
+고정 병렬도의 실제 비교는 [실험 36](../reports/36_generalized_common500_and_policy_heatmaps.md)을 따릅니다.
+
+### 11.8.1 설명의 출발점: 연산량과 처리 속도
+
+이 accelerator는 [state vector emulation](03_grover_and_bbht_algorithm.md#31-state-vector-emulation)을
+수행합니다. 같은 Oracle에서 BBHT shot이 실패한 뒤에는 이미 계산한 amplitude state를 재사용할 수 있습니다.
+Checkpoint-Capacity와 Lookahead-Shots는 **어떤 state를 보존하여 재계산을 얼마나 줄일지**를 결정하고,
+iteration PE와 square engine의 개수는 **남은 계산을 얼마나 빠르게 처리할지**를 결정합니다.
+여기에 Policy Scheduler가 다음 계획을 미리 준비할 수 있는지가 전체 실행 시간을 좌우합니다.
+
+| 설정 | algorithm에서의 의미 | 직접 바뀌는 양 | 구별할 것 |
+|---|---|---|---|
+| Checkpoint-Capacity | 동시에 보존할 amplitude checkpoint의 상한 | 재사용 가능한 state 집합과 executed iterations | checkpoint 하나는 전체 amplitude vector입니다. basis state나 qubit 하나를 뜻하지 않습니다 |
+| Lookahead-Shots | 현재 shot 뒤에 실패를 가정하여 계획에 넣는 미래 shot 수 | solver가 고려할 request window와 checkpoint 선택 | 현재 shot까지 포함하면 request는 하나 더 있습니다. Plan Queue 깊이와 다릅니다 |
+| number of PEs | 한 Grover iteration 안에서 서로 다른 row를 함께 처리하는 PE 수 | iteration당 cycle | 여러 shot을 독립 실행하는 개수가 아닙니다 |
+| square engines | Measurement Unit의 Build에서 row weight를 함께 만드는 engine 수 | measurement Build당 cycle | engine 하나에 row 하나를 위한 32-lane square가 있습니다. 과거 Measurement Microarchitecture 번호와 다릅니다 |
+
+후속 경로의 설정은 `CHECKPOINT_CAPACITY`, `LOOKAHEAD_SHOTS`, `NUMBER_OF_PES`,
+`BUILD_ROWS_PER_CYCLE`에 대응합니다. 기존 구성 이름과 과거 benchmark의 표기는 그대로 보존합니다.
+row와 lane, iteration, measurement의 상세 동작은 [9장](09_iteration_datapath_and_number_of_pes.md)과
+[10장](10_measurement_unit_and_microarchitecture.md)에 있습니다.
+
+<img src="diagrams/checkpoint_compute_tradeoffs.svg" alt="checkpoint 선택, 연산 병렬도와 policy overlap이 전체 실행 시간에 미치는 관계" width="1080">
+
+### 11.8.2 한 shot에서 policy가 하는 일
+
+1. Shot Controller가 이번 shot에서 필요한 number of iterations를 정합니다. Iteration-Count Predictor는
+   이번 shot과 뒤따르는 shot들이 실패한다는 조건으로 미래 request를 계산합니다.
+2. solver는 현재 checkpoint 집합과 request window를 입력받습니다. 각 request 이하에서 가장 가까운
+   checkpoint를 출발점으로 잡고, 없으면 uniform superposition에서 시작합니다.
+3. restricted-B action set 안에서 이번 endpoint와 보존할 기존 checkpoint, 실행 중 추가할 중간
+   checkpoint의 조합을 비교합니다. 추가할 중간 checkpoint는 request pool에 있는 값이며 실제 실행
+   구간 안에 있어야 합니다. endpoint를 포함한 보존 개수는 Checkpoint-Capacity 안에 들어가야 합니다.
+4. window 안의 executed iterations 합이 최소인 action을 선택합니다. 동점이면 root의 segment 수,
+   정렬된 checkpoint tuple 순서로 결정합니다. memoized DP와 lower bound를 이용한 pruning은
+   이 결정을 더 적은 탐색으로 계산하는 수단입니다.
+5. Checkpoint Planner가 선택한 논리적 checkpoint 집합을 물리 slot과 segment 경계로 바꿉니다.
+   Checkpoint Executor는 iteration PE들을 동작시키고 안전한 완료 경계에서 metadata를 확정합니다.
+6. Measurement Unit이 amplitude square, prefix sum, 선택과 solution check를 수행합니다. 실패하면
+   다음 shot에 checkpoint를 재사용합니다. enumeration에서 solution을 찾고 Oracle이 바뀌면 이전
+   checkpoint와 예측 계획을 무효화합니다.
+
+DP의 부분 문제는 checkpoint 집합과 남은 request 위치로 구분합니다. 같은 부분 문제의 비용을 memo에
+보관하여 재계산을 피합니다. generic backend는 DFS stack으로 부분 문제를 처리하며, 여러 후보의
+lower bound를 병렬로 계산합니다. lower bound는 보존 용량 등의 제약을 완화한 낙관적 비용입니다.
+실제로 끝까지 계산한 후보보다 좋아질 수 없는 후보를 제외하되 root의 동률 규칙도 보존합니다.
+이 후보 탐색 병렬도는 `POLICY_SCAN_LANES`이며 iteration PE나 square engine 개수와 별도입니다.
+
+Policy Scheduler는 이 결정이 필요한 시점에 준비되도록 demand와 speculation을 조정하고 Plan Queue를
+관리합니다. **solver는 무엇을 남길지 계산하고, scheduler는 언제 계산하고 어느 결과를 쓸지 제어합니다.**
+현재 Scheduler는 Accelerator Core의 `AP_*` / `SP_*` 제어이며 별도 module로 분리한 구현은 아닙니다
+([실험 35](../reports/35_parameterized_main_ip_scheduler_integration.md)). 미래 request는 조건부 예측이므로
+실제 request와 입력 checkpoint 집합, 계획의 유효 세대가 맞을 때만 사용합니다.
+
+현재 solver의 최적성은 **restricted-B action set과 유한 request window 안의 iteration 비용**에 관한
+것입니다. 모든 가능한 checkpoint algorithm이나 전체 BBHT 실행 시간의 전역 최적성을 뜻하지 않습니다.
+단일 action이면 비교할 선택이 없으므로 mode 6은 나머지 window의 비용 계산을 생략할 수 있습니다.
+이 경우 `root_cost`가 immediate cost를 반환하는 계약은
+[실험 28](../reports/28_policy_single_action_exit.md)과
+[실험 36](../reports/36_generalized_common500_and_policy_heatmaps.md)의 설명을 따릅니다.
+
+### 11.8.3 checkpoint와 Lookahead가 함께 필요한 예
+
+다음은 이해를 위한 algorithm 예이며 RTL 성능 측정값이 아닙니다. 같은 Oracle에서 5 iterations를
+계산한 checkpoint가 있고, 이번 request는 12 iterations, 다음 실패 후 request는 8 iterations라고 합니다.
+iteration은 순방향으로 실행하며 더 큰 checkpoint에서 역으로 돌아가는 action은 사용하지 않습니다.
+
+| 보존 가능 개수 | 이번 shot의 실행과 보존 | 다음 request의 실행 | 두 shot의 executed iterations |
+|---:|---|---|---:|
+| 1 | 5에서 12까지 7 iterations 실행하고 endpoint 12만 보존 | checkpoint 12에서 8로 돌아갈 수 없어 처음부터 8 iterations | 15 |
+| 2 | 다음 request를 보고 5에서 12로 가는 도중 8을 보존하고 endpoint 12도 보존 | checkpoint 8을 바로 사용 | 7 |
+
+다음 request가 8이라는 정보를 이용하려면 적어도 1-shot Lookahead가 필요합니다. 보존 공간이 하나뿐이면
+endpoint 12를 남겨야 하므로 Lookahead를 늘려도 이 예의 선택은 바뀌지 않습니다. 공간만 늘리는 것과
+미래 정보를 이용해 그 공간을 채우는 것은 함께 보아야 합니다.
+
+일반적으로 Checkpoint-Capacity가 커지면 재사용 기회가 늘지만, 선택할 집합과 저장 공간도 늘어납니다.
+Lookahead-Shots가 커지면 미래의 재사용을 고려할 수 있지만 탐색량도 늘어납니다. 유한 window를 매 shot
+다시 푸는 방식에서는 둘 중 하나를 늘릴 때 전체 workload의 iteration 수나 cycle이 항상 줄어든다고
+가정할 수 없습니다. 유효한 action이 하나뿐인 구간에서는 window가 커져도 선택 이득이 없습니다.
+
+request 방향의 탐색 깊이는 Lookahead-Shots가 결정합니다. Checkpoint-Capacity를 늘려 커지는 것은
+주로 checkpoint 집합의 크기와 가능한 조합 수입니다. amplitude memory의 물리 주소 깊이가 증가하는
+현상과 DFS의 탐색 깊이가 증가하는 현상은 구별합니다.
+
+### 11.8.4 전체 cycle에 반영되는 경로
+
+전체 cycle은 실행한 iteration들의 비용, 매 shot의 measurement 비용, initialization과 실행 제어 비용,
+그리고 사용 가능한 계획을 기다린 policy stall로 나누어 생각할 수 있습니다. iteration과 measurement는
+현재 실행 경로에서 차례로 진행되며, speculative policy 계산은 그 실행과 겹칠 수 있습니다.
+
+| 비교할 값 | 의미 | 해석 |
+|---|---|---|
+| executed iterations | 실제 amplitude 갱신을 수행한 iteration 수 | checkpoint policy가 줄이려는 연산량 |
+| iteration당 cycle | Pass 1 · Mean · Pass 2와 drain의 비용 | PE를 늘려 줄이려는 시간 |
+| measurement당 cycle | Build · Select · Reread와 solution check의 비용 | square engine은 주로 Build를 단축 |
+| policy cycles | run의 유효한 완료 solver 결과에 누적한 계산 cycle | background에서 겹쳐 수행한 계산도 포함하며, 취소된 job의 원시 총량과는 다를 수 있음 |
+| policy stall | 실제 demand가 사용 가능한 계획을 기다린 cycle | solver 계산뿐 아니라 predictor 준비와 demand 제어의 대기도 포함 |
+| total cycles | accelerator 실행의 경과 cycle | 겹친 policy cycles를 여기에 다시 더하면 안 됨 |
+
+policy cycles와 policy stall은 서로 다른 counter입니다. solver가 짧아도 초기 demand 제어에 대기가
+있을 수 있으며, solver가 오래 계산해도 미리 끝내면 그 계산 전체가 stall로 드러나지는 않습니다.
+정확한 counter 조건은 [`bbht_grover_main_ip.v`](../../hardware_bram/src/bbht_grover_main_ip.v)의
+`policy_cycles_run` / `policy_stall_run` 갱신을 기준으로 합니다.
+
+이상적인 row 발행 구간에서 PE 수를 두 배로 늘리면 iteration의 두 pass는 각각 약 절반에 발행할 수
+있습니다. square engine 수를 두 배로 늘리면 Build의 row 발행 구간이 약 절반으로 줄어듭니다.
+Mean, pipeline drain, Select, initialization과 제어는 같은 비율로 줄지 않으며 마지막 부분 row group도
+있으므로 전체 cycle을 단순히 병렬도에 반비례시킬 수는 없습니다.
+
+현재 solver의 비용 비교에는 iteration / square engine 수에 따른 cycle이나 예상 stall이 들어가지
+않습니다. 따라서 **iteration 수가 최소인 policy 선택과 전체 실행 시간이 최소인 hardware 구성을
+구별해야 합니다.** 같은 solver 입력에서 iteration / square engine 개수만 바꾸면 policy의 선택은
+같아야 하지만, 완료 시점과 speculative 계산의 overlap은 달라질 수 있습니다.
+
+### 11.8.5 네 설정 사이의 연결
+
+| 함께 볼 설정 | 연결되는 이유 | 성능을 볼 때의 기준 |
+|---|---|---|
+| Checkpoint-Capacity · Lookahead-Shots | 미래의 재사용 정보를 실제 보존 공간에 반영 | 둘을 늘린다고 항상 이득이 커지는 것은 아님. 선택 이득과 solver 비용을 함께 비교 |
+| Checkpoint-Capacity · number of PEs | checkpoint가 executed iterations를 줄이고 PE는 iteration당 시간을 줄임 | iteration이 적어지면 PE 증가로 절약할 총 cycle도 작아질 수 있음 |
+| Lookahead-Shots · number of PEs | 긴 window의 solver를 실행 뒤로 숨겨야 함 | iteration이 빨라지면 다음 계획이 필요한 시점도 빨라져 stall이 드러날 수 있음 |
+| Checkpoint-Capacity · square engines | checkpoint 재사용은 iteration을 생략해도 shot의 measurement는 수행 | 같은 shot 수에서는 Build 연산량이 유지되어 square engine의 상대적 중요도가 커질 수 있음 |
+| Lookahead-Shots · square engines | measurement 시간도 speculative policy의 준비 시간으로 사용 | Build가 빨라져도 계획 준비 시간이 줄어들 수 있음 |
+| number of PEs · square engines | iteration과 measurement의 다른 부분을 가속 | 어느 한쪽만 확대하면 남은 쪽과 고정 비용의 비중이 커짐 |
+
+고정 seed와 동일한 bit-exact 계약에서는 checkpoint policy와 병렬도 변경이 BBHT의 requested iterations,
+measurement의 PRNG 순서와 결과를 바꾸지 않아야 합니다. checkpoint가 줄이는 것은 물리적으로 다시
+계산할 iteration 수이며, shot 수를 줄이는 별도 algorithm으로 해석하지 않습니다.
+
+작은 Checkpoint-Capacity만으로 PE와 square engine의 최종 균형을 고르면, checkpoint를 늘렸을 때와
+iteration / measurement의 비중이 다를 수 있습니다. 예를 들어 iteration 수가 절반이 되면 iteration당
+같은 시간을 절약해도 전체 절약량은 절반이 되지만, shot 수가 같다면 Build 단축의 절약량은 유지됩니다.
+이는 PE 자체의 처리율이 나빠진다는 뜻이 아니라 가속할 작업의 양이 바뀐다는 뜻입니다.
+
+반대로 PE가 많아지면 checkpoint 재사용으로 절약하는 iteration 하나의 시간 가치가 작아지고, 동시에
+policy 계산을 숨길 시간도 줄어듭니다. 그래서 더 작은 checkpoint / Lookahead가 유리할 가능성도 있습니다.
+서로 반대 방향의 효과가 있으므로 연산 병렬도를 높이면 최적 checkpoint / Lookahead가 어느 쪽으로
+이동한다고 미리 단정할 수 없습니다.
+
+### 11.8.6 resource와 최종 선택
+
+Checkpoint-Capacity는 amplitude 저장 용량과 metadata를, Lookahead-Shots는 request window와 solver의
+탐색 stack / 후보 cache를 증가시킬 수 있습니다. PE는 iteration 산술과 read / write bandwidth,
+현재 구조의 dataset / Found Mask 복제에 영향을 줍니다. square engine은 square 산술, row weight 저장과
+amplitude read bandwidth에 영향을 줍니다. iteration과 measurement가 amplitude memory를 공유하므로
+전체 BRAM 사용량을 네 설정의 독립적인 증가량만 더해서 예측해서는 안 됩니다.
+
+최종 선택은 **resource 안에 들어가고 timing을 만족하는 구성 중 실제 전체 실행 시간이 짧은 구성**입니다.
+동일 clock에서는 total cycles로 비교할 수 있고, 달성 clock이 다르면 그 차이도 반영합니다.
+초기 연산부 비교를 같은 기준 checkpoint / Lookahead에서 수행한 뒤, 유망한 PE / square engine 후보마다
+checkpoint / Lookahead를 다시 비교합니다. 그 뒤 memory를 정리하고 synthesis / routing과 실제 통합
+실행으로 확인하는 순서는 [실험 37](../reports/37_expanded_iteration_and_measurement_engines.md)에 있습니다.

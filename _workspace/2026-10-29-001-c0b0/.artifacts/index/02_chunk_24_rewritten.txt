@@ -1,0 +1,17 @@
+#### Part 5~8의 원문 — 논문 6편 (`papers/` 2·3·4번 directory)
+
+Part 5~8은 아래 여섯 편을 설계 질문별로 가로질러 다룹니다. 각 편의 한국어 해설본과 원문 PDF 목록은 [논문 목록의 「보유 원문과 한국어 해설본」](papers/references.md#보유-원문과-한국어-해설본)에 있습니다(원문 대조용).
+
+- **[04] Developing a Grover's Emulator on Standalone FPGAs** — Choi & W. Lee (중앙대), AIMS Math. 9(11), 2024. Grover 전용 최적화 4종 + RISC-V SoC. → 11·13장(설계도).
+- **[05] Precision-aware Fixed-point Emulation of Grover's** — Choi 외, W. Lee 교신 (중앙대), Quantum Inf. Process. 25:214, 2026. truncation error 이론·minimum fraction bits 공식. → 12장.
+- **[06] Standalone FPGA-Based QAOA Emulator** — Choi 외, W. Lee (중앙대), arXiv:2502.11316, 2025. 같은 골격의 QAOA emulator. → 11·13장(multiplier 대비).
+- **[07] Towards Complete and Scalable Emulation (HPRC)** — El-Araby 외 (U. Kansas), IEEE TC 72(8), 2023. 외부 DDR로 32 qubits, C2Q initialization. → 11·12장(대조군).
+- **[08] Generalized Grover's Algorithm for Multiple Phase Inversion States** — Byrnes, Forster, Tessler, PRL 120, 060501, 2018. diffusion operator 일반화. → [11.10절](11_state_vector_emulator.md#1110-emulator가-숨기는-것)(실기에서는 이득이지만 emulator에서는 손해가 되는 일반화) · [14.0절](14_multiple_solutions_and_minimum_search.md#140-기호-충돌-주의)(기호 충돌 주의).
+- **[09] Quantum Minimum Searching for AUD in Wireless IoT** — Habibie 외 (INSA Lyon), IEEE IoT J. 11(12), 2024. Dürr–Høyer minimum search의 응용 사례. → [14.9절](14_multiple_solutions_and_minimum_search.md#149-확장--threshold를-낮추면-minimum-search) · [15장](15_paper_map_and_design_decisions.md)(**확장 참고 사례**로 강등 — 남는 것은 "oracle은 predicate를 판정한다"는 관점과 응용 사례 하나입니다).
+
+여섯 편의 계보 바깥에서 설계 결정 하나의 근거가 되는 논문이 한 편 더 있습니다.
+
+- **[BBHT] Tight bounds on quantum searching** — Boyer, Brassard, Høyer, Tapp (1998). solution이 몇 개인지 모르는 채 Grover를 돌리는 표준 절차(sampling range를 1에서 시작해 실패할 때마다 growth factor 6/5 = 1.2×로 키움)와 success probability lower bound의 **원전**. → [16.2절](16_iteration_control_and_checkpoints.md#162-bbht--무작위로-뽑는-number-of-iterations와-12-growth-factor). 09번 논문의 Algorithm 1·2도 이 절차를 옮겨 온 것이므로, **iteration schedule을 인용할 때는 09번이 아니라 1998년 원전을 인용하십시오.** 원문 PDF는 `papers/` 에 없습니다.
+
+---
+

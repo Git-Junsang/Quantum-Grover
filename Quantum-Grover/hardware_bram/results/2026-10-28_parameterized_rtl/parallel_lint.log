@@ -1,0 +1,8 @@
+%Warning-UNOPTFLAT: hardware_bram/src/grover_arithmetic.v:136:27: Signal unoptimizable: Circular combinational logic: 'grover_iter_datapath_parallel.g_engine[0].u_partial.pre_node'
+  136 |     wire signed [PSW-1:0] pre_node [0:(CUT+1)*P-1];
+      |                           ^~~~~~~~
+                    ... For warning description see https://verilator.org/warn/UNOPTFLAT?v=5.020
+                    ... Use "/* verilator lint_off UNOPTFLAT */" and lint_on around source to disable this message.
+                    hardware_bram/src/grover_arithmetic.v:136:27:      Example path: grover_iter_datapath_parallel.g_engine[0].u_partial.pre_node
+                    hardware_bram/src/grover_arithmetic.v:147:40:      Example path: ASSIGNW
+                    hardware_bram/src/grover_arithmetic.v:136:27:      Example path: grover_iter_datapath_parallel.g_engine[0].u_partial.pre_node

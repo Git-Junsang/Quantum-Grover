@@ -1,0 +1,237 @@
+{
+  "edits": [
+    {
+      "rule": "D-14",
+      "before": "**여러 번 던져야** 하고,",
+      "after": "**여러 번 실행해야** 하고"
+    },
+    {
+      "rule": "D-14",
+      "before": "이 project가 기존 Grover emulator들과 갈라지는 지점이 바로 여기이고,",
+      "after": "이 점이 이 project와 기존 Grover emulator들의 차이이며"
+    },
+    {
+      "rule": "D-14",
+      "before": "9.6절에서 못 박았듯",
+      "after": "9.6절에서 확인했듯"
+    },
+    {
+      "rule": "D-14",
+      "before": "quantum algorithm 쪽에는 정석 처방이 있습니다.",
+      "after": "quantum algorithm에는 이 문제를 다루는 표준 방법이 있습니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "13장의 multiplier 없는 산술이 통째로 무너집니다.",
+      "after": "13장의 multiplier 없는 산술을 그대로 쓸 수 없게 됩니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "counting 하나를 위해 accelerator 전체를 complex number로 바꾸는 거래는 남는 장사가 아닙니다.",
+      "after": "counting을 위해 accelerator 전체를 complex number로 바꾸는 것은 비용에 비해 이득이 작습니다."
+    },
+    {
+      "rule": "D-8",
+      "before": "여기서 정직하게 짚고 갈 것이 하나 있습니다.",
+      "after": "여기서 구분해 둘 점이 있습니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "solution을 미리 세어 놓고 시작하는 것은 amplitude array를 훔쳐보는 것과 같은 반칙이고, 그렇게 만든 기계는 \"Grover를 돌리는 기계\"가 아니라 \"Grover처럼 생긴 무언가\"가 됩니다.",
+      "after": "solution을 미리 세어 놓고 시작하는 것은 amplitude array를 직접 읽는 것과 마찬가지로 실제 장치에서 얻을 수 없는 정보를 쓰는 일입니다. 그렇게 만든 기계는 Grover의 외형만 따를 뿐 Grover의 동작을 충실히 재현하지 못합니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "충실도가 속도를 이깁니다.",
+      "after": "속도보다 충실도를 우선합니다."
+    },
+    {
+      "rule": "D-8",
+      "before": "답은 success probability의 모양에 있습니다.",
+      "after": "success probability의 모양을 보면 이유를 알 수 있습니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "그 shot은 몇 번을 반복해도 영원히 실패합니다.",
+      "after": "그 shot은 몇 번을 반복해도 실패합니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "algorithm의 정당성을 떠받치는 요소입니다.",
+      "after": "algorithm의 정당성을 보장하는 요소입니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "shot을 더 많이 던져야 하고,",
+      "after": "shot을 더 많이 실행해야 하고"
+    },
+    {
+      "rule": "D-14",
+      "before": "상한이 overshoot를 막는 장치로 일하는 모습입니다.",
+      "after": "이렇게 상한이 overshoot를 막습니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "**28항 ROM**에 구워 둡니다",
+      "after": "**28항 ROM**에 저장해 둡니다"
+    },
+    {
+      "rule": "D-14",
+      "before": "승부가 나기 시작하는 것은",
+      "after": "실제로 답을 얻기 쉬워지는 것은"
+    },
+    {
+      "rule": "D-14",
+      "before": "각각 18% 넘게 더 벌었습니다",
+      "after": "각각 18% 넘게 더 줄였습니다"
+    },
+    {
+      "rule": "D-14",
+      "before": "measurement가 뱉은 후보 index",
+      "after": "measurement가 내놓은 후보 index"
+    },
+    {
+      "rule": "D-14",
+      "before": "**non-solution을 뱉을 수 있기**",
+      "after": "**non-solution을 내놓을 수 있기**"
+    },
+    {
+      "rule": "D-14",
+      "before": "shot 사이의 state는 전부 hardware가 쥡니다.",
+      "after": "shot 사이의 state는 전부 hardware가 관리합니다."
+    },
+    {
+      "rule": "D-8",
+      "before": "이제 이 장의 본론입니다. 22.7번의 shot 가운데",
+      "after": "22.7번의 shot 가운데"
+    },
+    {
+      "rule": "D-14",
+      "before": "amplitude에 **한 글자도 쓰지 않습니다.**",
+      "after": "amplitude에 **아무 값도 쓰지 않습니다.**"
+    },
+    {
+      "rule": "A-7",
+      "before": "최대 세 벌(a Checkpoint-Capacity of 3) 들고 있고,",
+      "after": "최대 세 벌(a Checkpoint-Capacity of 3) 저장하고"
+    },
+    {
+      "rule": "D-14",
+      "before": "중간 state를 다른 checkpoint slot에 떨궈 두는 것도 거의 공짜입니다.",
+      "after": "중간 state를 다른 checkpoint slot에 저장하는 데도 추가 비용이 거의 들지 않습니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "진짜 LFSR state를 건드리지 않고 사본을 굴려",
+      "after": "실제 LFSR state를 바꾸지 않고 사본을 전진시켜"
+    },
+    {
+      "rule": "D-14",
+      "before": "정해진 정렬 순서로 동률을 끊어",
+      "after": "정해진 정렬 순서로 동률을 처리해"
+    },
+    {
+      "rule": "D-8",
+      "before": "이 절이 이 장에서 가장 중요합니다. 실패한 shot의",
+      "after": "실패한 shot의"
+    },
+    {
+      "rule": "D-14",
+      "before": "다만 정직하게 덧붙일 것이 있습니다.",
+      "after": "다만 제약도 있습니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "quantum mechanics가 그것을 허락해서가 아닙니다.",
+      "after": "quantum mechanics에서 가능한 동작이어서가 아닙니다."
+    },
+    {
+      "rule": "D-2",
+      "before": "가장 극적인 사례입니다.",
+      "after": "대표적인 사례입니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "쓰면 거짓말이 됩니다 —",
+      "after": "쓰면 부정확합니다 —"
+    },
+    {
+      "rule": "D-14",
+      "before": "software에 맡기면 **반드시 새는 곳이 생깁니다.**",
+      "after": "software에 맡기면 **무효화 처리를 빠뜨리는 경우가 반드시 생깁니다.**"
+    },
+    {
+      "rule": "D-14",
+      "before": "낡은 amplitude 위에 새 oracle이 얹혀",
+      "after": "이전 amplitude에 새 oracle이 적용되어"
+    },
+    {
+      "rule": "D-14",
+      "before": "설정값에서 공짜로 판정되는데",
+      "after": "설정값에서 추가 비용 없이 판정할 수 있는데"
+    },
+    {
+      "rule": "D-14",
+      "before": "추가 memory가 0이라는 매력이 있었지만,",
+      "after": "추가 memory가 0이라는 이점이 있었지만"
+    },
+    {
+      "rule": "A-19",
+      "before": "number of iterations마다의 amplitude를",
+      "after": "각 number of iterations의 amplitude를"
+    },
+    {
+      "rule": "D-14",
+      "before": "같은 규칙으로 못 박았습니다.",
+      "after": "같은 규칙으로 확정했습니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "array를 훔쳐보지 않는다는 16.1절의 원칙이",
+      "after": "array에서 정보를 미리 읽지 않는다는 16.1절의 원칙이"
+    },
+    {
+      "rule": "D-14",
+      "before": "**영원히 bit-exact가 되지 않는데**",
+      "after": "**bit-exact가 성립하지 않는데**"
+    },
+    {
+      "rule": "D-14",
+      "before": "Q1.22 datapath가 무너지기 때문.",
+      "after": "Q1.22 datapath를 그대로 쓸 수 없기 때문."
+    },
+    {
+      "rule": "D-14",
+      "before": "그것은 amplitude array를 훔쳐보는 반칙입니다.",
+      "after": "그것은 amplitude array를 직접 읽는 것처럼 실제 장치에서 얻을 수 없는 정보를 쓰는 일입니다."
+    },
+    {
+      "rule": "A-7",
+      "before": "**세 벌(a Checkpoint-Capacity of 3)** 들고 있다가",
+      "after": "**세 벌(a Checkpoint-Capacity of 3)** 저장해 두었다가"
+    },
+    {
+      "rule": "D-14",
+      "before": "Iteration-Count LFSR을 사본으로 굴려",
+      "after": "Iteration-Count LFSR의 사본을 전진시켜"
+    },
+    {
+      "rule": "D-14",
+      "before": "**실기 quantum은 못 하는 반칙**이고,",
+      "after": "**실기 quantum에서는 할 수 없는 동작**이고"
+    },
+    {
+      "rule": "D-14",
+      "before": "checkpoint slot이 살아 있습니다.",
+      "after": "checkpoint slot이 유효한 상태로 남습니다."
+    }
+  ],
+  "self_check": {
+    "fidelity": true,
+    "conservative": true,
+    "genre": true,
+    "register": true,
+    "targeted_patterns_reviewed": true,
+    "no_new_metaphors_or_claims": true
+  }
+}

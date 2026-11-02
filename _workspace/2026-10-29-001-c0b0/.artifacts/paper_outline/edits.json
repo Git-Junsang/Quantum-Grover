@@ -1,0 +1,17 @@
+{
+  "edits": [
+    {
+      "rule": "D-14",
+      "before": "그 절을 쓸 때 끌어올 기술문서 장과 benchmark 묶음입니다.",
+      "after": "그 절을 쓸 때 참조할 기술문서 장과 benchmark 묶음입니다."
+    }
+  ],
+  "self_check": {
+    "preserved_anchors": true,
+    "genre": true,
+    "register": true,
+    "no_added_claims": true,
+    "no_added_metaphors": true,
+    "protected_tokens": true
+  }
+}

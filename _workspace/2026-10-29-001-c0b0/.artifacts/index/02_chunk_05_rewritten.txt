@@ -1,0 +1,15 @@
+## 4. quantum computer는 무엇을 잘하는가
+
+quantum computer가 **모든** 문제를 빠르게 푸는 마법 상자는 아닙니다. 대부분의 문제에서는 classical computer와 큰 차이가 없습니다. 그러나 몇몇 특정 문제군에서는 극적으로 앞섭니다.
+
+| algorithm                | 문제                       | classical            | quantum            | 향상                   |
+| ----------------------- | -------------------------- | --------------- | --------------- | ---------------------- |
+| **Shor**          | 큰 수의 소인수분해         | exponential time       | polynomial time       | 지수적 (RSA 암호 위협) |
+| **Grover**        | 정렬 안 된 data에서 search | $O(\text{number of states})$        | $O(\sqrt{\text{number of states}})$ | quadratic        |
+| **Deutsch-Jozsa** | function이 constant/balanced인지 판별  | $O(2^{\text{number of qubits}})$      | $O(1)$        | 지수적 (교육적 예제)   |
+| quantum simulation         | 분자·물질 simulation      | 지수적으로 느림 | 효율적          | 지수적                 |
+
+이 표에서 **Grover와 Deutsch-Jozsa** 가 이 해설서의 종착지입니다. Shor algorithm은 더 복잡해서 다루지 않지만, Grover를 이해하면 quantum algorithm의 핵심 아이디어 — **interference로 solution의 probability를 키우는 것** — 을 익힐 수 있습니다.
+
+---
+

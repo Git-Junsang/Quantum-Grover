@@ -1,0 +1,22 @@
+{
+  "config": {
+    "schema": 2,
+    "k": 3,
+    "h": 3,
+    "e": 4,
+    "m": 2,
+    "policy_mode": 5,
+    "scan_lanes": 4,
+    "force_generic": true
+  },
+  "sha256": {
+    "hardware_bram/src/grover_policy.v": "2a3f066324b7be44aea5c90b0653bc9a10151edc29731d2623fba34366a79875",
+    "hardware_bram/src/grover_policy_parameterized.sv": "119f2bb54d308f2a77b33a34ccfcf9b2177927439b68d8872f09ed53cb250c05",
+    "hardware_bram/src/grover_param.vh": "f334d27683ec7660250a4c9ccefd90c1c82b9c7047d37bd4ca887fb29a11f2fd",
+    "hardware_bram/testbench/tb_policy_parameterized.sv": "13de89f15aeb3d5fdec2a360fb42c6667a006d8c467fe4e3a2e884114128bfc9"
+  },
+  "random_cases": 24,
+  "seed": 28028,
+  "scope": "standalone RTL policy only; full Main-IP integration pending",
+  "backend": "generic experimental"
+}

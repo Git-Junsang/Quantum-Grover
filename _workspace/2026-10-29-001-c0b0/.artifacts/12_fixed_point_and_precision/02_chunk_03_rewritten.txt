@@ -1,0 +1,20 @@
+## 12.2 fixed-point와 Q format 명명 규약
+
+**fixed-point**는 이름 그대로 radix point 위치를 **한 자리에 고정해** 두는 방식입니다. radix point가 떠다니지 않으므로 alignment·normalization이 필요 없고, 숫자를 그냥 **integer처럼** 다루되 "이 integer의 아래 몇 bit는 fraction bits"라고 약속만 해 두면 됩니다.
+
+일상의 비유를 들면, 돈을 다룰 때 우리는 12,345원을 굳이 $1.2345\times 10^4$ 로 쓰지 않습니다. 그냥 "원" 단위 integer로 적고 radix point는 생각하지 않죠. fixed-point도 똑같습니다. 예를 들어 아래 22 bits를 fraction bits로 약속하면, memory에 저장된 integer $2{,}097{,}152$ 는 실제로는 $2^{21}/2^{22} = 0.5$ 를 뜻합니다. radix point는 "약속" 속에만 있고 hardware는 integer 연산만 합니다.
+
+이 약속을 **Q format**으로 표기합니다. `Q<integer bits>.<fraction bits>` 꼴입니다. 그런데 여기에 문헌마다 갈리는 함정이 있습니다 — **sign bit를 integer bits에 넣어 세는 곳과 따로 빼는 곳이 있어서**, 똑같은 32-bit data word가 어디서는 Q1.30으로, 어디서는 Q2.30으로 적힙니다.
+
+이 해설서에서는 다음 규약으로 통일합니다. **sign bit는 integer bits에 포함합니다.** 따라서 Q format의 data word width는 언제나 integer bits + fraction bits이고, 표현 범위는 $[-2^{\,\text{integer bits}-1},\ 2^{\,\text{integer bits}-1} - 2^{-\text{fraction bits}}]$, resolution은 $2^{-\text{fraction bits}}$ 입니다.
+
+이 규약으로 우리 설계를 적으면 이렇게 됩니다. amplitude data word width는 23 bits, fraction bits는 22 bits, 그래서 **Q1.22** — sign 1 + fraction 22이고, integer bits에 sign 말고는 아무것도 없습니다. 23-bit two's complement의 표현 범위는 $[-1,\ 1 - 2^{-22}]$ 이고 resolution은 $2^{-22} \approx 2.38\times 10^{-7}$ 입니다. 여기서 한 가지를 눈여겨보십시오 — **$+1.0$ 은 담기지 않습니다.** integer로 $2^{22} = 4{,}194{,}304$ 가 필요한데 23-bit two's complement의 maximum은 $4{,}194{,}303$ 입니다. 우리는 여기에 한 칸을 더 버려, 음수 쪽 끝 $-4{,}194{,}304$ 도 쓰지 않고 **$[-4{,}194{,}303,\ +4{,}194{,}303]$ 의 대칭 범위**만 합법 값으로 둡니다. 왜 그런지는 12.5절과 13.4절에서 드러납니다.
+
+<img src="diagrams/12_qformat.svg" width="700" alt="23-bit Q1.22 저장 data word(sign 1 + fraction 22)와 25-bit 중간값 register, diffusion operator 중간값 상한 1 + 2/√(number of states)이 저장 data word 천장을 넘으면 symmetric saturation으로 붙이는 그림">
+
+04번 논문의 표기도 이 규약으로 옮겨 읽어야 합니다. 논문은 32-bit data word를 "Q1.30"이라 부르는데, 이는 sign을 밖으로 뺀 표기입니다. 우리 규약으로는 **Q2.30**(sign 1 + integer 1 + fraction 30 = 32 bits)입니다. 앞으로 Q format 표기를 만나면 **"integer bits + fraction bits = data word width"가 성립하는지** 확인하십시오. 성립하지 않으면 sign을 따로 센 표기입니다. 이 사소해 보이는 구분이 memory 예산 계산에서 bit를 한 칸씩 어긋나게 만듭니다.
+
+마지막으로 이 규약이 곧바로 쓰이는 constant 하나. uniform amplitude는 $1/\sqrt{\text{number of states}}$ 인데, 14 qubits면 $1/\sqrt{16384} = 1/128 = 2^{-7}$ 로 **power of two**입니다. Q1.22 integer로는 $2^{22}/2^{7} = \mathbf{32{,}768}$ 이고, rounding이 전혀 없는 **정확한** 값입니다. initialization이란 array 16,384칸을 전부 32,768로 채우는 일입니다(13.2절).
+
+---
+

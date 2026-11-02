@@ -1,0 +1,18 @@
+## 3. classical computer가 quantum을 흉내 내기 힘든 이유
+
+핵심만 짚어봅시다. 입자 여러 개로 이루어진 분자를 simulation한다고 합시다. 각 입자가 qubit인 것은 아니지만, 설명을 위해 그렇게 단순화하면, 이 system을 기술하는 데 **$2^{\text{number of qubits}}$개의 숫자(amplitude)** 가 필요합니다. 입자 하나가 늘 때마다 필요한 memory가 **두 배**로 뜁니다.
+
+왜 하필 2의 거듭제곱일까요? 입자(qubit) 하나는 0과 1, 두 가지 state를 가집니다. 둘이 되면 가능한 조합은 00·01·10·11 — 네 가지이고, 이 **조합 하나하나마다 amplitude(숫자)가 한 개씩** 필요합니다. 셋이면 000…111로 여덟 가지죠. 입자를 하나 더 붙일 때마다 기존 조합이 각각 "새 입자가 0인 경우"와 "1인 경우"로 둘씩 쪼개지므로, 조합의 수가 정확히 두 배가 됩니다($2 \to 4 \to 8 \to \cdots \to 2^{\text{number of qubits}}$). 그래서 필요한 숫자의 개수가 곧 조합의 총 개수, 즉 $2^{\text{number of qubits}}$인 것입니다.
+
+그런데 여기서 자연스러운 반문이 떠오릅니다. "입자마다 숫자 2개씩이면, 입자 수의 두 배만큼만 있으면 충분하지 않나?" 항상 그렇게 쓸 수는 없습니다. quantum의 중요한 성질이 여기서 드러납니다. state에는 "A는 이 state, B는 저 state"처럼 입자별로 따로 나눠 적을 수 **없는** 경우가 있습니다 — 예컨대 두 입자를 아무리 멀리 떨어뜨려 놓아도 측정하면 늘 똑같은 값이 나오도록 서로 묶인 state가 그렇습니다. 이 묶임을 **entanglement** 라 하는데, 이 상관관계를 온전히 담으려면 모든 조합의 숫자를 하나도 빠짐없이 들고 있어야 합니다. 그래서 압축이 원리적으로 불가능하고, 지수적 크기를 피할 수 없습니다. (entanglement는 [5장](05_multiple_qubits_and_entanglement.md)에서 제대로 배웁니다.)
+
+- 입자 10개 → $2^{10} \approx 1{,}000$개 숫자
+- 입자 50개 → $2^{50} \approx 10^{15}$개 (천조 개)
+- 입자 300개 → $2^{300}$ → 우주의 원자 수보다 많음
+
+실제 원자는 qubit보다 복잡해서 더 많은 숫자가 필요합니다. 그래서 작은 분자를 빼면 classical computer로는 quantum simulation이 사실상 불가능합니다. 반면 **quantum computer는 입자가 하나 늘 때마다 qubit 몇 개만 추가하면 됩니다** — 필요한 자원이 지수적 증가 대신 선형 증가에 그칩니다.
+
+> 🔑 **quantum computer의 근본 강점**: "$2^{\text{number of qubits}}$개의 amplitude"를 classical computer는 memory에 일일이 저장해야 하지만, quantum computer는 그만큼의 qubit만으로 그 state를 **자연스럽게 담습니다**. 이 "지수적으로 많은 amplitude를 다루는 능력"이 [1장](01_qubits_and_states.md)의 superposition에서 시작됩니다.
+
+---
+

@@ -1,0 +1,27 @@
+{
+  "status": "passed",
+  "documentation_check": {
+    "documents": 199,
+    "errors": 0,
+    "warnings": 0
+  },
+  "moved_files_sha256_match": 934,
+  "unchanged_protected_files": 2036,
+  "catalog_targets_verified": 59,
+  "stale_authored_full_paths": 0,
+  "policy_unit": {
+    "configurations": 9,
+    "cases": 477,
+    "errors": 0,
+    "output_directory": "/tmp/bbht_policy_unit_b1jqta_3"
+  },
+  "parallel_unit": {
+    "configurations": 5,
+    "errors": 0,
+    "output_directory": "/tmp/bbht_parallel_unit_0ibksoi8"
+  },
+  "python_compile": "passed",
+  "selected_diff_whitespace_check": "passed",
+  "background_status_queried": false,
+  "deleted_files": 0
+}

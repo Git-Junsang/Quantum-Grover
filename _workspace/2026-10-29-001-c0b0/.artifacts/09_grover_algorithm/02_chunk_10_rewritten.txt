@@ -1,0 +1,19 @@
+## 9.8 전체 그림 정리 — amplitude는 왜 real number뿐인가
+
+<img src="diagrams/09_grover_circuit.svg" width="640" alt="Grover algorithm circuit">
+
+| 요소      | 수식                                                                                        | 역할                          |
+| --------- | ------------------------------------------------------------------------------------------- | ----------------------------- |
+| 초기 state | $\|\psi\rangle = H^{\otimes \text{number of qubits}}\|0\rangle^{\otimes \text{number of qubits}} = \frac{1}{\sqrt{\text{number of states}}}\sum_x\|x\rangle$ | uniform superposition (모든 후보 동시에)   |
+| oracle    | $U_f = I - 2\sum_{x\in A}\|x\rangle\langle x\|$                                           | 조건에 걸리는 막대를 전부 아래로 |
+| diffusion operator      | $U_\psi = 2\|\psi\rangle\langle\psi\| - I$                                                | inversion about the mean (증폭)         |
+| 한 iteration   | $G = U_\psi U_f$                                                                          | solution 방향으로 $2\theta$ rotation |
+| number of iterations | $\text{number of iterations} \approx \frac{\pi}{4}\sqrt{\text{number of states}/\text{number of solutions}}$                                                       | solution 방향에 정렬될 때까지     |
+| complexity | $O(\sqrt{\text{number of states}})$                                                                              | oracle 호출 횟수 기준(real quantum hardware) |
+
+표를 세로로 훑으면 성질 하나가 눈에 들어옵니다. **여기 어디에도 imaginary number가 없습니다.** 세 가지가 겹쳐서 그렇습니다. 첫째, 시작 state $|\psi\rangle = H^{\otimes \text{number of qubits}}|0\rangle^{\otimes \text{number of qubits}}$ 의 amplitude는 전부 $\frac{1}{\sqrt{\text{number of states}}}$ 로 real number입니다. 둘째, oracle은 각 amplitude에 $+1$ 또는 $-1$ 을 곱할 뿐이라 real number를 real number로 보냅니다. 셋째, diffusion operator $a_x \mapsto 2\bar a - a_x$ 는 real number 계수만 쓰는 linear operation이라 역시 real number를 벗어나지 않습니다. real number 집합이 이 세 연산에 대해 닫혀 있으므로, 귀납적으로 **amplitude는 algorithm 처음부터 끝까지 real number**입니다. 일반적인 state의 amplitude는 complex number이고 그 relative phase가 곧 정보인데([1장](01_qubits_and_states.md)), 표준 Grover는 그 자유도를 한 번도 쓰지 않습니다 — 등장하는 phase가 $0$ 과 $\pi$ 둘뿐이고, 그건 sign bit 하나로 적히니까요.
+
+이 성질 덕분에 hardware에서는 비용을 절반으로 줄일 수 있습니다. amplitude 하나당 real part·imaginary part 두 칸을 잡을 이유가 없으니 **imaginary part memory가 아예 없고**, complex number multiplication(real number multiplication 4번 + addition 2번)도 datapath에 등장하지 않습니다. 대신 조건이 하나 붙습니다 — 이 논증은 "초기 state가 real number + phase가 $\pm1$ + diffusion operator가 real linear"라는 **세 전제를 모두 필요로 하므로**, 그중 하나라도 깨는 기능을 얹는 순간 datapath를 complex number에 맞게 다시 설계해야 합니다. 실제로 number of solutions를 세는 표준 기법인 **quantum counting**은 phase estimation을 쓰고, phase estimation은 $e^{2\pi i k / 2^t}$ 꼴의 complex phase를 amplitude에 직접 곱합니다. 그래서 우리 설계는 counting 계열을 아예 채택하지 않고, number of solutions를 모르는 채로 도는 9.6절의 BBHT를 택했습니다. real number 전용 datapath를 지키는 것이 그 선택의 근거 가운데 하나입니다.
+
+---
+

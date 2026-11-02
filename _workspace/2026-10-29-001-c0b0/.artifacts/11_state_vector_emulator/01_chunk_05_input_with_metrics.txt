@@ -1,0 +1,102 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 5/12이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 윤문 진단
+
+대상: `11_state_vector_emulator.md`
+
+## 장르와 레지스터
+
+학부생용 공부 해설서입니다. 설명 본문은 합쇼체 중심의 친근한 존댓말이고, 질문·권유에는 해요체가 섞입니다. 요약·표의 간결한 명사형은 의도된 형식입니다. 이 register와 독자 수준을 그대로 유지합니다.
+
+## 겨냥 순서와 근거
+
+1. **D-14 / D-5 — 지나친 비유와 의인화**: 「algorithm을 … 짓는 이야기」·「대가」·「지수 벽」·「memory를 지불」·「진범」·「요리사만 늘리는 헛수고」·「우리가 파는 것은 속도」가 기술 설명 전체를 비유로 잇습니다. 실제 저장량·연산량·병렬 접근 제한으로 풀 수 있는 부분을 우선합니다. 기존 절 제목·그림·비유 박스 이름은 보존합니다.
+
+2. **D-8 / D-2 — 평가와 당부를 앞세운 도입**: 「반드시 새겨야 할 사실 하나」·「못 박아」·「결정적인 교훈」·「중요하게」가 문단마다 설명을 예고합니다. 필요한 주장을 바로 진술하고 기존 경고의 의미·강도는 보존합니다.
+
+3. **A-18 / A-16 — 긴 삽입구와 추상적 지시**: 11.1·11.3·11.4·11.6·11.7의 문단은 조건·비교·평가를 대시로 길게 붙입니다. relative_clause_nesting=8, pronoun_density=0.001. 관계가 분명한 문장만 나눠 주체를 드러내고 수치·인용·영어 토큰은 유지합니다.
+
+4. **C-8 / I-3 — 대립 공식과 간접 종결 누적**: 「…아니라」·「…것입니다」·「…셈」의 반복을 확인합니다. 저장 대 연산, 실제 quantum 대 emulator 등 개념 구별은 필요한 곳에 남기고, 같은 결론을 반복하는 간접 설명만 직접 서술로 바꿉니다.
+
+## 정량 앵커와 해석
+
+입력 정량 블록의 route_hint는 `heavy`, 원문은 25,858자입니다. 위에 적은 양성 카운트만 해당 ID의 보조 근거로 사용했습니다. lexical_diversity의 낮은 값은 전문용어 반복의 영향이 있으므로 영어 용어를 치환하는 근거로 쓰지 않습니다. 이중 피동·by 피동·have 직역은 카운트가 0이어서 지배 패턴으로 지목하지 않습니다.
+
+## 보존 지침
+
+- 영어 용어·영어 토큰의 철자와 대소문자를 그대로 둡니다. 영어를 한국어로 옮기거나 동의어로 바꾸지 않습니다. 용어집 SSOT는 `documents/design_references/22_appendix_glossary_and_retired_specs.md` 22.2절입니다.
+- 사실·주장·수치·단위·수식·code·identifier·인용·조건·부정/긍정·인과를 보존합니다. 내용 보충이나 과학적 사실 수정은 이번 윤문의 범위가 아닙니다.
+- 제목·절 번호·link·그림·기존 콜아웃·표 구조를 유지합니다. 기존 볼드·이모지는 교재 고유 관습이므로 일괄 삭제하지 않습니다.
+- 어색한 비유·한국어 연결·조사·수식어만 국소 수정합니다. 단순히 technical term이 많이 나온다는 이유로 B 계열 처방을 적용하지 않습니다.
+- 의무·가능·추정의 강도를 보존하고 원문에 없던 설명이나 평가를 넣지 않습니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 2878
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.20  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.30  (z=-0.59 vs report 인간 baseline)
+- ending_comma_rate: 0.36  (n/a vs report 인간 baseline)
+- comma_segment_length: 9.47  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.004  (z=-1.88 vs report 인간 baseline)
+- lexical_diversity: 0.70  (z=+0.91 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 1
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 11.4 amplitude를 어디에 둘 것인가
+
+FPGA에는 숫자를 담을 그릇이 여러 종류이고, 어느 그릇을 고르느냐가 몇 qubit까지 갈 수 있는지를 결정합니다. 여섯 논문과 우리 설계는 사실상 세 진영으로 갈립니다.
+
+<img src="diagrams/11_storage_tradeoff.svg" width="640" alt="state vector 저장 방식의 세 storage layer: register / BRAM / 외부 DDR">
+
+| 저장 위치 | 누가 | 접근 방식 | number of qubits |
+|---|---|---|:---:|
+| **register array**(FF/LUT) | 04, 06 | 모든 amplitude를 온칩 register에 — 한 cycle에 전부 병렬 접근 | **6** (04, Kintex) · **8~9** (06) |
+| **온칩 BRAM** | **우리 IP** | 32칸짜리 row 단위로 저장하고 매 cycle 4 rows(128칸)씩 순차 streaming | **14** |
+| **외부 DDR memory** | 07 | board에 붙은 대용량 DRAM에 — 순차 streaming | **32** |
+
+세 진영의 차이는 **속도와 용량의 맞바꿈**입니다. register는 가장 빨라서(모든 칸을 같은 cycle에 읽고 씀) 연산을 극단적으로 병렬화할 수 있지만, FPGA에 register는 적으므로 금방 바닥납니다. 외부 DDR은 수 GB로 방대하지만 한 번에 몇 data word씩만 읽어 와야 해서 순차 처리를 강요합니다. 07번 논문이 32 qubits라는 압도적 규모를 달성한 것은 순전히 **외부 DDR4를 썼기 때문**입니다(16GB DIMM × 4). 04·06이 한 자릿수 qubit에 머문 것은 반대로 **전부 온칩 register에 욱여넣었기 때문**이고요.
+
+우리는 가운데를 골랐습니다. 그 이유가 이 장의 나머지를 지배하니 여기서 확실히 해 둡니다. **board에서 검증된 우리 IP에는 외부 DDR이 등장하지 않습니다.** 첫째, 14 qubits라면 세 array가 checkpoint slot까지 포함해 온칩에 전부 들어갑니다 — 넘치지 않는데 나갈 이유가 없고, DRAM controller와 그 latency를 감출 buffer 구조는 통째로 순수한 추가 비용입니다. 둘째, 그리고 이쪽이 더 결정적인데, 우리는 amplitude만이 아니라 **data array까지** 온칩에 둬야 합니다. oracle이 한 cycle에 128칸을 판정하려면 `value[i]` 128개가 amplitude 128칸과 **같은 cycle에** 나와야 하기 때문입니다. 외부 DRAM 한 channel로는 그런 접근을 줄 수 없습니다. (저장소에는 iteration마다 amplitude를 DRAM에 전량 저장하는 두 번째 variant인 DRAM Variant(`hardware_dram`)가 초안으로 있지만, 거기서도 계산 자체는 BRAM 위에서 하고 DRAM은 amplitude 보관 창고로만 씁니다. Board-Verified Build는 이 장이 다루는 BRAM Variant입니다.)
+
+그 대가로 우리는 용량 예산을 빡빡하게 씁니다. 2026-09-07 implementation report에서 잰 실제 장부는 이렇습니다(값의 source of truth는 [15.4절](15_paper_map_and_design_decisions.md#154-우리-project의-좌표--확정-설계-결정표)):
+
+| block | 구성 | BRAM |
+|---|---|--:|
+| amplitude · checkpoint memory | state 한 벌 = 512 rows × 736-bit = RAMB36 11개. row phase 4 banks에 checkpoint slot 4벌 | RAMB36 44 |
+| `data_mem` | 4 rows 동시 읽기용 | RAMB18 64 (= 32 tile) |
+| `found_mask` | 16,384 × 1-bit, 4 rows 동시 | RAMB36 2 |
+| measurement용 row-weight memory | 512 × 51-bit | RAMB36 2 |
+| checkpoint policy memo table | 16장의 policy 표 | RAMB36 4 |
+| **Accelerator Core 계** | | **84 tile** |
+| RVX SoC | system SRAM 128 KB 가 대부분 | 32 tile |
+| **board 전체** | | **116 / 135** |
+
+board는 Arty A7-100T(`xc7a100tcsg324-1`)이고 BRAM tile(BRAM36)이 **135개** 있습니다. 116개를 쓰니 남는 것이 19개입니다. 여기서 qubit를 하나 늘리면 어떻게 될까요. state 한 벌이 두 배(RAMB36 22개)가 되어 checkpoint slot 4벌만 88개, `data_mem` 도 64 tile 로 불어나 Accelerator Core 계가 대략 160 tile, board 전체를 넘깁니다(구조를 그대로 둔 채 깊이만 두 배로 잡은 추정입니다). 즉 **이 구조와 이 board에서 14 qubits가 천장**입니다. 14 qubits로 굳힌 근거는 이 resource 계산 하나가 아니라 precision benchmark도 함께인데, 그쪽은 [12.7절](12_fixed_point_and_precision.md#127-몇-bit면-되나--minimum-fraction-bits-공식과-그-전제)에 있습니다.
+
+> ⚠️ 여기서 흔히 하는 오해를 하나 짚고 갑니다. "register에 두니까 resource(LUT)가 터진다"는 설명은 **틀렸습니다.** 다음 절이 이 오해를 data로 반박합니다.
+
+---
+[원문 끝]

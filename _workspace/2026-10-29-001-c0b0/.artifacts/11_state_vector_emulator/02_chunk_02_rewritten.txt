@@ -1,0 +1,20 @@
+## 11.1 emulation·simulation·진짜 quantum computer
+
+세 단어가 자주 뒤섞여 쓰이니 먼저 정리하겠습니다. 07번 논문(El-Araby 외, IEEE TC 2023)의 용법을 따릅니다.
+
+- **진짜 quantum computer**: 물리적 qubit(초전도 circuit·이온 등)가 실제로 superposition·entanglement·interference를 겪습니다. amplitude는 어디에도 "저장"되지 않고 물리 state 그 자체입니다.
+- **simulation**: software로 state vector를 계산합니다. 보통 CPU/GPU에서 Qiskit 같은 library로 돌립니다. 유연하지만 느립니다.
+- **emulation**: **전용 hardware(FPGA)** 로 state vector 계산을 circuit 수준에서 가속합니다. simulation과 하는 일(숫자 array 계산)은 같지만, software가 아니라 **맞춤 datapath**로 처리한다는 점이 다릅니다.
+
+셋 중 뒤의 둘은 **똑같이 classical computer가 숫자 array를 계산**합니다. 차이는 "얼마나 빠른 hardware로 하느냐"뿐입니다. 우리 project가 만드는 것은 세 번째 — **FPGA emulator**입니다.
+
+우리 설계의 구체적인 구성을 먼저 살펴보겠습니다. 이 IP는 독립적으로 동작하는 chip이 아니라 **RVX SoC 안에 얹히는 accelerator**입니다. 제어 register(CSR)는 **APB slave**로 노출되어 RISC-V core가 명령·threshold·state를 읽고 쓰고, search 대상 data는 IP가 **AHB master**가 되어 직접 실어 옵니다. host는 **UART** 너머에서 RISC-V app에게 명령을 보낼 뿐, amplitude array를 한 칸도 만지지 않습니다. 즉 연산은 전부 IP 안에서 끝나고 host는 시작·정지·결과 회수만 합니다(자세한 것은 [17장](17_rvx_soc_integration.md)).
+
+여기서는 emulator가 quantum computer가 아니라는 사실을 반드시 구분해야 합니다. **quantum 이득($O(\sqrt{\text{number of states}})$ 같은)을 물리적으로 누리지 못합니다.** Grover iteration 한 번이 이미 모든 amplitude를 두 번 훑으므로 총비용은 $O\big(\text{number of states}\cdot\sqrt{\text{number of states}/\text{number of solutions}}\big)$ 이고, 이것은 같은 문제를 classical program이 array 한 번 훑어 푸는 $O(\text{number of states})$ 보다 **느립니다.** 이 사실을 흐리지 마십시오 — 우리 IP를 classical linear scan과 나란히 놓고 속도를 자랑하는 문장은 이 해설서 어디에도 없습니다.
+
+그럼 무엇과 비교해야 할까요. 같은 일을 하는 것, 즉 **state vector simulator**입니다. 구체적으로는 Qiskit의 `AerSimulator` 나 NumPy로 짠 state vector code가 우리의 비교 대상입니다. 그쪽도 모든 amplitude를 memory에 펼쳐 놓고 매 iteration 전부 훑으니, 우리와 같은 $O\big(\text{number of states}\cdot\sqrt{\text{number of states}/\text{number of solutions}}\big)$ 이 듭니다. 다만 그 일을 범용 CPU의 명령어로 하느냐 전용 datapath로 하느냐가 다를 뿐이죠. 같은 board 위에서 accelerator를 끄고 RISC-V core 하나로 같은 계산을 돌린 순수 software baseline도 정당한 대조군입니다([18.8절](18_reference_model_verification.md#188-잰-수치와-그-조건)). 그리고 이 IP의 값어치는 애초에 속도 우위가 아니라, **quantum algorithm의 동작을 결정적이고 재현 가능하게 재현·검증하는 전용 hardware**라는 데 있습니다. 같은 seed를 주면 같은 shot 수열과 같은 후보가 나오고, amplitude array는 언제든 덤프해 software reference model과 bit 단위로 대조할 수 있습니다([18장](18_reference_model_verification.md)). 실제 quantum computer에서는 둘 다 불가능한 일입니다.
+
+한 가지 더 짚어 둘 것이 있습니다. 문헌에서 "FPGA로 quantum을 다룬다"는 말은 사실 두 방식으로 갈립니다 — FPGA 자체가 quantum computer 역할을 맡고 host가 거기에 접속해 쓰는 방식과, 무거운 state vector 연산만 FPGA로 떼어내 가속하는 보조 accelerator 방식입니다(Cicero 외 2025 survey). 우리 IP는 뒤쪽입니다. 용어에는 주의가 필요합니다. 이 survey는 앞의 것을 "emulation", 뒤의 것을 "acceleration"이라 불러, 07번을 따라 "emulation = FPGA 가속 simulation"으로 써 온 이 해설서와 이름이 정반대입니다. 문헌마다 같은 단어가 다른 것을 가리킬 수 있으므로 용법을 확인해야 합니다.
+
+---
+

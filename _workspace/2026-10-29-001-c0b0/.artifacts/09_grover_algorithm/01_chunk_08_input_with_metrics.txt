@@ -1,0 +1,79 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 8/12이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 09_grover_algorithm.md 진단
+
+## 장르·레지스터와 보존 조건
+
+학부생용 기술 해설서(report). 본문은 친근한 존댓말(합니다/입니다, 일부 해요체 설명), 수식 풀이·표·요약은 압축형입니다. 문장 격식을 올리지 않습니다. 영어 용어와 영어 토큰은 번역·삭제·교체·대소문자 변경하지 않습니다. glossary 기준은 `documents/design_references/22_appendix_glossary_and_retired_specs.md` §22.2입니다. 수치·수식·code·제목·link·직접 인용·기존 콜아웃/이모지·문단 구조는 보존합니다. 실제 주장, 부정/긍정, 인과, 조건, 확신도도 보존합니다. 보고서용 서식 축약·영어 순화 규칙은 적용하지 않습니다. 본문에 사실을 추가하거나 현행 설계와 대조해 기술 내용을 고치지 않습니다.
+
+## 정량 근거
+
+입력의 정량 블록을 확인했습니다. risk_band는 low이고, 장문 파일의 heavy 권고는 문서 길이에서 나옵니다. 영어 기술 term 반복은 장르상 필수이므로 lexical_diversity의 낮은 값만으로 수정하지 않습니다. 아래 수치는 탐지 보조이며 개별 문맥과 함께 판단합니다.
+
+## 겨냥 순서의 지배 패턴
+
+1. **D-14·D-5 — 설명용 비유가 본문까지 관통하는 반복**: "Grover가 실제로 사는 곳", "손끝 하나 바꾸지 않습니다", "function을 먹인 것", "전부 헛수고", "hardware에서 한층 더 날카로워집니다" 등은 동작 설명에 어색한 행위 술어를 붙입니다. 막대·reflection·rotation의 교육적 비유와 기존 비유 상자는 유지하고 과장된 연결 표현만 구체화합니다.
+
+2. **D-2·F-1 — 지나친 감탄과 확언**: "말로만 하면 안 믿기니", "소수점 끝까지 한 치도 어긋나지", "축하합니다 … 완주했습니다" 등 독자를 대신 평가하는 표현을 완화합니다. 수학적으로 정확히 같다는 주장은 그대로 보존합니다.
+
+3. **A-18 — 긴 관형절·삽입 설명**: 정량 relative_clause_nesting=3. 도입의 절 안내, 9.1절 emulator 비용, 9.6절 BBHT, 9.8절 real number 전용 논증, 9.9절 hardware 안내가 장문입니다. 조건·한계와 모든 수식·수치를 보존하며 필요한 문장만 분리합니다.
+
+4. **C-8·D-8 — 반복적인 부정 대구·정의 강조**: "대상의 성질이지 … 성능 지표가 아닙니다", "표준 문제라서가 아닙니다", "고장이 아니라", "신비로운 constant가 아니라" 등 반복을 확인합니다. algorithm과 emulator의 구분처럼 기술적으로 필요한 대조는 유지하고 감탄용 대조만 줄입니다.
+
+5. **C-11·I-3 — 연결어미 쉼표·설명 끝의 군더더기**: 연결어미 뒤 쉼표와 "것뿐이에요", "것이죠", "뜻인데" 등으로 결론을 감싸는 문장을 국소 검토합니다. 정량 conclusion_pivot_count=1은 과다 기준 미달이므로 삭제 목표로 삼지 않습니다.
+
+## 비적용·잔존 처리
+
+교육적 질문·표·연습문제·단계 목록·기존 비유는 그 자체로 결함이 아닙니다. 자연스러운 문장은 그대로 두고 확인된 구간만 보수적으로 다듬습니다. 수치/기술 주장에 의문이 있어도 이번 윤문에서는 보존합니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 2474
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.54  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.75  (z=-0.07 vs report 인간 baseline)
+- ending_comma_rate: 0.58  (n/a vs report 인간 baseline)
+- comma_segment_length: 9.21  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.005  (z=-1.83 vs report 인간 baseline)
+- lexical_diversity: 0.79  (z=+2.85 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 0
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 9.6 지나치면 안 된다
+
+rotation 관점이 주는 중요한 경고입니다. iteration은 화살표를 $2\theta$ 씩 **계속** 돌립니다. 최적 횟수를 넘겨 돌리면 solution 방향을 **지나쳐** 버리고, 그러면 solution probability가 다시 **떨어집니다**(그리고 진동합니다).
+
+> ⚠️ **함정 — Grover는 "많이 돌릴수록 좋은" 게 아니다**: classical algorithm은 오래 돌릴수록 확실해지지만, Grover는 $\frac{\pi}{4}\sqrt{\text{number of states}}$ 근처에서 probability가 최대이고 그 뒤엔 오히려 감소합니다. **정확한 횟수**를 지키는 게 중요합니다. number of solutions를 모르면 횟수를 정하기 어려운데, 이를 다루는 기법들이 따로 연구돼 있습니다.
+
+solution이 하나일 때 최적 횟수 근처의 오류(solution이 안 나올) probability는 약 $\frac{1}{\text{number of states}}$ 정도로 아주 작습니다. 그리고 [8장 Deutsch–Jozsa](08_deutsch_jozsa_algorithm.md)는 interference **한 번**으로 답이 떨어졌지만, Grover iteration을 **여러 번** 돌리는 이유는 이제 분명하죠 — solution 하나가 많은 state 가운데 묻혀 초기 amplitude가 $\frac{1}{\sqrt{\text{number of states}}}$ 로 작으니, rotation을 여러 번 쌓아야 solution 방향에 닿기 때문입니다.
+
+방금 ⚠️ 상자가 "기법들이 따로 연구돼 있다"고만 하고 넘어간 그 기법에 이름을 붙여 둡시다. 표준 해법은 **BBHT**(Boyer–Brassard–Høyer–Tapp, 1998)입니다. number of solutions를 모르니 number of iterations를 한 번에 정하지 않고, 대신 여러 번의 **shot**으로 나눠 매 shot마다 number of iterations를 무작위로 뽑습니다. 뽑는 범위인 sampling range를 $1$ 에서 시작해 $\text{number of iterations} \sim U[0,\,\text{sampling range})$ 로 뽑고, 그 shot이 실패하면 $\text{sampling range} \leftarrow \min(1.2 \cdot \text{sampling range},\ \sqrt{\text{number of states}})$ 로 넓혀 다시 뽑습니다($\text{growth factor} = 6/5 = 1.2$). rotation angle을 모르니 **여러 각도를 무작위로 찔러 보는** 전략이고, 성공 여부는 measurement로 나온 후보 하나가 정말 predicate를 만족하는지 다시 확인하는 **solution check**로 판정합니다 — 값 한 칸을 읽는 것이라 사실상 공짜입니다.
+
+초반 shot이 거의 다 실패하는 것은 고장이 아니라 이 절차의 정상 동작입니다. sampling range가 1에서 시작해 growth factor 1.2로만 커지므로 처음 몇 shot은 number of iterations가 0~2 근처에서만 뽑히는데, state가 많으면 그 정도 iteration은 rotation을 겨우 두어 번 한 state라 solution probability가 사실상 0이거든요. 우리 규모인 14 qubits(16,384 states)에서 solution이 하나라면 최적은 $\frac{\pi}{4}\sqrt{16{,}384} - \frac12 = 100.03 \to 100$ iterations인데, sampling range가 거기까지 자라기 전의 shot들은 전부 헛수고입니다. 그래서 shot이 꽤 쌓입니다 — 성공까지 **mean 22.7 shots**입니다(14 qubits·1 solution, board benchmark와 같은 100 workloads). "네댓 번이면 끝난다"가 아니에요. 이 shot loop를 FSM으로 어떻게 돌리는지, 실패한 shot이 남긴 amplitude array를 버리지 않고 재사용하는 방법은 [16장](16_iteration_control_and_checkpoints.md)에서 다룹니다. 원논문은 [10.8절](10_glossary_and_cheat_sheet.md#108-원문-자료-대조표) 대조표 끝에 적어 둔 Boyer et al. (1998) *Tight bounds on quantum searching* 입니다.
+
+"지나치면 안 된다"는 성질은 hardware에서 한층 더 날카로워집니다 — number of iterations를 integer로 반올림해야 하고, state가 적으면 그 rounding error가 성공률에 크게 반영됩니다([14.8절](14_multiple_solutions_and_minimum_search.md#148-두-개의-함정)).
+
+---
+[원문 끝]

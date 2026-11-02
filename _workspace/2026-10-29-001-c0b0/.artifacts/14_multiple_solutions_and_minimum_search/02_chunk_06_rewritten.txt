@@ -1,0 +1,26 @@
+## 14.4 Born-rule sampling — probability를 circuit으로
+
+[4.1절](04_measurement.md#41-computational-basis-measurement와-born-rule)의 Born rule을 그대로 적용하면 됩니다. state $|\psi\rangle = \sum_i a_i |i\rangle$ 를 computational basis로 측정하면 결과 $i$ 가 나올 probability는
+
+$$\text{probability}(i) = |a_i|^2$$
+
+입니다. amplitude가 실수뿐인 우리 datapath에서는 그냥 $a_i^2$ 이고요. 우리가 할 일은 이 분포를 따르는 random number를 circuit으로 뽑는 것 — 실기 quantum에서 자연이 공짜로 해 주는 일을, emulator에서는 우리가 만들어야 합니다.
+
+교과서적인 방법은 **inverse transform sampling** 입니다. prefix sum
+
+$$\text{prefix sum}(i) = \sum_{k \le i} a_k^2$$
+
+를 만들어 두고, uniform random number를 하나 뽑아 $\text{prefix sum}(i) > \text{random number}$ 가 되는 **첫 번째** $i$ 를 답으로 씁니다. index $i$ 가 뽑힐 조건은 random number가 $[\text{prefix sum}(i-1),\, \text{prefix sum}(i))$ interval에 떨어지는 것이고, 그 interval의 길이가 정확히 $a_i^2$ 이므로 $\text{probability}(i) = a_i^2$ 가 그대로 성립합니다. 4장의 규칙과 circuit의 동작이 일치합니다.
+
+여기서 세 가지 실용적 결정을 합니다.
+
+**전부 integer로, 자르지 않고 계산합니다.** amplitude가 23-bit integer이므로 square는 46-bit integer이고, 우리는 이 곱을 한 bit도 자르지 않습니다. 잘린 하위 bit가 곧 probability의 왜곡이고, 값이 작은 칸일수록 상대 error가 커져 분포가 체계적으로 기울기 때문입니다. prefix sum과 total weight도 필요한 폭 그대로 담습니다(14.5절). integer라서 좋은 점이 하나 더 있습니다 — prefix sum이 array 끝에서 **정확히** total weight에 닿으므로, random number가 total weight 미만이기만 하면 어디선가 반드시 멈춥니다. floating-point prefix sum이라면 rounding 때문에 끝까지 가도 random number를 못 넘는 경우를 대비한 안전망이 필요했겠지만, integer 설계에서는 그 경로 자체가 없습니다. 남는 예외는 total weight가 0인 경우 하나이고, 이때 circuit은 `zero_weight_error` 를 세우고 끝냅니다.
+
+**나눗셈을 하지 않습니다.** 보통은 probability가 되도록 prefix sum을 전체 sum of squares로 나누지만, 우리는 나누는 대신 random number를 $[0,\ \text{total weight})$ 범위에서 뽑습니다($\text{total weight} = \sum_k a_k^2$). 비교의 양변에 같은 constant를 곱한 것과 같으므로 분포는 동일하고, divider가 통째로 사라집니다. 다만 이 동치는 random number가 $[0,\ \text{total weight})$ 에서 **정확히 균등**할 때만 성립하는데, total weight는 2의 거듭제곱이 아니라서 PRNG 출력을 그대로 잘라 쓰면 균등해지지 않습니다. 그래서 **rejection sampling**을 씁니다 — 64-bit PRNG 출력에서 total weight − 1 의 bit 길이만큼 하위 bit를 후보로 꺼내, 후보가 total weight 이상이면 버리고 다시 뽑습니다. comparator 하나면 되니 divider가 도로 들어오지는 않고, 후보가 받아들여질 probability가 늘 절반을 넘으므로 mean 두 번 안에 끝납니다. 64-bit 출력은 Measurement PRNG(xorshift64)가 한 block씩 내며, 32-bit seed 하나에서 결정적으로 확장됩니다. 초기 state에서 total weight는 정확히 $2^{44}$ 인데(13.2절), iteration을 거친 뒤에는 rounding 때문에 정확히 그 값이 아니어도 이 방식은 그때의 total weight를 그대로 쓰므로 영향을 받지 않습니다.
+
+**squarer는 필요합니다.** argmax 시절에는 $|a|$ 의 최대와 $a^2$ 의 최대가 같아서 square를 건너뛸 수 있었지만, probability로 뽑으려면 크기 자체가 필요하므로 square를 피할 수 없습니다. [13.8절](13_oracle_diffusion_measurement_datapath.md#138-multiplier는-어디에-있고-어디에-없는가)의 "0 multipliers"는 **diffusion operator·oracle·Init 경로에 한정된** 이야기이고, Measurement Unit은 squarer를 씁니다. 이것이 우리 설계에서 DSP가 잡히는 유일한 자리입니다.
+
+남은 문제는 속도입니다. 위 절차를 곧이곧대로 짜면 amplitude를 한 칸씩 훑는 직렬 scan이라 16,384 cycles이 듭니다. Grover iteration 한 번이 약 268 cycles인데([11.8절](11_state_vector_emulator.md#118-cycle-비용-model)) measurement 한 번에 그 60×의 시간이 들고, 128 lanes datapath는 활용되지 않습니다.
+
+---
+

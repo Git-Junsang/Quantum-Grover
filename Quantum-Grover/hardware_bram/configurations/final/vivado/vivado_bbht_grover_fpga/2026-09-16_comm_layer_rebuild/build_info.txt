@@ -1,0 +1,13 @@
+빌드 일시   2026-09-16 16:42~16:53 (KST)
+플랫폼      bbht_grover_upgrade
+타깃        arty-100t / xc7a100tcsg324-1
+구조        K3/H3-E4-M2 (어댑터 기본값. MEAS_M1/M2_ENABLE 둘 다 1)
+클럭 목표   가속기 100 MHz / 시스템 50 MHz
+Vivado      v2026.1 (64-bit), Tool Version Limit 2026.06
+RVX         /opt/rvx (로컬 전체 설치)
+작업방      $RVX_MINI_HOME/platform/bbht_grover_upgrade/imp_arty-100t_2026-09-16
+
+합성 대상 최상단   bbht_rvx_wrapper (user region 이 무는 것). bbht_bram_top 은 시뮬 전용
+user region 클럭   gclk_accel
+                   생성 RTL arch/rtl/src/bbht_grover_upgrade_rtl.v:1455 가
+                   assign gclk_accel = clk_accel; -- 게이팅도 BUFG 도 없는 순수 별칭

@@ -1,0 +1,6 @@
+1. **Quantum Computing for the Very Curious** — Andy Matuschak & Michael Nielsen (quantum.country). qubit·gate·measurement·CNOT·entanglement·범용성의 기초. → 주로 1~6장.
+2. **[양자컴퓨터 기초 이론] 5. 그로버 알고리즘과 도이치 알고리즘** — hgmin1159.github.io. oracle·amplitude amplification·Grover·Deutsch-Jozsa 개요. → 7~9장.
+3. **양자 컴퓨팅 입문 (2) - Grover's Algorithm** — infossm.github.io (Samsung SW Membership). Grover의 엄밀한 유도(phase kickback·diffusion operator·geometric rotation·number of iterations). → 9장.
+
+추가 참고 문헌: Sutor, R. (2019). *Dancing With Qubits*; Bernhardt, C. (2019). *Quantum Computing for Everyone*; Nielsen & Chuang, *Quantum Computation and Quantum Information*; Grover, L. K. (1996), *A fast quantum mechanical algorithm for database search*.
+

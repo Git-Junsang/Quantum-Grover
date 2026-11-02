@@ -1,0 +1,12 @@
+## 11.10 emulator가 숨기는 것
+
+편한 만큼 위험도 있습니다. emulator는 실기의 **gate 비용을 왜곡**합니다. 방금 본 것처럼 multi-controlled $Z$ gate가 emulator에서는 XOR 한 줄로 보이니, 실기라면 엄청나게 비쌀 circuit이 값싸 보입니다. 그래서 **emulator로 "algorithm의 논리가 맞다"는 것은 검증할 수 있어도, "이 circuit이 실기에서 실현 가능하다"는 것은 검증하지 못합니다.** emulator가 재현하는 것은 algorithm의 수학이지 물리적 gate 예산이 아닙니다.
+
+그리고 이 역설에는 **반대 방향**도 있습니다. 실기에서 값싼 trick이 emulator에서는 오히려 손해가 되는 경우입니다. 08번 논문(Byrnes 외, PRL 2018)은 diffusion operator 연산을 여러 solution state로 **일반화**한 $G = I - 2P_S$ 를 제안합니다. 실제 quantum computer에서는 이 일반화가 gate를 아껴 주는 좋은 아이디어입니다. 하지만 emulator에서 이 일반화된 projector $P_S$ 를 계산하려면 모든 state 각각에 대해 $D$ dimension inner product를 해야 해서 $O(\text{number of states}\cdot D)$ 짜리 multiply-accumulate와 $\text{number of states}\cdot D$ data words의 추가 저장이 듭니다 — **순수한 손해**입니다.
+
+그래서 08번 논문의 일반화 diffusion operator는 우리에게 **implementation 대상이 아니라, "왜 우리는 표준 diffusion operator 하나($a\mapsto 2\bar a - a$)를 고수하는가"의 근거**입니다. 표준 diffusion operator는 multiplication 없이 accumulation·shift·subtraction만으로 끝나거든요([13.5절](13_oracle_diffusion_measurement_datapath.md#135-diffusion-operator--2mean--amp가-circuit이-되는-순간)·[13.8절](13_oracle_diffusion_measurement_datapath.md#138-multiplier는-어디에-있고-어디에-없는가)).
+
+**한 문장으로: 실제 quantum computer에서 싼 것이 emulator에서 비싸고, 그 반대도 참입니다.** 이 감각을 갖고 논문을 읽어야, 어떤 아이디어를 우리 설계에 가져오고 어떤 것을 버릴지 판단할 수 있습니다.
+
+---
+

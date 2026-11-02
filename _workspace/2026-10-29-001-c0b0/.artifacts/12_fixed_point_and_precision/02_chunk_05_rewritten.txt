@@ -1,0 +1,4 @@
+## 12.4 rounding — 왜 half-to-even인가
+
+integer bits가 넘침을 막는 역할이라면, **fraction bits는 precision**을 정합니다. fraction bits가 유한하므로 어딘가에서는 아래 bit를 버려야 합니다. 어디서 버려질까요? 05번 논문이 이를 정확히 셋으로 짚습니다.
+

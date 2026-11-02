@@ -1,0 +1,16 @@
+## 9.10 이 장의 요약
+
+- **문제**: 정렬 안 된 $\text{number of states} = 2^{\text{number of qubits}}$ 개 항목에서 조건을 만족하는 항목 찾기. solution 집합 $A$ 가 비어 있지 않은 경우($\text{number of solutions} \ge 1$)가 정식 설정이고, solution이 하나뿐인 경우는 가장 단순한 special case.
+- **핵심 장면**: 균등 막대에서 시작 → ① oracle로 조건에 걸리는 막대를 전부 negative로 → ② diffusion operator(inversion about the mean $a\mapsto2\bar a-a$)로 그 막대들을 껑충. 이 둘을 매 iteration마다 되풀이.
+- **4 states 예제**: amplitude $(\tfrac12,\tfrac12,\tfrac12,\tfrac12)$ → oracle → diffusion operator → $(0,0,1,0)$. 한 번에 probability 1. solution을 둘로 늘리면 두 amplitude가 **정확히 같은 값**으로 움직이고, 8 states·2 solutions에서는 나란히 $\frac{1}{\sqrt2}$ 까지 자란다.
+- **왜 $\sqrt{\text{number of states}}$·왜 $\pi$**: Grover는 solution 방향(직각)으로 매번 $2\theta$ 씩 도는 **rotation**. 직각까지 = $\frac{\pi}{2}$, 나눗셈하면 $\text{number of iterations} \approx \frac{\pi}{4\theta} \approx \frac{\pi}{4}\sqrt{\text{number of states}/\text{number of solutions}}$. $\pi$ 는 rotation angle이라서 나온 것.
+- **함정**: 최적 횟수를 넘기면 solution을 지나쳐 probability가 다시 떨어짐. number of solutions를 모르면 number of iterations를 계산할 수 없어 **BBHT** shot loop가 shot마다 그 값을 무작위로 뽑는다.
+- **수식**: 두 reflection $U_f = I - 2\sum_{x\in A}|x\rangle\langle x|$, $U_\psi = 2|\psi\rangle\langle\psi| - I$. 두 reflection의 composition = rotation. solution이 여러 개여도 rotation 평면은 2차원이고, 그래서 solution들의 amplitude가 **항상 동일**하다.
+- **real number 전용**: 초기 uniform superposition이 real number + oracle이 $\pm1$ 곱하기 + diffusion operator가 real linear → amplitude는 real number를 벗어나지 않는다. imaginary part memory가 없고, complex number를 강제하는 quantum counting(phase estimation) 계열은 설계에서 제외.
+- **emulator와의 관계**: $\sqrt{\text{number of states}}$ 는 real quantum hardware의 oracle 호출 횟수 이야기다. classical circuit으로 흉내 내면 $O(\text{number of states}\cdot\sqrt{\text{number of states}/\text{number of solutions}})$ 이라 classical linear scan보다 느리므로, 비교 대상은 Qiskit Aer·NumPy state vector simulator이고 값어치는 속도가 아니라 **재현성과 verification**에 있다.
+
+quantum computing 기초부터 Grover까지 살펴보았습니다. 다음 장은 배운 내용을 한눈에 보는 **cheat sheet와 glossary**입니다.
+
+---
+
+> [← 8장 Deutsch–Jozsa algorithm](08_deutsch_jozsa_algorithm.md) · [index](index.md) · [10장 용어정리와 치트시트 →](10_glossary_and_cheat_sheet.md)

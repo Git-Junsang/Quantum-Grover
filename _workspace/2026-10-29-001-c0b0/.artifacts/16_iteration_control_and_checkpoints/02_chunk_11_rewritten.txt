@@ -1,0 +1,14 @@
+## 16.9 초판의 미정 넷은 이렇게 정해졌다
+
+이 장의 초판은 네 가지를 미정으로 남겨 두었습니다. 지금은 RTL과 software reference model이 같은 규칙으로 확정했습니다.
+
+**1. solution이 없을 때의 종료 조건.** predicate를 만족하는 원소가 하나도 없으면 BBHT는 영원히 실패합니다. hardware는 array를 고전적으로 훑어 "없음"을 확정하지 않고, 16.3절의 두 보호 한도 — shot cap 100, BBHT budget 576 — 중 먼저 닿는 쪽으로 끝냅니다. array에서 정보를 미리 읽지 않는다는 16.1절의 원칙이 그대로 지켜집니다. enumeration mode에서는 이 "실패로 끝난 BBHT"가 연속 `fail_repeat_limit` 번(기본 3번)이면 enumeration을 끝냅니다(14.7절).
+
+**2. $\text{number of iterations} \sim U[0,\ \text{sampling range})$ 의 균등성.** LFSR 출력을 masking만 하면 sampling range가 2의 거듭제곱이 아닐 때 분포가 균등하지 않습니다. 16.2절의 rejection sampling으로 해결했습니다 — 경계 이상의 후보는 버리고 다시 뽑습니다.
+
+**3. random number 소비 규약.** number of iterations stream과 measurement stream은 **서로 독립인 두 generator**입니다. number of iterations 쪽은 32-bit Iteration-Count LFSR이고 후보 하나마다(버린 후보까지 포함해) 한 번 추첨하며 LFSR을 7 steps 전진시킵니다. sampling range 경계가 1이어도 sampling 한 번은 소비하고 0 iterations를 냅니다. measurement 쪽은 Measurement PRNG(64-bit xorshift)이고, rejection sampling의 후보마다 64-bit block 하나를 씁니다(14.4절). group → row → lane 선택은 받아들인 random number 하나의 잔여를 이어 쓰며 새 random number를 뽑지 않습니다. 두 seed는 host가 시작 명령을 쓸 때 다시 읽히고, seed가 0이면 정해진 대체 constant를 씁니다. 이 규약이 다르면 reference model과 RTL이 **bit-exact가 성립하지 않는데**([18.3절](18_reference_model_verification.md#183-bit-exact가-성립하기-위한-조건)), 지금은 둘이 500 workloads 전부에서 같은 BBHT trajectory를 냅니다.
+
+**4. $\text{sampling range} \leftarrow \min(1.2\cdot\text{sampling range},\ \sqrt{\text{number of states}})$ 의 hardware 산술.** 1.2×는 shift로 떨어지지 않지만, $\sqrt{\text{number of states}} = 128$ 이 정확한 integer라 clamp는 쉬워졌습니다. 16.2절의 28항 ROM으로 정했습니다.
+
+---
+

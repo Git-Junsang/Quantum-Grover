@@ -1,0 +1,27 @@
+{
+  "status": "corrected",
+  "fidelity_violations": [],
+  "overediting": [],
+  "residual_findings": [],
+  "correction_count": 2,
+  "corrections": [
+    {
+      "before": "이 장치의 목적은 속도 우위를 얻는 데 있지 않습니다. quantum algorithm의 동작을",
+      "after": "이 장치의 가치는 속도 우위에 있지 않습니다. quantum algorithm의 동작을"
+    },
+    {
+      "before": "재현·검증하는 전용 hardware**입니다",
+      "after": "재현·검증하는 전용 hardware**라는 점에 있습니다"
+    }
+  ],
+  "preservation": "pass: English tokens, numbers, formulas, code, headings, links, callout symbols",
+  "gate_exit_code": 1,
+  "baseline_golden_unchanged": true,
+  "warnings": [
+    "각주 검사 경고 4건은 수정 전 원문을 원문 자신과 비교해도 동일하게 발생함. 수식·수치·code·제목·link 직접 보존 검사는 통과함."
+  ],
+  "grade": "B",
+  "self_check_passed": 6,
+  "self_check_total": 6,
+  "notes": "원문의 개념·조건·인과·부정·당위·존댓말을 보존함. 변경률 10% 미만의 국소 윤문으로 B 판정."
+}

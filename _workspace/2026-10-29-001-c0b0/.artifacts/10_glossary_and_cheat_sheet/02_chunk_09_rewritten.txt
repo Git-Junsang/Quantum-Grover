@@ -1,0 +1,14 @@
+## 10.8 원문 자료 대조표
+
+이 해설서가 재구성한 원문(`documents/study_references/papers/1. 양자컴퓨터 기초이론/`):
+
+| 원문 | 다룬 주제 | 대응 장 |
+|------|-----------|---------|
+| **Quantum Computing for the Very Curious** (Matuschak & Nielsen) | qubit·gate·measurement·unitary·CNOT·entanglement·universality·Toffoli | [1](01_qubits_and_states.md)~[6](06_quantum_circuit_model_and_universality.md) |
+| **[기초이론] 5. 그로버 알고리즘과 도이치 알고리즘** (hgmin1159) | oracle·amplitude amplification·inversion about the mean·diffusion operator·Grover circuit·Deutsch–Jozsa | [7](07_oracle_and_phase_kickback.md)~[9](09_grover_algorithm.md) |
+| **양자 컴퓨팅 입문 (2) - Grover's Algorithm** (infossm) | phase kickback·diffusion operator·geometric rotation·number of iterations 유도 | [7](07_oracle_and_phase_kickback.md), [9](09_grover_algorithm.md) |
+
+더 깊이 보려면: Nielsen & Chuang, *Quantum Computation and Quantum Information* (표준 교과서); Sutor, *Dancing With Qubits*; Bernhardt, *Quantum Computing for Everyone*; Grover (1996) 원논문; Boyer et al. (1998) *Tight bounds on quantum searching* (number of Grover iterations의 엄밀한 분석).
+
+---
+

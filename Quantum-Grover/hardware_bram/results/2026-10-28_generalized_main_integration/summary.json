@@ -1,0 +1,96 @@
+{
+  "implemented_plan_steps": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "scope": "parameterized Main-IP integration and selected directed RTL checks; full Common500 is step 7 and has not been run on this implementation",
+  "policy_mode": 6,
+  "same_source_baseline_prefix_rows_equal": true,
+  "baseline_prefix_workloads": 2,
+  "checkpoint_valid_policy_cases": 344,
+  "checkpoint_invalid_packet_tests": 4,
+  "checkpoint_inflight_invalidate_tests": 4,
+  "wide_fifo_slots": 10,
+  "wide_fifo_count_bits": 4,
+  "wide_fifo_packet_bits": 185,
+  "selected_main_configurations": [
+    [
+      3,
+      3,
+      4,
+      2
+    ],
+    [
+      5,
+      3,
+      3,
+      4
+    ],
+    [
+      3,
+      9,
+      1,
+      1
+    ],
+    [
+      10,
+      2,
+      16,
+      3
+    ],
+    [
+      1,
+      10,
+      1,
+      4
+    ]
+  ],
+  "maximum_parameter_combination": {
+    "k": 10,
+    "h": 10,
+    "e": 16,
+    "m": 4,
+    "stimulus": "synthetic all-targets, j=0; not a performance benchmark"
+  },
+  "scheduler_fault_tests": [
+    "one mismatched FIFO expected-j",
+    "reuse old epoch during cancelled in-flight speculation"
+  ],
+  "same_oracle_warm_restart_tests": 3,
+  "main_port_contract": {
+    "wrapper": 19,
+    "core": 61,
+    "errors": 0
+  },
+  "frozen_background_platform_inputs_unchanged": 28,
+  "protected_firmware_unchanged": true,
+  "verified_result_files": [
+    "hardware_bram/results/2026-10-28_generalized_main_integration/k3h3e4m2_final/integration.json",
+    "hardware_bram/results/2026-10-28_generalized_main_integration/legacy_baseline_final/integration.json",
+    "hardware_bram/results/2026-10-28_generalized_main_integration/demand_only_final/integration.json",
+    "hardware_bram/results/2026-10-28_generalized_main_integration/warm_restart_final/integration.json",
+    "hardware_bram/results/2026-10-28_generalized_main_integration/maximum_width_final/result.json",
+    "hardware_bram/results/2026-10-28_generalized_main_integration/final_boundaries/k5h3e3m4/integration.json",
+    "hardware_bram/results/2026-10-28_generalized_main_integration/final_boundaries/k3h9e1m1/integration.json",
+    "hardware_bram/results/2026-10-28_generalized_main_integration/final_boundaries/k10h2e16m3/integration.json",
+    "hardware_bram/results/2026-10-28_generalized_main_integration/final_boundaries/k1h10e1m4/integration.json",
+    "hardware_bram/results/2026-10-28_generalized_main_integration/mismatch_final/result.json",
+    "hardware_bram/results/2026-10-28_generalized_main_integration/epoch_reuse_final/result.json",
+    "hardware_bram/results/2026-10-28_generalized_main_integration/forced_generic_final/integration.json"
+  ],
+  "errors": 0,
+  "checkpoint_maximum_boundary_tests": 4,
+  "shadow_prediction_contexts": 400,
+  "forced_generic_supported_configuration_passed": true,
+  "documentation_check": {
+    "documents": 196,
+    "errors": 0,
+    "warnings": 0
+  },
+  "csr_check": "passed",
+  "background_status": "User-requested requery found three killed synthesis attempts; fourth serial-synthesis attempt submitted, completion not polled."
+}

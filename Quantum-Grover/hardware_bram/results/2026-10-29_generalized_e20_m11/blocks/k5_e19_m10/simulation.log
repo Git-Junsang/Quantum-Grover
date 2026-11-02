@@ -1,0 +1,2 @@
+SUMMARY parallel capacity=5 iteration_engines=19 square_engines=10 memory_rows=2560 square_rows=512 pass1_rows=2048 diffusion_rows=2048 errors=0
+hardware_bram/results/2026-10-29_generalized_e20_m11/blocks/k5_e19_m10/source/tb_parallel_generalized.sv:188: $finish called at 6906000 (1ps)

@@ -4,7 +4,7 @@ IEEE Transactions / Conference 양식(IEEEtran)에 맞춘 논문 뼈대입니다
 대문자 제목, 소단원은 `A.` `B.`, 그 아래는 `1)` `2)` 로 매깁니다. Abstract · Index Terms ·
 Acknowledgment · References · Appendix 는 번호를 붙이지 않습니다.
 
-각 절 옆의 "근거" 는 그 절을 쓸 때 끌어올 기술문서 장과 benchmark 묶음입니다. 성능 수치는 세 축
+각 절 옆의 "근거" 는 그 절을 쓸 때 참조할 기술문서 장과 benchmark 묶음입니다. 성능 수치는 세 축
 (RTL cycle · board wall-clock time · software 대비)을 섞지 않고, 축마다 source of truth 묶음에서만 인용합니다
 ([1장 1.5절](../../design_references/01_project_overview.md#15-성능-지표와-인용-기준)).
 

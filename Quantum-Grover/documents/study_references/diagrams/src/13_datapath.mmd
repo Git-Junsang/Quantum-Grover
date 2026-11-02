@@ -1,0 +1,11 @@
+flowchart TD
+    IN([Shot Controller에서 진입 · 목표 number of iterations]) --> CK{"이어 쓸 checkpoint slot이 있나?<br/>(16.5절)"}
+    CK -->|아니오| INIT["Init · 128 cycles<br/>전 칸 ← 32,768 (= 2⁻⁷, error 0)"]
+    CK -->|예| SKIP["Init 생략<br/>checkpoint의 iteration 위치에서 남은 iterations만 전진"]
+    INIT --> P1
+    SKIP --> P1
+    P1["Pass 1 · oracle + accumulation<br/>value − threshold의 MSB로 predicate 판정 · DATA_COUNT 밖과 찾은 칸은 non-solution<br/>맞으면 two's complement negate · PE마다 32 lanes sum → 4 accumulators"] --> MEAN["Mean · 네 accumulator sum(39 bits)을 13칸 산술 우시프트<br/>round-half-to-even → 2 × mean (25 bits)"]
+    MEAN --> P2["Pass 2 · diffusion operator<br/>amp ← 2 × mean − amp · 되쓰기 직전 symmetric saturation"]
+    P2 --> CHK{"number of iterations만큼 다 돌았나?"}
+    CHK -->|아니오| P1
+    CHK -->|예| OUT([measurement로 · 14장 · iteration 1회 ≈ 268 cycles])

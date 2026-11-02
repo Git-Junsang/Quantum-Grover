@@ -1,0 +1,24 @@
+{
+  "config": {
+    "schema": 2,
+    "k": 5,
+    "h": 3,
+    "e": 16,
+    "m": 4,
+    "policy_mode": 6,
+    "scan_lanes": 4,
+    "force_generic": true
+  },
+  "sha256": {
+    "hardware_bram/src/grover_policy.v": "54e3e9dc167b1fad567cdb5070505095502f9083856b76831ae515ecf4b1c232",
+    "hardware_bram/src/grover_policy_parameterized.sv": "1b2c3bd93e596fb83b7e9dfae23beb63e19ec276be1b38576692482b697832d2",
+    "hardware_bram/src/grover_param.vh": "f334d27683ec7660250a4c9ccefd90c1c82b9c7047d37bd4ca887fb29a11f2fd",
+    "hardware_bram/testbench/tb_policy_parameterized.sv": "6a5821c60bf8683e2a94f7c213bb5b853e31c9feb70c6f318d6b1b3a75752a32"
+  },
+  "random_cases": 48,
+  "seed": 28028,
+  "scope": "standalone RTL policy only; E/M integration not yet implemented",
+  "backend": "generic experimental",
+  "summary": "SUMMARY parameterized capacity=5 lookahead=3 cases=53 errors=0 total_cycles=1035",
+  "cycles_are": "observed start-to-done RTL clock edges, cross-checked with hardware counter"
+}

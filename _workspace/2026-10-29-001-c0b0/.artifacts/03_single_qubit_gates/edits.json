@@ -1,0 +1,77 @@
+{
+  "edits": [
+    {
+      "rule": "C-11",
+      "before": "qubit state를 알았으니, 이제",
+      "after": "qubit state를 알았으니 이제"
+    },
+    {
+      "rule": "I-3",
+      "before": "state vector에 matrix를 곱하는 것이 곧 gate를 적용하는 것입니다.",
+      "after": "state vector에 matrix를 곱해 gate를 적용합니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "특히 **Hadamard($H$)** 는 superposition을 만드는 열쇠입니다.",
+      "after": "특히 **Hadamard($H$)** 는 superposition을 만드는 데 쓰입니다."
+    },
+    {
+      "rule": "C-11",
+      "before": "이 linearity 덕분에, gate가",
+      "after": "이 linearity 덕분에 gate가"
+    },
+    {
+      "rule": "D-14",
+      "before": "state는 극도로 부서지기 쉽기 때문입니다.",
+      "after": "state는 외부 영향에 매우 민감하기 때문입니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "계산을 데려가, 지름길을 낼 수 있게 해 줍니다.",
+      "after": "계산할 수 있게 해 주어 지름길을 마련합니다."
+    },
+    {
+      "rule": "D-2",
+      "before": "(3) 영리한 상쇄·보강 패턴으로",
+      "after": "(3) 상쇄·보강 패턴으로"
+    },
+    {
+      "rule": "A-18",
+      "before": "우리 project의 14 qubits라면 16,384 states이고 $1/\\sqrt{16{,}384} = 1/128 = 0.0078125$ 인데, 이 값을",
+      "after": "우리 project의 14 qubits라면 16,384 states이고 $1/\\sqrt{16{,}384} = 1/128 = 0.0078125$ 입니다. 이 값을"
+    },
+    {
+      "rule": "D-8",
+      "before": "수식과 circuit이 이렇게 달라 보이는 이유는 간단합니다 — 우리는 matrix를 만드는 대신, 그 matrix가 만들어 낼 **결과**를 곧장 적어 넣습니다.",
+      "after": "수식과 circuit이 이렇게 달라 보이는 것은 우리가 matrix를 만드는 대신 그 matrix가 만들어 낼 **결과**를 곧장 적어 넣기 때문입니다."
+    },
+    {
+      "rule": "D-8",
+      "before": "이것이 gate에 필수인 이유: 입력 state는",
+      "after": "gate에서 이 성질이 필요한 까닭은 다음과 같습니다. 입력 state는"
+    },
+    {
+      "rule": "D-14",
+      "before": "Grover가 쓰는 gate는 matrix를 세우지 않고 **뜻만** 옮기면 됩니다.",
+      "after": "Grover가 쓰는 gate는 matrix를 만들지 않고 **작용만** 구현하면 됩니다."
+    },
+    {
+      "rule": "A-18",
+      "before": "한 번이고, predicate에 걸린 칸에 대해 oracle이 amplitude에 하는 일은 그것이 전부입니다",
+      "after": "한 번입니다. predicate에 걸린 칸에 대해 oracle이 amplitude에 하는 일은 이것이 전부입니다"
+    },
+    {
+      "rule": "D-14",
+      "before": "숨어 있던 amplitude가 어떻게 probability로 바뀌고,",
+      "after": "직접 읽을 수 없던 amplitude가 어떻게 probability로 바뀌고"
+    }
+  ],
+  "self_check": {
+    "preserved_anchors": true,
+    "genre": true,
+    "register": true,
+    "no_added_claims": true,
+    "no_added_metaphors": true,
+    "protected_tokens": true
+  }
+}

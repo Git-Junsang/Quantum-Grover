@@ -1,0 +1,75 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 8/12이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 윤문 진단
+
+## 장르·레지스터
+- 학부생용 quantum algorithm·FPGA 해설서(report), 친근한 합쇼체 중심이며 독자에게 말을 거는 해요체가 일부 섞인 기존 학습서 말투입니다. 격식을 올리거나 설명을 학술 논문체로 바꾸지 않습니다.
+- 제목·절 번호·목록·표·수식·code·link·기존 콜아웃 및 이모지 형식은 보존합니다. 한국어 서술만 국소적으로 다듬습니다.
+- 영어 용어·영어 토큰은 번역, 교체, 삭제, 추가하지 않습니다. SSOT는 documents/design_references/22_appendix_glossary_and_retired_specs.md §22.2와 기존 glossary입니다.
+- 사실·수치·조건·부정·인과·추측/당위·인용을 보존합니다. 원문의 기술 주장을 새 해설이나 사실 교정으로 확장하지 않습니다.
+
+## 정량 앵커
+- 26,357자, risk_band low, route_hint heavy(길이 기준). A-7 have_make_literal_count=1, A-19 double_particle_count=1, A-18 relative_clause_nesting=7. conclusion_pivot_count=2(그러므로), lexical_diversity=0.52(z=-2.54). 전문용어 반복을 줄이기 위해 영어를 바꾸지 않습니다. ending_comma_rate=0.47.
+## 지배 패턴과 겨냥 순서
+1. D-14·D-5: “여러 번 던져야”, “datapath가 통째로 무너집니다”, “남는 장사가 아닙니다”, “array를 훔쳐보는 반칙”, “Grover처럼 생긴 무언가”, “승부가 나기 시작”, “하드웨어가 쥡니다”, “state를 떨궈 두는”, “반드시 새는 곳” 등 일상 비유·의인화가 알고리즘·설계 설명을 덮습니다. 영어 표현은 두고 한국어 설명을 구체적으로 정돈하는 것이 우선입니다.
+2. D-8·I-2: “정직하게 짚고 갈 것이 하나”, “답은 … 모양에”, “이제 이 장의 본론”, “이 절이 이 장에서 가장 중요” 등 설명의 중요도를 선언하는 문장이 반복됩니다. 실제 주장과 조건을 유지하면서 군더더기를 덜어낼 후보입니다.
+3. A-18·C-11: 16.1의 QPE 도입 비용, 16.2의 BBHT 보장, 16.5의 policy 선택, 16.6의 재현성 논증에 조건과 후속 결과가 긴 문장으로 연결됩니다. causal order와 독립성·bit-exact 조건을 보존하며 한국어 연결을 다듬습니다.
+4. C-8·J-2: “속도가 아니라 충실도”, “저장 공간이 아니라 결정 비용”, “algorithm 지표가 아니라 emulation 시간”처럼 대조가 반복됩니다. 지표의 실질적 차이를 지우지 말고 가상 인용·감정적 평가 표현을 우선 정돈합니다.
+5. A-7·A-19: “checkpoint slot을 들고 있다”, “number of iterations마다의 amplitude” 같은 표현은 한국어 동사·조사 손질 후보입니다. ‘각 checkpoint slot에 값이 저장됨’ 같은 본래 뜻을 넘어서 새로운 동작을 추가하지 않습니다.
+6. F-1·D-2: “영원히”, “반드시”, “가장 극적인”, “거짓말” 등 강한 평가어가 많이 나옵니다. 요구 조건이나 명제의 강도를 바꾸지 않도록 감상적 수식만 검토합니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 2545
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.50  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.68  (z=-0.15 vs report 인간 baseline)
+- ending_comma_rate: 0.38  (n/a vs report 인간 baseline)
+- comma_segment_length: 8.64  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 1  (lexicon 매치: '그러므로')
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.002  (z=-1.92 vs report 인간 baseline)
+- lexical_diversity: 0.81  (z=+3.16 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.004
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 1
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 16.6 왜 결과가 달라지지 않는가
+
+이 절이 이 장에서 가장 중요합니다. 실패한 shot의 state를 물려받아 이어 돌리는 것이 정말 **같은 algorithm**인지, 두 층위로 나눠 답해야 합니다.
+
+**첫째, state 재현성.** Grover 한 바퀴를 $G = D \cdot O$(oracle 뒤 diffusion operator)라 쓰면, checkpoint slot에서 이어 가는 경로가 만들어 내는 연산열은
+
+$$(D O)^{\text{number of iterations}_{\text{request}}} = (D O)^{\,\text{number of iterations}_{\text{request}} - \text{number of iterations}_{\text{checkpoint slot}}} \cdot (D O)^{\,\text{number of iterations}_{\text{checkpoint slot}}}$$
+
+입니다. 6.6절이 "circuit의 순효과는 하나의 unitary"라고 했던 그 associative law가 근거입니다 — unitary의 곱은 결합적이므로 어디서 끊어 읽든 순효과가 같습니다. 즉 이어 가는 경로는 새로 Init해서 같은 횟수만큼 돌린 것과 **문자 그대로 같은 연산열**이고, 우리 산술이 결정적(rounding은 round-half-to-even, saturation 지점과 accumulator width는 고정)이므로 결과는 근사적으로 같은 정도가 아니라 **bit 단위로 동일**합니다. checkpoint slot이 몇 벌이든, policy가 어떤 중간 state를 남기든 이 등식은 그대로입니다. 이 등식이 [18.7절](18_reference_model_verification.md#187-checkpoint를-어떻게-검증하나)에서 verification의 합격 기준이 됩니다.
+
+**둘째, 통계적 정당성.** 여기서 반드시 나오는 질문이 있습니다 — *"앞 shot의 계산을 물려받으면 그건 shot을 여러 번 던진 게 아니라 한 번 길게 돌린 거 아닌가? 반칙 아닌가?"*
+
+아닙니다. 이유는 두 가지입니다. 하나, **같은 횟수만큼 iteration을 돈 state는 도달 경로와 무관하게 유일합니다.** 위 등식이 말하는 것이 정확히 그것이죠. 앞선 shot을 거쳐 왔든 방금 Init했든, 같은 횟수만큼 iteration을 돈 amplitude array는 같은 하나입니다. 둘, **measurement random number는 shot마다 Measurement PRNG에서 새로 뽑습니다.** 그래서 각 shot은 여전히 $\sin^2\big((2\cdot\text{number of iterations}+1)\,\theta\big)$ probability로 solution을 내는 **서로 독립인 shot**입니다. 결과적으로 후보 index의 분포도, shot당 success probability도, 총 number of shots의 분포도 checkpoint를 끄나 켜나 똑같습니다. **관측 가능한 출력은 하나도 바뀌지 않고 wall-clock time만 줄어듭니다.** 실제로 같은 500 workloads에서 board의 Restart mode와 final configuration이 결과 index·number of shots·requested iterations를 500/500 같게 냈습니다.
+
+다만 정직하게 덧붙일 것이 있습니다. **실기 quantum computer는 이렇게 할 수 없습니다.** [4.4절](04_measurement.md#44-measurement는-state를-collapse시킨다)의 collapse 때문입니다 — 실제 장치에서는 측정하는 순간 superposition이 무너져 amplitude가 사라지므로, 다음 shot은 무조건 $|0\cdots0\rangle$ 부터 다시 만들어야 합니다. 우리가 이어 돌릴 수 있는 것은 amplitude를 memory에 펼쳐 놓았고 Born-rule sampling을 **읽기 전용**으로 구현했기 때문이지, quantum mechanics가 그것을 허락해서가 아닙니다. 앞으로 올 request를 미리 계산하는 policy도 마찬가지로 emulator만 할 수 있는 일이지만, 그것이 들여다보는 것은 BBHT가 스스로 만든 number of iterations 수열뿐이고 amplitude나 solution은 아닙니다. 11장에서 말한 "emulator가 실기보다 쉬운 것들"의 가장 극적인 사례입니다.
+
+그러므로 보고할 때 두 지표를 반드시 갈라 적습니다. **algorithm 지표(requested iterations)는 그대로이고, 줄어드는 것은 executed iterations(`EXECUTED_ITERATIONS`)와 wall-clock time뿐입니다.** 16.3절 표에서 두 열이 따로 적힌 것이 이 구분입니다. 이걸 섞어 "우리 방식이 Grover iteration을 70% 줄였다"고 쓰면 거짓말이 됩니다 — 줄어든 것은 emulation 시간이지 algorithm이 oracle에 던진 질의 횟수가 아닙니다.
+
+---
+[원문 끝]

@@ -1,0 +1,86 @@
+{
+  "package": "RTL_ENUMERATION_GOLDEN_VECTORS",
+  "mask_word_mapping": "row=index>>5, bit=index&31, little lane order",
+  "cases": [
+    {
+      "name": "q14_eq_m1",
+      "backend": "SOFTWARE_RELOAD",
+      "directory": "software_reload/q14_eq_m1",
+      "config": "software_reload/q14_eq_m1/config.json",
+      "expected_result": "software_reload/q14_eq_m1/expected_result.json",
+      "data_sha256": "36132e05ed4b56d8161521d896a6947b24d8fb7cf8ec84d11416314f5581b9c9"
+    },
+    {
+      "name": "q14_range_m4_pad50",
+      "backend": "SOFTWARE_RELOAD",
+      "directory": "software_reload/q14_range_m4_pad50",
+      "config": "software_reload/q14_range_m4_pad50/config.json",
+      "expected_result": "software_reload/q14_range_m4_pad50/expected_result.json",
+      "data_sha256": "5261d0f3ce388d0ac25ea27c97d567d8a97aa8202fddb828736a1d39410241ff"
+    },
+    {
+      "name": "q14_gt_m8_pad75",
+      "backend": "SOFTWARE_RELOAD",
+      "directory": "software_reload/q14_gt_m8_pad75",
+      "config": "software_reload/q14_gt_m8_pad75/config.json",
+      "expected_result": "software_reload/q14_gt_m8_pad75/expected_result.json",
+      "data_sha256": "3339764f82f40766cdf440d80141f3df5f63e3b00854b7dc99d1d783307f0eab"
+    },
+    {
+      "name": "q14_lt_m0",
+      "backend": "SOFTWARE_RELOAD",
+      "directory": "software_reload/q14_lt_m0",
+      "config": "software_reload/q14_lt_m0/config.json",
+      "expected_result": "software_reload/q14_lt_m0/expected_result.json",
+      "data_sha256": "9f1dcbc35c350d6027f98be0f5c8b43b42ca52b7604459c0c42be3aa88913d47"
+    },
+    {
+      "name": "q16_eq_m2",
+      "backend": "SOFTWARE_RELOAD",
+      "directory": "software_reload/q16_eq_m2",
+      "config": "software_reload/q16_eq_m2/config.json",
+      "expected_result": "software_reload/q16_eq_m2/expected_result.json",
+      "data_sha256": "1f23374808f20f6d2153a4b42621608b2b51ccda4713a930def4facf026030eb"
+    },
+    {
+      "name": "q14_eq_m1",
+      "backend": "PROJECTED_MASK_MEM",
+      "directory": "projected_mask_mem/q14_eq_m1",
+      "config": "projected_mask_mem/q14_eq_m1/config.json",
+      "expected_result": "projected_mask_mem/q14_eq_m1/expected_result.json",
+      "data_sha256": "36132e05ed4b56d8161521d896a6947b24d8fb7cf8ec84d11416314f5581b9c9"
+    },
+    {
+      "name": "q14_range_m4_pad50",
+      "backend": "PROJECTED_MASK_MEM",
+      "directory": "projected_mask_mem/q14_range_m4_pad50",
+      "config": "projected_mask_mem/q14_range_m4_pad50/config.json",
+      "expected_result": "projected_mask_mem/q14_range_m4_pad50/expected_result.json",
+      "data_sha256": "5261d0f3ce388d0ac25ea27c97d567d8a97aa8202fddb828736a1d39410241ff"
+    },
+    {
+      "name": "q14_gt_m8_pad75",
+      "backend": "PROJECTED_MASK_MEM",
+      "directory": "projected_mask_mem/q14_gt_m8_pad75",
+      "config": "projected_mask_mem/q14_gt_m8_pad75/config.json",
+      "expected_result": "projected_mask_mem/q14_gt_m8_pad75/expected_result.json",
+      "data_sha256": "3339764f82f40766cdf440d80141f3df5f63e3b00854b7dc99d1d783307f0eab"
+    },
+    {
+      "name": "q14_lt_m0",
+      "backend": "PROJECTED_MASK_MEM",
+      "directory": "projected_mask_mem/q14_lt_m0",
+      "config": "projected_mask_mem/q14_lt_m0/config.json",
+      "expected_result": "projected_mask_mem/q14_lt_m0/expected_result.json",
+      "data_sha256": "9f1dcbc35c350d6027f98be0f5c8b43b42ca52b7604459c0c42be3aa88913d47"
+    },
+    {
+      "name": "q16_eq_m2",
+      "backend": "PROJECTED_MASK_MEM",
+      "directory": "projected_mask_mem/q16_eq_m2",
+      "config": "projected_mask_mem/q16_eq_m2/config.json",
+      "expected_result": "projected_mask_mem/q16_eq_m2/expected_result.json",
+      "data_sha256": "1f23374808f20f6d2153a4b42621608b2b51ccda4713a930def4facf026030eb"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+## 10.5 용어집
+
+| 용어 | 뜻 | 장 |
+|------|-----|:--:|
+| qubit | quantum 정보의 단위. state는 2차원 complex vector | [1](01_qubits_and_states.md) |
+| computational basis | $\|0\rangle, \|1\rangle$ (고전 bit 0, 1에 대응) | [1](01_qubits_and_states.md) |
+| amplitude | state의 complex 성분 $\alpha,\beta$. absolute value의 square가 probability | [1](01_qubits_and_states.md) |
+| superposition | 여러 computational basis state의 linear combination | [1](01_qubits_and_states.md) |
+| normalization | $\|\alpha\|^2+\|\beta\|^2=1$, state vector의 길이가 1 | [1](01_qubits_and_states.md) |
+| ket · bra | column vector $\|\psi\rangle$ · 그 conjugate transpose인 row vector $\langle\psi\|$ | [2](02_dirac_notation_and_linear_algebra.md) |
+| inner product | $\langle\phi\|\psi\rangle$, 두 state가 닮은 정도 (0이면 orthogonal) | [2](02_dirac_notation_and_linear_algebra.md) |
+| conjugate transpose | transpose한 뒤 complex conjugate를 취한 것. adjoint, dagger(†)라고도 부름 | [2](02_dirac_notation_and_linear_algebra.md) |
+| unitary | $U^\dagger U = I$. 길이를 보존. 모든 gate가 unitary | [3](03_single_qubit_gates.md) |
+| Hadamard gate | superposition을 만드는 gate $H$ | [3](03_single_qubit_gates.md) |
+| Pauli gate | $X, Y, Z$ | [3](03_single_qubit_gates.md) |
+| measurement | state를 고전 bit로 collapse시켜 읽음 | [4](04_measurement.md) |
+| Born rule | 결과 probability $= \|\text{amplitude}\|^2$ | [4](04_measurement.md) |
+| collapse | measurement 뒤 computational basis state 하나로 확정됨 (비가역) | [4](04_measurement.md) |
+| global phase | state 전체에 곱해지는 $e^{i\theta}$. measurement 결과에 영향 없음 | [4](04_measurement.md) |
+| tensor product | qubit를 합치는 연산 $\otimes$ | [5](05_multiple_qubits_and_entanglement.md) |
+| CNOT | controlled-NOT. control qubit가 1이면 target qubit를 뒤집음 | [5](05_multiple_qubits_and_entanglement.md) |
+| entanglement | tensor product로 분해되지 않는 state. measurement 결과가 서로 상관됨 | [5](05_multiple_qubits_and_entanglement.md) |
+| quantum parallelism | $2^{\text{number of qubits}}$ 개 입력을 동시에 처리 (단, measurement로는 하나만 얻음) | [6](06_quantum_circuit_model_and_universality.md) |
+| interference | amplitude끼리 상쇄 · 보강 | [6](06_quantum_circuit_model_and_universality.md) |
+| Toffoli gate | controlled-controlled-NOT. 가역 AND (control qubit 2개) | [6](06_quantum_circuit_model_and_universality.md) |
+| universal gate set | single-qubit gate + CNOT | [6](06_quantum_circuit_model_and_universality.md) |
+| oracle | solution을 판별하는 black box $f$ | [7](07_oracle_and_phase_kickback.md) |
+| phase kickback | 출력 쪽 뒤집힘이 입력 phase로 되돌아오는 현상 | [7](07_oracle_and_phase_kickback.md) |
+| diffusion operator | Grover의 inversion about the mean $U_\psi$ | [9](09_grover_algorithm.md) |
+| amplitude amplification | solution amplitude를 키우는 기법 | [9](09_grover_algorithm.md) |
+
+---
+

@@ -1,0 +1,21 @@
+
+=== results/2026-09-10_bench250_final_core/per_workload.csv ===
+  총 샷                 3,647
+  Normal 반복          14,883   사이클    5,648,298
+  K4 반복               4,457   사이클    2,563,403
+  반복 감소 70.05%   사이클 감소 54.62%
+  policy stall         93,297  (3.64% of K4)
+  plan_fifo_mismatch 0  (0 이어야 합니다)
+
+=== 궤적 불변량 ===
+  ok   [results/2026-09-10_bench250_final_core/per_workload.csv] Normal vs K4 궤적  250/250 일치
+
+=== 보드 실측 대조 (2026-09-08 M2, 같은 코어) ===
+  ok   result_index   250/250
+  ok   trial_count    250/250
+  ok   L_BBHT         250/250
+  ok   actual_iter    250/250
+       cycle_count    230/250  합계 2,563,403 대 2,556,312 (+0.28%)
+       사이클은 실패로 잡지 않습니다 -- 함수 주석 참고
+
+통과

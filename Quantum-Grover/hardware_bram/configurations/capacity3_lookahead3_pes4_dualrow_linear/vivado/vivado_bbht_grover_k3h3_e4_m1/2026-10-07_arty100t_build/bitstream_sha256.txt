@@ -1,0 +1,1 @@
+3b4fc4037988558deaa2840ba439792eeeaab57edf87bb84fdaeb1ed21c11438  bbht_grover_k3h3_e4_m1_fpga.arty-100t.bit

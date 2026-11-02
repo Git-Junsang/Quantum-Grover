@@ -1,0 +1,40 @@
+{
+  "genre": "report",
+  "change_rate": {
+    "rate": 0.0087,
+    "scope": "전문",
+    "verdict": "OK"
+  },
+  "s1_targets": [],
+  "antithesis": {
+    "before": 11,
+    "after": 10,
+    "verdict": "OK"
+  },
+  "golden": [],
+  "sentence_touch": {
+    "rate": 0.1022,
+    "touched": 32,
+    "total": 313
+  },
+  "numbers_dropped": [],
+  "modality": {
+    "lost_pairs": [],
+    "uncertain_pairs": [],
+    "counts": {
+      "deontic": {
+        "before": 28,
+        "after": 31
+      },
+      "hedge": {
+        "before": 8,
+        "after": 8
+      }
+    },
+    "verdict": "OK"
+  },
+  "gate": {
+    "verdict": "OK — 수렴",
+    "exit_code": 0
+  }
+}

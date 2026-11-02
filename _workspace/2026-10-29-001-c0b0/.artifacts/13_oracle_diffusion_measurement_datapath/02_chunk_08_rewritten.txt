@@ -1,0 +1,18 @@
+## 13.7 32-lane datapath와 accumulation 순서
+
+지금까지의 circuit은 amplitude 한 칸을 다루는 이야기였습니다. 실제로는 PE 하나가 한 cycle에 row 하나(32칸)를 처리하고, final configuration에는 **4 PEs**가 있어 128칸이 한꺼번에 흐릅니다([11.7절](11_state_vector_emulator.md#117-병렬도와-banking)).
+
+address 생성부터 봅니다. index의 **하위 5 bits가 lane, 상위 9 bits가 row**이고, row 번호의 하위 2 bits가 네 row phase bank 중 하나를 고릅니다(14 qubits):
+
+$$i = \underbrace{\texttt{row}[8{:}2]}_{\text{address in bank}}\ \Vert\ \underbrace{\texttt{row}[1{:}0]}_{\text{row phase bank}}\ \Vert\ \underbrace{\texttt{lane}[4{:}0]}_{\text{lane}}$$
+
+이렇게 잘라 두면 address generator가 7-bit counter 하나로 끝납니다. cycle $c$ 에는 네 bank가 **모두 같은 address $c$** 를 읽어 row $4c \ldots 4c+3$ 이 한꺼번에 나오므로 충돌이 원리적으로 0이고, crossbar나 permutation network가 필요 없습니다. amplitude를 임의로 재배치해야 하는 범용 gate simulator가 permutation network 하나에 logic의 3분의 1을 쓰는 것과 대조됩니다 — Grover의 두 연산(전역 균일 반사, index별 predicate 판정)이 둘 다 **순차 streaming**으로 충분하기 때문에 우리는 그 비용을 통째로 피합니다.
+
+lane 하나는 지금까지 만든 것을 그대로 복제한 것입니다. `data_mem` 에서 $v_i$, amplitude memory에서 $a_i$ 를 같은 cycle에 읽고, subtractor가 predicate를 판정하고, XOR-carry-in 한 줄이 sign을 뒤집어 되씁니다. 여기에 Pass 1에서만 쓰이는 것이 하나 더 붙습니다 — **lane 간 adder tree**입니다. PE 하나마다 32 amplitudes를 5단 adder tree로 더하면 단마다 폭이 1-bit씩 늘어 $23 + 5 = 28$-bit partial sum이 되고, PE마다 accumulator가 하나씩 이 partial sum을 128 cycles 동안 모읍니다. mean을 확정할 때는 **네 accumulator를 더한 전체 sum**에서 13.5절의 shift를 한 번 합니다. 39 bits는 이 모든 경우를 최악값으로 담는 폭입니다.
+
+여기에 함정이 하나 있습니다. **addition 순서를 고정하지 않으면 bit-exact가 흔들릴 수 있습니다.** integer addition은 폭이 충분하면 순서에 무관하게 같은 값을 주므로 언뜻 신경 쓸 일이 없어 보입니다 — 실제로 우리 RTL은 partial sum을 자르지 않고 최악 폭으로 담기 때문에, tree 모양이 달라도 integer 결과는 같습니다. 하지만 두 가지 경우에 순서가 결과를 바꿉니다. 첫째, 폭을 아끼려고 중간 partial sum을 좁은 register에 담아 자르거나 saturation하는 순간, 어느 쌍을 먼저 더했는지가 잘리는 bit를 바꿉니다. 둘째, float64 model과 대조할 때는 **floating-point addition은 associativity를 만족하지 않으므로** 순서가 곧 결과입니다. `sum += a[i]` 로 차례로 더한 float model과 tree로 더한 RTL은 마지막 bit가 다를 수 있습니다. 그래서 bit-exact 대조의 상대는 float64 model이 아니라 **integer로만 계산하는 fixed-point reference model**이고, 이 항목이 [18.3절](18_reference_model_verification.md#183-bit-exact가-성립하기-위한-조건)의 고정 대상 목록에 들어 있는 이유입니다.
+
+Pass 2에는 adder tree가 없고, 대신 확정된 $2\bar a$ 가 128 lanes에 broadcast되어 각 lane이 subtraction과 saturation 하나씩을 합니다. broadcast signal이 128곳으로 퍼지므로 fanout이 커지는데, pipeline register를 한 단 두어 나눠 주면 100 MHz에서 문제가 되지 않습니다. 실제로 이 IP는 100 MHz에서 timing을 닫았습니다(WNS +0.126 ns, 17장).
+
+---
+

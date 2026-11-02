@@ -1,0 +1,6 @@
+{
+  "observer_sha256": "fb4b1644feeb082afe99dec3ff05f62e51ba3ca8af63782e18c1d64011d18e62",
+  "csv_sha256": "ad67436c52f3d440a8a3155f10ea17ecd2a9d7fde9aaac0476ec2ec4f25c32df",
+  "status": "console model compiled and ran successfully before resubmission",
+  "rtl_and_firmware_unchanged": true
+}

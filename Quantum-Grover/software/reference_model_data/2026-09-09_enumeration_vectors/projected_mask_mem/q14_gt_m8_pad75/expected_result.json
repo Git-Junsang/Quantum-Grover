@@ -1,0 +1,3152 @@
+{
+  "model_variant": "RTL_V09_PROJECTED_ENUM_MASK_MEM",
+  "rtl_validation_status": "PROJECTED_NOT_RTL_VALIDATED",
+  "case": {
+    "case_id": "PROJECTED_MASK_MEM-q14_gt_m8_pad75",
+    "profile_name": "Q14",
+    "data_count": 12288,
+    "target_count": 8,
+    "oracle_mode": "GT",
+    "backend": "PROJECTED_MASK_MEM",
+    "layout": "RANDOM",
+    "burst_enable": true,
+    "requested_count": 4
+  },
+  "threshold_a": 0,
+  "threshold_b": 0,
+  "expected_target_indices": [
+    1051,
+    2204,
+    2228,
+    2908,
+    7153,
+    9844,
+    9966,
+    10680
+  ],
+  "round_files": [
+    {
+      "round_index": 1,
+      "mask_before": "round_001_mask_before.hex",
+      "mask_after": "round_001_mask_after.hex",
+      "found_index": 9844,
+      "remaining_before": 8,
+      "remaining_after": 7
+    },
+    {
+      "round_index": 2,
+      "mask_before": "round_002_mask_before.hex",
+      "mask_after": "round_002_mask_after.hex",
+      "found_index": 2228,
+      "remaining_before": 7,
+      "remaining_after": 6
+    },
+    {
+      "round_index": 3,
+      "mask_before": "round_003_mask_before.hex",
+      "mask_after": "round_003_mask_after.hex",
+      "found_index": 10680,
+      "remaining_before": 6,
+      "remaining_after": 5
+    },
+    {
+      "round_index": 4,
+      "mask_before": "round_004_mask_before.hex",
+      "mask_after": "round_004_mask_after.hex",
+      "found_index": 1051,
+      "remaining_before": 5,
+      "remaining_after": 4
+    }
+  ],
+  "result": {
+    "found_indices": [
+      9844,
+      2228,
+      10680,
+      1051
+    ],
+    "found_count": 4,
+    "duplicate_free": true,
+    "initial_target_count": 8,
+    "remaining_target_count": 4,
+    "termination_reason": "REQUESTED_COUNT",
+    "consecutive_round_failures": 0,
+    "total_shots": 70,
+    "total_logical_grover_iterations": 277,
+    "total_physical_grover_iterations": 151,
+    "total_phase_oracle_calls": 277,
+    "total_candidate_verification_calls": 70,
+    "total_time_ms": 112.0047,
+    "rounds": [
+      {
+        "round_index": 1,
+        "remaining_target_count_before": 8,
+        "remaining_target_count_after": 7,
+        "found_indices_before": [],
+        "found_indices_after": [
+          9844
+        ],
+        "found_mask_before": null,
+        "found_mask_after": null,
+        "exclude_backend": "PROJECTED_MASK_MEM",
+        "success": true,
+        "found_index": 9844,
+        "search_termination_reason": "SUCCESS",
+        "attempts": [
+          {
+            "attempt": 1,
+            "m_bound": 1,
+            "requested_j": 0,
+            "physical_iterations": 0,
+            "cumulative_L_BBHT": 0,
+            "cumulative_physical_iterations": 0,
+            "result_index": 492,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 528891814135,
+            "selected_row": 15,
+            "selected_lane": 12,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              305418363,
+              610836727
+            ],
+            "trace": []
+          },
+          {
+            "attempt": 2,
+            "m_bound": 2,
+            "requested_j": 1,
+            "physical_iterations": 1,
+            "cumulative_L_BBHT": 1,
+            "cumulative_physical_iterations": 1,
+            "result_index": 993,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 1062078595567,
+            "selected_row": 31,
+            "selected_lane": 1,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              610836727,
+              1221673455
+            ],
+            "trace": [
+              {
+                "iteration": 1,
+                "global_sum": 536346624,
+                "two_mean": 65472,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 3,
+            "m_bound": 2,
+            "requested_j": 0,
+            "physical_iterations": 0,
+            "cumulative_L_BBHT": 1,
+            "cumulative_physical_iterations": 1,
+            "result_index": 1982,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 2128452158430,
+            "selected_row": 61,
+            "selected_lane": 30,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              1221673455,
+              2443346910
+            ],
+            "trace": []
+          },
+          {
+            "attempt": 4,
+            "m_bound": 2,
+            "requested_j": 1,
+            "physical_iterations": 1,
+            "cumulative_L_BBHT": 2,
+            "cumulative_physical_iterations": 2,
+            "result_index": 3943,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 4252609349565,
+            "selected_row": 123,
+            "selected_lane": 7,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              2443346910,
+              591726525
+            ],
+            "trace": [
+              {
+                "iteration": 1,
+                "global_sum": 536346624,
+                "two_mean": 65472,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 5,
+            "m_bound": 3,
+            "requested_j": 2,
+            "physical_iterations": 1,
+            "cumulative_L_BBHT": 4,
+            "cumulative_physical_iterations": 3,
+            "result_index": 7897,
+            "success": false,
+            "total_weight": 17592052350976,
+            "measurement_threshold": 8509513666427,
+            "selected_row": 246,
+            "selected_lane": 25,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              591726525,
+              1183453051
+            ],
+            "trace": [
+              {
+                "iteration": 2,
+                "global_sum": 534774784,
+                "two_mean": 65280,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 6,
+            "m_bound": 3,
+            "requested_j": 1,
+            "physical_iterations": 1,
+            "cumulative_L_BBHT": 5,
+            "cumulative_physical_iterations": 4,
+            "result_index": 15852,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 17023322300150,
+            "selected_row": 495,
+            "selected_lane": 12,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              1183453051,
+              2366906102
+            ],
+            "trace": [
+              {
+                "iteration": 1,
+                "global_sum": 536346624,
+                "two_mean": 65472,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 7,
+            "m_bound": 3,
+            "requested_j": 2,
+            "physical_iterations": 1,
+            "cumulative_L_BBHT": 7,
+            "cumulative_physical_iterations": 5,
+            "result_index": 15307,
+            "success": false,
+            "total_weight": 17592052350976,
+            "measurement_threshold": 16450163588588,
+            "selected_row": 478,
+            "selected_lane": 11,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              2366906102,
+              438844908
+            ],
+            "trace": [
+              {
+                "iteration": 2,
+                "global_sum": 534774784,
+                "two_mean": 65280,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 8,
+            "m_bound": 4,
+            "requested_j": 1,
+            "physical_iterations": 1,
+            "cumulative_L_BBHT": 8,
+            "cumulative_physical_iterations": 6,
+            "result_index": 14248,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 15308141132761,
+            "selected_row": 445,
+            "selected_lane": 8,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              438844908,
+              877689817
+            ],
+            "trace": [
+              {
+                "iteration": 1,
+                "global_sum": 536346624,
+                "two_mean": 65472,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 9,
+            "m_bound": 5,
+            "requested_j": 2,
+            "physical_iterations": 1,
+            "cumulative_L_BBHT": 10,
+            "cumulative_physical_iterations": 7,
+            "result_index": 12083,
+            "success": false,
+            "total_weight": 17592052350976,
+            "measurement_threshold": 13028391188403,
+            "selected_row": 377,
+            "selected_lane": 19,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              877689817,
+              1755379635
+            ],
+            "trace": [
+              {
+                "iteration": 2,
+                "global_sum": 534774784,
+                "two_mean": 65280,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 10,
+            "m_bound": 6,
+            "requested_j": 4,
+            "physical_iterations": 2,
+            "cumulative_L_BBHT": 14,
+            "cumulative_physical_iterations": 9,
+            "result_index": 7793,
+            "success": false,
+            "total_weight": 17591255953408,
+            "measurement_threshold": 8468891299687,
+            "selected_row": 243,
+            "selected_lane": 17,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              1755379635,
+              3510759271
+            ],
+            "trace": [
+              {
+                "iteration": 3,
+                "global_sum": 532156416,
+                "two_mean": 64960,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 4,
+                "global_sum": 528492544,
+                "two_mean": 64513,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 11,
+            "m_bound": 7,
+            "requested_j": 1,
+            "physical_iterations": 1,
+            "cumulative_L_BBHT": 15,
+            "cumulative_physical_iterations": 10,
+            "result_index": 15772,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 16937782599375,
+            "selected_row": 492,
+            "selected_lane": 28,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              3510759271,
+              2726551247
+            ],
+            "trace": [
+              {
+                "iteration": 1,
+                "global_sum": 536346624,
+                "two_mean": 65472,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 12,
+            "m_bound": 8,
+            "requested_j": 3,
+            "physical_iterations": 2,
+            "cumulative_L_BBHT": 18,
+            "cumulative_physical_iterations": 12,
+            "result_index": 15136,
+            "success": false,
+            "total_weight": 17591520198656,
+            "measurement_threshold": 16283379154335,
+            "selected_row": 473,
+            "selected_lane": 0,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              2726551247,
+              1158135199
+            ],
+            "trace": [
+              {
+                "iteration": 2,
+                "global_sum": 534774784,
+                "two_mean": 65280,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 3,
+                "global_sum": 532156416,
+                "two_mean": 64960,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 13,
+            "m_bound": 9,
+            "requested_j": 6,
+            "physical_iterations": 3,
+            "cumulative_L_BBHT": 24,
+            "cumulative_physical_iterations": 15,
+            "result_index": 13740,
+            "success": false,
+            "total_weight": 17590353739136,
+            "measurement_threshold": 14978867231550,
+            "selected_row": 429,
+            "selected_lane": 12,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              1158135199,
+              2316270398
+            ],
+            "trace": [
+              {
+                "iteration": 4,
+                "global_sum": 528492544,
+                "two_mean": 64513,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 5,
+                "global_sum": 523800560,
+                "two_mean": 63940,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 6,
+                "global_sum": 518081472,
+                "two_mean": 63242,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 14,
+            "m_bound": 11,
+            "requested_j": 7,
+            "physical_iterations": 1,
+            "cumulative_L_BBHT": 31,
+            "cumulative_physical_iterations": 16,
+            "result_index": 10939,
+            "success": false,
+            "total_weight": 17590375711328,
+            "measurement_threshold": 12361253451388,
+            "selected_row": 341,
+            "selected_lane": 27,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              2316270398,
+              337573500
+            ],
+            "trace": [
+              {
+                "iteration": 7,
+                "global_sum": 511352656,
+                "two_mean": 62421,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 15,
+            "m_bound": 13,
+            "requested_j": 10,
+            "physical_iterations": 3,
+            "cumulative_L_BBHT": 41,
+            "cumulative_physical_iterations": 19,
+            "result_index": 6254,
+            "success": false,
+            "total_weight": 17589576243456,
+            "measurement_threshold": 7130320858360,
+            "selected_row": 195,
+            "selected_lane": 14,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              337573500,
+              675147000
+            ],
+            "trace": [
+              {
+                "iteration": 8,
+                "global_sum": 503631472,
+                "two_mean": 61478,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 9,
+                "global_sum": 494918896,
+                "two_mean": 60415,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 10,
+                "global_sum": 485248640,
+                "two_mean": 59234,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 16,
+            "m_bound": 16,
+            "requested_j": 4,
+            "physical_iterations": 4,
+            "cumulative_L_BBHT": 45,
+            "cumulative_physical_iterations": 23,
+            "result_index": 13157,
+            "success": false,
+            "total_weight": 17591255953408,
+            "measurement_threshold": 14260641716721,
+            "selected_row": 411,
+            "selected_lane": 5,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              675147000,
+              1350294001
+            ],
+            "trace": [
+              {
+                "iteration": 1,
+                "global_sum": 536346624,
+                "two_mean": 65472,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 2,
+                "global_sum": 534774784,
+                "two_mean": 65280,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 3,
+                "global_sum": 532156416,
+                "two_mean": 64960,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 4,
+                "global_sum": 528492544,
+                "two_mean": 64513,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 17,
+            "m_bound": 19,
+            "requested_j": 9,
+            "physical_iterations": 5,
+            "cumulative_L_BBHT": 54,
+            "cumulative_physical_iterations": 28,
+            "result_index": 9844,
+            "success": true,
+            "total_weight": 17590015996672,
+            "measurement_threshold": 10933392356322,
+            "selected_row": 307,
+            "selected_lane": 20,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              1350294001,
+              2700588002
+            ],
+            "trace": [
+              {
+                "iteration": 5,
+                "global_sum": 523800560,
+                "two_mean": 63940,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 6,
+                "global_sum": 518081472,
+                "two_mean": 63242,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 7,
+                "global_sum": 511352656,
+                "two_mean": 62421,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 8,
+                "global_sum": 503631472,
+                "two_mean": 61478,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 9,
+                "global_sum": 494918896,
+                "two_mean": 60415,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          }
+        ],
+        "logical_grover_iterations": 54,
+        "physical_grover_iterations": 28,
+        "phase_oracle_calls": 54,
+        "candidate_verification_calls": 17,
+        "cache_invalidated_after_hit": true,
+        "timing_ms": 25.4093
+      },
+      {
+        "round_index": 2,
+        "remaining_target_count_before": 7,
+        "remaining_target_count_after": 6,
+        "found_indices_before": [
+          9844
+        ],
+        "found_indices_after": [
+          9844,
+          2228
+        ],
+        "found_mask_before": null,
+        "found_mask_after": null,
+        "exclude_backend": "PROJECTED_MASK_MEM",
+        "success": true,
+        "found_index": 2228,
+        "search_termination_reason": "SUCCESS",
+        "attempts": [
+          {
+            "attempt": 1,
+            "m_bound": 1,
+            "requested_j": 0,
+            "physical_iterations": 0,
+            "cumulative_L_BBHT": 0,
+            "cumulative_physical_iterations": 0,
+            "result_index": 3977,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 4270303700933,
+            "selected_row": 124,
+            "selected_lane": 9,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              2700588002,
+              1106208709
+            ],
+            "trace": []
+          },
+          {
+            "attempt": 2,
+            "m_bound": 2,
+            "requested_j": 0,
+            "physical_iterations": 0,
+            "cumulative_L_BBHT": 0,
+            "cumulative_physical_iterations": 0,
+            "result_index": 7958,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 8544902369162,
+            "selected_row": 248,
+            "selected_lane": 22,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              1106208709,
+              2212417418
+            ],
+            "trace": []
+          },
+          {
+            "attempt": 3,
+            "m_bound": 2,
+            "requested_j": 0,
+            "physical_iterations": 0,
+            "cumulative_L_BBHT": 0,
+            "cumulative_physical_iterations": 0,
+            "result_index": 15912,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 17085509771028,
+            "selected_row": 497,
+            "selected_lane": 8,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              2212417418,
+              129867540
+            ],
+            "trace": []
+          },
+          {
+            "attempt": 4,
+            "m_bound": 2,
+            "requested_j": 1,
+            "physical_iterations": 1,
+            "cumulative_L_BBHT": 1,
+            "cumulative_physical_iterations": 1,
+            "result_index": 15437,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 16578833497641,
+            "selected_row": 482,
+            "selected_lane": 13,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              129867540,
+              259735081
+            ],
+            "trace": [
+              {
+                "iteration": 1,
+                "global_sum": 536412160,
+                "two_mean": 65480,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 5,
+            "m_bound": 3,
+            "requested_j": 2,
+            "physical_iterations": 1,
+            "cumulative_L_BBHT": 3,
+            "cumulative_physical_iterations": 2,
+            "result_index": 14481,
+            "success": false,
+            "total_weight": 17592083635200,
+            "measurement_threshold": 15569775918162,
+            "selected_row": 452,
+            "selected_lane": 17,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              259735081,
+              519470162
+            ],
+            "trace": [
+              {
+                "iteration": 2,
+                "global_sum": 535036688,
+                "two_mean": 65312,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 6,
+            "m_bound": 3,
+            "requested_j": 0,
+            "physical_iterations": 0,
+            "cumulative_L_BBHT": 3,
+            "cumulative_physical_iterations": 2,
+            "result_index": 12616,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 13547365791908,
+            "selected_row": 394,
+            "selected_lane": 8,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              519470162,
+              1038940324
+            ],
+            "trace": []
+          },
+          {
+            "attempt": 7,
+            "m_bound": 3,
+            "requested_j": 1,
+            "physical_iterations": 1,
+            "cumulative_L_BBHT": 4,
+            "cumulative_physical_iterations": 3,
+            "result_index": 8840,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 9502545539401,
+            "selected_row": 276,
+            "selected_lane": 8,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              1038940324,
+              2077880649
+            ],
+            "trace": [
+              {
+                "iteration": 1,
+                "global_sum": 536412160,
+                "two_mean": 65480,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 8,
+            "m_bound": 4,
+            "requested_j": 3,
+            "physical_iterations": 2,
+            "cumulative_L_BBHT": 7,
+            "cumulative_physical_iterations": 5,
+            "result_index": 1298,
+            "success": false,
+            "total_weight": 17591675754496,
+            "measurement_threshold": 1417200001683,
+            "selected_row": 40,
+            "selected_lane": 18,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              2077880649,
+              4155761299
+            ],
+            "trace": [
+              {
+                "iteration": 2,
+                "global_sum": 535036688,
+                "two_mean": 65312,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 3,
+                "global_sum": 532745280,
+                "two_mean": 65032,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 9,
+            "m_bound": 5,
+            "requested_j": 4,
+            "physical_iterations": 1,
+            "cumulative_L_BBHT": 11,
+            "cumulative_physical_iterations": 6,
+            "result_index": 2486,
+            "success": false,
+            "total_weight": 17591721261760,
+            "measurement_threshold": 2834400003366,
+            "selected_row": 77,
+            "selected_lane": 22,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              4155761299,
+              4016555302
+            ],
+            "trace": [
+              {
+                "iteration": 4,
+                "global_sum": 529538720,
+                "two_mean": 64641,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 10,
+            "m_bound": 6,
+            "requested_j": 1,
+            "physical_iterations": 1,
+            "cumulative_L_BBHT": 12,
+            "cumulative_physical_iterations": 7,
+            "result_index": 5261,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 5664505039437,
+            "selected_row": 164,
+            "selected_lane": 13,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              4016555302,
+              3738143309
+            ],
+            "trace": [
+              {
+                "iteration": 1,
+                "global_sum": 536412160,
+                "two_mean": 65480,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 11,
+            "m_bound": 7,
+            "requested_j": 2,
+            "physical_iterations": 1,
+            "cumulative_L_BBHT": 14,
+            "cumulative_physical_iterations": 8,
+            "result_index": 10514,
+            "success": false,
+            "total_weight": 17592083635200,
+            "measurement_threshold": 11329010078874,
+            "selected_row": 328,
+            "selected_lane": 18,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              3738143309,
+              3181319322
+            ],
+            "trace": [
+              {
+                "iteration": 2,
+                "global_sum": 535036688,
+                "two_mean": 65312,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 12,
+            "m_bound": 8,
+            "requested_j": 5,
+            "physical_iterations": 3,
+            "cumulative_L_BBHT": 19,
+            "cumulative_physical_iterations": 11,
+            "result_index": 4467,
+            "success": false,
+            "total_weight": 17591813366800,
+            "measurement_threshold": 5061539146036,
+            "selected_row": 139,
+            "selected_lane": 19,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              3181319322,
+              2067671348
+            ],
+            "trace": [
+              {
+                "iteration": 3,
+                "global_sum": 532745280,
+                "two_mean": 65032,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 4,
+                "global_sum": 529538720,
+                "two_mean": 64641,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 5,
+                "global_sum": 525434162,
+                "two_mean": 64140,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 13,
+            "m_bound": 9,
+            "requested_j": 6,
+            "physical_iterations": 1,
+            "cumulative_L_BBHT": 25,
+            "cumulative_physical_iterations": 12,
+            "result_index": 9256,
+            "success": false,
+            "total_weight": 17591456587936,
+            "measurement_threshold": 10123078292073,
+            "selected_row": 289,
+            "selected_lane": 8,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              2067671348,
+              4135342697
+            ],
+            "trace": [
+              {
+                "iteration": 6,
+                "global_sum": 520432376,
+                "two_mean": 63529,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 14,
+            "m_bound": 11,
+            "requested_j": 6,
+            "physical_iterations": 0,
+            "cumulative_L_BBHT": 31,
+            "cumulative_physical_iterations": 12,
+            "result_index": 2228,
+            "success": true,
+            "total_weight": 17591456587936,
+            "measurement_threshold": 2653970539731,
+            "selected_row": 69,
+            "selected_lane": 20,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              4135342697,
+              3975718099
+            ],
+            "trace": []
+          }
+        ],
+        "logical_grover_iterations": 31,
+        "physical_grover_iterations": 12,
+        "phase_oracle_calls": 31,
+        "candidate_verification_calls": 14,
+        "cache_invalidated_after_hit": true,
+        "timing_ms": 11.1424
+      },
+      {
+        "round_index": 3,
+        "remaining_target_count_before": 6,
+        "remaining_target_count_after": 5,
+        "found_indices_before": [
+          9844,
+          2228
+        ],
+        "found_indices_after": [
+          9844,
+          2228,
+          10680
+        ],
+        "found_mask_before": null,
+        "found_mask_after": null,
+        "exclude_backend": "PROJECTED_MASK_MEM",
+        "success": true,
+        "found_index": 10680,
+        "search_termination_reason": "SUCCESS",
+        "attempts": [
+          {
+            "attempt": 1,
+            "m_bound": 1,
+            "requested_j": 0,
+            "physical_iterations": 0,
+            "cumulative_L_BBHT": 0,
+            "cumulative_physical_iterations": 0,
+            "result_index": 4943,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 5307941079462,
+            "selected_row": 154,
+            "selected_lane": 15,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              3975718099,
+              3656468902
+            ],
+            "trace": []
+          },
+          {
+            "attempt": 2,
+            "m_bound": 2,
+            "requested_j": 0,
+            "physical_iterations": 0,
+            "cumulative_L_BBHT": 0,
+            "cumulative_physical_iterations": 0,
+            "result_index": 9882,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 10611587191629,
+            "selected_row": 308,
+            "selected_lane": 26,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              3656468902,
+              3017970509
+            ],
+            "trace": []
+          },
+          {
+            "attempt": 3,
+            "m_bound": 2,
+            "requested_j": 1,
+            "physical_iterations": 1,
+            "cumulative_L_BBHT": 1,
+            "cumulative_physical_iterations": 1,
+            "result_index": 3367,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 3630988338843,
+            "selected_row": 105,
+            "selected_lane": 7,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              3017970509,
+              1740973723
+            ],
+            "trace": [
+              {
+                "iteration": 1,
+                "global_sum": 536477696,
+                "two_mean": 65488,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 4,
+            "m_bound": 2,
+            "requested_j": 0,
+            "physical_iterations": 0,
+            "cumulative_L_BBHT": 1,
+            "cumulative_physical_iterations": 1,
+            "result_index": 6767,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 7266271644982,
+            "selected_row": 211,
+            "selected_lane": 15,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              1740973723,
+              3481947446
+            ],
+            "trace": []
+          },
+          {
+            "attempt": 5,
+            "m_bound": 3,
+            "requested_j": 1,
+            "physical_iterations": 1,
+            "cumulative_L_BBHT": 2,
+            "cumulative_physical_iterations": 2,
+            "result_index": 13522,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 14528248322668,
+            "selected_row": 422,
+            "selected_lane": 18,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              3481947446,
+              2668927596
+            ],
+            "trace": [
+              {
+                "iteration": 1,
+                "global_sum": 536477696,
+                "two_mean": 65488,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 6,
+            "m_bound": 3,
+            "requested_j": 2,
+            "physical_iterations": 1,
+            "cumulative_L_BBHT": 4,
+            "cumulative_physical_iterations": 3,
+            "result_index": 10646,
+            "success": false,
+            "total_weight": 17592110768128,
+            "measurement_threshold": 11460015633625,
+            "selected_row": 332,
+            "selected_lane": 22,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              2668927596,
+              1042887897
+            ],
+            "trace": [
+              {
+                "iteration": 2,
+                "global_sum": 535298624,
+                "two_mean": 65344,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 7,
+            "m_bound": 3,
+            "requested_j": 1,
+            "physical_iterations": 1,
+            "cumulative_L_BBHT": 5,
+            "cumulative_physical_iterations": 4,
+            "result_index": 4956,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 5332140190130,
+            "selected_row": 154,
+            "selected_lane": 28,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              1042887897,
+              2085775794
+            ],
+            "trace": [
+              {
+                "iteration": 1,
+                "global_sum": 536477696,
+                "two_mean": 65488,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 8,
+            "m_bound": 4,
+            "requested_j": 3,
+            "physical_iterations": 2,
+            "cumulative_L_BBHT": 8,
+            "cumulative_physical_iterations": 6,
+            "result_index": 9914,
+            "success": false,
+            "total_weight": 17591810768896,
+            "measurement_threshold": 10664280380261,
+            "selected_row": 309,
+            "selected_lane": 26,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              2085775794,
+              4171551589
+            ],
+            "trace": [
+              {
+                "iteration": 2,
+                "global_sum": 535298624,
+                "two_mean": 65344,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 3,
+                "global_sum": 533334272,
+                "two_mean": 65104,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 9,
+            "m_bound": 5,
+            "requested_j": 4,
+            "physical_iterations": 1,
+            "cumulative_L_BBHT": 12,
+            "cumulative_physical_iterations": 7,
+            "result_index": 3338,
+            "success": false,
+            "total_weight": 17592125805312,
+            "measurement_threshold": 3736374716107,
+            "selected_row": 104,
+            "selected_lane": 10,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              4171551589,
+              4048135883
+            ],
+            "trace": [
+              {
+                "iteration": 4,
+                "global_sum": 530585216,
+                "two_mean": 64769,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 10,
+            "m_bound": 6,
+            "requested_j": 0,
+            "physical_iterations": 0,
+            "cumulative_L_BBHT": 12,
+            "cumulative_physical_iterations": 7,
+            "result_index": 6959,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 7472749432215,
+            "selected_row": 217,
+            "selected_lane": 15,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              4048135883,
+              3801304471
+            ],
+            "trace": []
+          },
+          {
+            "attempt": 11,
+            "m_bound": 7,
+            "requested_j": 0,
+            "physical_iterations": 0,
+            "cumulative_L_BBHT": 12,
+            "cumulative_physical_iterations": 7,
+            "result_index": 13919,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 14945498864431,
+            "selected_row": 434,
+            "selected_lane": 31,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              3801304471,
+              3307641647
+            ],
+            "trace": []
+          },
+          {
+            "attempt": 12,
+            "m_bound": 8,
+            "requested_j": 0,
+            "physical_iterations": 0,
+            "cumulative_L_BBHT": 12,
+            "cumulative_physical_iterations": 7,
+            "result_index": 11454,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 12298811684446,
+            "selected_row": 357,
+            "selected_lane": 30,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              3307641647,
+              2320315998
+            ],
+            "trace": []
+          },
+          {
+            "attempt": 13,
+            "m_bound": 9,
+            "requested_j": 0,
+            "physical_iterations": 0,
+            "cumulative_L_BBHT": 12,
+            "cumulative_physical_iterations": 7,
+            "result_index": 6520,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 7001142357180,
+            "selected_row": 203,
+            "selected_lane": 24,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              2320315998,
+              345664700
+            ],
+            "trace": []
+          },
+          {
+            "attempt": 14,
+            "m_bound": 11,
+            "requested_j": 1,
+            "physical_iterations": 1,
+            "cumulative_L_BBHT": 13,
+            "cumulative_physical_iterations": 8,
+            "result_index": 13030,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 14002284714360,
+            "selected_row": 407,
+            "selected_lane": 6,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              345664700,
+              691329400
+            ],
+            "trace": [
+              {
+                "iteration": 1,
+                "global_sum": 536477696,
+                "two_mean": 65488,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 15,
+            "m_bound": 13,
+            "requested_j": 3,
+            "physical_iterations": 2,
+            "cumulative_L_BBHT": 16,
+            "cumulative_physical_iterations": 10,
+            "result_index": 9675,
+            "success": false,
+            "total_weight": 17591810768896,
+            "measurement_threshold": 10412383384305,
+            "selected_row": 302,
+            "selected_lane": 11,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              691329400,
+              1382658801
+            ],
+            "trace": [
+              {
+                "iteration": 2,
+                "global_sum": 535298624,
+                "two_mean": 65344,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 3,
+                "global_sum": 533334272,
+                "two_mean": 65104,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 16,
+            "m_bound": 16,
+            "requested_j": 7,
+            "physical_iterations": 4,
+            "cumulative_L_BBHT": 23,
+            "cumulative_physical_iterations": 14,
+            "result_index": 2802,
+            "success": false,
+            "total_weight": 17591297109976,
+            "measurement_threshold": 3236875691490,
+            "selected_row": 87,
+            "selected_lane": 18,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              1382658801,
+              2765317602
+            ],
+            "trace": [
+              {
+                "iteration": 4,
+                "global_sum": 530585216,
+                "two_mean": 64769,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 5,
+                "global_sum": 527068404,
+                "two_mean": 64339,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 6,
+                "global_sum": 522768028,
+                "two_mean": 63814,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 7,
+                "global_sum": 517701036,
+                "two_mean": 63196,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 17,
+            "m_bound": 19,
+            "requested_j": 14,
+            "physical_iterations": 7,
+            "cumulative_L_BBHT": 37,
+            "cumulative_physical_iterations": 21,
+            "result_index": 5193,
+            "success": false,
+            "total_weight": 17591363157352,
+            "measurement_threshold": 6469456415684,
+            "selected_row": 162,
+            "selected_lane": 9,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              2765317602,
+              1235667908
+            ],
+            "trace": [
+              {
+                "iteration": 8,
+                "global_sum": 511884364,
+                "two_mean": 62486,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 9,
+                "global_sum": 505318564,
+                "two_mean": 61684,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 10,
+                "global_sum": 498004188,
+                "two_mean": 60792,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 11,
+                "global_sum": 489974532,
+                "two_mean": 59811,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 12,
+                "global_sum": 481213752,
+                "two_mean": 58742,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 13,
+                "global_sum": 471755132,
+                "two_mean": 57587,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 14,
+                "global_sum": 461599188,
+                "two_mean": 56348,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 18,
+            "m_bound": 23,
+            "requested_j": 20,
+            "physical_iterations": 6,
+            "cumulative_L_BBHT": 57,
+            "cumulative_physical_iterations": 27,
+            "result_index": 10453,
+            "success": false,
+            "total_weight": 17591841645568,
+            "measurement_threshold": 12938912831369,
+            "selected_row": 326,
+            "selected_lane": 21,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              1235667908,
+              2471335817
+            ],
+            "trace": [
+              {
+                "iteration": 15,
+                "global_sum": 450779180,
+                "two_mean": 55027,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 16,
+                "global_sum": 439295600,
+                "two_mean": 53625,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 17,
+                "global_sum": 427165312,
+                "two_mean": 52144,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 18,
+                "global_sum": 414405168,
+                "two_mean": 50587,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 19,
+                "global_sum": 401048380,
+                "two_mean": 48956,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 20,
+                "global_sum": 387095392,
+                "two_mean": 47253,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 19,
+            "m_bound": 27,
+            "requested_j": 8,
+            "physical_iterations": 8,
+            "cumulative_L_BBHT": 65,
+            "cumulative_physical_iterations": 35,
+            "result_index": 7353,
+            "success": false,
+            "total_weight": 17591415583432,
+            "measurement_threshold": 8285639618322,
+            "selected_row": 229,
+            "selected_lane": 25,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              2471335817,
+              647704338
+            ],
+            "trace": [
+              {
+                "iteration": 1,
+                "global_sum": 536477696,
+                "two_mean": 65488,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 2,
+                "global_sum": 535298624,
+                "two_mean": 65344,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 3,
+                "global_sum": 533334272,
+                "two_mean": 65104,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 4,
+                "global_sum": 530585216,
+                "two_mean": 64769,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 5,
+                "global_sum": 527068404,
+                "two_mean": 64339,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 6,
+                "global_sum": 522768028,
+                "two_mean": 63814,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 7,
+                "global_sum": 517701036,
+                "two_mean": 63196,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 8,
+                "global_sum": 511884364,
+                "two_mean": 62486,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 20,
+            "m_bound": 32,
+            "requested_j": 16,
+            "physical_iterations": 8,
+            "cumulative_L_BBHT": 81,
+            "cumulative_physical_iterations": 43,
+            "result_index": 14925,
+            "success": false,
+            "total_weight": 17591626605568,
+            "measurement_threshold": 16571279236645,
+            "selected_row": 466,
+            "selected_lane": 13,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              647704338,
+              1295408677
+            ],
+            "trace": [
+              {
+                "iteration": 9,
+                "global_sum": 505318564,
+                "two_mean": 61684,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 10,
+                "global_sum": 498004188,
+                "two_mean": 60792,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 11,
+                "global_sum": 489974532,
+                "two_mean": 59811,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 12,
+                "global_sum": 481213752,
+                "two_mean": 58742,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 13,
+                "global_sum": 471755132,
+                "two_mean": 57587,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 14,
+                "global_sum": 461599188,
+                "two_mean": 56348,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 15,
+                "global_sum": 450779180,
+                "two_mean": 55027,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 16,
+                "global_sum": 439295600,
+                "two_mean": 53625,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 21,
+            "m_bound": 39,
+            "requested_j": 32,
+            "physical_iterations": 16,
+            "cumulative_L_BBHT": 113,
+            "cumulative_physical_iterations": 59,
+            "result_index": 10680,
+            "success": true,
+            "total_weight": 17591741397952,
+            "measurement_threshold": 15554667396170,
+            "selected_row": 333,
+            "selected_lane": 24,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              1295408677,
+              2590817354
+            ],
+            "trace": [
+              {
+                "iteration": 17,
+                "global_sum": 427165312,
+                "two_mean": 52144,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 18,
+                "global_sum": 414405168,
+                "two_mean": 50587,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 19,
+                "global_sum": 401048380,
+                "two_mean": 48956,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 20,
+                "global_sum": 387095392,
+                "two_mean": 47253,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 21,
+                "global_sum": 372579392,
+                "two_mean": 45481,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 22,
+                "global_sum": 357517172,
+                "two_mean": 43642,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 23,
+                "global_sum": 341925512,
+                "two_mean": 41739,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 24,
+                "global_sum": 325837552,
+                "two_mean": 39775,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 25,
+                "global_sum": 309270036,
+                "two_mean": 37753,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 26,
+                "global_sum": 292256068,
+                "two_mean": 35676,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 27,
+                "global_sum": 274812356,
+                "two_mean": 33546,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 28,
+                "global_sum": 256955596,
+                "two_mean": 31367,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 29,
+                "global_sum": 238735216,
+                "two_mean": 29142,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 30,
+                "global_sum": 220151492,
+                "two_mean": 26874,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 31,
+                "global_sum": 201253816,
+                "two_mean": 24567,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 32,
+                "global_sum": 182058800,
+                "two_mean": 22224,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          }
+        ],
+        "logical_grover_iterations": 113,
+        "physical_grover_iterations": 59,
+        "phase_oracle_calls": 113,
+        "candidate_verification_calls": 21,
+        "cache_invalidated_after_hit": true,
+        "timing_ms": 51.1524
+      },
+      {
+        "round_index": 4,
+        "remaining_target_count_before": 5,
+        "remaining_target_count_after": 4,
+        "found_indices_before": [
+          9844,
+          2228,
+          10680
+        ],
+        "found_indices_after": [
+          9844,
+          2228,
+          10680,
+          1051
+        ],
+        "found_mask_before": null,
+        "found_mask_after": null,
+        "exclude_backend": "PROJECTED_MASK_MEM",
+        "success": true,
+        "found_index": 1051,
+        "search_termination_reason": "SUCCESS",
+        "attempts": [
+          {
+            "attempt": 1,
+            "m_bound": 1,
+            "requested_j": 0,
+            "physical_iterations": 0,
+            "cumulative_L_BBHT": 0,
+            "cumulative_physical_iterations": 0,
+            "result_index": 12584,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 13512853780629,
+            "selected_row": 393,
+            "selected_lane": 8,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              2590817354,
+              886667413
+            ],
+            "trace": []
+          },
+          {
+            "attempt": 2,
+            "m_bound": 2,
+            "requested_j": 1,
+            "physical_iterations": 1,
+            "cumulative_L_BBHT": 1,
+            "cumulative_physical_iterations": 1,
+            "result_index": 8779,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 9437816484139,
+            "selected_row": 274,
+            "selected_lane": 11,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              886667413,
+              1773334827
+            ],
+            "trace": [
+              {
+                "iteration": 1,
+                "global_sum": 536543232,
+                "two_mean": 65496,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 3,
+            "m_bound": 2,
+            "requested_j": 0,
+            "physical_iterations": 0,
+            "cumulative_L_BBHT": 1,
+            "cumulative_physical_iterations": 1,
+            "result_index": 1199,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 1287741891159,
+            "selected_row": 37,
+            "selected_lane": 15,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              1773334827,
+              3546669655
+            ],
+            "trace": []
+          },
+          {
+            "attempt": 4,
+            "m_bound": 2,
+            "requested_j": 1,
+            "physical_iterations": 1,
+            "cumulative_L_BBHT": 2,
+            "cumulative_physical_iterations": 2,
+            "result_index": 2388,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 2575483782318,
+            "selected_row": 74,
+            "selected_lane": 20,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              3546669655,
+              2798372014
+            ],
+            "trace": [
+              {
+                "iteration": 1,
+                "global_sum": 536543232,
+                "two_mean": 65496,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 5,
+            "m_bound": 3,
+            "requested_j": 2,
+            "physical_iterations": 1,
+            "cumulative_L_BBHT": 4,
+            "cumulative_physical_iterations": 3,
+            "result_index": 4756,
+            "success": false,
+            "total_weight": 17592133743616,
+            "measurement_threshold": 5146672597340,
+            "selected_row": 148,
+            "selected_lane": 20,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              2798372014,
+              1301776732
+            ],
+            "trace": [
+              {
+                "iteration": 2,
+                "global_sum": 535560592,
+                "two_mean": 65376,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 6,
+            "m_bound": 3,
+            "requested_j": 0,
+            "physical_iterations": 0,
+            "cumulative_L_BBHT": 4,
+            "cumulative_physical_iterations": 3,
+            "result_index": 9586,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 10293345194680,
+            "selected_row": 299,
+            "selected_lane": 18,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              1301776732,
+              2603553464
+            ],
+            "trace": []
+          },
+          {
+            "attempt": 7,
+            "m_bound": 3,
+            "requested_j": 0,
+            "physical_iterations": 0,
+            "cumulative_L_BBHT": 4,
+            "cumulative_physical_iterations": 3,
+            "result_index": 2784,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 2990209377648,
+            "selected_row": 87,
+            "selected_lane": 0,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              2603553464,
+              912139632
+            ],
+            "trace": []
+          },
+          {
+            "attempt": 8,
+            "m_bound": 4,
+            "requested_j": 1,
+            "physical_iterations": 1,
+            "cumulative_L_BBHT": 5,
+            "cumulative_physical_iterations": 4,
+            "result_index": 5559,
+            "success": false,
+            "total_weight": 17592186044416,
+            "measurement_threshold": 5980418755296,
+            "selected_row": 173,
+            "selected_lane": 23,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              912139632,
+              1824279264
+            ],
+            "trace": [
+              {
+                "iteration": 1,
+                "global_sum": 536543232,
+                "two_mean": 65496,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 9,
+            "m_bound": 5,
+            "requested_j": 3,
+            "physical_iterations": 2,
+            "cumulative_L_BBHT": 8,
+            "cumulative_physical_iterations": 6,
+            "result_index": 11061,
+            "success": false,
+            "total_weight": 17591925180416,
+            "measurement_threshold": 11960837510593,
+            "selected_row": 345,
+            "selected_lane": 21,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              1824279264,
+              3648558529
+            ],
+            "trace": [
+              {
+                "iteration": 2,
+                "global_sum": 535560592,
+                "two_mean": 65376,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 3,
+                "global_sum": 533923392,
+                "two_mean": 65176,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 10,
+            "m_bound": 6,
+            "requested_j": 5,
+            "physical_iterations": 2,
+            "cumulative_L_BBHT": 13,
+            "cumulative_physical_iterations": 8,
+            "result_index": 5747,
+            "success": false,
+            "total_weight": 17591430794624,
+            "measurement_threshold": 6329488976771,
+            "selected_row": 179,
+            "selected_lane": 19,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              3648558529,
+              3002149763
+            ],
+            "trace": [
+              {
+                "iteration": 4,
+                "global_sum": 531632032,
+                "two_mean": 64896,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 5,
+                "global_sum": 528686912,
+                "two_mean": 64537,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 11,
+            "m_bound": 7,
+            "requested_j": 3,
+            "physical_iterations": 3,
+            "cumulative_L_BBHT": 16,
+            "cumulative_physical_iterations": 11,
+            "result_index": 11721,
+            "success": false,
+            "total_weight": 17591925180416,
+            "measurement_threshold": 12658977953542,
+            "selected_row": 366,
+            "selected_lane": 9,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              3002149763,
+              1709332230
+            ],
+            "trace": [
+              {
+                "iteration": 1,
+                "global_sum": 536543232,
+                "two_mean": 65496,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 2,
+                "global_sum": 535560592,
+                "two_mean": 65376,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 3,
+                "global_sum": 533923392,
+                "two_mean": 65176,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 12,
+            "m_bound": 8,
+            "requested_j": 7,
+            "physical_iterations": 4,
+            "cumulative_L_BBHT": 23,
+            "cumulative_physical_iterations": 15,
+            "result_index": 7006,
+            "success": false,
+            "total_weight": 17592019514144,
+            "measurement_threshold": 7725769862668,
+            "selected_row": 218,
+            "selected_lane": 30,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              1709332230,
+              3418664460
+            ],
+            "trace": [
+              {
+                "iteration": 4,
+                "global_sum": 531632032,
+                "two_mean": 64896,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 5,
+                "global_sum": 528686912,
+                "two_mean": 64537,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 6,
+                "global_sum": 525104806,
+                "two_mean": 64100,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 7,
+                "global_sum": 520886104,
+                "two_mean": 63585,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 13,
+            "m_bound": 9,
+            "requested_j": 6,
+            "physical_iterations": 6,
+            "cumulative_L_BBHT": 29,
+            "cumulative_physical_iterations": 21,
+            "result_index": 14280,
+            "success": false,
+            "total_weight": 17591737705424,
+            "measurement_threshold": 15447244758041,
+            "selected_row": 446,
+            "selected_lane": 8,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              3418664460,
+              2542361625
+            ],
+            "trace": [
+              {
+                "iteration": 1,
+                "global_sum": 536543232,
+                "two_mean": 65496,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 2,
+                "global_sum": 535560592,
+                "two_mean": 65376,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 3,
+                "global_sum": 533923392,
+                "two_mean": 65176,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 4,
+                "global_sum": 531632032,
+                "two_mean": 64896,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 5,
+                "global_sum": 528686912,
+                "two_mean": 64537,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 6,
+                "global_sum": 525104806,
+                "two_mean": 64100,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 14,
+            "m_bound": 11,
+            "requested_j": 10,
+            "physical_iterations": 4,
+            "cumulative_L_BBHT": 39,
+            "cumulative_physical_iterations": 25,
+            "result_index": 11800,
+            "success": false,
+            "total_weight": 17592083004736,
+            "measurement_threshold": 13302303471666,
+            "selected_row": 368,
+            "selected_lane": 24,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              2542361625,
+              789755954
+            ],
+            "trace": [
+              {
+                "iteration": 7,
+                "global_sum": 520886104,
+                "two_mean": 63585,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 8,
+                "global_sum": 516031196,
+                "two_mean": 62992,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 9,
+                "global_sum": 510540472,
+                "two_mean": 62322,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 10,
+                "global_sum": 504430696,
+                "two_mean": 61576,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 15,
+            "m_bound": 13,
+            "requested_j": 5,
+            "physical_iterations": 5,
+            "cumulative_L_BBHT": 44,
+            "cumulative_physical_iterations": 30,
+            "result_index": 8216,
+            "success": false,
+            "total_weight": 17591430794624,
+            "measurement_threshold": 9012420898917,
+            "selected_row": 256,
+            "selected_lane": 24,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              789755954,
+              1579511909
+            ],
+            "trace": [
+              {
+                "iteration": 1,
+                "global_sum": 536543232,
+                "two_mean": 65496,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 2,
+                "global_sum": 535560592,
+                "two_mean": 65376,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 3,
+                "global_sum": 533923392,
+                "two_mean": 65176,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 4,
+                "global_sum": 531632032,
+                "two_mean": 64896,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 5,
+                "global_sum": 528686912,
+                "two_mean": 64537,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 16,
+            "m_bound": 16,
+            "requested_j": 10,
+            "physical_iterations": 5,
+            "cumulative_L_BBHT": 54,
+            "cumulative_physical_iterations": 35,
+            "result_index": 466,
+            "success": false,
+            "total_weight": 17592083004736,
+            "measurement_threshold": 436950720714,
+            "selected_row": 14,
+            "selected_lane": 18,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              1579511909,
+              3159023818
+            ],
+            "trace": [
+              {
+                "iteration": 6,
+                "global_sum": 525104806,
+                "two_mean": 64100,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 7,
+                "global_sum": 520886104,
+                "two_mean": 63585,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 8,
+                "global_sum": 516031196,
+                "two_mean": 62992,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 9,
+                "global_sum": 510540472,
+                "two_mean": 62322,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 10,
+                "global_sum": 504430696,
+                "two_mean": 61576,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 17,
+            "m_bound": 19,
+            "requested_j": 8,
+            "physical_iterations": 8,
+            "cumulative_L_BBHT": 62,
+            "cumulative_physical_iterations": 43,
+            "result_index": 885,
+            "success": false,
+            "total_weight": 17591927293856,
+            "measurement_threshold": 869606474132,
+            "selected_row": 27,
+            "selected_lane": 21,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              3159023818,
+              2023080340
+            ],
+            "trace": [
+              {
+                "iteration": 1,
+                "global_sum": 536543232,
+                "two_mean": 65496,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 2,
+                "global_sum": 535560592,
+                "two_mean": 65376,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 3,
+                "global_sum": 533923392,
+                "two_mean": 65176,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 4,
+                "global_sum": 531632032,
+                "two_mean": 64896,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 5,
+                "global_sum": 528686912,
+                "two_mean": 64537,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 6,
+                "global_sum": 525104806,
+                "two_mean": 64100,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 7,
+                "global_sum": 520886104,
+                "two_mean": 63585,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 8,
+                "global_sum": 516031196,
+                "two_mean": 62992,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          },
+          {
+            "attempt": 18,
+            "m_bound": 23,
+            "requested_j": 17,
+            "physical_iterations": 9,
+            "cumulative_L_BBHT": 79,
+            "cumulative_physical_iterations": 52,
+            "result_index": 1051,
+            "success": true,
+            "total_weight": 17593148769604,
+            "measurement_threshold": 1739212948264,
+            "selected_row": 32,
+            "selected_lane": 27,
+            "saturation_count": 0,
+            "measurement_random_draws": [
+              2023080340,
+              4046160680
+            ],
+            "trace": [
+              {
+                "iteration": 9,
+                "global_sum": 510540472,
+                "two_mean": 62322,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 10,
+                "global_sum": 504430696,
+                "two_mean": 61576,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 11,
+                "global_sum": 497702248,
+                "two_mean": 60755,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 12,
+                "global_sum": 490371882,
+                "two_mean": 59860,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 13,
+                "global_sum": 482439968,
+                "two_mean": 58892,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 14,
+                "global_sum": 473923250,
+                "two_mean": 57852,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 15,
+                "global_sum": 464822088,
+                "two_mean": 56741,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 16,
+                "global_sum": 455153216,
+                "two_mean": 55561,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              },
+              {
+                "iteration": 17,
+                "global_sum": 444933358,
+                "two_mean": 54313,
+                "saturation_count": 0,
+                "row_partial_sums": null,
+                "amplitudes_before": null,
+                "amplitudes_after_oracle": null,
+                "amplitudes_after_diffusion": null
+              }
+            ]
+          }
+        ],
+        "logical_grover_iterations": 79,
+        "physical_grover_iterations": 52,
+        "phase_oracle_calls": 79,
+        "candidate_verification_calls": 18,
+        "cache_invalidated_after_hit": true,
+        "timing_ms": 23.8175
+      }
+    ]
+  }
+}

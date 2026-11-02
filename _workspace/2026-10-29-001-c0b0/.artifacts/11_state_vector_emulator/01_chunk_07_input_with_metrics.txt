@@ -1,0 +1,83 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 7/12이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 윤문 진단
+
+대상: `11_state_vector_emulator.md`
+
+## 장르와 레지스터
+
+학부생용 공부 해설서입니다. 설명 본문은 합쇼체 중심의 친근한 존댓말이고, 질문·권유에는 해요체가 섞입니다. 요약·표의 간결한 명사형은 의도된 형식입니다. 이 register와 독자 수준을 그대로 유지합니다.
+
+## 겨냥 순서와 근거
+
+1. **D-14 / D-5 — 지나친 비유와 의인화**: 「algorithm을 … 짓는 이야기」·「대가」·「지수 벽」·「memory를 지불」·「진범」·「요리사만 늘리는 헛수고」·「우리가 파는 것은 속도」가 기술 설명 전체를 비유로 잇습니다. 실제 저장량·연산량·병렬 접근 제한으로 풀 수 있는 부분을 우선합니다. 기존 절 제목·그림·비유 박스 이름은 보존합니다.
+
+2. **D-8 / D-2 — 평가와 당부를 앞세운 도입**: 「반드시 새겨야 할 사실 하나」·「못 박아」·「결정적인 교훈」·「중요하게」가 문단마다 설명을 예고합니다. 필요한 주장을 바로 진술하고 기존 경고의 의미·강도는 보존합니다.
+
+3. **A-18 / A-16 — 긴 삽입구와 추상적 지시**: 11.1·11.3·11.4·11.6·11.7의 문단은 조건·비교·평가를 대시로 길게 붙입니다. relative_clause_nesting=8, pronoun_density=0.001. 관계가 분명한 문장만 나눠 주체를 드러내고 수치·인용·영어 토큰은 유지합니다.
+
+4. **C-8 / I-3 — 대립 공식과 간접 종결 누적**: 「…아니라」·「…것입니다」·「…셈」의 반복을 확인합니다. 저장 대 연산, 실제 quantum 대 emulator 등 개념 구별은 필요한 곳에 남기고, 같은 결론을 반복하는 간접 설명만 직접 서술로 바꿉니다.
+
+## 정량 앵커와 해석
+
+입력 정량 블록의 route_hint는 `heavy`, 원문은 25,858자입니다. 위에 적은 양성 카운트만 해당 ID의 보조 근거로 사용했습니다. lexical_diversity의 낮은 값은 전문용어 반복의 영향이 있으므로 영어 용어를 치환하는 근거로 쓰지 않습니다. 이중 피동·by 피동·have 직역은 카운트가 0이어서 지배 패턴으로 지목하지 않습니다.
+
+## 보존 지침
+
+- 영어 용어·영어 토큰의 철자와 대소문자를 그대로 둡니다. 영어를 한국어로 옮기거나 동의어로 바꾸지 않습니다. 용어집 SSOT는 `documents/design_references/22_appendix_glossary_and_retired_specs.md` 22.2절입니다.
+- 사실·주장·수치·단위·수식·code·identifier·인용·조건·부정/긍정·인과를 보존합니다. 내용 보충이나 과학적 사실 수정은 이번 윤문의 범위가 아닙니다.
+- 제목·절 번호·link·그림·기존 콜아웃·표 구조를 유지합니다. 기존 볼드·이모지는 교재 고유 관습이므로 일괄 삭제하지 않습니다.
+- 어색한 비유·한국어 연결·조사·수식어만 국소 수정합니다. 단순히 technical term이 많이 나온다는 이유로 B 계열 처방을 적용하지 않습니다.
+- 의무·가능·추정의 강도를 보존하고 원문에 없던 설명이나 평가를 넣지 않습니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 2118
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.33  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.44  (z=-0.42 vs report 인간 baseline)
+- ending_comma_rate: 0.44  (n/a vs report 인간 baseline)
+- comma_segment_length: 10.26  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.000  (z=-2.00 vs report 인간 baseline)
+- lexical_diversity: 0.82  (z=+3.49 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.002
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 1
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 11.6 memory-bound의 두 얼굴 — 용량과 port
+
+07번 논문의 핵심 주장이자 이 분야를 관통하는 진단입니다. **memory-bound**란, 계산의 속도가 산술 능력이 아니라 **memory에서 data를 꺼내 오는 능력**에 발목 잡힌 상황을 뜻합니다.
+
+비유하자면 이렇습니다. 요리사(연산 unit)를 아무리 늘려도, 재료(amplitude)를 냉장고(memory)에서 꺼내 오는 문 하나가 좁으면 요리 속도는 그 문이 결정합니다. emulator에서 diffusion operator 한 번은 모든 amplitude를 읽어야 하는데, number of states가 지수적으로 크니 결국 "amplitude를 얼마나 빨리 실어 나르느냐"가 전체 속도를 지배합니다. multiplier(DSP)를 더 넣는 것은 요리사만 늘리는 헛수고인 경우가 많습니다 — 06번에서 DSP가 3.8%만 쓰인 것도 같은 이야기입니다.
+
+이 진단에 대한 최근의 응답은 "bandwidth 자체를 높이자"입니다. 07번이 외부 DDR4에서 "memory-bound다"로 멈춘 지점을, 2026년 C-DAC의 Alveo U55C implementation(Tiwari 외)은 한 걸음 더 밀어붙입니다 — DDR4보다 약 10× 빠른 **HBM**(high-bandwidth memory, 460 GB/s)을 16 banks로 나누고, amplitude $i$ 를 `i mod 16` 번째 bank에 흩뿌려(연속된 amplitude를 서로 다른 bank로) 병렬로 읽습니다. 이렇게 30 qubits(amplitude 약 10.7억 개, 8 GB)를 단일 FPGA에서 돌렸습니다. 특히 눈길을 끄는 것은 이들이 관측한 **성능 절벽**입니다 — 12 qubits에서 13 qubits로 넘어가는 순간 state vector가 온칩 BRAM을 넘쳐 HBM으로 밀려나며 실행 시간이 81% 튑니다. 11.4에서 개념으로만 이야기한 "storage layer의 경계"가 benchmark graph에 그대로 찍힌 셈입니다. (다만 이 논문은 Grover 전용이 아닌 범용·complex number simulator이고 아직 비심사 preprint이며, number of qubits 자체는 07번의 32를 넘지 않습니다 — 새로운 것은 규모가 아니라 HBM이라는 storage layer와 bank 병렬 구조입니다.)
+
+그렇다면 우리는 어떨까요. 우리 IP는 계산 중에 외부 memory를 쓰지 않으므로 **bandwidth는 병목이 아닙니다.** 온칩 BRAM은 요청한 cycle에 답을 줍니다. 그 대신 memory-bound가 두 개의 다른 얼굴로 나타납니다.
+
+**첫째는 용량 천장입니다.** Accelerator Core가 84 tile, SoC가 32 tile로 board 135 tile 중 116 tile을 씁니다(11.4). qubit 하나가 memory 두 배이므로 15 qubits는 곧바로 예산 밖입니다. 07번이 "온칩 resource에만 의존해서 2~7 qubits에 갇혔다"고 지적한 그 벽 앞에 우리도 서 있습니다. 다만 register 대신 BRAM에, 그것도 23-bit amplitude 셋을 69-bit 폭에 빈틈없이 담아(12.8절) 천장을 14까지 밀어 올린 것뿐이고, **number of qubits의 상한을 정하는 것은 연산 circuit이 아니라 memory 용량**이라는 구조는 똑같습니다. 우리 경우는 checkpoint slot(16장)이 amplitude array를 여러 벌 요구하기 때문에 이 천장이 한층 더 빨리 옵니다.
+
+**둘째는 port 천장입니다.** BRAM 하나에는 port가 둘뿐입니다. 한 cycle에 amplitude 128칸을 읽고 쓰고 싶으면 방법이 하나뿐입니다 — array를 여러 개의 독립된 block로 쪼개 폭을 넓히는 것. 즉 우리 병렬도의 상한을 정하는 것도 adder 개수나 DSP가 아니라 **memory의 number of ports와 port width**입니다. "multiplier를 늘려도 소용없다"는 07번의 진단이 우리 조건에서는 **"lane을 늘리려면 memory를 넓혀야 하고, 넓이는 BRAM 개수로 값을 치른다"** 로 번역됩니다. 다음 절이 그 계산입니다.
+
+---
+[원문 끝]

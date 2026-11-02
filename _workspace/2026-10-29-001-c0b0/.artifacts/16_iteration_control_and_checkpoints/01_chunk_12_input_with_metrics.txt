@@ -1,0 +1,76 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 12/12이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 윤문 진단
+
+## 장르·레지스터
+- 학부생용 quantum algorithm·FPGA 해설서(report), 친근한 합쇼체 중심이며 독자에게 말을 거는 해요체가 일부 섞인 기존 학습서 말투입니다. 격식을 올리거나 설명을 학술 논문체로 바꾸지 않습니다.
+- 제목·절 번호·목록·표·수식·code·link·기존 콜아웃 및 이모지 형식은 보존합니다. 한국어 서술만 국소적으로 다듬습니다.
+- 영어 용어·영어 토큰은 번역, 교체, 삭제, 추가하지 않습니다. SSOT는 documents/design_references/22_appendix_glossary_and_retired_specs.md §22.2와 기존 glossary입니다.
+- 사실·수치·조건·부정·인과·추측/당위·인용을 보존합니다. 원문의 기술 주장을 새 해설이나 사실 교정으로 확장하지 않습니다.
+
+## 정량 앵커
+- 26,357자, risk_band low, route_hint heavy(길이 기준). A-7 have_make_literal_count=1, A-19 double_particle_count=1, A-18 relative_clause_nesting=7. conclusion_pivot_count=2(그러므로), lexical_diversity=0.52(z=-2.54). 전문용어 반복을 줄이기 위해 영어를 바꾸지 않습니다. ending_comma_rate=0.47.
+## 지배 패턴과 겨냥 순서
+1. D-14·D-5: “여러 번 던져야”, “datapath가 통째로 무너집니다”, “남는 장사가 아닙니다”, “array를 훔쳐보는 반칙”, “Grover처럼 생긴 무언가”, “승부가 나기 시작”, “하드웨어가 쥡니다”, “state를 떨궈 두는”, “반드시 새는 곳” 등 일상 비유·의인화가 알고리즘·설계 설명을 덮습니다. 영어 표현은 두고 한국어 설명을 구체적으로 정돈하는 것이 우선입니다.
+2. D-8·I-2: “정직하게 짚고 갈 것이 하나”, “답은 … 모양에”, “이제 이 장의 본론”, “이 절이 이 장에서 가장 중요” 등 설명의 중요도를 선언하는 문장이 반복됩니다. 실제 주장과 조건을 유지하면서 군더더기를 덜어낼 후보입니다.
+3. A-18·C-11: 16.1의 QPE 도입 비용, 16.2의 BBHT 보장, 16.5의 policy 선택, 16.6의 재현성 논증에 조건과 후속 결과가 긴 문장으로 연결됩니다. causal order와 독립성·bit-exact 조건을 보존하며 한국어 연결을 다듬습니다.
+4. C-8·J-2: “속도가 아니라 충실도”, “저장 공간이 아니라 결정 비용”, “algorithm 지표가 아니라 emulation 시간”처럼 대조가 반복됩니다. 지표의 실질적 차이를 지우지 말고 가상 인용·감정적 평가 표현을 우선 정돈합니다.
+5. A-7·A-19: “checkpoint slot을 들고 있다”, “number of iterations마다의 amplitude” 같은 표현은 한국어 동사·조사 손질 후보입니다. ‘각 checkpoint slot에 값이 저장됨’ 같은 본래 뜻을 넘어서 새로운 동작을 추가하지 않습니다.
+6. F-1·D-2: “영원히”, “반드시”, “가장 극적인”, “거짓말” 등 강한 평가어가 많이 나옵니다. 요구 조건이나 명제의 강도를 바꾸지 않도록 감상적 수식만 검토합니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 3368
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.33  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.45  (z=-0.41 vs report 인간 baseline)
+- ending_comma_rate: 0.69  (n/a vs report 인간 baseline)
+- comma_segment_length: 11.04  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.000  (z=-2.00 vs report 인간 baseline)
+- lexical_diversity: 0.79  (z=+2.80 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.001
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 1
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 16.10 이 장의 요약
+
+- **solution이 몇 개인지 모른다**: number of solutions는 predicate·threshold·data에 달려 실행 시점에야 정해지므로 optimal number of iterations $\frac{\pi}{4}\sqrt{\text{number of states}/\text{number of solutions}} - \frac12$ 를 미리 계산할 수 없고, 9.6절 때문에 "넉넉히 많이"도 안 통합니다.
+- **quantum counting(QPE)은 제외**: complex number를 강제해 실수 전용 23-bit Q1.22 datapath가 무너지기 때문. 성능 문제가 아니라 수 표현 문제입니다.
+- **그래도 BBHT를 쓰는 이유는 속도가 아니라 충실도**: emulator에서 solution을 세는 비용은 shot 하나보다 싸지만, 그것은 amplitude array를 훔쳐보는 반칙입니다. 비교 실험용으로는 firmware가 number of iterations를 정하는 Manual mode가 따로 있습니다.
+- **BBHT**: sampling range는 1에서 시작하고, shot마다 number of iterations를 $[0,\ \text{sampling range})$ 에서 **무작위**로 뽑고, 실패하면 sampling range를 growth factor 6/5만큼 넓힙니다(상한 $\sqrt{\text{number of states}}$). number of iterations를 무작위로 뽑는 이유는 success probability $\sin^2\big((2\cdot\text{number of iterations}+1)\,\theta\big)$ 가 진동하기 때문 — 14 qubits · 1 solution에서 100 iterations는 100%인데 200 iterations는 0%입니다. $\sqrt{\text{number of states}} = 128$ 이 integer라 number of iterations는 $[0,128)$ 에서만 뽑히고, sampling range 수열은 28항 ROM, number of iterations는 LFSR rejection sampling으로 정확히 균등합니다.
+- **mean 22.7 shots**(14 qubits · 1 solution · 500 workloads campaign): sampling range가 1부터 1.2×씩 커져 초반 shot은 거의 전부 실패하도록 되어 있습니다. "4~5회"가 아닙니다. 보호 한도는 shot cap 100과 BBHT budget 576입니다.
+- **바깥 FSM 2 layer**: shot loop(ROM에서 sampling range · LFSR로 number of iterations · policy에 출발 checkpoint slot 문의) + 안쪽 iteration(13장) + solution check(한 칸 고전 확인) + enumeration round loop. shot loop 자체는 LUT 359개로 작습니다.
+- **checkpoint**: amplitude에 쓰는 것은 Init·oracle·diffusion operator 셋뿐이고 Born-rule sampling은 읽기 전용이므로, 실패한 shot의 state가 그대로 남습니다. state를 **세 벌(a Checkpoint-Capacity of 3)** 들고 있다가 가장 가까운 앞선 state에서 **차이만큼만** 전진합니다. 무엇을 남길지는 지금 request와 **앞으로 올 3 requests(3-shot Lookahead)** 를 보는 DP policy가 정하고, 앞으로 올 request는 결정적인 Iteration-Count LFSR을 사본으로 굴려 미리 압니다. 500 workloads executed iterations **−69.5%**.
+- **a Checkpoint-Capacity of 3 and 3-shot Lookahead가 a Checkpoint-Capacity of 4 and 4-shot Lookahead를 이긴 이유**: iteration은 5.8% 더 쓰지만 결정 비용이 크게 줄어 총 cycle −7.66%. 비싼 쪽은 저장 공간이 아니라 결정 비용입니다.
+- **결과는 안 바뀝니다**: Grover iteration의 곱은 결합적이라 checkpoint slot에서 이어 간 state가 bit 단위로 같은 state이고(6.6절), measurement random number는 shot마다 새로 뽑으므로 각 shot은 여전히 서로 독립입니다. board에서 Restart mode와 final configuration의 BBHT trajectory가 500/500 같았습니다. 단 **실기 quantum은 못 하는 반칙**이고, algorithm 지표 requested iterations와 executed iterations·wall-clock time을 갈라 적습니다.
+- **무효화는 hardware가**: data load·predicate·threshold·data 개수·enumeration mask가 바뀌면 Accelerator Core가 스스로 checkpoint slot을 비웁니다. software에 맡기면 조용히 틀리는 bug가 납니다. enumeration에서 실패한 BBHT 사이에는 checkpoint slot이 살아 있습니다.
+- **기각·보류한 대안**: 1칸 checkpoint(대체됨) · 되감기(fixed-point에서 정확한 역이 아님) · 8-shot Lookahead(stall 23×) · Checkpoint-Capacity 증설(이득 미미, BRAM 예산) · `hit[]` caching(cycle 절감 0). DRAM Variant는 보류.
+- **초판의 미정 넷**은 전부 정해졌습니다: solution이 없으면 두 보호 한도로 종료 · number of iterations는 rejection sampling으로 균등 · 두 random number stream의 소비 규약 고정 · sampling range는 28항 ROM.
+
+이것으로 한 shot 안(13·14장)과 shot 바깥(16장)의 제어가 모두 정리됐습니다. 다음 17장은 이 accelerator를 혼자 두지 않고 RVX SoC에 붙입니다 — host가 UART로 명령을 보내고, RISC-V core가 APB로 CSR을 쓰고, accelerator가 AHB master로 data를 끌어오는 경로입니다.
+
+---
+
+> [← 15장 논문 지도와 설계 결정표](15_paper_map_and_design_decisions.md) · [index](index.md) · [17장 RVX SoC에 붙이기 →](17_rvx_soc_integration.md)
+[원문 끝]

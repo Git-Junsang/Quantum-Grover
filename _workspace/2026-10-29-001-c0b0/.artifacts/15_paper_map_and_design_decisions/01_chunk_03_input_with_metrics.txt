@@ -1,0 +1,79 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 3/13이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 15_paper_map_and_design_decisions.md 진단
+
+## 장르·레지스터와 보존 조건
+
+학부생용 기술 해설서(report). 본문은 친근한 존댓말(합니다/입니다, 일부 해요체 설명), 수식 풀이·표·요약은 압축형입니다. 문장 격식을 올리지 않습니다. 영어 용어와 영어 토큰은 번역·삭제·교체·대소문자 변경하지 않습니다. glossary 기준은 `documents/design_references/22_appendix_glossary_and_retired_specs.md` §22.2입니다. 수치·수식·code·제목·link·직접 인용·기존 콜아웃/이모지·문단 구조는 보존합니다. 실제 주장, 부정/긍정, 인과, 조건, 확신도도 보존합니다. 보고서용 서식 축약·영어 순화 규칙은 적용하지 않습니다. 본문에 사실을 추가하거나 현행 설계와 대조해 기술 내용을 고치지 않습니다.
+
+## 정량 근거
+
+입력의 정량 블록을 확인했습니다. risk_band는 low이고, 장문 파일의 heavy 권고는 문서 길이에서 나옵니다. 영어 기술 term 반복은 장르상 필수이므로 lexical_diversity의 낮은 값만으로 수정하지 않습니다. 아래 수치는 탐지 보조이며 개별 문맥과 함께 판단합니다.
+
+## 겨냥 순서의 지배 패턴
+
+1. **D-14·D-5 — 지형·계보·축 은유의 과도한 반복**: "15.4절이 이깁니다", "09번의 자리가 한 칸 내려갔습니다", "공통의 조상", "설계 결정 … 떠받치는", "해설서의 척추", "곁다리 참고" 등은 참조 자료에 과한 비유를 얹습니다. 표의 내용과 계보도·제목은 유지하고 본문 비유를 구체화합니다.
+
+2. **D-2·F-1 — 가치 판단·평가성 안내**: "가장 값집니다", "단단해집니다", "값어치는 충분", "이 절은 값을 합니다" 등 평가가 반복됩니다. 실제 오류·판단 근거를 앞세웁니다.
+
+3. **A-18 — 참조·조건이 겹친 긴 문장**: 정량 relative_clause_nesting=5. 15.1절 09번 위치, 15.2절 공통 출처와 BBHT, 15.5절 성능 축, 15.9절 simulation 방식 문단에서 긴 수식·참조를 보존하며 호흡을 조정합니다.
+
+4. **C-8·D-8 — 부정 대구와 정의 공식 반복**: "새 내용을 배우는 곳이 아니라", "참고문헌이 아니라", "목록 … 그 자체가 아닙니다", "게으른 선택이 아니라 합리적인 선택" 등 수사 대조를 선별합니다. 기술적 구별·성능 해석에 필수인 대조는 유지합니다.
+
+## 비적용·잔존 처리
+
+교육적 질문·표·연습문제·단계 목록·기존 비유는 그 자체로 결함이 아닙니다. 자연스러운 문장은 그대로 두고 확인된 구간만 보수적으로 다듬습니다. 수치/기술 주장에 의문이 있어도 이번 윤문에서는 보존합니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 1616
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.45  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.55  (z=-0.30 vs report 인간 baseline)
+- ending_comma_rate: 0.38  (n/a vs report 인간 baseline)
+- comma_segment_length: 8.47  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.018  (z=-1.41 vs report 인간 baseline)
+- lexical_diversity: 0.87  (z=+4.46 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 0
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 15.2 계보도 — 누가 누구를 딛고 섰나
+
+여섯 논문은 흩어진 개별 자료가 아니라 서로 인용하는 **하나의 지형**을 이룹니다.
+
+<img src="diagrams/15_lineage.svg" width="640" alt="여섯 논문의 계보: 04를 중심으로 05·06이 위성, 07은 대조군, 08·09는 응용축">
+
+- **04 → 06 → 05** 가 중앙대 연구실의 3부작입니다. 04번(Grover emulator)이 뿌리이고, 06번이 그 설계 철학을 QAOA라는 다른 algorithm으로 옮겼으며, 05번이 04번의 fixed-point precision 문제에 이론적 근거를 댔습니다. 04번이 중심이고 05·06은 그 위성입니다.
+- **07** 은 반대 진영(미국 Kansas 대학, HPC accelerator 계보)에서 온 **대조항**입니다. on-chip resource 대신 외부 DDR을, fixed-point 대신 floating-point를 택해 우리와 정반대의 선택을 합니다 — 그래서 12장의 논쟁 상대로 값집니다.
+- **08·09** 는 algorithm 축의 확장입니다. 08번은 Grover 자체의 이론적 일반화(FPGA 무관), 09번은 Grover를 통신 문제에 응용한 사례입니다.
+
+한 가지 정직하게 짚을 점 — 04번의 최적화 4종 중 기법 1(imaginary part 제거)과 기법 3(matrix multiplication 분해)의 **착상 자체는 선행연구 인용**입니다(각각 Ionescu 2019, Bag 2022). 04번의 실제 기여는 이들을 통합·정리하고 SoC로 만들고 자동 생성 tool(QEX)까지 붙인 데 있습니다. 그런데 04번은 자기가 인용한 그 선행연구와 정량 비교를 하지 않습니다 — 논문을 읽을 때 감안할 점입니다.
+
+덧붙여, 이 여섯 편의 밑에는 공통의 조상이 하나 더 있습니다 — Pilch–Długopolski(2018)의 범용 FPGA quantum emulator입니다. 04·05·06·07번이 **모두** 이 논문을 인용합니다(각각 참고문헌 [18]·[48]·[11]·[41]). 여섯 편의 계보도에는 그리지 않았지만, FPGA quantum emulator라는 분야의 공통 출발점 격이라 알아 둘 값어치가 있습니다(더 읽을거리는 [15.9절](#159-여섯-논문-너머--더-읽을거리)).
+
+계보 바깥에서 우리 설계 결정 하나를 통째로 떠받치는 논문도 한 편 있습니다. **Boyer·Brassard·Høyer·Tapp(1998), _Tight bounds on quantum searching_** — solution이 몇 개인지 모르는 채로 Grover를 돌리는 표준 절차(이른바 BBHT)의 원전입니다. 우리가 쓰는 schedule, 곧 sampling range를 1에서 시작해 실패할 때마다 growth factor 6/5(1.2×)로 넓히는 방식이 전부 이 논문에서 나왔습니다. 09번 논문의 Algorithm 1·2도 이 절차를 그대로 옮겨 온 것이고 — 옮기는 과정에서 한 줄이 빠졌습니다([15.6절](#156-인용-시-주의--논문의-오류와-모호점)). 그러니 iteration schedule을 인용할 때는 09번이 아니라 1998년 원전을 인용하십시오.
+
+---
+[원문 끝]

@@ -1,0 +1,53 @@
+[P0 문자율] 1.1% [전문] — OK (경고 30% / 중단 50%)
+[P1 목표달성] N/A — 구조 진단 (어휘 S1 앵커 없음)
+[P2 전멸] C-8 대구 9 → 9 — OK
+[P3 golden] FAIL — 1건:
+    FAIL [footnote_anchor] 각주 32)이 원위치를 벗어났습니다 (인접 수치 앵커 '9' → '4'): 인용 출처 변조 위험
+[P4 터치율] 10.5% (32/306 문장) — 보고 전용
+[P5 서법] 소실 0문장 (참고 총수: 당위 19→21 / 완곡 10→11) — OK
+gate: WARN — 경고. 사용자 고지 + finalize 승급
+{
+  "genre": "report",
+  "change_rate": {
+    "rate": 0.0105,
+    "scope": "전문",
+    "verdict": "OK"
+  },
+  "s1_targets": [],
+  "antithesis": {
+    "before": 9,
+    "after": 9,
+    "verdict": "OK"
+  },
+  "golden": [
+    {
+      "code": "footnote_anchor",
+      "message": "각주 32)이 원위치를 벗어났습니다 (인접 수치 앵커 '9' → '4'): 인용 출처 변조 위험"
+    }
+  ],
+  "sentence_touch": {
+    "rate": 0.1046,
+    "touched": 32,
+    "total": 306
+  },
+  "numbers_dropped": [],
+  "modality": {
+    "lost_pairs": [],
+    "uncertain_pairs": [],
+    "counts": {
+      "deontic": {
+        "before": 19,
+        "after": 21
+      },
+      "hedge": {
+        "before": 10,
+        "after": 11
+      }
+    },
+    "verdict": "OK"
+  },
+  "gate": {
+    "verdict": "WARN — 경고. 사용자 고지 + finalize 승급",
+    "exit_code": 1
+  }
+}

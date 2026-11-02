@@ -1,0 +1,186 @@
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/interface/ahb.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/interface/aioif.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/interface/apb.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/interface/axi.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/interface/axi4.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/interface/axi4l.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/interface/gpio_mmio.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/interface/i2c.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/interface/jtag.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/interface/mlsi.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/interface/mmiox1.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/interface/moi.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/interface/ni.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/interface/olede.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/interface/pc.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/interface/spi.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/interface/svni.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/interface/tristate.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/interface/uart.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/interface/valid_ready_data.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/interface/wifie.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/interface/xmi.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/adc_apb_template.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/aioifm.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/apb_bridge.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/apb_dummy_slave.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/clock_gate.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/clock_pll_template.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/common_peri_group.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/compress_PU.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/core_peri_group.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/default_slave.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/dma.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/dma_twoport.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/external_peri_group.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/fast_dram.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/florian.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/florian_PU.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/fuse_box.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/gpio.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/hbc1_rx.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/hbc1_tx.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/i2s_master.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/inter_router_fifo.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/inter_router_fifo_asynch.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/jpeg_encoder.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/jpegls_encoder.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/led_checker.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/matrix_lsu.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/member_mmio.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/mmiox1_interface.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/mni_ahbm_asynch.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/mni_ahbm_synch.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/mni_axi4_asynch.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/mni_axi4_synch.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/mni_axi4l_asynch.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/mni_axi4l_synch.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/mni_axi_asynch.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/mni_axi_synch.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/mni_moi_asynch.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/mni_moi_synch.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/mni_xmi_asynch.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/mni_xmi_synch.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/pact.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/platform_controller.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/plic.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/prvp_c2c_master.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/prvp_c2c_slave00.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/prvp_c2c_slave01.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/real_clock.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/rom_axi_template.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/router.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/rvc_biriscv_sub.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/rvc_orca_cache_sub.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/rvc_orca_plus_sub.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/rvc_orca_sub.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/rvc_rocket_big_sub.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/rvc_rocket_opt_sub.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/sdram.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/slow_dram.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/sni_ahbs_asynch.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/sni_ahbs_synch.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/sni_apb_asynch.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/sni_apb_synch.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/sni_axi4_asynch.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/sni_axi4_synch.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/sni_axi4l_asynch.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/sni_axi4l_synch.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/sni_axi_asynch.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/sni_axi_synch.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/sni_xmi_asynch.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/sni_xmi_synch.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/sram_axi.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/sram_xmi.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/starc.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/tcu.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/tick_generator.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/timer_tick_generator.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/traffic_generator.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/tristate_buffer.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/user_clock.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/user_gpio.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/user_i2c.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/user_spi.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/user_uart.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/system_ip/vta.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/rvc_biriscv.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/rvc_orca.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/rvc_orca_cache.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/rvc_orca_plus.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/rvc_rocket_big.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/rvc_rocket_opt.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/user_ddr3.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/user_ddr4.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/user_masterif_ahb_clkin.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/user_masterif_ahb_clkout.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/user_masterif_axi4_clkin.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/user_masterif_axi4_clkout.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/user_masterif_axi4l_clkin.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/user_masterif_axi4l_clkout.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/user_masterif_axi_clkin.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/user_masterif_axi_clkout.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/user_masterif_moi_clkin.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/user_masterif_moi_clkout.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/user_masterif_xmi_clkin.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/user_masterif_xmi_clkout.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/user_matrix_lsu.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/user_mmiox1.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/user_slaveif_ahb_clkin.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/user_slaveif_ahb_clkout.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/user_slaveif_apb_clkin.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/user_slaveif_apb_clkout.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/user_slaveif_axi4_clkin.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/user_slaveif_axi4_clkout.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/user_slaveif_axi4l_clkin.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/user_slaveif_axi4l_clkout.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/user_slaveif_axi_clkin.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/user_slaveif_axi_clkin_cacheable.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/user_slaveif_axi_clkout.xml
+Library file : /opt/rvx/rvx_synthesizer_obfuscated/general_ip/user_slaveif_axi_clkout_cacheable.xml
+All libraries are imported
+
+
+Synthesizing platform 'bbht_grover_k3h3_e4_m2_rankfix_20261028'
+('default_slave/ni', '0xc0000000', '0x1000')
+('i_system_sram/no_name', '0xe0000000', '0x20000')
+('platform_controller/no_name', '0xe1000000', '0x40000')
+('common_peri_group/no_name', '0xe2000000', '0x10000')
+('external_peri_group/no_name', '0xe2010000', '0x10000')
+('i_grover_csr/slave', '0xe2020000', '0x1000')
+('core_peri_group/no_name', '0xf0000000', '0x8000')
+
+Synthesizing is complete
+Caching polocy: caching_none
+
+Elaborating platform 'bbht_grover_k3h3_e4_m2_rankfix_20261028'
+- Elaborating instance is complete
+- Splitting array is complete
+- Splitting interface is complete
+- Transforming tristate is complete
+- Transforming array port is complete
+- Transforming not-connect is complete
+- Flattening interface is complete
+- Making signals for IP ports is complete
+- Separating user-dependent is complete
+- Converting included port is complete
+
+Elaborating is complete
+
+Elaborating platform 'bbht_grover_k3h3_e4_m2_rankfix_20261028_rtl'
+- Elaborating instance is complete
+- Splitting array is complete
+- Splitting interface is complete
+- Transforming tristate is complete
+- Transforming array port is complete
+- Transforming not-connect is complete
+- Flattening interface is complete
+- Making signals for IP ports is complete
+- Separating user-dependent is complete
+- Converting included port is complete
+
+Elaborating is complete
+
+Generating RTL is complete
+
+

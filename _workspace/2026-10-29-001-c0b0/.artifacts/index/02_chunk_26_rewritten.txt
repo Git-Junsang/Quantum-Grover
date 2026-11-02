@@ -1,0 +1,14 @@
+## 8. 요약
+
+- **computer의 기원**: Turing(1936)이 "algorithm=Turing machine이 하는 것"으로 정의 → 현대 computing의 토대.
+- **Deutsch의 질문**: "모든 물리 system을 효율적으로 simulation하는 범용 장치가 있는가?" → classical computer는 quantum을 못 흉내 냄 → quantum computer의 탄생.
+- **근본 강점**: 입자가 하나 늘 때마다 amplitude는 두 배. classical은 지수적으로 증가, quantum은 입자 수만큼의 qubit로 자연스럽게 담음.
+- **잘하는 문제**: Shor(소인수분해, 지수적)·Grover(search, 이차)·quantum simulation. 만능은 아님.
+- **이 project**: BRAM에 올린 data array에서 네 가지 predicate($<$·$>$·$=$·interval)를 만족하는 index를 찾아 주는 **Grover emulator IP**(Arty A7-100T + RVX SoC, 14 qubits). 하나를 돌려주거나 호출을 되풀이해 전부 enumeration합니다.
+- **속도가 값어치가 아니다**: $O(\sqrt{\text{number of states}})$ 은 실제 quantum computer의 이야기이고, classical circuit으로 흉내 내면 classical linear scan보다 **느립니다.** 상대는 Qiskit `AerSimulator`·NumPy state vector code며, 이 IP의 값어치는 **결정적·재현 가능한 재현과 verification**에 있습니다.
+
+다음 장에서는 이 모든 것의 출발점, **qubit** 가 정확히 무엇인지 — 왜 그 state가 "숫자"가 아니라 "vector"인지 — 부터 배웁니다.
+
+---
+
+> [1장 qubit와 state →](01_qubits_and_states.md)

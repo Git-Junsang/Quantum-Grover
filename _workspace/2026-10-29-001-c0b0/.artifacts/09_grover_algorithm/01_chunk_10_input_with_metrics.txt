@@ -1,0 +1,82 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 10/12이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 09_grover_algorithm.md 진단
+
+## 장르·레지스터와 보존 조건
+
+학부생용 기술 해설서(report). 본문은 친근한 존댓말(합니다/입니다, 일부 해요체 설명), 수식 풀이·표·요약은 압축형입니다. 문장 격식을 올리지 않습니다. 영어 용어와 영어 토큰은 번역·삭제·교체·대소문자 변경하지 않습니다. glossary 기준은 `documents/design_references/22_appendix_glossary_and_retired_specs.md` §22.2입니다. 수치·수식·code·제목·link·직접 인용·기존 콜아웃/이모지·문단 구조는 보존합니다. 실제 주장, 부정/긍정, 인과, 조건, 확신도도 보존합니다. 보고서용 서식 축약·영어 순화 규칙은 적용하지 않습니다. 본문에 사실을 추가하거나 현행 설계와 대조해 기술 내용을 고치지 않습니다.
+
+## 정량 근거
+
+입력의 정량 블록을 확인했습니다. risk_band는 low이고, 장문 파일의 heavy 권고는 문서 길이에서 나옵니다. 영어 기술 term 반복은 장르상 필수이므로 lexical_diversity의 낮은 값만으로 수정하지 않습니다. 아래 수치는 탐지 보조이며 개별 문맥과 함께 판단합니다.
+
+## 겨냥 순서의 지배 패턴
+
+1. **D-14·D-5 — 설명용 비유가 본문까지 관통하는 반복**: "Grover가 실제로 사는 곳", "손끝 하나 바꾸지 않습니다", "function을 먹인 것", "전부 헛수고", "hardware에서 한층 더 날카로워집니다" 등은 동작 설명에 어색한 행위 술어를 붙입니다. 막대·reflection·rotation의 교육적 비유와 기존 비유 상자는 유지하고 과장된 연결 표현만 구체화합니다.
+
+2. **D-2·F-1 — 지나친 감탄과 확언**: "말로만 하면 안 믿기니", "소수점 끝까지 한 치도 어긋나지", "축하합니다 … 완주했습니다" 등 독자를 대신 평가하는 표현을 완화합니다. 수학적으로 정확히 같다는 주장은 그대로 보존합니다.
+
+3. **A-18 — 긴 관형절·삽입 설명**: 정량 relative_clause_nesting=3. 도입의 절 안내, 9.1절 emulator 비용, 9.6절 BBHT, 9.8절 real number 전용 논증, 9.9절 hardware 안내가 장문입니다. 조건·한계와 모든 수식·수치를 보존하며 필요한 문장만 분리합니다.
+
+4. **C-8·D-8 — 반복적인 부정 대구·정의 강조**: "대상의 성질이지 … 성능 지표가 아닙니다", "표준 문제라서가 아닙니다", "고장이 아니라", "신비로운 constant가 아니라" 등 반복을 확인합니다. algorithm과 emulator의 구분처럼 기술적으로 필요한 대조는 유지하고 감탄용 대조만 줄입니다.
+
+5. **C-11·I-3 — 연결어미 쉼표·설명 끝의 군더더기**: 연결어미 뒤 쉼표와 "것뿐이에요", "것이죠", "뜻인데" 등으로 결론을 감싸는 문장을 국소 검토합니다. 정량 conclusion_pivot_count=1은 과다 기준 미달이므로 삭제 목표로 삼지 않습니다.
+
+## 비적용·잔존 처리
+
+교육적 질문·표·연습문제·단계 목록·기존 비유는 그 자체로 결함이 아닙니다. 자연스러운 문장은 그대로 두고 확인된 구간만 보수적으로 다듬습니다. 수치/기술 주장에 의문이 있어도 이번 윤문에서는 보존합니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 2884
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.38  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.42  (z=-0.45 vs report 인간 baseline)
+- ending_comma_rate: 0.75  (n/a vs report 인간 baseline)
+- comma_segment_length: 11.12  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.000  (z=-2.00 vs report 인간 baseline)
+- lexical_diversity: 0.70  (z=+0.96 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 0
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 9.8 전체 그림 정리 — amplitude는 왜 real number뿐인가
+
+<img src="diagrams/09_grover_circuit.svg" width="640" alt="Grover algorithm circuit">
+
+| 요소      | 수식                                                                                        | 역할                          |
+| --------- | ------------------------------------------------------------------------------------------- | ----------------------------- |
+| 초기 state | $\|\psi\rangle = H^{\otimes \text{number of qubits}}\|0\rangle^{\otimes \text{number of qubits}} = \frac{1}{\sqrt{\text{number of states}}}\sum_x\|x\rangle$ | uniform superposition (모든 후보 동시에)   |
+| oracle    | $U_f = I - 2\sum_{x\in A}\|x\rangle\langle x\|$                                           | 조건에 걸리는 막대를 전부 아래로 |
+| diffusion operator      | $U_\psi = 2\|\psi\rangle\langle\psi\| - I$                                                | inversion about the mean (증폭)         |
+| 한 iteration   | $G = U_\psi U_f$                                                                          | solution 방향으로 $2\theta$ rotation |
+| number of iterations | $\text{number of iterations} \approx \frac{\pi}{4}\sqrt{\text{number of states}/\text{number of solutions}}$                                                       | solution 방향에 정렬될 때까지     |
+| complexity | $O(\sqrt{\text{number of states}})$                                                                              | oracle 호출 횟수 기준(real quantum hardware) |
+
+표를 세로로 훑으면 성질 하나가 눈에 들어옵니다. **여기 어디에도 imaginary number가 없습니다.** 세 가지가 겹쳐서 그렇습니다. 첫째, 시작 state $|\psi\rangle = H^{\otimes \text{number of qubits}}|0\rangle^{\otimes \text{number of qubits}}$ 의 amplitude는 전부 $\frac{1}{\sqrt{\text{number of states}}}$ 로 real number입니다. 둘째, oracle은 각 amplitude에 $+1$ 또는 $-1$ 을 곱할 뿐이라 real number를 real number로 보냅니다. 셋째, diffusion operator $a_x \mapsto 2\bar a - a_x$ 는 real number 계수만 쓰는 linear operation이라 역시 real number를 벗어나지 않습니다. real number 집합이 이 세 연산에 대해 닫혀 있으므로, 귀납적으로 **amplitude는 algorithm 처음부터 끝까지 real number**입니다. 일반적인 state의 amplitude는 complex number이고 그 relative phase가 곧 정보인데([1장](01_qubits_and_states.md)), 표준 Grover는 그 자유도를 한 번도 쓰지 않습니다 — 등장하는 phase가 $0$ 과 $\pi$ 둘뿐이고, 그건 sign bit 하나로 적히니까요.
+
+이 관찰이 hardware에서는 비용을 통째로 절반으로 자릅니다. amplitude 하나당 real part·imaginary part 두 칸을 잡을 이유가 없으니 **imaginary part memory가 아예 없고**, complex number multiplication(real number multiplication 4번 + addition 2번)도 datapath에 등장하지 않습니다. 대신 조건이 하나 붙습니다 — 이 논증은 "초기 state가 real number + phase가 $\pm1$ + diffusion operator가 real linear"라는 **세 전제에 통째로 기대고** 있으므로, 그중 하나라도 깨는 기능을 얹는 순간 datapath를 complex number로 다시 지어야 합니다. 실제로 number of solutions를 세는 표준 기법인 **quantum counting**은 phase estimation을 쓰고, phase estimation은 $e^{2\pi i k / 2^t}$ 꼴의 complex phase를 amplitude에 직접 곱합니다. 그래서 우리 설계는 counting 계열을 아예 채택하지 않고, number of solutions를 모르는 채로 도는 9.6절의 BBHT를 택했습니다. real number 전용 datapath를 지키는 것이 그 선택의 근거 가운데 하나입니다.
+
+---
+[원문 끝]

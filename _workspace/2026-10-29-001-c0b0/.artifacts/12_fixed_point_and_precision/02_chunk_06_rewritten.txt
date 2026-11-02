@@ -1,0 +1,28 @@
+1. **initialization** — uniform amplitude $1/\sqrt{\text{number of states}}$ 를 유한 bit로 표현할 때. loop 시작 전 **한 번**. 다만 우리 14 qubits에서는 $1/\sqrt{\text{number of states}} = 2^{-7}$ 이라 **버리는 bit가 없습니다**(12.2절).
+2. **diffusion operator의 right shift** — diffusion operator가 실제로 필요로 하는 값은 mean이 아니라 **2×mean**이라, accumulator를 number of qubits − 1 bits, 곧 13 bits만큼 arithmetic right shift해(`sum >>> 13`) 한 번에 구합니다(13.5절). 이 shift에서 아래 13 bits가 떨어져 나갑니다. **매 iteration**.
+3. **measurement의 square** — probability를 만들 때 amplitude를 제곱합니다. 05번은 여기서도 product의 아래 bit를 버리지만 우리는 자르지 않습니다. 23-bit끼리의 product는 46 bits이고 그 폭 그대로 누적하므로, 이 자리에서 precision을 좌우하는 것은 truncation이 아니라 **accumulator 폭**입니다. 폭 결정은 [14.5절](14_multiple_solutions_and_minimum_search.md#145-2단-병렬-measurement)에 있습니다. loop가 끝난 뒤 **한 번**.
+
+addition과 subtraction은 fraction bits를 깎지 않고(자릿수만 늘 뿐 아래 bit를 버리지 않습니다), 2×는 shift 칸수를 14 대신 13으로 잡는 것으로 흡수되어 별도의 연산 자체가 없습니다. 그래서 diffusion operator 전체(accumulation → shift → subtraction)에서 error를 만드는 곳은 **가운데 shift 한 곳**뿐입니다. 되쓸 때의 saturation은 그보다 훨씬 드문 두 번째 자리입니다(12.3·12.5절).
+
+그런데 그 한 곳이 결정적입니다. mean은 그 iteration의 **모든 amplitude에 2×로 실려** 들어갑니다 — mean의 rounding error $\epsilon$ 은 곧바로 모든 칸에 $2\epsilon$ 으로 퍼집니다. 그리고 이 일이 매 iteration 되풀이됩니다. 14 qubits · 1 solution이면 최적은 100 iterations입니다.
+
+따라서 rounding 방식은 설계 기준에 따라 정해야 합니다. 후보는 셋입니다.
+
+- **truncation** — arithmetic right shift 결과를 그대로 쓰는 것. two's complement에서 truncation은 언제나 $-\infty$ 방향이므로 평균적으로 $-0.5$ LSB의 **한 방향 편향**이 남습니다.
+- **half-up** — 정확히 절반인 지점을 늘 위로 올림. 대부분의 값에서는 편향이 사라지지만, 절반인 경우에만 $+$ 방향으로 치우친 것이 남습니다.
+- **round-half-to-even** — 절반일 때는 결과의 최하위 bit가 0이 되는 쪽으로 붙임. 절반이 위·아래로 반반 갈리므로 편향이 정확히 0입니다.
+
+편향이 있느냐 없느냐가 error의 **성장 속도**를 바꿉니다. 방향이 같은 error는 서로 상쇄되지 않고 number of iterations에 **비례**해 쌓입니다. 반면 방향이 무작위인 error는 서로 상쇄되며 $\sqrt{\text{number of iterations}}$ 규모로만 자랍니다. 100 iterations를 도는 loop에서 이 차이는 열 배입니다. 그래서 **truncation은 쓰지 않습니다.**
+
+남은 둘 중 half-to-even을 고른 이유는 error 크기가 아닙니다. diffusion operator의 shift는 13 bits라 버려지는 bit가 정확히 절반이 되는 경우 자체가 $2^{-13}$ probability로만 나오고, half-up과 갈리는 자리도 딱 거기뿐이기 때문입니다. 고른 이유는 규칙이 대칭이라 편향의 상한이 원리적으로 0이라는 것, 그리고 수식으로 적었을 때 모호함이 없어 software reference model과 RTL이 tie에서 갈릴 여지가 없다는 것입니다(18.3절).
+
+hardware 비용은 사실상 0입니다. 버릴 하위 bit 중 최상위 하나를 $g$(guard), 그 아래 전부의 OR를 $r$(sticky), 남는 값의 최하위 bit를 $\ell$ 이라 하면 올림 조건은
+
+$$g \wedge (r \vee \ell)$$
+
+입니다. gate 몇 개짜리 combinational logic이고, diffusion operator 한 번에 한 번만 씁니다.
+
+두 가지를 미리 밝혀 둡니다. 첫째, 다음 두 절에서 인용할 05번 논문의 error 이론은 **truncation을 전제로** 세워졌습니다. 규칙을 바꾸는 순간 그 이론의 exponent와 constant를 그대로 가져다 쓸 수 없게 되는데, 이것이 12.7절의 주제입니다. 둘째, 규칙을 못 박는 것 자체가 verification의 전제조건입니다. reference model과 RTL이 서로 다른 rounding을 쓰면 두 결과는 영원히 bit 단위로 일치하지 않습니다(18.3절).
+
+---
+

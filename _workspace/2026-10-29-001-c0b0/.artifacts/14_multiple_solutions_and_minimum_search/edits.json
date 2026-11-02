@@ -1,0 +1,207 @@
+{
+  "edits": [
+    {
+      "rule": "D-14",
+      "before": "13장이 oracle과 diffusion operator를 circuit으로 내렸습니다.",
+      "after": "13장에서는 oracle과 diffusion operator를 circuit으로 구현했습니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "oracle에서는 아무 대가도 요구하지 않지만, measurement에서는 설계를 통째로 뒤엎습니다.",
+      "after": "oracle에서는 추가 비용이 들지 않지만, measurement에서는 설계를 바꿔야 합니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-8",
+      "before": "먼저 함정 하나를 치우고 시작해야 합니다.",
+      "after": "먼저 혼동하기 쉬운 표기를 정리해야 합니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "이 표를 손 닿는 곳에 두고,",
+      "after": "이 표를 참고하면서,",
+      "occurrences": 1
+    },
+    {
+      "rule": "C-8",
+      "before": "**oracle에서는 이것이 공짜입니다.**",
+      "after": "**oracle에서는 추가 비용이 들지 않습니다.**",
+      "occurrences": 1
+    },
+    {
+      "rule": "C-8",
+      "before": "**diffusion operator에서도 공짜입니다.**",
+      "after": "**diffusion operator에서도 추가 비용이 들지 않습니다.**",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "circuit은 손끝 하나 달라지지 않습니다.",
+      "after": "circuit은 달라지지 않습니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "C-8",
+      "before": "**그러나 iteration 제어에서는 공짜가 아닙니다.**",
+      "after": "**그러나 iteration 제어에서는 해결할 문제가 있습니다.**",
+      "occurrences": 1
+    },
+    {
+      "rule": "C-8",
+      "before": "**그리고 measurement에서는 전혀 공짜가 아닙니다.** 여기가 이 장의 본론입니다.",
+      "after": "**measurement에서도 설계를 다시 살펴봐야 합니다.**",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-8",
+      "before": "이것이 이 해설서 전체를 관통하는 명제입니다.",
+      "after": "이 해설서는 이 설명을 일관되게 따릅니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "그들은 전부 똑같이",
+      "after": "모두 똑같이",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "이 둘째 귀결이 measurement를 무너뜨립니다.",
+      "after": "이 두 번째 성질 때문에 기존 measurement 방식이 작동하지 않습니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "같은 function을 먹였으니",
+      "after": "같은 function을 적용했으니",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-8",
+      "before": "귀납이 끝났습니다.",
+      "after": "이 관계는 반복해도 유지됩니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-2",
+      "before": "Grover는 제 일을 완벽하게 했습니다",
+      "after": "Grover는 의도한 대로 동작했습니다",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "가 여기서 통째로 막힙니다.",
+      "after": "를 이 방식으로는 충족할 수 없습니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-2",
+      "before": "probability sampling의 어설픈 특수 경우입니다.",
+      "after": "probability sampling의 제한적인 특수 경우입니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "[4.1절](04_measurement.md#41-computational-basis-measurement와-born-rule)의 Born rule이 답을 이미 갖고 있습니다.",
+      "after": "[4.1절](04_measurement.md#41-computational-basis-measurement와-born-rule)의 Born rule을 그대로 적용하면 됩니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "4장의 규칙과 circuit이 한 치도 어긋나지 않습니다.",
+      "after": "4장의 규칙과 circuit의 동작이 일치합니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "measurement 한 번이 그 60×를 먹는 셈이고, 128 lanes datapath가 통째로 놀게 됩니다.",
+      "after": "measurement 한 번에 그 60×의 시간이 들고, 128 lanes datapath는 활용되지 않습니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "18.3절이 bit-exact 조건으로 못 박는 항목입니다.",
+      "after": "18.3절에서 bit-exact 조건으로 명시한 항목입니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "group·row·lane 순의 layer 선택은 그저 순회를 영리하게 한 것이고,",
+      "after": "group·row·lane 순의 layer 선택은 순회 방식을 바꾼 것이고,",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "상위 bit는 거의 놀지만,",
+      "after": "상위 bit는 거의 쓰이지 않지만,",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-8",
+      "before": "마지막으로 눈여겨볼 것 — **Build도 lane 고르기도 amplitude memory를 읽기만 합니다.**",
+      "after": "마지막으로, **Build도 lane 고르기도 amplitude memory를 읽기만 합니다.**",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "이유를 모르면 나중에 다시 끌려갑니다.",
+      "after": "이유를 알아야 나중에 같은 대안을 다시 검토하는 일을 줄일 수 있습니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "Artix-7에 DSP는 남아돌고",
+      "after": "Artix-7의 DSP에는 여유가 있고",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "checkpoint라는 이득까지 열어 주는 셈입니다.",
+      "after": "checkpoint도 사용할 수 있게 합니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "같은 문제의 이어달리기가 아니라",
+      "after": "같은 문제를 이어 푸는 것이 아니라",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-8",
+      "before": "한 가지 좋은 소식이 있습니다. 새 답이 나와",
+      "after": "새 답이 나와",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "checkpoint가 살아 있습니다.",
+      "after": "checkpoint가 유효합니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "그래서 enumeration에서도 checkpoint가 일을 합니다.",
+      "after": "그래서 enumeration에서도 checkpoint를 활용합니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "접근하면 영원히 헤맵니다.",
+      "after": "접근하면 원하는 결과를 얻지 못할 수 있습니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "checkpoint가 살아 있어 enumeration에서도",
+      "after": "checkpoint가 유효하므로 enumeration에서도",
+      "occurrences": 1
+    }
+  ],
+  "self_check": {
+    "passed": 6,
+    "total": 6,
+    "note": "사용자 보존 조건 우선; 교육용 표·콜아웃과 필수 technical term 반복 유지"
+  }
+}

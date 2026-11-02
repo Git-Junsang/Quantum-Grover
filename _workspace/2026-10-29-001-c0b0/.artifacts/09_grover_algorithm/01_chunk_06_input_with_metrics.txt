@@ -1,0 +1,93 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 6/12이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 09_grover_algorithm.md 진단
+
+## 장르·레지스터와 보존 조건
+
+학부생용 기술 해설서(report). 본문은 친근한 존댓말(합니다/입니다, 일부 해요체 설명), 수식 풀이·표·요약은 압축형입니다. 문장 격식을 올리지 않습니다. 영어 용어와 영어 토큰은 번역·삭제·교체·대소문자 변경하지 않습니다. glossary 기준은 `documents/design_references/22_appendix_glossary_and_retired_specs.md` §22.2입니다. 수치·수식·code·제목·link·직접 인용·기존 콜아웃/이모지·문단 구조는 보존합니다. 실제 주장, 부정/긍정, 인과, 조건, 확신도도 보존합니다. 보고서용 서식 축약·영어 순화 규칙은 적용하지 않습니다. 본문에 사실을 추가하거나 현행 설계와 대조해 기술 내용을 고치지 않습니다.
+
+## 정량 근거
+
+입력의 정량 블록을 확인했습니다. risk_band는 low이고, 장문 파일의 heavy 권고는 문서 길이에서 나옵니다. 영어 기술 term 반복은 장르상 필수이므로 lexical_diversity의 낮은 값만으로 수정하지 않습니다. 아래 수치는 탐지 보조이며 개별 문맥과 함께 판단합니다.
+
+## 겨냥 순서의 지배 패턴
+
+1. **D-14·D-5 — 설명용 비유가 본문까지 관통하는 반복**: "Grover가 실제로 사는 곳", "손끝 하나 바꾸지 않습니다", "function을 먹인 것", "전부 헛수고", "hardware에서 한층 더 날카로워집니다" 등은 동작 설명에 어색한 행위 술어를 붙입니다. 막대·reflection·rotation의 교육적 비유와 기존 비유 상자는 유지하고 과장된 연결 표현만 구체화합니다.
+
+2. **D-2·F-1 — 지나친 감탄과 확언**: "말로만 하면 안 믿기니", "소수점 끝까지 한 치도 어긋나지", "축하합니다 … 완주했습니다" 등 독자를 대신 평가하는 표현을 완화합니다. 수학적으로 정확히 같다는 주장은 그대로 보존합니다.
+
+3. **A-18 — 긴 관형절·삽입 설명**: 정량 relative_clause_nesting=3. 도입의 절 안내, 9.1절 emulator 비용, 9.6절 BBHT, 9.8절 real number 전용 논증, 9.9절 hardware 안내가 장문입니다. 조건·한계와 모든 수식·수치를 보존하며 필요한 문장만 분리합니다.
+
+4. **C-8·D-8 — 반복적인 부정 대구·정의 강조**: "대상의 성질이지 … 성능 지표가 아닙니다", "표준 문제라서가 아닙니다", "고장이 아니라", "신비로운 constant가 아니라" 등 반복을 확인합니다. algorithm과 emulator의 구분처럼 기술적으로 필요한 대조는 유지하고 감탄용 대조만 줄입니다.
+
+5. **C-11·I-3 — 연결어미 쉼표·설명 끝의 군더더기**: 연결어미 뒤 쉼표와 "것뿐이에요", "것이죠", "뜻인데" 등으로 결론을 감싸는 문장을 국소 검토합니다. 정량 conclusion_pivot_count=1은 과다 기준 미달이므로 삭제 목표로 삼지 않습니다.
+
+## 비적용·잔존 처리
+
+교육적 질문·표·연습문제·단계 목록·기존 비유는 그 자체로 결함이 아닙니다. 자연스러운 문장은 그대로 두고 확인된 구간만 보수적으로 다듬습니다. 수치/기술 주장에 의문이 있어도 이번 윤문에서는 보존합니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 1851
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.33  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.50  (z=-0.35 vs report 인간 baseline)
+- ending_comma_rate: 0.38  (n/a vs report 인간 baseline)
+- comma_segment_length: 6.82  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.000  (z=-2.00 vs report 인간 baseline)
+- lexical_diversity: 0.74  (z=+1.73 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 0
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+### solution이 둘이면 — 같은 계산, 두 막대
+
+이제 방금 계산에서 **solution만 하나 더 늘려** 봅시다. circuit은 손끝 하나 바꾸지 않습니다. 셋째와 넷째 칸이 둘 다 조건을 만족한다고 하죠(2 solutions). oracle은 조건에 걸리는 칸을 **전부** 뒤집으므로:
+
+$$
+\left(\tfrac12,\ \tfrac12,\ -\tfrac12,\ -\tfrac12\right)
+$$
+
+mean은 $\bar a = \frac14\left(\tfrac12+\tfrac12-\tfrac12-\tfrac12\right) = 0$ 이고, diffusion operator $a \mapsto 2\bar a - a = -a$ 를 먹이면:
+
+$$
+\left(-\tfrac12,\ -\tfrac12,\ \tfrac12,\ \tfrac12\right)
+$$
+
+두 solution 막대의 값이 **정확히 같습니다.** 우연이 아니에요. 시작이 같았고(uniform superposition이니 모든 칸이 같은 값), oracle이 둘을 똑같이 뒤집었고, diffusion operator $a \mapsto 2\bar a - a$ 는 애초에 index를 구별하지 않는 global operation이라 **같은 값에 같은 function을 먹인 것**뿐입니다. 이 세 줄이 그대로 induction이고, iteration을 몇 번 하든 결론은 바뀌지 않습니다 — **solution들의 amplitude는 매 iteration 후 정확히 같습니다.**
+
+(다만 4 states에 solution이 둘이면 처음부터 절반이 solution이라 더 짜낼 것이 없습니다. 실제로 solution 쪽 probability는 $\frac12$ 에서 $\frac12$ 로 제자리예요. 이건 **9.6절** "지나치면 안 된다"의 최소 사례이기도 합니다 — 한 번의 rotation이 목표를 그대로 지나쳐 버린 것이죠.)
+
+**막대가 나란히 자라는 것까지 보려면 8 states.** 여덟 칸 중 두 칸이 조건을 만족한다고 하고 같은 계산을 반복합니다. 시작 amplitude는 여덟 칸 모두 $\frac{1}{\sqrt 8} \approx 0.35355$.
+
+- oracle 뒤: solution 둘이 $-0.35355$, non-solution 여섯이 $+0.35355$.
+- mean: $\bar a = \dfrac{6(0.35355) - 2(0.35355)}{8} = 0.17678$.
+- diffusion operator: solution $2(0.17678) - (-0.35355) = 0.70711 = \tfrac{1}{\sqrt2}$, non-solution $2(0.17678) - 0.35355 = 0$.
+
+두 solution 막대가 **나란히 $\frac{1}{\sqrt2}$ 까지 자랐고**, non-solution 여섯은 정확히 0으로 눌렸습니다. 각 solution의 probability는 $\frac12$ 이고 합치면 1 — 여기서도 한 번에 100%입니다. 두 막대의 높이는 소수점 끝까지 한 치도 어긋나지 않습니다.
+
+이 "solution들의 amplitude가 항상 같다"는 사실은 이론에서는 사소해 보이지만 hardware에서는 결정적입니다. amplitude가 가장 큰 칸을 고르는 comparator circuit은 동률이 나오면 구조가 정한 **하나**만 내놓기 때문에, solution이 둘 이상이면 나머지는 영원히 출력되지 않습니다([14.3절](14_multiple_solutions_and_minimum_search.md#143-amplitude-동률--argmax가-무너지는-지점)). 일반적인 경우의 증명은 **9.7절** 끝에 있습니다.
+
+---
+[원문 끝]

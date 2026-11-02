@@ -1,0 +1,17 @@
+## 11.11 이 장의 요약
+
+- **emulator**는 state vector를 숫자 array로 펼쳐 classical hardware로 계산하는 기계입니다. quantum 이득을 누리지 못하며, 총비용 $O\big(\text{number of states}\cdot\sqrt{\text{number of states}/\text{number of solutions}}\big)$ 은 classical linear scan보다 **느립니다.** 비교 대상은 Qiskit `AerSimulator`·NumPy state vector simulator와 같은 board의 순수 software baseline이고, 값어치는 속도가 아니라 **결정적·재현 가능한 verification**에 있습니다.
+- 우리 IP는 **RVX SoC의 APB slave(CSR) + AHB master(DMA)** 이고, host는 UART 너머에서 명령만 내립니다([17장](17_rvx_soc_integration.md)).
+- array는 셋입니다 — `amp_mem`(23b, 쓰기 대상, 실제로는 checkpoint slot 여러 벌) · `data_mem`(16b signed, 읽기 전용) · `found_mask`(1b, enumeration용). oracle은 `amp[i] ← −amp[i] if pred(value[i], thr)` 이고 **solution index를 모릅니다.**
+- qubit 하나 = memory 두 배. 14 qubits에서 Accelerator Core가 **84 tile**, board 전체가 **116 / 135 tile**(2026-09-07 implementation report)이고, 이 구조에서 15 qubits는 예산 밖입니다.
+- "register라서 resource가 터진다"는 **틀렸습니다.** FF는 1.20×, LUT는 19.8× — 원인은 저장이 아니라 **병렬 연산 unit**입니다. 저장 위치 선택은 용량 문제가 아니라 **병렬성 예산** 문제입니다.
+- 우리의 **memory-bound는 bandwidth가 아닙니다.** (a) BRAM 용량 천장, (b) BRAM의 number of ports와 port width = 병렬도의 상한 — 두 얼굴로 나타납니다.
+- **row = 32 lanes**, index 하위 5 bits가 lane, 상위 9 bits가 row. row 하나(736 bits)가 RAMB36 11개에 담기고, 4 PEs가 row phase 4 banks에서 한 cycle에 4 rows를 읽습니다. 순차 streaming이라 **충돌 0**이고 범용 simulator가 logic 36%를 쓰는 **Beneš permutation network를 통째로 회피**합니다.
+- **비용 model**(500 workloads campaign 직선 맞춤): iteration 1회 ≈ 1,033 cycles(1 PE) → **≈ 268 cycles**(4 PEs), shot 1회의 나머지 ≈ 1,327 → **≈ 354 cycles**(final configuration). 여기에 number of shots가 곱해집니다 — 14 qubits·1 solution이면 mean 22.7 shots, final configuration에서 mean 약 **0.25 ms**(RTL cycle 축, [16장](16_iteration_control_and_checkpoints.md)).
+- emulator는 실기의 여러 난제(multi-controlled $Z$, uncompute, ancilla, C2Q initialization)를 **공짜로** 우회하지만, 실기의 gate 비용도 **숨깁니다.** 그리고 반대로, 08의 일반화 diffusion operator처럼 실기에서 좋은 trick이 emulator에서는 손해가 되기도 합니다.
+
+다음 장에서는 array의 각 칸 — amplitude 하나 — 를 **실제로 몇 bit의 어떤 숫자로 담을 것인가**를 파고듭니다. fixed-point와 Q1.22, 즉 이 datapath의 가장 실무적인 첫 결정입니다.
+
+---
+
+> [← 10장 용어정리와 치트시트](10_glossary_and_cheat_sheet.md) · [index](index.md) · [12장 amplitude를 숫자로 →](12_fixed_point_and_precision.md)

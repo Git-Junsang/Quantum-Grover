@@ -1,0 +1,16 @@
+{
+  "status": "accept",
+  "fidelity_violations": [],
+  "overediting": [],
+  "residual_findings": [],
+  "correction_count": 0,
+  "corrections": [],
+  "preservation": "pass: English tokens, numbers, formulas, code, headings, links, callout symbols",
+  "gate_exit_code": 0,
+  "baseline_golden_unchanged": true,
+  "warnings": [],
+  "grade": "B",
+  "self_check_passed": 6,
+  "self_check_total": 6,
+  "notes": "원문의 개념·조건·인과·부정·당위·존댓말을 보존함. 변경률 10% 미만의 국소 윤문으로 B 판정."
+}

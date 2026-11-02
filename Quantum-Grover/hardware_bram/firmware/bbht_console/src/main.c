@@ -1,0 +1,669 @@
+/*
+ * bbht_console -- 호스트에서 UART 로 BBHT/Grover 를 직접 몰기 위한 셸
+ *
+ * 기존 proof app 들은 술어와 임계값과 시드가 C 코드에 박혀 있어서, 조건을
+ * 하나 바꾸려면 앱을 다시 빌드하고 다시 내려받아야 했습니다. 이 앱은 그
+ * 값들을 UART 명령으로 받습니다. 비트스트림도 앱도 그대로 두고 호스트에서
+ * 조건만 바꿔 가며 돌릴 수 있습니다.
+ *
+ * 프로토콜 정본은 documents/design_references/14_host_interface_and_uart_protocol.md 입니다. 요약하면,
+ *   - 명령은 한 줄. 개행으로 끝납니다
+ *   - 응답은 데이터 줄이 먼저 나오고, 마지막이 반드시 OK 또는 ERR 입니다
+ *   - 호스트는 그 마지막 줄을 보고 다음 명령을 보냅니다
+ *
+ * 흐름 제어가 없는 8N1 원시 스트림이므로 "응답을 받은 뒤에 다음 명령" 이
+ * 규약입니다. 이것을 어기면 폴링 루프 동안 RX FIFO 가 넘칩니다.
+ */
+#include "platform_info.h"
+#include "ervp_printf.h"
+#include "ervp_uart.h"
+#include "ervp_real_clock.h"
+#include "bbht_grover_driver.h"
+#include "bbht_dataset_gen.h"
+
+/* ID 가 보고하는 펌웨어 판. 호스트 자동 테스트(bbht_predicate500.py)가 이
+ * 값으로 GEN PRED / SUM / wall_us 를 쓸 수 있는지 판단합니다. */
+#define BBHT_CONSOLE_FW  "2026-09-25"
+
+#define UART_IDX      UART_INDEX_FOR_UART_PRINTF
+#define LINE_MAX      160
+#define WORDS_MAX     (BBHT_N_ENTRIES / 2)      /* 8192 워드 = 32 KiB */
+#define ENUM_OUT_MAX  512
+
+/* 데이터셋 버퍼. System SRAM 에 잡히고 이 주소를 그대로 DMA 원본으로
+ * 넘깁니다. 4바이트 정렬이 필수입니다. */
+static unsigned int dataset[WORDS_MAX] __attribute__((aligned(4)));
+
+static unsigned short enum_out[ENUM_OUT_MAX];
+
+static bbht_config_t  cfg;
+static bbht_result_t  res;
+
+static unsigned int dataset_count = 0u;   /* 지금 버퍼에 든 항목 수 */
+static unsigned int dataset_ready = 0u;   /* DMA 로 적재까지 끝났는가 */
+
+/*====================================================================
+ * 문자열 도우미. 표준 라이브러리를 끌어오지 않습니다.
+ *==================================================================*/
+static int str_eq(const char *a, const char *b)
+{
+    while (*a && *b) { if (*a != *b) return 0; a++; b++; }
+    return *a == *b;
+}
+
+static int is_space(char c) { return c == ' ' || c == '\t'; }
+
+static char upper(char c) { return (c >= 'a' && c <= 'z') ? (char)(c - 32) : c; }
+
+/* 10진수 기본, 0x 접두사는 16진수, 앞의 - 는 음수.
+ * 실패하면 0 을 반환하고 *ok 를 0 으로 만듭니다. */
+static int parse_num(const char *s, int *ok)
+{
+    int neg = 0;
+    long v = 0;
+    int digits = 0;
+
+    *ok = 0;
+    if (*s == '-') { neg = 1; s++; }
+    else if (*s == '+') { s++; }
+
+    if (s[0] == '0' && (s[1] == 'x' || s[1] == 'X')) {
+        s += 2;
+        while (*s) {
+            char c = upper(*s);
+            int d;
+            if (c >= '0' && c <= '9')      d = c - '0';
+            else if (c >= 'A' && c <= 'F') d = c - 'A' + 10;
+            else return 0;
+            v = v * 16 + d;
+            digits++; s++;
+        }
+    } else {
+        while (*s) {
+            if (*s < '0' || *s > '9') return 0;
+            v = v * 10 + (*s - '0');
+            digits++; s++;
+        }
+    }
+
+    if (!digits) return 0;
+    *ok = 1;
+    return neg ? (int)(-v) : (int)v;
+}
+
+/*====================================================================
+ * UART 한 줄 읽기
+ *
+ * 사람이 직접 칠 수 있어야 하므로 에코를 넣고 백스페이스를 받습니다.
+ * CR 과 LF 를 둘 다 줄 끝으로 봅니다 -- 터미널마다 다릅니다.
+ *==================================================================*/
+#ifdef BBHT_CONSOLE_SCRIPT
+/*
+ * 스크립트 모드 -- RTL 시뮬 전용입니다. 보드 빌드에는 들어가지 않습니다.
+ *
+ * RVX 의 시뮬 printf 모듈(ncsim_printf.v)은 uart_tx 를 1 로 묶어 둡니다.
+ * 보낼 쪽이 없으니 read_line() 의 rx_data_ready 폴링이 영원히 안 풀리고,
+ * 그래서 SoC RTL 시뮬에서 콘솔 앱이 첫 명령도 못 받고 멈춥니다.
+ *
+ * 그것을 피하려고 명령을 컴파일 시점에 박아 넣습니다. UART 경로 코드는
+ * 그대로 두었습니다 -- 이 매크로를 정의하지 않으면 보드 빌드는 한 바이트도
+ * 달라지지 않습니다.
+ *
+ * 이 매크로는 앱 폴더의 rvx_each.mh 가 RTL 시뮬 빌드에만 켭니다. 명령줄로
+ * 넘기면 sim_rtl 이 시뮬 직전에 다시 빌드하면서 빠지므로 그쪽을 쓰십시오.
+ *
+ * 명령 목록은 -DBBHT_CONSOLE_SCRIPT_LINES='"A","B",...' 로 넘기거나,
+ * 안 넘기면 아래 기본 순서를 씁니다. 마지막 QUIT 이 시뮬을 끝냅니다.
+ *
+ * 기본 순서는 보드 실측과 바로 맞댈 수 있게 짰습니다. 보드 500런의
+ * M = 4, 시드 0 워크로드입니다.
+ *   - 데이터셋: software/testbench_data/2026-09-08_common500/datasets/
+ *     dataset_target_4.bin 에서 12345 인 칸은 507 2852 4724 8685 넷뿐입니다.
+ *     GEN TARGETS=0 은 12345 가 한 칸도 없는 배경을 만들고, POKE 넷이 같은
+ *     자리에 목표를 심습니다. EQ 술어는 "12345 와 같은가" 만 보므로 배경
+ *     값이 달라도 오라클 표시는 보드 데이터셋과 칸마다 같습니다.
+ *   - 시드: 공식 로스터 0번 (SEEDJ 0x7B1DCDAF, SEEDM 0x24370DF2).
+ *   - BURST=0 은 bench500 의 normal, BURST=1 은 k4 행이자 보드 M2 행입니다.
+ *   - BURST=1 RUN 을 리셋 없이 두 번 합니다. 체크포인트 사이클은 실행 이력에
+ *     달려 있습니다. 리셋 뒤 첫 탐색은 정책 memo 청소로 3,279 사이클이 더
+ *     붙어 6단계 캠페인(워크로드마다 새로 시작) 값과 같고, 두 번째는 직전
+ *     탐색이 보드 앱과 달라 사이클이 보드 표와 다릅니다. 사이클 기준은 같은
+ *     순서로 두드리는 testbench/tb_console_seq.cpp 입니다.
+ * 적재 전 RUN 과 틀린 SET 은 ERR 종결자 경로를 보려고 일부러 넣었습니다.
+ *
+ * 다른 순서를 돌리려면 명령 목록을 헤더로 만들어 BBHT_CONSOLE_SCRIPT_FILE 로
+ * 넘깁니다 (rvx_each.mh 가 환경변수 BBHT_SCRIPT 를 보고 넣어 줍니다).
+ * software/host_fpga_develop/bbht_predicate500.py --emit-script 가 호스트 자동 테스트와
+ * 한 줄도 다르지 않은 순서를 뽑아 주므로, 그 트랜스크립트를 호스트 프로그램에
+ * --port replay:<qtsim.log> 로 그대로 되먹일 수 있습니다.
+ */
+#ifdef BBHT_CONSOLE_SCRIPT_FILE
+#include BBHT_CONSOLE_SCRIPT_FILE
+#endif
+#ifndef BBHT_CONSOLE_SCRIPT_LINES
+#define BBHT_CONSOLE_SCRIPT_LINES                                             \
+    "ID",                                                                     \
+    "RUN",                                                                    \
+    "GEN COUNT=16384 TARGETS=0 VAL=12345 SEED=1",                             \
+    "POKE IDX=507 VAL=12345",                                                 \
+    "POKE IDX=2852 VAL=12345",                                                \
+    "POKE IDX=4724 VAL=12345",                                                \
+    "POKE IDX=8685 VAL=12345",                                                \
+    "PEEK IDX=8685",                                                          \
+    "LOAD",                                                                   \
+    "SET MODE=EQ A=12345 AUTO=1 BURST=0 SEEDJ=0x7B1DCDAF SEEDM=0x24370DF2",   \
+    "SHOW",                                                                   \
+    "RUN",                                                                    \
+    "STAT",                                                                   \
+    "SET BURST=1",                                                            \
+    "RUN",                                                                    \
+    "STAT",                                                                   \
+    "RUN",                                                                    \
+    "STAT",                                                                   \
+    "SET MODE=NOPE",                                                          \
+    "ENUM",                                                                   \
+    "QUIT"
+#endif
+
+static const char *const script_lines[] = { BBHT_CONSOLE_SCRIPT_LINES };
+static int script_pos = 0;
+
+/* 한 줄씩 돌려줍니다. 다 쓰면 QUIT 을 계속 냅니다. */
+static void read_line(char *buf, int max)
+{
+    const char *s;
+    int n = 0;
+
+    s = (script_pos < (int)(sizeof(script_lines) / sizeof(script_lines[0])))
+        ? script_lines[script_pos++]
+        : "QUIT";
+
+    while (s[n] && n < max - 1) { buf[n] = s[n]; n++; }
+    buf[n] = '\0';
+
+    /* 호스트가 보낸 것처럼 보이게 에코합니다 -- 트랜스크립트를 그대로
+       bbht_cli.py --port replay 로 먹일 수 있게 하려는 것입니다. */
+    printf("> %s\n", buf);
+}
+#else
+static void read_line(char *buf, int max)
+{
+    int n = 0;
+
+    for (;;) {
+        char c;
+
+        while (!uart_check_rx_data_ready(UART_IDX)) { }
+        c = uart_read_rx_buffer(UART_IDX);
+
+        if (c == '\r' || c == '\n') {
+            uart_putc(UART_IDX, '\r');
+            uart_putc(UART_IDX, '\n');
+            buf[n] = '\0';
+            return;
+        }
+
+        if (c == 8 || c == 127) {              /* BS / DEL */
+            if (n > 0) {
+                n--;
+                uart_putc(UART_IDX, 8);
+                uart_putc(UART_IDX, ' ');
+                uart_putc(UART_IDX, 8);
+            }
+            continue;
+        }
+
+        if (c >= 32 && c < 127 && n < max - 1) {
+            buf[n++] = c;
+            uart_putc(UART_IDX, c);            /* 에코 */
+        }
+    }
+}
+#endif  /* BBHT_CONSOLE_SCRIPT */
+
+/* 공백으로 자른 토큰을 최대 max 개까지. 원본을 제자리에서 자릅니다. */
+static int split(char *line, char *tok[], int max)
+{
+    int n = 0;
+    char *p = line;
+
+    while (*p && n < max) {
+        while (is_space(*p)) p++;
+        if (!*p) break;
+        tok[n++] = p;
+        while (*p && !is_space(*p)) { *p = upper(*p); p++; }
+        if (*p) *p++ = '\0';
+    }
+    return n;
+}
+
+/* "KEY=VAL" 을 둘로 가릅니다. '=' 가 없으면 0 을 반환합니다. */
+static int split_kv(char *tok, char **key, char **val)
+{
+    char *p = tok;
+
+    while (*p && *p != '=') p++;
+    if (*p != '=') return 0;
+    *p = '\0';
+    *key = tok;
+    *val = p + 1;
+    return 1;
+}
+
+/*====================================================================
+ * 데이터셋 생성
+ *
+ * 규칙은 bbht_dataset_gen.h 에 있습니다. PJK 벤치마크 하니스와 같은
+ * xorshift32 이고, 술어를 주면(PRED=) 배경을 그 술어의 비정답 쪽으로 접어
+ * 넣어 TARGETS 개가 정확히 정답이 되게 합니다. 같은 인자면
+ * software/reference_model_develop/models/common/benchmark_dataset.py 와 바이트 단위로 같은 배열이
+ * 나오므로, 보드에서 얻은 결과를 SW 기준모델과 대조할 수 있습니다.
+ *==================================================================*/
+/* PRED 만 주고 A/B/POS 를 안 주면 Predicate500 의 값을 씁니다
+ * (benchmark_dataset.PREDICATE500_SPECS 와 같음). */
+static void pred500_defaults(unsigned int mode, int *a, int *b, unsigned int *pos)
+{
+    switch (mode) {
+    case BBHT_PRED_LT:    *a = -16384; *b = 0;    *pos = 0x17A02026u; break;
+    case BBHT_PRED_GT:    *a = 16383;  *b = 0;    *pos = 0x67A02026u; break;
+    case BBHT_PRED_RANGE: *a = -4096;  *b = 4096; *pos = 0x3A4E2026u; break;
+    default:              *a = 12345;  *b = 0;    *pos = 0xA17E2026u; break;
+    }
+}
+
+static int parse_pred(const char *v, unsigned int *mode)
+{
+    if      (str_eq(v, "LT"))    *mode = BBHT_PRED_LT;
+    else if (str_eq(v, "GT"))    *mode = BBHT_PRED_GT;
+    else if (str_eq(v, "EQ"))    *mode = BBHT_PRED_EQ;
+    else if (str_eq(v, "RANGE")) *mode = BBHT_PRED_RANGE;
+    else return 0;
+    return 1;
+}
+
+/*====================================================================
+ * 명령 처리
+ *==================================================================*/
+static const char *pred_name(unsigned int p)
+{
+    switch (p) {
+    case BBHT_PRED_LT:    return "LT";
+    case BBHT_PRED_GT:    return "GT";
+    case BBHT_PRED_EQ:    return "EQ";
+    case BBHT_PRED_RANGE: return "RANGE";
+    default:              return "?";
+    }
+}
+
+static void cmd_help(void)
+{
+    printf("# ID                          펌웨어/하드웨어 식별\n");
+    printf("# SET K=V ...                 MODE A B COUNT CAP SEEDJ SEEDM AUTO BURST J FAILLIM\n");
+    printf("# SHOW                        현재 설정\n");
+    printf("# GEN COUNT=n SEED=x POS=x TARGETS=n VAL=v   데이터셋 생성 (EQ)\n");
+    printf("# GEN PRED=LT|GT|EQ|RANGE A=a B=b TARGETS=n [SEED POS COUNT]\n");
+    printf("#                             술어별 데이터셋. SET MODE/A/B/COUNT 도 같이 맞춤\n");
+    printf("# SUM                         버퍼 FNV-1a 와 현재 술어의 정답 수\n");
+    printf("# POKE IDX=i VAL=v            한 칸 수정 (뒤에 LOAD 필요)\n");
+    printf("# PEEK IDX=i                  한 칸 읽기 (보드 버퍼)\n");
+    printf("# LOAD                        버퍼를 DMA 로 적재\n");
+    printf("# RUN                         단일 탐색\n");
+    printf("# ENUM                        열거\n");
+    printf("# STAT                        마지막 실행 카운터/텔레메트리\n");
+    printf("# REG                         CSR 덤프\n");
+    printf("OK\n");
+}
+
+static void cmd_id(void)
+{
+    printf("STAT name=bbht_console csr_ver=%s\n", "0.9.8");
+    printf("STAT platform=%s fw=%s\n", PLATFORM_NAME, BBHT_CONSOLE_FW);
+    printf("STAT csr_base=0x%08x q_bits=%d n_entries=%u fifo_depth=%u\n",
+           (unsigned int)BBHT_CSR_BASE, BBHT_Q_BITS,
+           BBHT_N_ENTRIES, BBHT_FIFO_DEPTH);
+    printf("STAT accel_clk_hz=%u sram_base=0x%08x sram_last=0x%08x\n",
+           BBHT_ACCEL_CLK_HZ, BBHT_SRAM_BASE, BBHT_SRAM_LAST);
+    printf("STAT dataset_addr=0x%08x dataset_count=%u loaded=%u\n",
+           (unsigned int)(unsigned long)dataset, dataset_count, dataset_ready);
+    printf("OK\n");
+}
+
+static void cmd_show(void)
+{
+    printf("CFG mode=%s a=%d b=%d count=%u cap=%u\n",
+           pred_name(cfg.predicate), cfg.threshold_a, cfg.threshold_b,
+           cfg.data_count, cfg.shot_cap);
+    printf("CFG auto=%u burst=%u j=%u faillim=%u seedj=0x%08x seedm=0x%08x\n",
+           cfg.auto_shot, cfg.burst_enable, cfg.j_target, cfg.fail_limit,
+           cfg.seed_j, cfg.seed_meas);
+    printf("OK\n");
+}
+
+/* SET 의 키 하나를 처리합니다. 모르는 키면 0 을 반환합니다. */
+static int apply_kv(const char *k, const char *v)
+{
+    int ok, n;
+
+    if (str_eq(k, "MODE")) {
+        if      (str_eq(v, "LT"))    cfg.predicate = BBHT_PRED_LT;
+        else if (str_eq(v, "GT"))    cfg.predicate = BBHT_PRED_GT;
+        else if (str_eq(v, "EQ"))    cfg.predicate = BBHT_PRED_EQ;
+        else if (str_eq(v, "RANGE")) cfg.predicate = BBHT_PRED_RANGE;
+        else return 0;
+        return 1;
+    }
+
+    n = parse_num(v, &ok);
+    if (!ok) return 0;
+
+    if      (str_eq(k, "A"))       cfg.threshold_a  = n;
+    else if (str_eq(k, "B"))       cfg.threshold_b  = n;
+    else if (str_eq(k, "COUNT"))   cfg.data_count   = (unsigned int)n;
+    else if (str_eq(k, "CAP"))     cfg.shot_cap     = (unsigned int)n;
+    else if (str_eq(k, "SEEDJ"))   cfg.seed_j       = (unsigned int)n;
+    else if (str_eq(k, "SEEDM"))   cfg.seed_meas    = (unsigned int)n;
+    else if (str_eq(k, "AUTO"))    cfg.auto_shot    = n ? 1u : 0u;
+    else if (str_eq(k, "BURST"))   cfg.burst_enable = n ? 1u : 0u;
+    else if (str_eq(k, "J"))       cfg.j_target     = (unsigned int)n;
+    else if (str_eq(k, "FAILLIM")) cfg.fail_limit   = (unsigned int)n;
+    else return 0;
+
+    return 1;
+}
+
+/* us= 는 사이클을 100 으로 나눈 환산값이고, wall_us= 는 보드 실시간 클럭
+ * (1 MHz 틱)으로 COMMAND 부터 DONE 을 본 순간까지 잰 실경과 시간입니다.
+ * 재는 구간은 보드 500런 정본(bbht_paper_bench)과 같습니다. */
+static unsigned int last_wall_us = 0u;
+
+static void report_run(bbht_status_t rc)
+{
+    if (rc == BBHT_OK) {
+        int val = (res.result_index < dataset_count)
+                ? bbht_unpack16(dataset, res.result_index) : 0;
+        printf("HIT idx=%u val=%d trials=%u l=%u iters=%u cyc=%u us=%u wall_us=%u\n",
+               res.result_index, val, res.shot_count, res.requested_iterations,
+               res.executed_iterations, res.cycle_count,
+               bbht_cycles_to_us(res.cycle_count), last_wall_us);
+        if (res.amp_overflow) printf("# amp_overflow (진단용, 결과는 유효)\n");
+        printf("OK\n");
+        return;
+    }
+
+    if (rc == BBHT_ERR_NOT_FOUND) {
+        const char *why = (res.status & BBHT_ST_SHOT_LIMIT)   ? "SHOT_CAP"
+                        : (res.status & BBHT_ST_BUDGET_LIMIT) ? "BUDGET"
+                        : "NONE";
+        printf("MISS reason=%s trials=%u l=%u iters=%u cyc=%u us=%u wall_us=%u\n",
+               why, res.shot_count, res.requested_iterations, res.executed_iterations, res.cycle_count,
+               bbht_cycles_to_us(res.cycle_count), last_wall_us);
+        printf("OK\n");
+        return;
+    }
+
+    printf("ERR %s status=0x%08x\n", bbht_status_str(rc), res.status);
+}
+
+/*====================================================================*/
+int main(void)
+{
+    char  line[LINE_MAX];
+    char *tok[16];
+    int   ntok, i;
+
+    uart_init();
+
+    bbht_config_init(&cfg);
+
+    printf("\n");
+    printf("# bbht_console -- HELP 를 치면 명령 목록이 나옵니다\n");
+
+    if (bbht_probe() != BBHT_OK)
+        printf("# 경고: CSR 응답이 이상합니다. 비트스트림과 base address 를 확인하십시오\n");
+
+    printf("OK\n");
+
+    for (;;) {
+        read_line(line, LINE_MAX);
+        ntok = split(line, tok, 16);
+
+        if (ntok == 0) { printf("OK\n"); continue; }
+
+        /*------------------------------------------------------------*/
+#ifdef BBHT_CONSOLE_SCRIPT
+        if (str_eq(tok[0], "QUIT")) {
+            /* 시뮬을 끝냅니다. 보드 빌드에는 이 분기가 없습니다. */
+            printf("OK\n");
+            printf("# script done\n");
+            return 0;
+        }
+#endif
+
+        if (str_eq(tok[0], "HELP")) {
+            cmd_help();
+
+        } else if (str_eq(tok[0], "ID")) {
+            cmd_id();
+
+        } else if (str_eq(tok[0], "SHOW")) {
+            cmd_show();
+
+        /*------------------------------------------------------------*/
+        } else if (str_eq(tok[0], "SET")) {
+            int bad = 0;
+            for (i = 1; i < ntok; i++) {
+                char *k, *v;
+                if (!split_kv(tok[i], &k, &v) || !apply_kv(k, v)) { bad = 1; break; }
+            }
+            if (bad) printf("ERR BAD_KV\n");
+            else if (cfg.predicate == BBHT_PRED_RANGE &&
+                     cfg.threshold_b <= cfg.threshold_a)
+                printf("ERR RANGE_NEEDS_B_GT_A\n");
+            else printf("OK\n");
+
+        /*------------------------------------------------------------*/
+        } else if (str_eq(tok[0], "GEN")) {
+            unsigned int count = BBHT_N_ENTRIES, seed = 0x5EED1234u;
+            unsigned int pos = 0xA17E2026u, targets = 1u, mode = BBHT_PRED_EQ;
+            unsigned int placed = 0u;
+            int value = 12345, a = 0, b = 0, bad = 0, grc;
+            int has_pred = 0, has_a = 0, has_b = 0, has_pos = 0;
+
+            for (i = 1; i < ntok; i++) {
+                char *k, *v; int ok, n;
+                if (!split_kv(tok[i], &k, &v)) { bad = 1; break; }
+                if (str_eq(k, "PRED")) {
+                    if (!parse_pred(v, &mode)) { bad = 1; break; }
+                    has_pred = 1;
+                    continue;
+                }
+                n = parse_num(v, &ok);
+                if (!ok) { bad = 1; break; }
+                if      (str_eq(k, "COUNT"))   count   = (unsigned int)n;
+                else if (str_eq(k, "SEED"))    seed    = (unsigned int)n;
+                else if (str_eq(k, "POS"))     { pos = (unsigned int)n; has_pos = 1; }
+                else if (str_eq(k, "TARGETS")) targets = (unsigned int)n;
+                else if (str_eq(k, "VAL"))     value   = n;
+                else if (str_eq(k, "A"))       { a = n; has_a = 1; }
+                else if (str_eq(k, "B"))       { b = n; has_b = 1; }
+                else { bad = 1; break; }
+            }
+
+            if (!bad) {
+                if (has_pred) {
+                    /* 술어판. 안 준 값은 Predicate500 기본값. */
+                    int da, db; unsigned int dpos;
+                    pred500_defaults(mode, &da, &db, &dpos);
+                    if (!has_a) a = (mode == BBHT_PRED_EQ) ? value : da;
+                    if (!has_b) b = db;
+                    if (!has_pos) pos = dpos;
+                } else {
+                    /* 2026-09-01 부터의 GEN. EQ 이고 VAL 이 목표값입니다. */
+                    mode = BBHT_PRED_EQ;
+                    a = value;
+                    b = 0;
+                }
+            }
+
+            if (bad) { printf("ERR BAD_KV\n"); continue; }
+            if (count == 0u || count > BBHT_N_ENTRIES) { printf("ERR BAD_COUNT\n"); continue; }
+            if (targets > count) { printf("ERR TOO_MANY_TARGETS\n"); continue; }
+
+            grc = bbht_gen_dataset(dataset, count, mode, a, b, targets, seed, pos, &placed);
+            if (grc == BBHT_GEN_BAD_THRESHOLD) { printf("ERR BAD_THRESHOLD\n"); continue; }
+            dataset_count = count;
+            dataset_ready = 0u;
+            cfg.data_count = count;
+            if (grc != BBHT_GEN_OK) {
+                printf("ERR TARGET_GUARD placed=%u\n", placed);
+                continue;
+            }
+            if (has_pred) {
+                /* 만든 술어로 탐색하도록 SET 도 맞춰 둡니다. */
+                cfg.predicate   = mode;
+                cfg.threshold_a = a;
+                cfg.threshold_b = b;
+                printf("OK count=%u targets=%u pred=%s a=%d b=%d\n",
+                       count, targets, pred_name(mode), a, b);
+            } else {
+                printf("OK count=%u targets=%u val=%d\n", count, targets, value);
+            }
+
+        /*------------------------------------------------------------*/
+        } else if (str_eq(tok[0], "SUM")) {
+            /* 호스트가 보드 버퍼를 SW 기준 데이터셋과 맞대는 용도.
+             * hits 는 지금 SET 된 술어로 센 정답 수입니다. */
+            if (dataset_count == 0u) { printf("ERR NO_DATASET\n"); continue; }
+            printf("STAT count=%u fnv=0x%08x hits=%u pred=%s a=%d b=%d loaded=%u\n",
+                   dataset_count, bbht_gen_fnv1a(dataset, dataset_count),
+                   bbht_gen_count_hits(dataset, dataset_count, cfg.predicate,
+                                       cfg.threshold_a, cfg.threshold_b),
+                   pred_name(cfg.predicate), cfg.threshold_a, cfg.threshold_b,
+                   dataset_ready);
+            printf("OK\n");
+
+        /*------------------------------------------------------------*/
+        } else if (str_eq(tok[0], "POKE")) {
+            unsigned int idx = 0u; int value = 0, bad = 0, got = 0;
+            for (i = 1; i < ntok; i++) {
+                char *k, *v; int ok, n;
+                if (!split_kv(tok[i], &k, &v)) { bad = 1; break; }
+                n = parse_num(v, &ok);
+                if (!ok) { bad = 1; break; }
+                if      (str_eq(k, "IDX")) { idx = (unsigned int)n; got |= 1; }
+                else if (str_eq(k, "VAL")) { value = n;             got |= 2; }
+                else { bad = 1; break; }
+            }
+            if (bad || got != 3)              printf("ERR BAD_KV\n");
+            else if (idx >= BBHT_N_ENTRIES)   printf("ERR BAD_INDEX\n");
+            else {
+                bbht_pack16(dataset, idx, value);
+                if (idx + 1u > dataset_count) dataset_count = idx + 1u;
+                dataset_ready = 0u;
+                printf("OK idx=%u val=%d\n", idx, value);
+            }
+
+        /*------------------------------------------------------------*/
+        } else if (str_eq(tok[0], "PEEK")) {
+            unsigned int idx = 0u; int bad = 0, got = 0;
+            for (i = 1; i < ntok; i++) {
+                char *k, *v; int ok, n;
+                if (!split_kv(tok[i], &k, &v)) { bad = 1; break; }
+                n = parse_num(v, &ok);
+                if (!ok) { bad = 1; break; }
+                if (str_eq(k, "IDX")) { idx = (unsigned int)n; got = 1; }
+                else { bad = 1; break; }
+            }
+            if (bad || !got)                printf("ERR BAD_KV\n");
+            else if (idx >= BBHT_N_ENTRIES) printf("ERR BAD_INDEX\n");
+            else printf("STAT idx=%u val=%d\nOK\n", idx, bbht_unpack16(dataset, idx));
+
+        /*------------------------------------------------------------*/
+        } else if (str_eq(tok[0], "LOAD")) {
+            bbht_status_t rc;
+            if (dataset_count == 0u) { printf("ERR NO_DATASET\n"); continue; }
+            rc = bbht_dma_load(dataset, dataset_count);
+            if (rc == BBHT_OK) {
+                dataset_ready = 1u;
+                printf("OK loaded=%u addr=0x%08x\n",
+                       dataset_count, (unsigned int)(unsigned long)dataset);
+            } else {
+                printf("ERR %s dma_status=0x%08x\n",
+                       bbht_status_str(rc), bbht_rd(BBHT_DMA_STATUS));
+            }
+
+        /*------------------------------------------------------------*/
+        } else if (str_eq(tok[0], "RUN")) {
+            bbht_config_t local = cfg;
+            if (!dataset_ready) { printf("ERR NOT_LOADED\n"); continue; }
+            local.enum_enable = 0u;
+            {
+                unsigned long long wall = 0ull;
+                bbht_status_t rc = bbht_search_single_timed(&local, &res,
+                                                            get_real_clock_tick, &wall);
+                last_wall_us = (unsigned int)wall;
+                report_run(rc);
+            }
+
+        /*------------------------------------------------------------*/
+        } else if (str_eq(tok[0], "ENUM")) {
+            unsigned int n = 0u, k;
+            bbht_status_t rc;
+            if (!dataset_ready) { printf("ERR NOT_LOADED\n"); continue; }
+
+            rc = bbht_search_enum(&cfg, enum_out, ENUM_OUT_MAX, &n, &res);
+            if (rc != BBHT_OK && rc != BBHT_ERR_NOT_FOUND) {
+                printf("ERR %s status=0x%08x\n", bbht_status_str(rc), res.status);
+                continue;
+            }
+            for (k = 0u; k < n; k++)
+                printf("FOUND idx=%u val=%d\n",
+                       enum_out[k], bbht_unpack16(dataset, enum_out[k]));
+            printf("END count=%u found=%u cyc=%u us=%u%s\n",
+                   n, res.found_count, res.cycle_count,
+                   bbht_cycles_to_us(res.cycle_count),
+                   (n >= ENUM_OUT_MAX) ? " truncated=1" : "");
+            printf("OK\n");
+
+        /*------------------------------------------------------------*/
+        } else if (str_eq(tok[0], "STAT")) {
+            bbht_read_result(&res);
+            printf("STAT status=0x%08x valid=%u idx=%u\n",
+                   res.status, res.result_valid, res.result_index);
+            printf("STAT trials=%u l_bbht=%u actual_iter=%u cyc=%u us=%u\n",
+                   res.shot_count, res.requested_iterations, res.executed_iterations,
+                   res.cycle_count, bbht_cycles_to_us(res.cycle_count));
+            printf("STAT found=%u consec_fail=%u max_fifo=%u fifo_stall=%u\n",
+                   res.found_count, res.consec_fail,
+                   res.max_fifo_occ, res.fifo_stall);
+            printf("STAT policy_cyc=%u stall=%u actions=%u memo_hit=%u memo_miss=%u\n",
+                   res.policy_cycles, res.policy_stall, res.policy_actions,
+                   res.policy_memo_hit, res.policy_memo_miss);
+            printf("STAT plan_level=%u high=%u empty=%u hit=%u mismatch=%u\n",
+                   res.plan_level, res.plan_highwater, res.plan_empty_demand,
+                   res.plan_hit, res.plan_mismatch);
+            printf("STAT cold_solve=%u spec_solve=%u max_latency=%u\n",
+                   res.cold_solve, res.spec_solve, res.policy_max_latency);
+            printf("OK\n");
+
+        /*------------------------------------------------------------*/
+        } else if (str_eq(tok[0], "REG")) {
+            unsigned int off;
+            for (off = 0u; off <= BBHT_POLICY_SPEC_SOLVE_COUNT; off += 4u) {
+                /* FIFO_DATA 는 읽으면 pop 되므로 덤프에서 뺍니다. */
+                if (off == BBHT_FIFO_DATA) {
+                    printf("REG 0x%03x = (skip: read-to-pop)\n", off);
+                    continue;
+                }
+                printf("REG 0x%03x = 0x%08x\n", off, bbht_rd(off));
+            }
+            printf("OK\n");
+
+        /*------------------------------------------------------------*/
+        } else {
+            printf("ERR UNKNOWN_CMD\n");
+        }
+    }
+
+    return 0;
+}

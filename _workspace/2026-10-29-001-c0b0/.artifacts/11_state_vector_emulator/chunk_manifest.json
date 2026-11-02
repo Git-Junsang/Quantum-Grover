@@ -1,0 +1,151 @@
+{
+  "version": 1,
+  "created": "2026-10-29",
+  "source_file": "01_input.txt",
+  "source_chars": 25858,
+  "source_sha256": "49f38b766d471e913e06c849ac4edc2a90b9fddfebbf8f58b84c0c146b80ca27",
+  "genre": "report",
+  "target_chunk_chars": 7000,
+  "max_chunk_chars": 9000,
+  "route_hint": "heavy",
+  "route_reason": "25,858자 초장문(>15,000) — 진단 + 청킹 권장",
+  "chunk_count": 12,
+  "body_chunk_count": 12,
+  "passthrough_chunk_count": 0,
+  "lossless_check": "ok",
+  "warnings": [],
+  "chunks": [
+    {
+      "index": 1,
+      "start": 0,
+      "end": 1217,
+      "char_count": 1217,
+      "starts_with_heading": true,
+      "heading": "# 11장. state vector emulator — memory map과 resource 예산",
+      "passthrough": false,
+      "input_file": "01_chunk_01_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_01_rewritten.txt"
+    },
+    {
+      "index": 2,
+      "start": 1217,
+      "end": 3921,
+      "char_count": 2704,
+      "starts_with_heading": true,
+      "heading": "## 11.1 emulation·simulation·진짜 quantum computer",
+      "passthrough": false,
+      "input_file": "01_chunk_02_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_02_rewritten.txt"
+    },
+    {
+      "index": 3,
+      "start": 3921,
+      "end": 7158,
+      "char_count": 3237,
+      "starts_with_heading": true,
+      "heading": "## 11.2 세 개의 array — amp·data·mask",
+      "passthrough": false,
+      "input_file": "01_chunk_03_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_03_rewritten.txt"
+    },
+    {
+      "index": 4,
+      "start": 7158,
+      "end": 8434,
+      "char_count": 1276,
+      "starts_with_heading": true,
+      "heading": "## 11.3 qubit 하나 = memory 두 배",
+      "passthrough": false,
+      "input_file": "01_chunk_04_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_04_rewritten.txt"
+    },
+    {
+      "index": 5,
+      "start": 8434,
+      "end": 11312,
+      "char_count": 2878,
+      "starts_with_heading": true,
+      "heading": "## 11.4 amplitude를 어디에 둘 것인가",
+      "passthrough": false,
+      "input_file": "01_chunk_05_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_05_rewritten.txt"
+    },
+    {
+      "index": 6,
+      "start": 11312,
+      "end": 12965,
+      "char_count": 1653,
+      "starts_with_heading": true,
+      "heading": "## 11.5 register의 진짜 대가",
+      "passthrough": false,
+      "input_file": "01_chunk_06_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_06_rewritten.txt"
+    },
+    {
+      "index": 7,
+      "start": 12965,
+      "end": 15083,
+      "char_count": 2118,
+      "starts_with_heading": true,
+      "heading": "## 11.6 memory-bound의 두 얼굴 — 용량과 port",
+      "passthrough": false,
+      "input_file": "01_chunk_07_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_07_rewritten.txt"
+    },
+    {
+      "index": 8,
+      "start": 15083,
+      "end": 17916,
+      "char_count": 2833,
+      "starts_with_heading": true,
+      "heading": "## 11.7 병렬도와 banking",
+      "passthrough": false,
+      "input_file": "01_chunk_08_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_08_rewritten.txt"
+    },
+    {
+      "index": 9,
+      "start": 17916,
+      "end": 20089,
+      "char_count": 2173,
+      "starts_with_heading": true,
+      "heading": "## 11.8 cycle 비용 model",
+      "passthrough": false,
+      "input_file": "01_chunk_09_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_09_rewritten.txt"
+    },
+    {
+      "index": 10,
+      "start": 20089,
+      "end": 22346,
+      "char_count": 2257,
+      "starts_with_heading": true,
+      "heading": "## 11.9 emulator가 실기보다 쉬운 것들",
+      "passthrough": false,
+      "input_file": "01_chunk_10_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_10_rewritten.txt"
+    },
+    {
+      "index": 11,
+      "start": 22346,
+      "end": 23671,
+      "char_count": 1325,
+      "starts_with_heading": true,
+      "heading": "## 11.10 emulator가 숨기는 것",
+      "passthrough": false,
+      "input_file": "01_chunk_11_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_11_rewritten.txt"
+    },
+    {
+      "index": 12,
+      "start": 23671,
+      "end": 25858,
+      "char_count": 2187,
+      "starts_with_heading": true,
+      "heading": "## 11.11 이 장의 요약",
+      "passthrough": false,
+      "input_file": "01_chunk_12_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_12_rewritten.txt"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "pid": 1864794,
+  "started_at": "2026-10-29T16:35:39.666358+09:00",
+  "interval_seconds": 1800,
+  "command": [
+    "/usr/bin/python3",
+    "/workspace/hardware_bram/sim/collect_policy_cache.py",
+    "--source",
+    "/tmp/claude-1000/-workspace/955a78d1-b88e-402e-85da-d001bfbd4798/scratchpad/synth_wt",
+    "--out",
+    "/workspace/hardware_bram/results/2026-10-29_policy_cache_capacity/actual_synthesis",
+    "--watch",
+    "--interval-seconds",
+    "1800"
+  ],
+  "launches_vivado": false
+}

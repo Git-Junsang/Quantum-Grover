@@ -1,0 +1,10 @@
+## 10.2 핵심 state
+
+$$|0\rangle = \begin{bmatrix}1\\0\end{bmatrix},\quad |1\rangle = \begin{bmatrix}0\\1\end{bmatrix},\quad |+\rangle = \frac{|0\rangle+|1\rangle}{\sqrt2},\quad |-\rangle = \frac{|0\rangle-|1\rangle}{\sqrt2}$$
+
+- $H|0\rangle = |+\rangle$, $H|1\rangle = |-\rangle$, $H|+\rangle = |0\rangle$, $H|-\rangle = |1\rangle$.
+- $X|-\rangle = -|-\rangle$ (phase kickback의 핵심, [7장](07_oracle_and_phase_kickback.md)).
+- Bell state (entanglement): $\frac{|00\rangle+|11\rangle}{\sqrt2}$ ([5장](05_multiple_qubits_and_entanglement.md)).
+
+---
+

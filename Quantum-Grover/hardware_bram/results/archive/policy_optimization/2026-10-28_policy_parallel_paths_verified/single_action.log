@@ -1,0 +1,2 @@
+SUMMARY single_action cases=268 errors=0 clears=3
+hardware_bram/testbench/tb_policy_single_action.sv:150: $finish called at 111340000 (1ps)

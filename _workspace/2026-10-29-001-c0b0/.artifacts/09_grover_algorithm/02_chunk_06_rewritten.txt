@@ -1,0 +1,30 @@
+### solution이 둘이면 — 같은 계산, 두 막대
+
+이제 방금 계산에서 **solution만 하나 더 늘려** 봅시다. circuit은 그대로 씁니다. 셋째와 넷째 칸이 둘 다 조건을 만족한다고 하죠(2 solutions). oracle은 조건에 걸리는 칸을 **전부** 뒤집으므로:
+
+$$
+\left(\tfrac12,\ \tfrac12,\ -\tfrac12,\ -\tfrac12\right)
+$$
+
+mean은 $\bar a = \frac14\left(\tfrac12+\tfrac12-\tfrac12-\tfrac12\right) = 0$ 이고, diffusion operator $a \mapsto 2\bar a - a = -a$ 를 적용하면:
+
+$$
+\left(-\tfrac12,\ -\tfrac12,\ \tfrac12,\ \tfrac12\right)
+$$
+
+두 solution 막대의 값이 **정확히 같습니다.** 우연이 아니에요. 시작이 같았고(uniform superposition이니 모든 칸이 같은 값), oracle이 둘을 똑같이 뒤집었고, diffusion operator $a \mapsto 2\bar a - a$ 는 애초에 index를 구별하지 않는 global operation이라 **같은 값에 같은 function을 적용한 것**뿐입니다. 이 세 줄이 그대로 induction이고, iteration을 몇 번 하든 결론은 바뀌지 않습니다 — **solution들의 amplitude는 매 iteration 후 정확히 같습니다.**
+
+(다만 4 states에 solution이 둘이면 처음부터 절반이 solution이라 더 짜낼 것이 없습니다. 실제로 solution 쪽 probability는 $\frac12$ 에서 $\frac12$ 로 제자리예요. 이건 **9.6절** "지나치면 안 된다"의 최소 사례이기도 합니다 — 한 번의 rotation이 목표를 그대로 지나쳐 버린 것이죠.)
+
+**막대가 나란히 자라는 것까지 보려면 8 states.** 여덟 칸 중 두 칸이 조건을 만족한다고 하고 같은 계산을 반복합니다. 시작 amplitude는 여덟 칸 모두 $\frac{1}{\sqrt 8} \approx 0.35355$.
+
+- oracle 뒤: solution 둘이 $-0.35355$, non-solution 여섯이 $+0.35355$.
+- mean: $\bar a = \dfrac{6(0.35355) - 2(0.35355)}{8} = 0.17678$.
+- diffusion operator: solution $2(0.17678) - (-0.35355) = 0.70711 = \tfrac{1}{\sqrt2}$, non-solution $2(0.17678) - 0.35355 = 0$.
+
+두 solution 막대가 **나란히 $\frac{1}{\sqrt2}$ 까지 자랐고**, non-solution 여섯은 정확히 0으로 눌렸습니다. 각 solution의 probability는 $\frac12$ 이고 합치면 1 — 여기서도 한 번에 100%입니다. 두 막대의 높이는 정확히 같습니다.
+
+이 "solution들의 amplitude가 항상 같다"는 사실은 이론에서는 사소해 보이지만 hardware에서는 결정적입니다. amplitude가 가장 큰 칸을 고르는 comparator circuit은 동률이 나오면 구조가 정한 **하나**만 내놓기 때문에, solution이 둘 이상이면 나머지는 영원히 출력되지 않습니다([14.3절](14_multiple_solutions_and_minimum_search.md#143-amplitude-동률--argmax가-무너지는-지점)). 일반적인 경우의 증명은 **9.7절** 끝에 있습니다.
+
+---
+

@@ -1,0 +1,12 @@
+## 17.1 accelerator는 혼자 서지 않는다
+
+우리 IP가 실제로 잘하는 일은 하나뿐입니다 — **모든 state의 amplitude를 한꺼번에 훑어 갱신하는 것**. 128 lanes가 매 cycle 128칸씩 sign을 뒤집고 mean으로 되비추는 일은 규칙적이고, 분기가 없고, data에 따라 흐름이 바뀌지 않습니다. hardware로 병렬 처리하기에 적합한 계산입니다.
+
+반대로 이 IP를 실제로 **쓰는** 과정은 정반대의 성격을 가집니다. 어떤 predicate를 쓸지 정하고, threshold를 넘기고, data를 준비하고, enumeration mode라면 결과를 제때 빼 가고, 결과를 사람이 읽을 형태로 찍어 내는 일 — 전부 분기와 loop, 예외 처리가 필요한 작업입니다. 이런 것을 state machine으로 굳혀 넣으면 조건 하나 바뀔 때마다 재합성해야 하고, synthesis에 걸리는 시간이 실험 한 번의 시간을 압도하게 됩니다.
+
+그래서 경계를 이렇게 긋습니다. **amplitude 갱신과 shot loop는 hardware가, 설정과 결과 처리와 표시는 software가.** 정확히 말하면 software가 하는 일은 "설정을 쓰고 시작을 누르고 status를 polling하고 결과를 읽는" 몇 줄이며, 그 몇 줄이 유연해야 하는 부분 전부를 흡수합니다.
+
+이 구도가 임의로 고른 편의가 아니라는 점을 짚어 둘 필요가 있습니다. **실제 quantum computer도 똑같이 생겼습니다.** quantum processor는 circuit 하나를 실행하고 measurement 결과를 내보낼 뿐이고, "몇 번 더 돌릴지, 다음에 어떤 parameter를 넣을지"는 옆에 붙은 classical control computer가 정합니다. superconducting qubit든 trapped ion이든, 사용자가 실제로 명령을 주고받는 대상은 언제나 그 classical computer입니다. 우리가 RISC-V core를 옆에 두는 것은 emulator를 편하게 만들려는 타협이 아니라 **실기의 구조를 그대로 흉내 내는 것**입니다. 16.1절에서 "충실도가 속도를 이긴다"고 한 원칙이 system 층에서도 똑같이 적용됩니다.
+
+---
+

@@ -1,0 +1,19 @@
+{
+  "matching_rows": 1000,
+  "matching_fields": [
+    "m",
+    "seed_idx",
+    "mode",
+    "result_index",
+    "trial",
+    "l_bbht",
+    "iter",
+    "mismatch"
+  ],
+  "normal_rows_unchanged": true,
+  "target_bins_halved": true,
+  "target_cycles": {
+    "candidate_walk_filter": 5089,
+    "response_finish": 13080
+  }
+}

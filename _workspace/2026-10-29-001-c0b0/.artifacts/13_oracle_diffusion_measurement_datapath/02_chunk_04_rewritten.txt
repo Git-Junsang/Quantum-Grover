@@ -1,0 +1,35 @@
+## 13.3 oracle — predicate 4종이 subtractor 하나를 공유한다
+
+이 project의 oracle은 **solution이 어디 있는지 아는 circuit이 아니라, 한 칸을 보고 predicate를 만족하는지 판정하는 circuit**입니다([14.2절](14_multiple_solutions_and_minimum_search.md#142-oracle은-solution을-아는-circuit이-아니다)). 우리 IP가 판정하는 predicate는 네 가지입니다:
+
+$$\texttt{LT}:\ v_i < t_a \qquad \texttt{GT}:\ v_i > t_a \qquad \texttt{EQ}:\ v_i = t_a \qquad \texttt{RANGE}:\ t_a < v_i < t_b$$
+
+여기서 $v_i$ 는 `data_mem` 의 $i$ 번 칸이고 $t_a, t_b$ 는 CSR로 받은 threshold입니다. data word는 16-bit signed입니다([12.8절](12_fixed_point_and_precision.md#128-data-word와-bram-환산)).
+
+조건마다 comparator IP를 하나씩 두는 방법을 먼저 생각할 수 있지만, 네 개가 모두 필요하지는 않습니다. **비교는 subtraction의 sign bit 하나**이기 때문입니다. 16-bit operand를 sign extension해 17 bits로 빼면
+
+$$d = \underbrace{\{v_{15}, v\}}_{17\text{b}} - \underbrace{\{t_{15}, t\}}_{17\text{b}}$$
+
+이고, $d$ 의 최상위 bit `d[16]` 이 곧 $v < t$ 의 답입니다. sign extension을 빠뜨리면 $v = -32768$, $t = 1$ 같은 입력에서 subtraction이 overflow해 sign bit가 뒤집히므로, 17 bits로 넓히지 않으면 circuit이 잘못된 결과를 냅니다. 나머지 predicate는 이 subtractor를 재활용합니다.
+
+| predicate | subtractor 입력 $A - B$ | `hit_i` combinational logic | 추가 hardware |
+|---|---|---|---|
+| `LT` $v_i < t_a$ | $A = v_i$, $B = t_a$ | `d1[16]` | 없음 |
+| `GT` $v_i > t_a$ | $A = t_a$, $B = v_i$ (**operand 교환**) | `d1[16]` | 입력 mux |
+| `EQ` $v_i = t_a$ | (subtractor를 쓰지 않음) | `~\|(v_i ^ t_a)` (XOR-NOR) | XOR 16개 + NOR 1단 |
+| `RANGE` $t_a < v_i < t_b$ | $A = t_a, B = v_i$ / $A = v_i, B = t_b$ | `d1[16] & d2[16]` | subtractor 하나 더 |
+
+`GT` 는 추가 비교 연산이 필요 없다는 점을 눈여겨보십시오. $v > t$ 는 $t < v$ 와 같은 말이므로, subtractor에 들어가는 두 입력을 **바꿔 넣기만** 하면 됩니다. comparator를 새로 만들 이유가 없습니다. `EQ` 는 subtractor조차 필요 없습니다 — 두 값이 같다는 것은 XOR 결과가 전부 0이라는 뜻이니 XOR 한 층과 NOR 한 층이면 끝이고, 이게 subtraction 결과가 0인지 보는 것보다 latency가 짧습니다. `RANGE` 만 비교가 둘이라 subtractor를 하나 더 둡니다. 17-bit subtractor는 LUT 수십 개 수준이라 128 lanes에 깔아도 부담이 크지 않습니다 — implementation report에서 lane 하나의 predicate circuit이 LUT 한 자릿수로 잡힙니다. 경계가 열린 interval($<$)인지 닫힌 interval($\le$)인지는 circuit이 아니라 **약속**의 문제이고, 우리는 위 표대로 네 predicate 모두 strict inequality로 고정합니다. 경계값 test는 [18.5절](18_reference_model_verification.md#185-predicate-4종과-경계값)에서 따로 다룹니다.
+
+판정 앞에는 조건이 하나 더 있습니다. host가 array를 다 채우지 않고 `DATA_COUNT` 개만 올렸다면, index가 `DATA_COUNT` 이상인 칸은 memory에 무엇이 남아 있든 **항상 non-solution**입니다(padding gate). 이 조건이 없으면 지난 실험에서 남은 값이 solution으로 판정될 수 있습니다.
+
+마지막으로 **enumeration mode**가 이 판정에 한 겹을 더합니다. 이미 찾아낸 index를 다시 뽑지 않으려면 `found_mask` 의 bit를 AND로 걸면 됩니다:
+
+$$\texttt{hit}_i = \texttt{predicate}(v_i) \ \wedge\ \overline{\texttt{found}[i]}$$
+
+AND gate 하나가 전부이고, 이것이 왜 정당한 oracle인지는 [14.7절](14_multiple_solutions_and_minimum_search.md#147-enumeration-mode--mask로-중복-없이)에서 설명합니다.
+
+solution index를 parameter로 고정하고 그 칸만 뒤집는 circuit — predicate 판정이 아예 없는 형태 — 도 값어치가 있긴 합니다. 9장의 수식을 **최소 circuit으로 확인하는 한 단계**이기 때문입니다. 판정 logic가 없으니 diffusion operator와 iteration만 남고, 그러면 [9.4절](09_grover_algorithm.md#94-진짜로-한-번-돌려보기--4-states)의 4 states 손계산과 waveform을 한 칸씩 대조할 수 있습니다([18.4절](18_reference_model_verification.md#184-첫-test-vector는-94절의-손계산)). 다만 그것은 verification을 위한 중간 단계이며 실제 설계는 아닙니다. 우리 oracle은 처음부터 위 표의 predicate circuit입니다.
+
+---
+

@@ -1,0 +1,83 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 7/12이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 윤문 진단
+
+## 장르·레지스터
+- 학부생용 quantum algorithm·FPGA 해설서(report), 친근한 합쇼체 중심이며 독자에게 말을 거는 해요체가 일부 섞인 기존 학습서 말투입니다. 격식을 올리거나 설명을 학술 논문체로 바꾸지 않습니다.
+- 제목·절 번호·목록·표·수식·code·link·기존 콜아웃 및 이모지 형식은 보존합니다. 한국어 서술만 국소적으로 다듬습니다.
+- 영어 용어·영어 토큰은 번역, 교체, 삭제, 추가하지 않습니다. SSOT는 documents/design_references/22_appendix_glossary_and_retired_specs.md §22.2와 기존 glossary입니다.
+- 사실·수치·조건·부정·인과·추측/당위·인용을 보존합니다. 원문의 기술 주장을 새 해설이나 사실 교정으로 확장하지 않습니다.
+
+## 정량 앵커
+- 26,357자, risk_band low, route_hint heavy(길이 기준). A-7 have_make_literal_count=1, A-19 double_particle_count=1, A-18 relative_clause_nesting=7. conclusion_pivot_count=2(그러므로), lexical_diversity=0.52(z=-2.54). 전문용어 반복을 줄이기 위해 영어를 바꾸지 않습니다. ending_comma_rate=0.47.
+## 지배 패턴과 겨냥 순서
+1. D-14·D-5: “여러 번 던져야”, “datapath가 통째로 무너집니다”, “남는 장사가 아닙니다”, “array를 훔쳐보는 반칙”, “Grover처럼 생긴 무언가”, “승부가 나기 시작”, “하드웨어가 쥡니다”, “state를 떨궈 두는”, “반드시 새는 곳” 등 일상 비유·의인화가 알고리즘·설계 설명을 덮습니다. 영어 표현은 두고 한국어 설명을 구체적으로 정돈하는 것이 우선입니다.
+2. D-8·I-2: “정직하게 짚고 갈 것이 하나”, “답은 … 모양에”, “이제 이 장의 본론”, “이 절이 이 장에서 가장 중요” 등 설명의 중요도를 선언하는 문장이 반복됩니다. 실제 주장과 조건을 유지하면서 군더더기를 덜어낼 후보입니다.
+3. A-18·C-11: 16.1의 QPE 도입 비용, 16.2의 BBHT 보장, 16.5의 policy 선택, 16.6의 재현성 논증에 조건과 후속 결과가 긴 문장으로 연결됩니다. causal order와 독립성·bit-exact 조건을 보존하며 한국어 연결을 다듬습니다.
+4. C-8·J-2: “속도가 아니라 충실도”, “저장 공간이 아니라 결정 비용”, “algorithm 지표가 아니라 emulation 시간”처럼 대조가 반복됩니다. 지표의 실질적 차이를 지우지 말고 가상 인용·감정적 평가 표현을 우선 정돈합니다.
+5. A-7·A-19: “checkpoint slot을 들고 있다”, “number of iterations마다의 amplitude” 같은 표현은 한국어 동사·조사 손질 후보입니다. ‘각 checkpoint slot에 값이 저장됨’ 같은 본래 뜻을 넘어서 새로운 동작을 추가하지 않습니다.
+6. F-1·D-2: “영원히”, “반드시”, “가장 극적인”, “거짓말” 등 강한 평가어가 많이 나옵니다. 요구 조건이나 명제의 강도를 바꾸지 않도록 감상적 수식만 검토합니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 4088
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.58  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.67  (z=-0.15 vs report 인간 baseline)
+- ending_comma_rate: 0.62  (n/a vs report 인간 baseline)
+- comma_segment_length: 9.68  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 1  (lexicon 매치: '그러므로')
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.000  (z=-2.00 vs report 인간 baseline)
+- lexical_diversity: 0.74  (z=+1.82 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 1
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 0
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 16.5 checkpoint — measurement가 읽기 전용이라는 사실에서
+
+이제 이 장의 본론입니다. 22.7번의 shot 가운데 스물몇 번은 실패인데, 실패한 shot은 무엇을 남길까요?
+
+관찰 하나에서 출발합니다. **amplitude memory에 쓰는 주체는 셋뿐입니다** — Init, oracle, diffusion operator. 14장에서 만든 Born-rule sampling은 amplitude를 읽어 square의 prefix sum을 만들고 그 prefix sum이 random number를 넘는 지점을 찾을 뿐, amplitude에 **한 글자도 쓰지 않습니다.** 뒤이은 solution check도 `data_mem` 의 한 칸을 읽을 뿐입니다. 그러므로 shot이 실패해 바깥 loop로 돌아온 시점에도 amplitude memory에는 **그 shot이 요청한 만큼 iteration을 돈 state가 고스란히 남아 있습니다.**
+
+그리고 BBHT의 number of iterations는 sampling range 안에서 뽑히는데 sampling range는 단조 증가합니다. 다음 shot이 요청하는 number of iterations가 이미 계산해 둔 state의 number of iterations보다 큰 경우가 흔하다는 뜻이고, 그럴 때는 처음부터 다시 돌 이유가 없습니다. 이 project의 초판 설계는 이 관찰을 **state 한 벌**로 옮겼습니다 — 직전 shot의 state를 지우지 않고, 다음 request가 그보다 크면 차이만큼만 더 돌리는 1칸짜리 **checkpoint**였습니다. 최종 설계는 이것을 **여러 벌**로 넓혔습니다.
+
+**checkpoint slot 세 벌.** amplitude state를 최대 세 벌(a Checkpoint-Capacity of 3) 들고 있고, 각 checkpoint slot에는 "이 state는 iteration을 몇 번 돈 것인가"라는 number of iterations가 붙어 있습니다. 새 request가 오면, checkpoint slot 가운데 number of iterations가 request 이하이면서 가장 큰 것(가장 가까운 앞선 state)에서 출발합니다. 이번 request의 물리 비용은
+
+$$\text{cost} = \text{number of iterations}_{\text{request}} - \text{number of iterations}_{\text{checkpoint slot}}$$
+
+이고(출발할 checkpoint slot이 없으면 Init 뒤 request의 number of iterations 전부), request와 같은 number of iterations의 checkpoint slot이 이미 있으면 비용은 0 — 계산 없이 그 state를 다시 측정합니다. 전진하는 도중의 중간 state를 다른 checkpoint slot에 떨궈 두는 것도 거의 공짜입니다. 그 state는 어차피 datapath를 지나가므로, 한 iteration만 다른 checkpoint slot으로 건너 쓰면(bridge) 됩니다. 계산은 checkpoint slot 안에서 제자리로 이어 가므로, chip 안에는 checkpoint slot과 따로 떨어진 작업용 amplitude memory가 없습니다.
+
+<img src="diagrams/16_cache_timeline.svg" width="760" alt="같은 shot 수열에서 매번 Init부터 도는 Restart mode와 a Checkpoint-Capacity of 3을 쓰는 경우의 시간 비교: checkpoint는 남겨 둔 state 중 가장 가까운 것에서 차이만큼만 전진">
+
+**무엇을 남길 것인가 — policy.** checkpoint slot이 셋뿐이니, 이번 전진이 끝났을 때 어느 state들을 남겨 둘지 골라야 합니다. 여기서 emulator만의 사정이 하나 드러납니다. number of iterations를 뽑는 random number는 seed에서 시작하는 **결정적인** Iteration-Count LFSR이 내고, sampling range 경계도 ROM에 적혀 있습니다. 그러니 "이번 shot이 실패한다면" 다음에 올 request들은 **미리 계산할 수 있습니다.** hardware는 진짜 LFSR state를 건드리지 않고 사본을 굴려 앞으로 올 request를 미리 뽑아 보는 circuit(Iteration-Count Predictor)을 둡니다. shot이 성공하면 search가 끝나거나(단일) 문제가 바뀌므로(enumeration) 그 예측은 버리면 되고, 실패하면 예측이 정확히 맞습니다.
+
+policy는 **지금 request 하나와 앞으로 올 3 requests**(3-shot Lookahead)를 한꺼번에 놓고, 어느 number of iterations의 state를 checkpoint slot에 남기면 이 request들 전체의 물리 비용 sum이 가장 작아지는지를 푸는 작은 DP입니다. 남길 후보는 이 request들의 값으로 제한하고, 지금 request의 state는 측정해야 하니 반드시 남깁니다. 비용이 같으면 전진하는 segment가 적은 쪽, 그다음 정해진 정렬 순서로 동률을 끊어 **언제나 같은 답**을 냅니다. 풀이 중간값은 BRAM 4개짜리 memo table에 적어 되풀이 계산을 줄입니다. 그리고 지금 shot이 도는 동안 다음 shot의 계획을 미리 풀어 작은 Plan Queue에 넣어 두어, shot 사이에 policy를 기다리는 시간을 숨깁니다. 미리 푼 계획이 실제 request와 어긋난 횟수(Plan Queue miss)는 `PLAN_FIFO_MISMATCH_COUNT` 로 남고, **0이어야 정상**입니다.
+
+policy가 search 결과를 바꾸는 일은 없습니다. policy가 정하는 것은 "어느 state에서 출발해 무엇을 남기느냐" — 즉 요청된 state를 **어떻게 만드느냐**뿐이고, 어떤 number of iterations를 요청하느냐는 BBHT의 random number가 정합니다.
+
+**얼마나 줄었나.** 500 workloads 전체에서 executed iterations가 31,424에서 9,582로 **69.5%** 줄었습니다(16.3절 표). 이 절감이 Six-Stage Ablation의 첫 단계(Stage 1 → Stage 2, 총 cycle −56.63%)이고, board wall-clock time 7.626× 가속의 가장 큰 몫입니다.
+
+**왜 a Checkpoint-Capacity of 3, 왜 3-shot Lookahead인가.** 직관과 반대로, Checkpoint-Capacity와 Lookahead-Shots를 늘리는 것이 늘 이득은 아니었습니다. a Checkpoint-Capacity of 4 and 4-shot Lookahead에서 a Checkpoint-Capacity of 3 and 3-shot Lookahead로 줄였더니 executed iterations는 9,058에서 9,582로 5.8% **늘었는데** 총 cycle은 7.66% **줄었습니다**. 4 PEs로 iteration 한 번이 약 268 cycles까지 짧아진 뒤에는, policy가 결정을 내리는 데 드는 cycle이 아끼는 iteration보다 비싸졌기 때문입니다. 발표 자료의 직접 비교에서 policy가 평가한 action이 70%, policy cycle이 56%, policy 때문에 search가 멈춘 cycle이 73% 줄었습니다. 1 PE 조건의 Checkpoint-Capacity · Lookahead-Shots 단독 실험도 같은 방향입니다 — Checkpoint-Capacity만 4에서 3으로 줄이면 거의 차이가 없고(0.21%), 이득은 대부분 Lookahead-Shots를 줄일 때 나옵니다(2.58%). **비싼 쪽은 저장 공간이 아니라 결정 비용**입니다. 참고로 4 PEs configuration의 amplitude memory는 checkpoint slot 네 벌 분량(RAMB36 44개)으로 짜여 있어, Checkpoint-Capacity를 3으로 줄여도 BRAM은 줄지 않습니다(11.4절).
+
+---
+[원문 끝]

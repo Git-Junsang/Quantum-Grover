@@ -5,7 +5,7 @@
 
 ---
 
-이 장은 새로운 내용을 배우는 곳이 아니라, 1~9장의 핵심을 **한눈에** 모은 참조 자료입니다. gate matrix, 핵심 공식, glossary, 연습문제 답, 원문 대조표를 담았습니다.
+이 장은 1~9장의 핵심을 **한눈에** 모은 참조 자료입니다. gate matrix, 핵심 공식, glossary, 연습문제 답, 원문 대조표를 담았습니다.
 
 ---
 
@@ -65,7 +65,7 @@ $$U_\psi = 2|\psi\rangle\langle\psi| - I \;(\text{inversion about the mean } a\m
 | Grover | 정렬 안 된 search | $(U_\psi U_f)$ iteration, $\frac{\pi}{4}\sqrt{\text{number of states}}$ 회 | $O(\text{number of states}) \to O(\sqrt{\text{number of states}})$ |
 | Grover **emulation** (이 project) | 같은 algorithm을 classical circuit으로 흉내 | iteration당 $O(\text{number of states}/\text{number of lanes})$ cycles × $O(\sqrt{\text{number of states}/\text{number of solutions}})$ iterations | $O(\text{number of states}\cdot\sqrt{\text{number of states}/\text{number of solutions}})$ — classical scan보다 **느림** |
 
-마지막 줄을 오해하지 마세요. $\sqrt{\text{number of states}}$ 이득은 **real quantum hardware**의 oracle 호출 횟수 이야기이고, 모든 state의 amplitude를 매 iteration 전부 훑어야 하는 emulator에는 해당하지 않습니다. 그래서 이 해설서는 우리 accelerator를 classical linear scan과 비교하지 않습니다 — 비교 대상은 같은 일을 하는 **Qiskit `AerSimulator`·NumPy state vector simulator**이고, 값어치는 속도 우위가 아니라 quantum algorithm의 동작을 **결정적이고 재현 가능하게 재현·검증하는 전용 hardware**라는 데 있습니다([11.1절](11_state_vector_emulator.md#111-emulationsimulation진짜-quantum-computer)).
+마지막 줄을 오해하지 마세요. $\sqrt{\text{number of states}}$ 이득은 **real quantum hardware**의 oracle 호출 횟수 이야기이고, 모든 state의 amplitude를 매 iteration 전부 훑어야 하는 emulator에는 해당하지 않습니다. 그래서 이 해설서는 우리 accelerator를 classical linear scan과 비교하지 않습니다 — 비교 대상은 같은 일을 하는 **Qiskit `AerSimulator`·NumPy state vector simulator**이고, 이 장치의 가치는 속도 우위에 있지 않습니다. quantum algorithm의 동작을 **결정적이고 재현 가능하게 재현·검증하는 전용 hardware**라는 점에 있습니다([11.1절](11_state_vector_emulator.md#111-emulationsimulation진짜-quantum-computer)).
 
 ---
 
@@ -131,7 +131,7 @@ $$U_\psi = 2|\psi\rangle\langle\psi| - I \;(\text{inversion about the mean } a\m
 | amplitude가 가장 큰 칸을 고르면 된다고 착각 | 모든 solution의 amplitude는 매 iteration **정확히 같음.** maximum comparator는 늘 같은 index 하나만 반환 | [9](09_grover_algorithm.md)·[14](14_multiple_solutions_and_minimum_search.md) |
 | $\|\alpha\| \le 1$ 이니 integer bits 1-bit면 된다고 착각 | diffusion operator 중간값 $2\cdot\text{mean} - \text{amplitude}$ 는 최대 $1 + 2/\sqrt{\text{number of states}}$ 까지 커져 1을 넘음 | [12](12_fixed_point_and_precision.md) |
 
-마지막 두 줄은 교과서적 오해가 아니라 **이 project가 실제로 밟은 함정**입니다. Measurement Unit을 한동안 maximum comparator로 잡아 두었다가 solution이 둘 이상일 때 동률로 무너지는 것을 확인하고 Born-rule sampling으로 갈아엎었고([14.3절](14_multiple_solutions_and_minimum_search.md#143-amplitude-동률--argmax가-무너지는-지점)), amplitude의 크기만 보고 integer bits를 sign 1-bit로 잡았다가 diffusion operator 중간값이 표현 범위를 넘는 것을 보고 한때 integer bits를 2 bits로 늘렸고, 최종 RTL은 저장 data word를 23-bit Q1.22로 두고 중간값 register만 넓혀 symmetric saturation을 거는 쪽으로 정리했습니다([12.3절](12_fixed_point_and_precision.md#123-integer-bits는-몇-bit인가--재는-대상이-셋이다)).
+마지막 두 줄은 교과서적 오해가 아니라 **이 project에서 실제로 겪은 문제**입니다. Measurement Unit을 한동안 maximum comparator로 잡아 두었다가 solution이 둘 이상일 때 동률 때문에 실패하는 것을 확인하고 Born-rule sampling으로 바꾸었습니다([14.3절](14_multiple_solutions_and_minimum_search.md#143-amplitude-동률--argmax가-무너지는-지점)). 또 amplitude의 크기만 보고 integer bits를 sign 1-bit로 잡았다가 diffusion operator 중간값이 표현 범위를 넘는 것을 보고 한때 integer bits를 2 bits로 늘렸습니다. 최종 RTL은 저장 data word를 23-bit Q1.22로 두고 중간값 register만 넓혀 symmetric saturation을 거는 쪽으로 정리했습니다([12.3절](12_fixed_point_and_precision.md#123-integer-bits는-몇-bit인가--재는-대상이-셋이다)).
 
 ---
 
@@ -151,18 +151,18 @@ $$U_\psi = 2|\psi\rangle\langle\psi| - I \;(\text{inversion about the mean } a\m
 
 ## 10.9 다음 단계 — Part 5: 이론에서 hardware로
 
-이론을 마쳤으니, 이 algorithm을 **FPGA hardware로 흉내 내는** 이야기로 넘어갈 준비가 되었습니다. 11장부터 18장까지 여덟 장이 그 이야기이고, 이 project가 실제로 만들려는 물건입니다. Part 5(11·12장)가 뼈대 — memory 지도와 수 표현 — 를 놓고, Part 6(13·14장)이 한 shot 안의 datapath를, Part 7(15장)이 설계 좌표를, Part 8(16~18장)이 shot 바깥의 제어·system·verification을 다룹니다.
+이론을 마쳤으니, 이 algorithm을 **FPGA hardware로 흉내 내는** 이야기로 넘어갈 준비가 되었습니다. 11장부터 18장까지 여덟 장에서 이 project가 실제로 만들려는 장치를 다룹니다. Part 5(11·12장)가 기초가 되는 memory 지도와 수 표현을 설명하고 Part 6(13·14장)이 한 shot 안의 datapath를, Part 7(15장)이 설계 좌표를, Part 8(16~18장)이 shot 바깥의 제어·system·verification을 다룹니다.
 
 - [11장 state vector emulator](11_state_vector_emulator.md) — ket $|\psi\rangle$ 이 array가 되는 원리, `amp`·`data`·`mask` 세 array의 BRAM 예산, 32-lane banking, pass 단위 cycle 비용 model.
 - [12장 amplitude를 숫자로](12_fixed_point_and_precision.md) — 왜 floating-point가 아니라 fixed-point인가. Q1.22(23 bits)와 넓은 중간값·symmetric saturation, round-half-to-even, 그리고 bit width는 공식이 아니라 **재서** 정한다는 것.
-- [13장 oracle과 diffusion operator](13_oracle_diffusion_measurement_datapath.md) — 한 iteration 안의 FSM, predicate 4종($<$·$>$·$=$·범위)이 subtractor 하나를 공유하는 방법, accumulation·shift·subtraction만으로 닫히는 diffusion operator(0 multipliers).
+- [13장 oracle과 diffusion operator](13_oracle_diffusion_measurement_datapath.md) — 한 iteration 안의 FSM, predicate 4종($<$·$>$·$=$·범위)이 subtractor 하나를 공유하는 방법, accumulation·shift·subtraction만으로 계산하는 diffusion operator(0 multipliers).
 - [14장 multiple solutions](14_multiple_solutions_and_minimum_search.md) — solution이 여럿일 때의 amplitude 동률, Born-rule sampling, row·lane layer measurement, Found Mask로 중복 없이 전부 찾는 enumeration mode.
 - [15장 논문 지도와 설계 결정표](15_paper_map_and_design_decisions.md) — 여섯 논문의 계보와 여덟 개의 대립축, 확정 설계 결정표, 인용 시 주의할 정오표.
 - [16장 몇 번 돌릴지 모를 때](16_iteration_control_and_checkpoints.md) — number of solutions를 모를 때의 BBHT shot loop(mean 22.7 shots, 14 qubits·1 solution)와, 실패한 shot이 남긴 amplitude를 세 벌까지 남겨 두고 이어 도는 checkpoint.
-- [17장 RVX SoC에 붙이기](17_rvx_soc_integration.md) — accelerator를 system에 얹는 일. APB CSR로 제어하고, AHB master로 data를 실어 오고, host와는 UART로 말합니다.
+- [17장 RVX SoC에 붙이기](17_rvx_soc_integration.md) — accelerator를 system에 얹는 일. APB CSR로 제어하고, AHB master로 data를 실어 오고, host와는 UART로 통신합니다.
 - [18장 3단 reference model과 bit-exact verification](18_reference_model_verification.md) — float64 → fixed-point model → RTL의 verification ladder로 "무엇이 틀렸나"를 층마다 나눠 묻는 방법.
 
-hardware 쪽 용어(LUT·FF·BRAM·DSP·APB·AHB 같은 것들)는 [15.7절 hardware glossary](15_paper_map_and_design_decisions.md#157-hardware-용어집)에 모아 두었습니다. 위 10.5절의 glossary는 quantum 이론 용어 전용입니다. 그리고 설계 수치 — bit width·BRAM 개수·number of lanes·shot 통계 — 의 source of truth는 [15.4절 확정 설계 결정표](15_paper_map_and_design_decisions.md#154-우리-project의-좌표--확정-설계-결정표)입니다. 다른 장이 같은 값을 본문에 다시 적어 두는 것은 읽는 도중 link를 따라가지 않아도 되게 하려는 배려일 뿐이고, 값이 어긋나면 그쪽이 기준입니다.
+hardware 쪽 용어(LUT·FF·BRAM·DSP·APB·AHB 같은 것들)는 [15.7절 hardware glossary](15_paper_map_and_design_decisions.md#157-hardware-용어집)에 모아 두었습니다. 위 10.5절의 glossary는 quantum 이론 용어 전용입니다. 그리고 설계 수치 — bit width·BRAM 개수·number of lanes·shot 통계 — 의 source of truth는 [15.4절 확정 설계 결정표](15_paper_map_and_design_decisions.md#154-우리-project의-좌표--확정-설계-결정표)입니다. 다른 장이 같은 값을 본문에 다시 적어 두는 것은 읽는 도중 link를 따라가지 않고도 확인할 수 있게 하기 위해서입니다. 값이 어긋나면 설계 결정표를 기준으로 합니다.
 
 이제 "state vector·oracle·diffusion operator·$\sqrt{\text{number of states}}$ iterations·measurement probability"가 무슨 뜻인지 알고 있으므로, 이 이론이 Verilog RTL과 datapath로 바뀌는 것을 따라갈 수 있습니다. 각 논문을 원문으로 정독하고 싶다면 한국어 해설본이 [`../papers/papers_ko/`](papers/papers_ko/)에 있습니다(원문 대조용 보조 자료).
 

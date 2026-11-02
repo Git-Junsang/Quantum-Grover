@@ -1,0 +1,67 @@
+{
+  "edits": [
+    {
+      "rule": "C-8",
+      "before": "이 장은 새로운 내용을 배우는 곳이 아니라, 1~9장의 핵심을 **한눈에** 모은 참조 자료입니다.",
+      "after": "이 장은 1~9장의 핵심을 **한눈에** 모은 참조 자료입니다."
+    },
+    {
+      "rule": "D-8",
+      "before": "값어치는 속도 우위가 아니라 quantum algorithm의 동작을 **결정적이고 재현 가능하게 재현·검증하는 전용 hardware**라는 데 있습니다",
+      "after": "이 장치의 목적은 속도 우위를 얻는 데 있지 않습니다. quantum algorithm의 동작을 **결정적이고 재현 가능하게 재현·검증하는 전용 hardware**입니다"
+    },
+    {
+      "rule": "D-14",
+      "before": "이 project가 실제로 밟은 함정",
+      "after": "이 project에서 실제로 겪은 문제"
+    },
+    {
+      "rule": "D-14",
+      "before": "solution이 둘 이상일 때 동률로 무너지는 것을 확인하고 Born-rule sampling으로 갈아엎었고",
+      "after": "solution이 둘 이상일 때 동률 때문에 실패하는 것을 확인하고 Born-rule sampling으로 바꾸었습니다"
+    },
+    {
+      "rule": "A-18",
+      "before": ")), amplitude의 크기만 보고 integer bits를 sign 1-bit로 잡았다가",
+      "after": ")). 또 amplitude의 크기만 보고 integer bits를 sign 1-bit로 잡았다가"
+    },
+    {
+      "rule": "A-18",
+      "before": "한때 integer bits를 2 bits로 늘렸고, 최종 RTL은",
+      "after": "한때 integer bits를 2 bits로 늘렸습니다. 최종 RTL은"
+    },
+    {
+      "rule": "D-14",
+      "before": "11장부터 18장까지 여덟 장이 그 이야기이고, 이 project가 실제로 만들려는 물건입니다.",
+      "after": "11장부터 18장까지 여덟 장에서 이 project가 실제로 만들려는 장치를 다룹니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "Part 5(11·12장)가 뼈대 — memory 지도와 수 표현 — 를 놓고,",
+      "after": "Part 5(11·12장)가 기초가 되는 memory 지도와 수 표현을 설명하고"
+    },
+    {
+      "rule": "D-14",
+      "before": "accumulation·shift·subtraction만으로 닫히는 diffusion operator",
+      "after": "accumulation·shift·subtraction만으로 계산하는 diffusion operator"
+    },
+    {
+      "rule": "D-14",
+      "before": "host와는 UART로 말합니다.",
+      "after": "host와는 UART로 통신합니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "읽는 도중 link를 따라가지 않아도 되게 하려는 배려일 뿐이고, 값이 어긋나면 그쪽이 기준입니다.",
+      "after": "읽는 도중 link를 따라가지 않고도 확인할 수 있게 하기 위해서입니다. 값이 어긋나면 설계 결정표를 기준으로 합니다."
+    }
+  ],
+  "self_check": {
+    "fidelity": true,
+    "conservative": true,
+    "genre": true,
+    "register": true,
+    "targeted_patterns_reviewed": true,
+    "no_new_metaphors_or_claims": true
+  }
+}

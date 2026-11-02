@@ -1,0 +1,2 @@
+platform,device,vivado,clock_MHz,WNS,TNS,WHS,THS,WPWS,TPWS,LUT,FF,BRAM_tile,DSP,Slices,power_W
+Full-RVX DRAM branch + AXI4 bridge (16-beat) + slow_dram (manual PnR),xc7a100tcsg324-1,2026.1,100,0.005,0.000,0.021,0.000,0.109,0.000,27379,34162,81,74,13151,1.030

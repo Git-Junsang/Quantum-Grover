@@ -1,0 +1,84 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 10/10이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 윤문 진단
+
+대상: `17_rvx_soc_integration.md`
+
+## 장르와 레지스터
+
+학부생용 공부 해설서입니다. 설명 본문은 합쇼체 중심의 친근한 존댓말이고, 질문·권유에는 해요체가 섞입니다. 요약·표의 간결한 명사형은 의도된 형식입니다. 이 register와 독자 수준을 그대로 유지합니다.
+
+## 겨냥 순서와 근거
+
+1. **D-14 / D-5 — 기술 구성요소의 의인화와 구어 비유**: 「시작을 눌러 줄 사람」·「accelerator는 놀고」·「SoC 바깥의 섬」·「policy의 손잡이」·「state를 software에 맡기면 샙니다」·「CSR을 두드리는」 등의 비유가 역할 구분을 흐립니다. interface·상태 관리·CSR 접근이라는 실제 작업으로 표현합니다. 제목·표기·영어는 유지합니다.
+
+2. **D-8 / D-2 — 강한 예고·평가 표현**: 「압도적으로 유리」·「정확히」·「못 박아」·「이유는 자명」·「며칠을 좌우」가 기술적 근거보다 평가를 먼저 둡니다. 과한 수식만 덜고 설계 선택의 이유와 규약의 당위는 보존합니다.
+
+3. **A-18 / I-3 — 조건 열거를 한 문장에 몰기**: 17.2의 XML instance 설명, 17.4의 status·시작 수락 조건, 17.7의 firmware 규약이 긴 문장으로 이어집니다. relative_clause_nesting=11. 순서·동시 조건·원문 수치·macro는 그대로 두고 한국어 연결을 정리합니다.
+
+4. **C-8 — 반복되는 대립 규정**: 「편의가 아니라」·「타협이 아니라」·「종이 위가 아니라 board 위」처럼 이항 대립이 겹칩니다. hardware/software 경계의 실질 근거를 직접 쓰되 실제 quantum 구조와의 대응 주장을 바꾸지 않습니다.
+
+## 정량 앵커와 해석
+
+입력 정량 블록의 route_hint는 `heavy`, 원문은 19,627자입니다. 위에 적은 양성 카운트만 해당 ID의 보조 근거로 사용했습니다. lexical_diversity의 낮은 값은 전문용어 반복의 영향이 있으므로 영어 용어를 치환하는 근거로 쓰지 않습니다. 이중 피동·by 피동·have 직역은 카운트가 0이어서 지배 패턴으로 지목하지 않습니다.
+
+## 보존 지침
+
+- 영어 용어·영어 토큰의 철자와 대소문자를 그대로 둡니다. 영어를 한국어로 옮기거나 동의어로 바꾸지 않습니다. 용어집 SSOT는 `documents/design_references/22_appendix_glossary_and_retired_specs.md` 22.2절입니다.
+- 사실·주장·수치·단위·수식·code·identifier·인용·조건·부정/긍정·인과를 보존합니다. 내용 보충이나 과학적 사실 수정은 이번 윤문의 범위가 아닙니다.
+- 제목·절 번호·link·그림·기존 콜아웃·표 구조를 유지합니다. 기존 볼드·이모지는 교재 고유 관습이므로 일괄 삭제하지 않습니다.
+- 어색한 비유·한국어 연결·조사·수식어만 국소 수정합니다. 단순히 technical term이 많이 나온다는 이유로 B 계열 처방을 적용하지 않습니다.
+- 의무·가능·추정의 강도를 보존하고 원문에 없던 설명이나 평가를 넣지 않습니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 1987
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.50  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.62  (z=-0.22 vs report 인간 baseline)
+- ending_comma_rate: 0.71  (n/a vs report 인간 baseline)
+- comma_segment_length: 8.21  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.009  (z=-1.70 vs report 인간 baseline)
+- lexical_diversity: 0.85  (z=+3.96 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 1
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 17.9 이 장의 요약
+
+- **경계**: amplitude 갱신과 shot loop처럼 규칙적이고 IP 안 state에 묶인 일은 hardware가, 설정·결과 처리·표시처럼 응용마다 바뀌는 일은 software가. 실제 quantum computer도 classical control computer가 circuit을 돌리는 구조라, 이 배치는 편의가 아니라 실기의 구조를 따르는 것입니다.
+- **RVX**: ETRI의 RISC-V eXpress. **platform XML 하나**에서 SoC RTL·memory map C header·Verilog header·boot ROM·Vivado script가 전부 생성됩니다. 우리 platform은 core `rvc_orca`, APB slave shim, AHB master shim 셋에 accelerator 전용 100 MHz clock과 SRAM 128 KB. `/opt/rvx` 에 전체 설치되어 생성부터 bitstream까지 local에서 돕니다.
+- **bus 두 개**: 설정·status는 **APB slave**, 32 KB array load는 **AHB master**. load는 SINGLE 읽기 하나씩으로 충분했고, **AXI-Stream은 RVX에 shim이 없어** 초기 원안을 폐기했습니다. IP는 `_clkout` shim으로 자기 clock domain에서 돌고, CDC는 RVX 생성 bridge가 맡습니다.
+- **CSR map**: 손으로 짠 APB slave, 32-bit **38개 · 4-byte 간격**, 접근 성격은 `RW` · `W1P` · `RO` · `RPOP`. 무효화 register가 없고(Accelerator Core가 스스로), algorithm 지표 `REQUESTED_ITERATIONS` 와 비용 지표 `EXECUTED_ITERATIONS` · `CYCLE_COUNT` 를 따로 둡니다. 시작 queue는 없고 firmware가 `STATUS` 를 먼저 봅니다.
+- **load**: 32-bit SINGLE, data word당 3 cycles → 8,192 data words **약 246 µs**(100 MHz). 정렬·개수·범위·실행 중 여부를 DMA Engine이 검사하고, load 중 시작 금지 · 홀수 개수의 마지막 상위 16-bit 생략 · load는 checkpoint 무효화. benchmark data는 firmware `GEN` 이 seed로부터 결정적으로 만듭니다.
+- **UART**: console app과 ASCII line protocol, 115200 8N1, 흐름 제어 없음. 명령과 결과만 오갑니다 — 32 KB를 UART로 보내면 **약 2.8초**로 search 시간의 만 배라 data 직송은 비현실적입니다.
+- **shot loop는 hardware**(BBHT autonomous mode)가 돌고, firmware가 number of iterations를 정하는 **Manual mode**도 비교 실험과 reference model 대조를 위해 남아 있습니다. **enumeration 종료 판정도 hardware**가 하고, 한계값만 firmware가 쥡니다.
+- **초판의 미정 다섯**은 전부 정해졌습니다: CSR 38개 · 4-byte · 256-entry Result FIFO · 별도 `M_max` 없음 · SoC 32 BRAM tiles · accelerator 100 MHz / core 50 MHz.
+
+system 경계까지 그렸으니 설계는 이제 종이 위가 아니라 board 위에서 돕니다. 남은 질문은 하나입니다 — 이것이 맞다는 것을 어떻게 증명하나요? 다음 18장이 그 답입니다.
+
+---
+
+> [← 16장 몇 번 돌릴지 모를 때](16_iteration_control_and_checkpoints.md) · [index](index.md) · [18장 무엇을 어떻게 증명하나 →](18_reference_model_verification.md)
+[원문 끝]

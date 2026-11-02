@@ -1,0 +1,25 @@
+{
+  "scope": "First two newly simulated Common500 cells, including build/reference checks",
+  "sample_cells": [
+    {
+      "k": "1",
+      "h": "1",
+      "e": "4",
+      "m": "2",
+      "elapsed_seconds": "128.76"
+    },
+    {
+      "k": "1",
+      "h": "2",
+      "e": "4",
+      "m": "2",
+      "elapsed_seconds": "130.16"
+    }
+  ],
+  "completed": 3,
+  "remaining_cells": 37,
+  "workers": 2,
+  "mean_seconds_per_cell": 129.5,
+  "estimated_remaining_minutes": 39.9,
+  "note": "K1 samples have more physical iterations than larger capacities; ETA will be updated from later cells."
+}

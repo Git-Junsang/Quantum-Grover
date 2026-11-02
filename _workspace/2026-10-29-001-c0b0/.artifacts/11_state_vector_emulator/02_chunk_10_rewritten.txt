@@ -1,0 +1,14 @@
+## 11.9 emulator가 실기보다 쉬운 것들
+
+emulator는 진짜 quantum computer의 흉내이지만, 어떤 면에서는 **진짜보다 훨씬 편합니다.** 실제 quantum computer에서 값비싼 여러 연산이, classical array 계산에서는 공짜에 가깝기 때문입니다. 이 역설은 응용 논문(08·09)을 읽을 때 특히 중요하니 미리 정리해 둡니다.
+
+- **phase 반전.** 실기에서 특정 computational basis state의 phase만 뒤집으려면 multi-controlled $Z$ gate가 필요하고, 이는 qubit가 늘수록 비싸집니다(08번 논문이 다루는 일반화된 phase 반전은 별도의 보조 circuit block까지 요구합니다). emulator에서는 sign을 뒤집는 two's complement negate 한 줄이 전부입니다([13.4절](13_oracle_diffusion_measurement_datapath.md#134-sign-반전--twos-complement-negate-한-번)). 다만 "그래서 1 cycle에 끝난다"고 쓰면 틀립니다 — 우리 oracle은 solution index를 모르므로 **모든 칸을 훑으며 predicate를 판정**해야 하고, 128 lanes로도 16,384 / 128 = 128 cycles입니다. 정확한 서술은 "gate 비용이 사라지고 scan 비용만 남는다"이고, 그 scan이 diffusion operator의 accumulation pass와 같은 pass라 **oracle이 따로 더 쓰는 cycle은 없습니다**(11.8).
+- **되돌리기(uncomputation).** 실기에서는 ancilla qubit를 쓴 뒤 entanglement를 풀려고 circuit을 **역순으로 다시 실행**해야 합니다(09번 논문의 oracle은 $A_f\to N_f\to U_\delta$ 를 걸고 다시 역순으로 풀어 circuit depth가 두 배가 됩니다). emulator에서는 그냥 array를 **덮어쓰면** 끝이라 되돌리기 자체가 불필요합니다.
+- **ancilla qubit와 phase kickback.** 7장에서 본 phase kickback은 $|-\rangle$ state의 ancilla qubit가 있어야 성립합니다. 실기에서는 이 ancilla qubit를 실제로 마련하고 관리해야 하지만, emulator에서는 "sign을 뒤집는다"는 **결과만 array에 직접 쓰면** 되므로 ancilla qubit가 필요 없습니다.
+- **state initialization.** 07번 논문은 논문의 **절반가량을 "classical data를 state로 싣는(Classical-to-Quantum, C2Q)" 문제**에 씁니다. 임의의 data를 amplitude로 encoding하는 circuit이 algorithm 본체보다 깊어질 만큼 어려운 문제이기 때문입니다. 그런데 Grover의 초기 state는 **uniform superposition** — 모든 칸을 같은 값으로 채우는 `memset` 한 번입니다. Grover는 이 최대 난제를 **구조적으로 우회**합니다.
+- **중간 state 관찰.** 실기에서 계산 도중 state를 들여다보면 measurement가 되어 superposition이 collapse합니다(4장). emulator에서는 array를 언제든 덤프해 볼 수 있어 debugging이 자유롭고, 이것이 11.1에서 말한 "verification 가능성"의 실체입니다.
+
+이 마지막 항목에는 **일부러 사용하지 않는 간단한 방법**이 있습니다. oracle 직후의 amplitude array에서 sign이 음수인 칸이 곧 solution 집합이므로, 그 array를 한 번 훑기만 하면 iteration도 measurement도 없이 solution을 **전부** 얻을 수 있습니다. 이것은 Grover가 아니라 classical scan이고, 그 사실이 바로 [11.10절](#1110-emulator가-숨기는-것)이 말하는 왜곡의 극단입니다. 그래서 이 경로는 **동작 경로에 넣지 않습니다.** 실기라면 measurement 전까지 amplitude를 볼 수 없고 measurement하면 collapse하므로, 우리도 그 제약을 스스로 지켜야 재현한 것이 algorithm이 됩니다 — 결과가 밖으로 나가는 길이 measurement 한 곳뿐이고, 중간 amplitude는 verification용 덤프로만 꺼내는 이유가 이것입니다.
+
+---
+

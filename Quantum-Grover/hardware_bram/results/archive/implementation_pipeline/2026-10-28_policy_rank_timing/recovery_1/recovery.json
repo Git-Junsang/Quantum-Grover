@@ -1,0 +1,7 @@
+{
+  "failure": "console observer used three previous driver structure field names; no implementation had started",
+  "changes": "Only the copied observer uses shot_count/requested_iterations/executed_iterations. RTL and firmware inputs stay frozen.",
+  "observer_source": "hardware_bram/results/2026-10-28_policy_rank_timing/source/tb_console_seq_driver_fields.cpp",
+  "observer_sha256": "fb4b1644feeb082afe99dec3ff05f62e51ba3ca8af63782e18c1d64011d18e62",
+  "worker_sha256": "bdf51706505fa98b446c0083d9d9bbadfa98ea6ec546936c9cef4358ddf5ecce"
+}

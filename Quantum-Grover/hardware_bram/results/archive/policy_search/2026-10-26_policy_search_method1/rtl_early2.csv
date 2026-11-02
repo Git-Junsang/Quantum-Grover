@@ -1,0 +1,4 @@
+k,h,decisions,baseline_cycles,early2_cycles,cycle_reduction_pct,baseline_actions,early2_actions,action_reduction_pct,baseline_max_latency,early2_max_latency,max_reduction_pct,choice_errors
+3,3,7403,1183308,933966,21.071606,167908,128208,23.643900,811,701,13.563502,0
+4,4,7403,2841616,1985090,30.142215,579120,404606,30.134342,6532,6257,4.210043,0
+4,8,7403,21593720,18354629,15.000153,7292597,6659765,8.677732,39622,33582,15.244056,0

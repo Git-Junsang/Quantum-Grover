@@ -1,0 +1,8 @@
+#### Part 5. 이론에서 hardware로 — 뼈대
+
+| 장 | file | 무엇을 배우나 |
+|----|------|--------------|
+| 11 | [state vector emulator — memory map과 resource 예산](11_state_vector_emulator.md) | ket → 세 개의 array(`amp`·`data`·`mask`), qubit 하나 = memory 두 배, amplitude를 어디에 둘 것인가, memory-bound의 두 얼굴, 32 lanes 병렬과 banking, cycle 비용 model, emulator가 숨기는 것 |
+| 12 | [amplitude를 숫자로 — fixed-point와 Q1.22](12_fixed_point_and_precision.md) | 왜 floating-point를 안 쓰는가, Q format 명명 규약, 폭을 정할 때 재는 대상이 셋이라는 것, round-half-to-even, symmetric saturation·renormalization 없음, minimum fraction bits 공식과 그 전제, fraction bits를 공식이 아니라 재서 정한 과정 |
+
+

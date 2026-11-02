@@ -1,0 +1,8 @@
+{
+  "stage": "failed",
+  "updated_utc": "2026-10-28T12:55:34.952356+00:00",
+  "pid": 1264341,
+  "platform": "bbht_grover_k3h3_e4_m2_rankfix_20261028",
+  "failed_stage": "implementation",
+  "error": "All three physical implementation strategies failed; see archived attempt reports. RTL changes require a new source snapshot."
+}

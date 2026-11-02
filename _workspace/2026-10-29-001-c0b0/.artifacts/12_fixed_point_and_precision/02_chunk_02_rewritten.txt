@@ -1,0 +1,10 @@
+## 12.1 왜 floating-point를 안 쓰는가
+
+프로그래밍에서 fractional number를 다룰 때 우리는 보통 `float`·`double` 같은 **floating-point**를 씁니다. radix point 위치가 "떠다니며" 아주 큰 수와 아주 작은 수를 모두 표현하죠. 편리하지만, hardware로 만들면 **비쌉니다.** floating-point는 숫자를 $\text{mantissa}\times 2^{\text{exponent}}$ 로 쪼개 저장하기 때문에, addition 한 번에도 exponent를 맞추고(alignment) 결과를 다시 normalization하고 rounding하는 부수 작업이 딸려 옵니다.
+
+04번 논문은 이 비용을 정확히 셉니다. floating-point **addition 한 번**은 내부적으로 real addition 4회 + 비교 4회 + shift 3회를 요구하고, **multiplication 한 번**은 real addition 4 + real multiplication 1 + 비교 4 + shift 2 + XOR 1이 필요합니다. 반면 **fixed-point**는 같은 addition이 그냥 integer addition 1회, power of two를 곱하는 것은 shift 1회로 끝납니다. emulator는 diffusion operator 한 번에 모든 amplitude를 더하고 빼므로(13.5절), 이 constant 배의 차이가 number of states에 곱해져 resource·전력·latency로 고스란히 나타납니다.
+
+우리에게는 이유가 하나 더 있습니다. 13.8절에서 보겠지만 이 IP의 diffusion operator·oracle·initialization 경로에는 **multiplier가 하나도 없습니다** — 전부 addition·subtraction·shift뿐입니다. floating-point를 택하는 순간 그 결론은 성립하지 않습니다. alignment와 normalization이 곧 가변 shift와 priority encoder를 뜻하고, 그것이 128 lanes마다 하나씩 붙기 때문입니다.
+
+---
+

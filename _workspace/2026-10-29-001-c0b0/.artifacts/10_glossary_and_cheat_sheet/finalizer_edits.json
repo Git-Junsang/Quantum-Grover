@@ -1,0 +1,10 @@
+[
+  {
+    "before": "이 장치의 목적은 속도 우위를 얻는 데 있지 않습니다. quantum algorithm의 동작을",
+    "after": "이 장치의 가치는 속도 우위에 있지 않습니다. quantum algorithm의 동작을"
+  },
+  {
+    "before": "재현·검증하는 전용 hardware**입니다",
+    "after": "재현·검증하는 전용 hardware**라는 점에 있습니다"
+  }
+]

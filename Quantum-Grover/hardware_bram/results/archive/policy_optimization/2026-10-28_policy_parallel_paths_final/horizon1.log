@@ -1,0 +1,2 @@
+SUMMARY seed_replay cases=35 errors=0 skips=15 nested=0 seed_hits=35 seed_misses=0 canonical_misses=0 root_equal_bounds=34 skip_during_miss=0 max_universe=5 checked_bounds=62 cached_bounds=49 max_pruned_batch=3 max_scan_count=6
+hardware_bram/testbench/tb_policy_seed_replay.sv:268: $finish called at 20890000 (1ps)

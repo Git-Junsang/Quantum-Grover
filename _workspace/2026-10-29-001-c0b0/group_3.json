@@ -1,0 +1,51 @@
+{
+  "skill_root": "/root/.codex/skills/humanize-korean",
+  "constraints": {
+    "scope": "한국어 해설서 윤문. 영어 용어·영어 토큰·수치·수식·code·제목·link·기존 콜아웃 표기는 모두 보존. glossary SSOT documents/design_references/22_appendix_glossary_and_retired_specs.md §22.2. 원문 주장 추가 금지. 기존 작업 변경 보존.",
+    "genre": "report (학부생용 해설서, 친근한 존댓말을 보존; report 서식 축약 규칙은 적용하지 않음)"
+  },
+  "files": [
+    {
+      "source": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/documents/study_references/03_single_qubit_gates.md",
+      "run_dir": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/_workspace/2026-10-29-001-c0b0/.artifacts/03_single_qubit_gates",
+      "route": "light",
+      "chars": 10539
+    },
+    {
+      "source": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/documents/study_references/06_quantum_circuit_model_and_universality.md",
+      "run_dir": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/_workspace/2026-10-29-001-c0b0/.artifacts/06_quantum_circuit_model_and_universality",
+      "route": "light",
+      "chars": 10865
+    },
+    {
+      "source": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/documents/study_references/09_grover_algorithm.md",
+      "run_dir": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/_workspace/2026-10-29-001-c0b0/.artifacts/09_grover_algorithm",
+      "route": "heavy",
+      "chars": 27645
+    },
+    {
+      "source": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/documents/study_references/12_fixed_point_and_precision.md",
+      "run_dir": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/_workspace/2026-10-29-001-c0b0/.artifacts/12_fixed_point_and_precision",
+      "route": "heavy",
+      "chars": 25593
+    },
+    {
+      "source": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/documents/study_references/15_paper_map_and_design_decisions.md",
+      "run_dir": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/_workspace/2026-10-29-001-c0b0/.artifacts/15_paper_map_and_design_decisions",
+      "route": "heavy",
+      "chars": 32774
+    },
+    {
+      "source": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/documents/study_references/18_reference_model_verification.md",
+      "run_dir": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/_workspace/2026-10-29-001-c0b0/.artifacts/18_reference_model_verification",
+      "route": "heavy",
+      "chars": 29241
+    },
+    {
+      "source": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/documents/study_references/papers/paper_outline.md",
+      "run_dir": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/_workspace/2026-10-29-001-c0b0/.artifacts/paper_outline",
+      "route": "light",
+      "chars": 6874
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+## 16.2 BBHT — 무작위로 뽑는 number of iterations와 1.2× growth factor
+
+solution이 몇 개인지 모를 때 쓰는 표준 절차가 BBHT(Boyer–Brassard–Høyer–Tapp)입니다. 네 줄이면 끝납니다.
+

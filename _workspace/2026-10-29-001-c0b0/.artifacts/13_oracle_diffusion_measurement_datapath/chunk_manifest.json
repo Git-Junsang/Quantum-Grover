@@ -1,0 +1,129 @@
+{
+  "version": 1,
+  "created": "2026-10-29",
+  "source_file": "01_input.txt",
+  "source_chars": 21908,
+  "source_sha256": "4079b63673d00fe66553ff13fb9e120da55e70cad1523f5d129f373e785a319c",
+  "genre": "report",
+  "target_chunk_chars": 7000,
+  "max_chunk_chars": 9000,
+  "route_hint": "heavy",
+  "route_reason": "21,908자 초장문(>15,000) — 진단 + 청킹 권장",
+  "chunk_count": 10,
+  "body_chunk_count": 10,
+  "passthrough_chunk_count": 0,
+  "lossless_check": "ok",
+  "warnings": [],
+  "chunks": [
+    {
+      "index": 1,
+      "start": 0,
+      "end": 1406,
+      "char_count": 1406,
+      "starts_with_heading": true,
+      "heading": "# 13장. oracle과 diffusion operator — multiplier 없는 산술",
+      "passthrough": false,
+      "input_file": "01_chunk_01_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_01_rewritten.txt"
+    },
+    {
+      "index": 2,
+      "start": 1406,
+      "end": 3116,
+      "char_count": 1710,
+      "starts_with_heading": true,
+      "heading": "## 13.1 한 iteration 안의 FSM",
+      "passthrough": false,
+      "input_file": "01_chunk_02_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_02_rewritten.txt"
+    },
+    {
+      "index": 3,
+      "start": 3116,
+      "end": 5691,
+      "char_count": 2575,
+      "starts_with_heading": true,
+      "heading": "## 13.2 Init — uniform amplitude를 square-root unit 없이",
+      "passthrough": false,
+      "input_file": "01_chunk_03_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_03_rewritten.txt"
+    },
+    {
+      "index": 4,
+      "start": 5691,
+      "end": 8768,
+      "char_count": 3077,
+      "starts_with_heading": true,
+      "heading": "## 13.3 oracle — predicate 4종이 subtractor 하나를 공유한다",
+      "passthrough": false,
+      "input_file": "01_chunk_04_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_04_rewritten.txt"
+    },
+    {
+      "index": 5,
+      "start": 8768,
+      "end": 9953,
+      "char_count": 1185,
+      "starts_with_heading": true,
+      "heading": "## 13.4 sign 반전 — two's complement negate 한 번",
+      "passthrough": false,
+      "input_file": "01_chunk_05_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_05_rewritten.txt"
+    },
+    {
+      "index": 6,
+      "start": 9953,
+      "end": 13599,
+      "char_count": 3646,
+      "starts_with_heading": true,
+      "heading": "## 13.5 diffusion operator — 2·mean − amp가 circuit이 되는 순간",
+      "passthrough": false,
+      "input_file": "01_chunk_06_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_06_rewritten.txt"
+    },
+    {
+      "index": 7,
+      "start": 13599,
+      "end": 15224,
+      "char_count": 1625,
+      "starts_with_heading": true,
+      "heading": "## 13.6 왜 2 passes인가",
+      "passthrough": false,
+      "input_file": "01_chunk_07_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_07_rewritten.txt"
+    },
+    {
+      "index": 8,
+      "start": 15224,
+      "end": 17596,
+      "char_count": 2372,
+      "starts_with_heading": true,
+      "heading": "## 13.7 32-lane datapath와 accumulation 순서",
+      "passthrough": false,
+      "input_file": "01_chunk_08_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_08_rewritten.txt"
+    },
+    {
+      "index": 9,
+      "start": 17596,
+      "end": 19800,
+      "char_count": 2204,
+      "starts_with_heading": true,
+      "heading": "## 13.8 multiplier는 어디에 있고 어디에 없는가",
+      "passthrough": false,
+      "input_file": "01_chunk_09_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_09_rewritten.txt"
+    },
+    {
+      "index": 10,
+      "start": 19800,
+      "end": 21908,
+      "char_count": 2108,
+      "starts_with_heading": true,
+      "heading": "## 13.9 이 장의 요약",
+      "passthrough": false,
+      "input_file": "01_chunk_10_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_10_rewritten.txt"
+    }
+  ]
+}

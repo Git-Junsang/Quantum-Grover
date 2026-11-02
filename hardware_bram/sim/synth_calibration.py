@@ -138,8 +138,9 @@ def collect(synth, out):
         points.append(row)
         keep = out / "synth" / cell.name
         keep.mkdir(parents=True, exist_ok=True)
+        # policy_cache_memory.csv(점당 최대 2 MB)는 cache · memo 의 primitive 수만 points.csv 에 남기고 복사하지 않습니다.
         for name in ("config.json", "manifest.json", "adapter.v", "resource.json", "util.rpt", "util_hier.rpt",
-                     "policy_cache_memory.csv", "policy_cache_audit_status.txt"):
+                     "policy_cache_audit_status.txt"):
             if (cell / name).exists():
                 shutil.copy(cell / name, keep / name)
     points.sort(key=lambda r: (r["k"], r["h"], r["e"], r["m"]))
@@ -171,126 +172,346 @@ def linear(xs, ys):
     return [float(c) for c in coef], float(np.max(np.abs(a @ coef - np.array(ys, float)))) if len(xs) > 2 else 0.0
 
 
+# 칸마다 "들어가는 것 중 가장 좋은" policy 조합을 고를 때의 순서. 100 workloads K/H sweep 의 기준점
+# (iteration engines 9 / square engines 7) 총 cycle 이 작은 순서이고, 다른 E/M 에서도 순위가 거의 같았습니다.
+RANK_TABLE = es.ROOT / "hardware_bram/results/2026-10-29_checkpoint_sweep/workloads100/e9m7/anchor_table.csv"
+
+
 def fit(out):
     points = list(csv.DictReader((out / "points.csv").open()))
     for p in points:
         for key in p:
             p[key] = (p[key] == "True") if key == "cache_report" else float(p[key]) if p[key] != "" else None
-    base = [p for p in points if p["k"] == 3 and p["h"] == 3]
-    model = {"device": DEVICE, "limit": LIMIT, "soc": SOC, "blocks": {}}
-
-    # iteration engines 에만 걸리는 블록: dataset 복제, datapath, 제어. square engines 4 점들로 직선을 맞춥니다.
-    m4 = [p for p in base if p["m"] == 4]
-    for block in ("dataset", "datapath", "control"):
-        model["blocks"][block] = {}
-        for f in FIELDS:
-            coef, residual = linear([p["e"] for p in m4], [p[f"{block}_{f}"] for p in m4])
-            model["blocks"][block][f] = {"intercept": coef[0], "per_iteration_engine": coef[1], "max_residual": residual}
-
-    # amplitude memory: 읽기 mux 는 engine_sweep 식(read port x 736 bit x ceil(bank/4)), BRAM 은 bank x tile 식.
-    # 실측과의 차이를 기록만 하고 식은 그대로 씁니다.
-    model["blocks"]["amplitude"] = {"check": [
-        {"e": p["e"], "m": p["m"], "lut": p["amplitude_lut"], "lut_formula": amplitude_lut(int(p["e"]), int(p["m"])),
-         "bram": p["amplitude_bram"], "bram_formula": es.amplitude_tiles(3, int(p["e"]), int(p["m"]))}
-        for p in base]}
-
-    # measurement: square engines 4 이하는 기존 sampler, 5 이상은 grover_born_sampler_parallel 입니다.
-    # 5 이상 점들로 직선을, 4 이하는 square engines 4 점의 값을 squarer 하나 단가로 나눠 씁니다.
-    big = [p for p in base if p["m"] >= 5]
-    model["blocks"]["measurement"] = {"parallel": {}, "legacy_m4": {}}
-    for f in FIELDS:
-        coef, residual = linear([p["m"] for p in big], [p[f"measurement_{f}"] for p in big]) if len(big) >= 2 else ([0, 0], 0)
-        model["blocks"]["measurement"]["parallel"][f] = {"intercept": coef[0], "per_square_engine": coef[1],
-                                                        "max_residual": residual}
-        model["blocks"]["measurement"]["legacy_m4"][f] = float(np.mean([p[f"measurement_{f}"] for p in m4]))
-    model["blocks"]["rest"] = {f: float(np.mean([p[f"rest_{f}"] for p in base])) for f in FIELDS}
-    model["blocks"]["rest_spread"] = {f: float(np.ptp([p[f"rest_{f}"] for p in base])) for f in FIELDS}
+    base = {(int(p["e"]), int(p["m"])): p for p in points if p["k"] == 3 and p["h"] == 3}
+    grid = {(int(p["k"]), int(p["h"])): p for p in points if p["e"] == 4 and p["m"] == 4}
 
     # policy: iteration engines / square engines 4/4 에서 Checkpoint-Capacity / Lookahead-Shots 만 바꾼 점들.
-    # policy 몫에는 policy 블록과 함께, 같은 점의 rest 가 Checkpoint-Capacity / Lookahead-Shots 3/3 보다
-    # 늘어난 만큼(checkpoint executor 의 slot 폭 등)을 넣습니다. amplitude memory 의 Checkpoint-Capacity
-    # 의존분은 amplitude 식이 따로 셉니다.
-    policy = {}
     rows = []
-    rest33 = next(p for p in points if (p["k"], p["h"], p["e"], p["m"]) == (3, 3, 4, 4))
-    for p in points:
-        if p["e"] == 4 and p["m"] == 4:
-            k, h = int(p["k"]), int(p["h"])
-            entries, width = cache_bound(k, h)
-            policy[(k, h)] = {f: p[f"policy_{f}"] + p[f"rest_{f}"] - rest33[f"rest_{f}"] for f in FIELDS}
-            rows.append({"k": k, "h": h, "cache_entries": entries, "cache_width": width,
-                         "cache_kib": round(entries * width / 8 / 1024, 1),
-                         "cache_bram_formula": cache_tiles(entries, width),
-                         "cache_bram_measured": p["cache_bram"], "cache_lutram_measured": p["cache_lutram"],
-                         "memo_bram_measured": p["memo_bram"], "memo_lutram_measured": p["memo_lutram"],
-                         "policy_lut": int(p["policy_lut"]), "policy_ff": int(p["policy_ff"]),
-                         "policy_bram": p["policy_bram"]})
+    for (k, h), p in sorted(grid.items()):
+        entries, width = cache_bound(k, h)
+        rows.append({"k": k, "h": h, "cache_entries": entries, "cache_width": width,
+                     "cache_kib": round(entries * width / 8 / 1024, 1),
+                     "cache_bram_formula": cache_tiles(entries, width),
+                     "cache_bram_measured": p["cache_bram"], "cache_lutram_measured": p["cache_lutram"],
+                     "memo_bram_measured": p["memo_bram"], "memo_lutram_measured": p["memo_lutram"],
+                     "policy_lut": int(p["policy_lut"]), "policy_ff": int(p["policy_ff"]),
+                     "policy_bram": p["policy_bram"], "wrapper_lut": int(p["total_lut"]),
+                     "wrapper_bram": p["total_bram"]})
     with (out / "policy_cache_kh.csv").open("w", newline="") as stream:
         writer = csv.DictWriter(stream, fieldnames=list(rows[0]), lineterminator="\n")
         writer.writeheader()
-        writer.writerows(sorted(rows, key=lambda r: (r["k"], r["h"])))
-    model["policy_points"] = [f"{k},{h}" for k, h in sorted(policy)]
+        writer.writerows(rows)
 
-    # 실측 점의 예측 오차(블록 식으로 다시 맞춘 값과 synthesis 총합의 차이).
-    model["prediction_check"] = []
-    for p in points:
-        if (int(p["k"]), int(p["h"])) not in policy:
-            continue
-        est = estimate(model, policy, int(p["e"]), int(p["m"]), int(p["k"]), int(p["h"]))
-        model["prediction_check"].append({"point": f"k{int(p['k'])}h{int(p['h'])}e{int(p['e'])}m{int(p['m'])}",
-                                          **{f: [p[f"total_{f}"], round(est[f], 1)] for f in FIELDS}})
-    (out / "compute_fit.json").write_text(json.dumps(model, indent=2) + "\n")
+    model = Model(base, grid)
+    report = {"device": DEVICE, "limit": LIMIT, "soc": SOC, "policy_points": [f"{k},{h}" for k, h in sorted(grid)],
+              "measured_engine_points": [f"{e},{m}" for e, m in sorted(base)],
+              "leave_one_out": model.leave_one_out()}
+    (out / "compute_fit.json").write_text(json.dumps(report, indent=2) + "\n")
 
     # 칸마다 판정: 지원 범위(iteration engines 1~10, square engines 1~9) x 실측한 policy 조합.
     table = []
     for e in SUPPORTED_E:
         for m in SUPPORTED_M:
-            for (k, h) in sorted(policy):
-                est = estimate(model, policy, e, m, k, h)
+            for (k, h) in sorted(grid):
+                est = model.total(e, m, k, h)
                 total = {f: est[f] + SOC[f] for f in FIELDS}
                 over = [f for f in FIELDS if total[f] > DEVICE[f] * LIMIT[f]]
                 table.append({"e": e, "m": m, "k": k, "h": h,
                               **{f"{f}_percent": round(100 * total[f] / DEVICE[f], 1) for f in FIELDS},
-                              "feasible": not over, "over": "+".join(over)})
+                              "feasible": not over, "over": "+".join(over),
+                              "engine_source": "measured" if (e, m) in base else "estimated"})
     with (out / "calibrated_feasibility.csv").open("w", newline="") as stream:
         writer = csv.DictWriter(stream, fieldnames=list(table[0]), lineterminator="\n")
         writer.writeheader()
         writer.writerows(table)
-    return model, rows, table
+
+    # 칸마다 들어가는 policy 조합 중 가장 좋은 것(RANK_TABLE 의 총 cycle 순).
+    cycles = {(int(r["k"]), int(r["h"])): int(r["sample_cycles"]) for r in csv.DictReader(RANK_TABLE.open())}
+    order = sorted(grid, key=lambda kh: cycles[kh])
+    fits = {(r["e"], r["m"], r["k"], r["h"]): r["feasible"] for r in table}
+    best = []
+    for e in SUPPORTED_E:
+        for m in SUPPORTED_M:
+            choice = next((kh for kh in order if fits[(e, m, *kh)]), None)
+            best.append({"e": e, "m": m, "best_k": choice[0] if choice else "", "best_h": choice[1] if choice else "",
+                         "rank_cycle_gap_percent": round(100 * (cycles[choice] / cycles[order[0]] - 1), 2)
+                         if choice else ""})
+    with (out / "calibrated_best.csv").open("w", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=list(best[0]), lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(best)
+    report["rank_order"] = [f"{k},{h}" for k, h in order]
+    (out / "compute_fit.json").write_text(json.dumps(report, indent=2) + "\n")
+    return report, rows, table
 
 
-def amplitude_lut(e, m):
-    b = es.banks(e, m)
-    return max(e, max(m, 4)) * es.AMP_W * -(-b // 4)
+class Model:
+    """Checkpoint-Capacity / Lookahead-Shots 3/3 의 연산부 실측과 4/4 의 policy 실측을 합치는 사용량 모델.
+
+    연산부(K3H3) 사용량은 synthesis 한 칸이면 그 실측 총합을 그대로 쓰고, 아니면 세 부분을 더합니다.
+
+      linear     dataset 복제 + iteration 제어: iteration engines 에 비례(실측 직선)
+      crossbar   amplitude 읽기 · 쓰기 mux + iteration datapath: bank 구조가 같은 실측 칸의 값.
+                 bank 수 = max(iteration engines, square engines, 4) 이고, bank 가 iteration engines 와
+                 같을 때와 square engines 때문에 더 많을 때를 구분합니다. LUT 는 2 의 거듭제곱 여부에 따라
+                 크게 달라 engine 수로 보간하지 않습니다.
+      sampler    measurement + 나머지(Bus Interface, BBHT 제어 등): square engines 별 실측. 4 이하는 기존
+                 sampler, 5 이상은 grover_born_sampler_parallel 입니다.
+
+    Checkpoint-Capacity / Lookahead-Shots 를 바꾸면 iteration engines / square engines 4/4 에서 잰
+    policy + 나머지의 증가분과, amplitude memory BRAM 의 Checkpoint-Capacity 의존분(식)을 더합니다.
+    """
+
+    def __init__(self, base, grid, exclude=None):
+        self.base = {key: p for key, p in base.items() if key != exclude}
+        self.grid = grid
+        pts = list(self.base.values())
+        self.linear = {f: linear([p["e"] for p in pts], [p[f"dataset_{f}"] + p[f"control_{f}"] for p in pts])[0]
+                       for f in FIELDS}
+        self.policy33 = {f: float(np.mean([p[f"policy_{f}"] for p in pts])) for f in FIELDS}
+
+    # bank 구조: (iteration engines, bank 수, 새 sampler 여부)
+    @staticmethod
+    def shape(e, m):
+        return e, es.banks(e, m), m >= 5
+
+    def crossbar(self, e, m, f):
+        if f == "bram":
+            return float(es.amplitude_tiles(3, e, m))
+        if f == "dsp":
+            return 0.0
+        same = [p for (pe, pm), p in self.base.items() if self.shape(pe, pm) == self.shape(e, m)]
+        if same:
+            return float(np.mean([p[f"amplitude_{f}"] + p[f"datapath_{f}"] for p in same]))
+        b = es.banks(e, m)
+        # 같은 bank 수의 실측 중 가장 가까운 것: bank = iteration engines 인 칸을 먼저 보고(E < 4 는 bank 4 의
+        # 실측을 상한으로), 새 sampler 가 붙는 경우에는 같은 bank 의 새 sampler 칸이 있으면 그것을 씁니다.
+        cands = [p for (pe, pm), p in self.base.items() if es.banks(pe, pm) == b and (pm >= 5) == (m >= 5)]
+        cands = cands or [p for (pe, pm), p in self.base.items() if es.banks(pe, pm) == b]
+        if not cands:
+            raise KeyError(f"no measured point with {b} banks")
+        return float(max(p[f"amplitude_{f}"] + p[f"datapath_{f}"] for p in cands))
+
+    def sampler(self, m, f):
+        rows = {}
+        for (pe, pm), p in self.base.items():
+            rows.setdefault(pm, []).append(p[f"measurement_{f}"] + p[f"rest_{f}"])
+        table = {mm: float(np.mean(v)) for mm, v in rows.items()}
+        if f == "dsp":
+            return 64.0 * m
+        if m in table:
+            return table[m]
+        same = sorted(mm for mm in table if (mm >= 5) == (m >= 5))
+        lower = [mm for mm in same if mm < m]
+        upper = [mm for mm in same if mm > m]
+        if lower and upper:
+            a, b = lower[-1], upper[0]
+            return table[a] + (table[b] - table[a]) * (m - a) / (b - a)
+        # 4 이하 범위의 끝(square engines 1~2)은 가장 가까운 실측을 그대로 씁니다.
+        near = min(same or table, key=lambda mm: abs(mm - m))
+        if m >= 5 and len(same) >= 2:
+            a, b = same[-2], same[-1]
+            return table[b] + (table[b] - table[a]) * (m - b) / (b - a)
+        return table[near]
+
+    def engine(self, e, m):
+        """연산부 + K3H3 policy 의 wrapper 사용량(SoC 제외)과 출처."""
+        if (e, m) in self.base:
+            p = self.base[(e, m)]
+            return {f: p[f"total_{f}"] for f in FIELDS}, "measured"
+        out = {}
+        for f in FIELDS:
+            c = self.linear[f]
+            out[f] = c[0] + c[1] * e + self.crossbar(e, m, f) + self.sampler(m, f) + self.policy33[f]
+        return out, "estimated"
+
+    def total(self, e, m, k, h):
+        value, _ = self.engine(e, m)
+        p, p33 = self.grid[(k, h)], self.grid[(3, 3)]
+        out = {}
+        for f in FIELDS:
+            # iteration engines / square engines 4/4 에서 잰 wrapper 총합의 차이를 그대로 씁니다. policy 블록만의
+            # 차이를 쓰면 다른 블록이 synthesis 마다 1~2천 LUT 씩 오르내리는 몫이 빠지거나 겹쳐, 실측점도 재현되지
+            # 않았습니다(K5H6: 블록 합 차이 11,901 대 총합 차이 9,655). BRAM 은 amplitude memory 의
+            # Checkpoint-Capacity 몫을 4/4 의 식 값에서 대상 E/M 의 식 값으로 바꿔 끼웁니다.
+            delta = p[f"total_{f}"] - p33[f"total_{f}"]
+            if f == "bram":
+                delta += (es.amplitude_tiles(k, e, m) - es.amplitude_tiles(3, e, m)
+                          - es.amplitude_tiles(k, 4, 4) + es.amplitude_tiles(3, 4, 4))
+            out[f] = value[f] + delta
+        return out
+
+    def leave_one_out(self):
+        """실측한 연산부 칸을 하나씩 빼고 나머지로 그 칸을 추정했을 때의 오차."""
+        checks = []
+        for key, p in sorted(self.base.items()):
+            try:
+                est, _ = Model(self.base, self.grid, exclude=key).engine(*key)
+            except KeyError as error:
+                checks.append({"point": f"e{key[0]}m{key[1]}", "note": str(error)})
+                continue
+            checks.append({"point": f"e{key[0]}m{key[1]}",
+                           **{f: [p[f"total_{f}"], round(est[f], 1)] for f in FIELDS}})
+        return checks
 
 
-def estimate(model, policy, e, m, k, h):
-    """wrapper 하나의 사용량 추정(SoC 제외). policy 는 실측한 (k, h) 만 받습니다."""
-    blocks = model["blocks"]
-    est = {}
-    for f in FIELDS:
-        value = blocks["rest"][f] + policy[(k, h)][f]
-        for block in ("dataset", "datapath", "control"):
-            c = blocks[block][f]
-            value += c["intercept"] + c["per_iteration_engine"] * e
-        if m >= 5:
-            c = blocks["measurement"]["parallel"][f]
-            value += c["intercept"] + c["per_square_engine"] * m
-        else:
-            # 기존 sampler 는 square engines 4 실측을 squarer 수에 비례해 줄입니다(squarer 가 대부분).
-            value += blocks["measurement"]["legacy_m4"][f] * (m / 4 if f in ("lut", "ff", "dsp") else 1)
-        if f == "lut":
-            value += amplitude_lut(e, m)
-        elif f == "bram":
-            value += es.amplitude_tiles(k, e, m)
-        # amplitude 블록의 FF(읽기 bank 선택 register 등)는 수백 개라 넣지 않습니다.
-        est[f] = value
-    return est
+# ------------------------------------------------------------------ kh_range
+# Checkpoint-Capacity / Lookahead-Shots 의 policy 비용을 synthesis 전에 예상하는 식. iteration engines / square
+# engines 4/4 에서 잰 점들로 맞췄고, K7H9(BRAM 이 바닥나 memo table 이 LUTRAM 으로 밀려난 점)는 뺐습니다.
+# 실측점 하나씩 빼고 맞춘 예측 오차는 rms 약 900, 최대 약 1,700 LUT 입니다.
+POLICY_LUT_COEF = (2014.9, 1468.0, 287.0)
+
+# Vivado 가 후보 cache bank 를 BRAM 으로 쌓는 규칙: bank 깊이를 2 의 거듭제곱으로 올리고, 그 깊이에서 RAMB18
+# 하나가 담는 bit 수로 항목 폭을 나눕니다(2K 이하 깊이는 parity 를 써 36 / 18 / 9 bit). 실측 12점 중 10점이
+# 정확히 맞고 2점은 2 tile 많게(안전한 쪽으로) 나옵니다. 항목이 bank 당 64 이하이면 LUTRAM 으로 갑니다.
+RAMB18_BITS = {512: 36, 1024: 18, 2048: 9, 4096: 4, 8192: 2, 16384: 1, 32768: 0.5, 65536: 0.25,
+               131072: 0.125, 262144: 0.0625, 524288: 0.03125, 1048576: 0.015625, 2097152: 0.0078125}
+
+
+def policy_lut_delta(k, h):
+    a, b, c = POLICY_LUT_COEF
+    return a * (k - 3) + b * (h - 3) + c * (k - 3) * (h - 3)
+
+
+def cache_bram_rule(k, h, lanes=4):
+    entries, width = cache_bound(k, h)
+    depth = (entries + lanes - 1) // lanes + 1
+    if entries <= 64 * lanes:
+        return 0.0
+    d2 = max(512, 1 << (depth - 1).bit_length())
+    return lanes * ceil(width / RAMB18_BITS[d2]) / 2
+
+
+def kh_range(out, k_range=range(3, 11), h_range=range(3, 11)):
+    """iteration engines / square engines 마다 200T 에 들어가는 Checkpoint-Capacity x Lookahead-Shots 를 예상합니다.
+
+    resource 만 봅니다(cycle 은 보지 않음). 연산부는 Model.engine(K3H3 실측 또는 블록 추정), policy 는 위 두 식,
+    amplitude memory 의 Checkpoint-Capacity 의존분은 engine_sweep.amplitude_tiles 식입니다. DSP 는 square engines
+    만으로 정해지고, FF 는 이 범위에서 한도의 30% 를 넘지 않아 판정에 넣지 않습니다.
+    """
+    points = list(csv.DictReader((out / "points.csv").open()))
+    for p in points:
+        for key in p:
+            p[key] = (p[key] == "True") if key == "cache_report" else float(p[key]) if p[key] != "" else None
+    base = {(int(p["e"]), int(p["m"])): p for p in points if p["k"] == 3 and p["h"] == 3}
+    grid = {(int(p["k"]), int(p["h"])): p for p in points if p["e"] == 4 and p["m"] == 4}
+    exact = {(int(p["e"]), int(p["m"]), int(p["k"]), int(p["h"])): p for p in points}
+    model = Model(base, grid)
+    cap = {f: DEVICE[f] * LIMIT[f] for f in FIELDS}
+    rows, checks = [], []
+    for e in SUPPORTED_E:
+        for m in SUPPORTED_M:
+            engine, source = model.engine(e, m)
+            for k in k_range:
+                for h in h_range:
+                    predicted = {
+                        "lut": engine["lut"] + SOC["lut"] + policy_lut_delta(k, h),
+                        "bram": (engine["bram"] + SOC["bram"] + cache_bram_rule(k, h)
+                                 + es.amplitude_tiles(k, e, m) - es.amplitude_tiles(3, e, m)),
+                        "dsp": engine["dsp"] + SOC["dsp"]}
+                    # 그 조합을 synthesis 했으면 예상 대신 실측(+SoC)을 씁니다.
+                    point = exact.get((e, m, k, h))
+                    used = ({f: point[f"total_{f}"] + SOC[f] for f in ("lut", "bram", "dsp")} if point else predicted)
+                    over = [f for f in ("lut", "bram", "dsp") if used[f] > cap[f]]
+                    rows.append({"e": e, "m": m, "k": k, "h": h,
+                                 **{f"{f}_percent": round(100 * used[f] / DEVICE[f], 1) for f in ("lut", "bram", "dsp")},
+                                 "feasible": not over, "over": "+".join(over), "engine_source": source,
+                                 "source": "synthesized" if point else "predicted",
+                                 "lut_predicted_percent": round(100 * predicted["lut"] / DEVICE["lut"], 1),
+                                 "bram_predicted_percent": round(100 * predicted["bram"] / DEVICE["bram"], 1)})
+                    if point and not (k == 3 and h == 3):
+                        # 예상 식이 실측을 얼마나 맞히는지. E4M4 의 점들은 policy 식을 맞춘 점이라 따로 표시합니다.
+                        pred_over = [f for f in ("lut", "bram", "dsp") if predicted[f] > cap[f]]
+                        checks.append({"e": e, "m": m, "k": k, "h": h,
+                                       "kind": "fit point" if (e, m) == (4, 4) else "combined check",
+                                       "lut_measured": int(used["lut"]), "lut_predicted": int(round(predicted["lut"])),
+                                       "lut_error": int(round(predicted["lut"] - used["lut"])),
+                                       "bram_measured": used["bram"], "bram_predicted": predicted["bram"],
+                                       "bram_error": predicted["bram"] - used["bram"],
+                                       "feasible_measured": not over, "feasible_predicted": not pred_over})
+    with (out / "kh_range.csv").open("w", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=list(rows[0]), lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
+    if checks:
+        with (out / "prediction_check.csv").open("w", newline="") as stream:
+            writer = csv.DictWriter(stream, fieldnames=list(checks[0]), lineterminator="\n")
+            writer.writeheader()
+            writer.writerows(sorted(checks, key=lambda c: (c["kind"], -c["e"], c["m"], c["k"], c["h"])))
+    return rows
+
+
+# kh_heatmap 의 가로 범위(사용자 지정). 3/3 에서도 넘치는 조합도 넣고 빗금으로 표시합니다.
+HEATMAP_E = range(4, 11)
+HEATMAP_M = range(1, 9)
+
+
+def kh_heatmap(out):
+    """iteration engines / square engines(가로) x Checkpoint-Capacity / Lookahead-Shots(세로) 의 200T 가능 범위.
+
+    가로는 HEATMAP_E x HEATMAP_M 의 모든 조합을 iteration engines 별로 묶어 square engines 순으로 둡니다. 세로는 Checkpoint-Capacity 별로 묶어 Lookahead-Shots
+    순입니다. 칸 색은 가장 빠듯한 자원(LUT 75%, BRAM 90%, DSP 90% 한도)의 한도 대비 사용률이고, 여유가 클수록
+    빨강입니다. cycle 은 보지 않습니다.
+    """
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.colors import Normalize
+    rows = list(csv.DictReader((out / "kh_range.csv").open()))
+    cell = {(int(r["e"]), int(r["m"]), int(r["k"]), int(r["h"])): r for r in rows}
+    ks = sorted({int(r["k"]) for r in rows})
+    hs = sorted({int(r["h"]) for r in rows})
+    kh = [(k, h) for k in ks for h in hs]
+    em = [(e, m) for e in HEATMAP_E for m in HEATMAP_M]
+    cap_percent = {f: 100 * LIMIT[f] for f in ("lut", "bram", "dsp")}
+    tight = np.full((len(kh), len(em)), np.nan)
+    fits = np.zeros((len(kh), len(em)), bool)
+    for x, (e, m) in enumerate(em):
+        for y, (k, h) in enumerate(kh):
+            r = cell[(e, m, k, h)]
+            tight[y, x] = max(float(r[f"{f}_percent"]) / cap_percent[f] for f in cap_percent) * 100
+            fits[y, x] = r["feasible"] == "True"
+    fig, ax = plt.subplots(figsize=(24, 18))
+    cmap = plt.get_cmap("rainbow_r").copy()
+    norm = Normalize(vmin=50, vmax=100, clip=True)
+    image = ax.imshow(np.ma.masked_where(~fits, tight), origin="lower", cmap=cmap, norm=norm, aspect="auto")
+    hatches = {"lut": "///", "bram": "\\\\\\", "dsp": "...", "lut+bram": "xxx"}
+    for x, (e, m) in enumerate(em):
+        for y, (k, h) in enumerate(kh):
+            r = cell[(e, m, k, h)]
+            if not fits[y, x]:
+                ax.add_patch(plt.Rectangle((x - .5, y - .5), 1, 1, facecolor="0.88", edgecolor="0.45",
+                                           hatch=hatches.get(r["over"], "xxx"), lw=0))
+            if r["source"] == "synthesized":
+                ax.plot(x, y, "o", ms=5, mfc="black", mec="white", mew=0.8)
+    import engine_sweep
+    engine_sweep.outline_inset(ax, fits, 0.0, color="black", lw=2.2)
+    for y in range(len(hs), len(kh), len(hs)):
+        ax.axhline(y - .5, color="white", lw=1.6)
+    groups = [x for x in range(1, len(em)) if em[x][0] != em[x - 1][0]]
+    for x in groups:
+        ax.axvline(x - .5, color="white", lw=1.6)
+    ax.set_xticks(range(len(em)), [f"{e}/{m}" + ("*" if cell[(e, m, ks[0], hs[0])]["engine_source"] == "measured" else "")
+                                   for e, m in em], rotation=90, fontsize=8)
+    ax.set_yticks(range(len(kh)), [f"{k}/{h}" for k, h in kh], fontsize=7)
+    ax.set_xlabel("iteration engines / square engines   (* = engine pair synthesized at capacity 3 / lookahead 3)")
+    ax.set_ylabel("checkpoint capacity / lookahead shots")
+    ax.set_title("200T FIT BY RESOURCES ONLY (no cycles): checkpoint capacity x lookahead shots for each engine pair\n"
+                 "color: tightest of LUT (limit 75%), BRAM (90%), DSP (90%) as a share of its limit; red = more "
+                 "headroom; SoC included, timing excluded\n"
+                 "hatched grey: over the limit (/// LUT, \\\\ BRAM, xxx both);  black line: boundary of the fitting "
+                 "region;  dot: this exact combination synthesized\n"
+                 "other cells predicted: engine blocks from synthesized points + policy cost fitted on synthesized "
+                 "capacity / lookahead points", fontsize=9)
+    bar = fig.colorbar(image, ax=ax, shrink=0.5, label="tightest resource, % of its limit")
+    fig.tight_layout()
+    fig.savefig(out / "feasibility_heatmap.png", dpi=150)
+    fig.savefig(out / "feasibility_heatmap.svg")
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("stage", choices=["collect", "fit"])
+    parser.add_argument("stage", choices=["collect", "fit", "kh_range", "kh_heatmap"])
     parser.add_argument("--synth", type=Path, help="collect: engine_sweep.py synth --out directory")
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
@@ -298,9 +519,16 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     if args.stage == "collect":
         print(len(collect(args.synth.resolve(), out)), "synthesis points")
+    elif args.stage == "kh_range":
+        rows = kh_range(out)
+        print(len(rows), "rows ->", out / "kh_range.csv")
+    elif args.stage == "kh_heatmap":
+        kh_heatmap(out)
+        print("->", out / "feasibility_heatmap.png")
     else:
-        model, rows, table = fit(out)
-        print(json.dumps(model["prediction_check"], indent=1))
+        report, rows, table = fit(out)
+        for check in report["leave_one_out"]:
+            print(check["point"], check.get("lut", check.get("note")))
 
 
 if __name__ == "__main__":

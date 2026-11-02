@@ -1,0 +1,3 @@
+RESULT row=0 cycles=42113 actions=167969 hits=0 misses=10
+SUMMARY parameterized capacity=10 lookahead=10 cases=1 errors=0 total_cycles=42113
+/workspace/hardware_bram/testbench/tb_policy_parameterized.sv:54: $finish called at 621190000 (1ps)

@@ -1,0 +1,7 @@
+category,cycles,denominator_cycles,percent,nominal_us_at_100mhz
+input_sort_planner_launch,29612,51910,57.044885,296.12
+demand_check,7403,51910,14.261221,74.03
+cold_shadow_wait,4610,51910,8.880755,46.10
+cold_policy_req,500,51910,0.963206,5.00
+cold_policy_wait,7524,51910,14.494317,75.24
+late_spec_wait,2261,51910,4.355615,22.61

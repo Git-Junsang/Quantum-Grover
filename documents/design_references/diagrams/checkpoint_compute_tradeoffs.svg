@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="840" viewBox="0 0 1120 840" role="img" aria-labelledby="title desc">
+  <title id="title">Checkpoint policy and compute parallelism</title>
+  <desc id="desc">Checkpoint capacity and lookahead influence executed iterations and policy computation. Iteration PEs and square engines influence the time per operation. Policy work overlaps execution; only exposed waiting contributes policy stall. All components share resource and timing constraints.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#526273"/>
+    </marker>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172b40; }
+      .title { font-size: 25px; font-weight: 700; }
+      .label { font-size: 18px; font-weight: 700; }
+      .body { font-size: 16px; }
+      .small { font-size: 14px; fill: #46586c; }
+      .box { stroke-width: 1.5; rx: 10px; }
+      .policy { fill: #e9f2ff; stroke: #3574b7; }
+      .compute { fill: #eaf6ef; stroke: #30865d; }
+      .result { fill: #fff5df; stroke: #bd872b; }
+      .edge { fill: none; stroke: #526273; stroke-width: 2; marker-end: url(#arrow); }
+      .dashed { stroke-dasharray: 6 5; }
+    </style>
+  </defs>
+  <rect width="1120" height="840" fill="#ffffff"/>
+  <text x="560" y="40" text-anchor="middle" class="title">Checkpoint reuse and compute throughput</text>
+  <text x="560" y="69" text-anchor="middle" class="body">Reduce work, accelerate the remaining work, and prepare plans in time</text>
+
+  <rect x="35" y="105" width="310" height="95" class="box policy"/>
+  <text x="190" y="137" text-anchor="middle" class="label">Checkpoint-Capacity</text>
+  <text x="190" y="166" text-anchor="middle" class="body">How many amplitude states to retain</text>
+  <text x="190" y="187" text-anchor="middle" class="small">Storage and reuse opportunities</text>
+
+  <rect x="405" y="105" width="310" height="95" class="box policy"/>
+  <text x="560" y="137" text-anchor="middle" class="label">Lookahead-Shots</text>
+  <text x="560" y="166" text-anchor="middle" class="body">Future requests beyond this shot</text>
+  <text x="560" y="187" text-anchor="middle" class="small">Conditional on failed shots</text>
+
+  <rect x="775" y="105" width="310" height="95" class="box compute"/>
+  <text x="930" y="137" text-anchor="middle" class="label">Square engines</text>
+  <text x="930" y="166" text-anchor="middle" class="body">Parallel rows in measurement Build</text>
+  <text x="930" y="187" text-anchor="middle" class="small">Shot count remains the same</text>
+
+  <path d="M 190 200 V 224 H 290 V 250" class="edge"/>
+  <path d="M 560 200 V 224 H 420 V 250" class="edge"/>
+
+  <rect x="130" y="250" width="525" height="106" class="box policy"/>
+  <text x="392" y="282" text-anchor="middle" class="label">Policy solver</text>
+  <text x="392" y="310" text-anchor="middle" class="body">Choose checkpoint sets within a finite window</text>
+  <text x="392" y="337" text-anchor="middle" class="small">Objective: executed iterations within restricted-B actions</text>
+
+  <rect x="775" y="250" width="310" height="106" class="box compute"/>
+  <text x="930" y="284" text-anchor="middle" class="label">Measurement cycles</text>
+  <text x="930" y="313" text-anchor="middle" class="body">Build + Select + Reread</text>
+  <text x="930" y="338" text-anchor="middle" class="small">Square engines mainly shorten Build</text>
+  <path d="M 930 200 V 250" class="edge"/>
+
+  <rect x="35" y="414" width="310" height="105" class="box policy"/>
+  <text x="190" y="447" text-anchor="middle" class="label">Executed iterations</text>
+  <text x="190" y="476" text-anchor="middle" class="body">The work left after checkpoint reuse</text>
+  <text x="190" y="500" text-anchor="middle" class="small">Smaller work can change the best balance</text>
+  <path d="M 275 356 V 386 H 190 V 414" class="edge"/>
+
+  <rect x="405" y="414" width="310" height="105" class="box policy"/>
+  <text x="560" y="440" text-anchor="middle" class="label">Policy Scheduler</text>
+  <text x="560" y="463" text-anchor="middle" class="label">Plan Queue</text>
+  <text x="560" y="486" text-anchor="middle" class="body">Prepare and validate the next plan</text>
+  <text x="560" y="509" text-anchor="middle" class="small">Overlap with datapath execution</text>
+  <path d="M 510 356 V 386 H 560 V 414" class="edge"/>
+
+  <rect x="35" y="575" width="310" height="105" class="box compute"/>
+  <text x="190" y="608" text-anchor="middle" class="label">Iteration PEs</text>
+  <text x="190" y="637" text-anchor="middle" class="body">Parallel rows within one iteration</text>
+  <text x="190" y="661" text-anchor="middle" class="small">Shorten time per iteration</text>
+
+  <rect x="405" y="575" width="310" height="105" class="box result"/>
+  <text x="560" y="608" text-anchor="middle" class="label">Exposed policy stall</text>
+  <text x="560" y="637" text-anchor="middle" class="body">A required plan is not ready yet</text>
+  <text x="560" y="661" text-anchor="middle" class="small">Faster compute leaves less overlap time</text>
+  <path d="M 560 519 V 575" class="edge"/>
+
+  <rect x="775" y="575" width="310" height="105" class="box result"/>
+  <text x="930" y="608" text-anchor="middle" class="label">Elapsed accelerator cycles</text>
+  <text x="930" y="637" text-anchor="middle" class="body">Iteration + measurement + control</text>
+  <text x="930" y="661" text-anchor="middle" class="body">+ exposed policy stall</text>
+  <path d="M 930 356 V 575" class="edge"/>
+  <path d="M 345 466 H 370 V 550 H 800 V 575" class="edge"/>
+  <path d="M 345 628 H 385 V 705 H 930 V 680" class="edge"/>
+  <path d="M 715 628 H 775" class="edge"/>
+  <path d="M 190 575 V 562 H 525 V 519" class="edge dashed"/>
+  <path d="M 930 440 H 735 V 465 H 715" class="edge dashed"/>
+
+  <path d="M 40 724 H 78" fill="none" stroke="#526273" stroke-width="2" stroke-dasharray="6 5"/>
+  <text x="88" y="729" class="small">Dashed arrows: execution time available for speculative planning</text>
+
+  <rect x="35" y="744" width="1050" height="65" rx="10" fill="#f3f5f8" stroke="#b3becb"/>
+  <text x="560" y="771" text-anchor="middle" class="label">Choose the fastest feasible complete configuration</text>
+  <text x="560" y="795" text-anchor="middle" class="body">Shared memory bandwidth, BRAM / LUT / DSP budgets, and achieved clock all matter</text>
+</svg>

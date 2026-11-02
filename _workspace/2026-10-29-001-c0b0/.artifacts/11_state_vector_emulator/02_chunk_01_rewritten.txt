@@ -1,0 +1,13 @@
+# 11장. state vector emulator — memory map과 resource 예산
+
+> [← 10장 용어 정리와 cheat sheet](10_glossary_and_cheat_sheet.md) · [index](index.md) · [12장 amplitude를 숫자로 — fixed-point와 Q1.22 →](12_fixed_point_and_precision.md)
+> **이 장을 읽기 위한 준비**: [1장 amplitude·superposition](01_qubits_and_states.md), [5장 tensor product·$2^{\text{number of qubits}}$ dimension](05_multiple_qubits_and_entanglement.md), [9장 Grover](09_grover_algorithm.md). FPGA 기초 용어(LUT·FF·BRAM·DSP)는 [15.7절 hardware 용어집](15_paper_map_and_design_decisions.md#157-hardware-용어집)에 모아 두었습니다.
+
+---
+
+10장까지 우리는 **quantum algorithm이 수학적으로 무엇을 하는지**를 배웠습니다. 이제 방향을 바꿉니다. 여기서부터(Part 5)는 그 algorithm을 **classical hardware(FPGA)로 흉내 내는 기계** — 이 project의 실제 목표물 — 를 만드는 과정입니다. 새로 배우는 논문은 여섯 편이고, 이 장은 그 여섯 편이 공유하는 **기본적인 질문 하나**에서 출발합니다: *quantum computer가 없는데 어떻게 quantum algorithm을 "돌린다"는 걸까요?*
+
+답은 단순합니다. state는 결국 **숫자 array**(amplitude vector)이고, gate는 그 array에 가하는 **산술 연산**입니다. 진짜 quantum computer가 물리적으로 하는 일을, classical computer는 그 숫자 array를 memory에 펼쳐 놓고 계산으로 재현합니다. 이것이 **state vector emulation**이고, 이 장은 그 원리와 **비용**을 다룹니다. 비용을 알아야 이 방식으로 다룰 수 있는 qubit 수가 왜 제한되는지 알 수 있고, board에서 검증된 우리 IP가 실제로 몇 개의 BRAM과 몇 cycle을 쓰는지도 이 장에서 숫자로 확인합니다.
+
+---
+

@@ -1,0 +1,47 @@
+[P0 문자율] 1.1% [전문] — OK (경고 30% / 중단 50%)
+[P1 목표달성] N/A — 구조 진단 (어휘 S1 앵커 없음)
+[P2 전멸] C-8 대구 9 → 8 — OK
+[P3 golden] PASS (수치 주입·각주·인용·register 이상 없음)
+[P4 터치율] 7.5% (24/319 문장) — 보고 전용
+[P5 서법] 소실 0문장 (참고 총수: 당위 10→12 / 완곡 3→5) — OK
+gate: OK — 수렴
+{
+  "genre": "report",
+  "change_rate": {
+    "rate": 0.0109,
+    "scope": "전문",
+    "verdict": "OK"
+  },
+  "s1_targets": [],
+  "antithesis": {
+    "before": 9,
+    "after": 8,
+    "verdict": "OK"
+  },
+  "golden": [],
+  "sentence_touch": {
+    "rate": 0.0752,
+    "touched": 24,
+    "total": 319
+  },
+  "numbers_dropped": [],
+  "modality": {
+    "lost_pairs": [],
+    "uncertain_pairs": [],
+    "counts": {
+      "deontic": {
+        "before": 10,
+        "after": 12
+      },
+      "hedge": {
+        "before": 3,
+        "after": 5
+      }
+    },
+    "verdict": "OK"
+  },
+  "gate": {
+    "verdict": "OK — 수렴",
+    "exit_code": 0
+  }
+}

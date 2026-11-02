@@ -1,0 +1,79 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 5/11이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 18_reference_model_verification.md 진단
+
+## 장르·레지스터와 보존 조건
+
+학부생용 기술 해설서(report). 본문은 친근한 존댓말(합니다/입니다, 일부 해요체 설명), 수식 풀이·표·요약은 압축형입니다. 문장 격식을 올리지 않습니다. 영어 용어와 영어 토큰은 번역·삭제·교체·대소문자 변경하지 않습니다. glossary 기준은 `documents/design_references/22_appendix_glossary_and_retired_specs.md` §22.2입니다. 수치·수식·code·제목·link·직접 인용·기존 콜아웃/이모지·문단 구조는 보존합니다. 실제 주장, 부정/긍정, 인과, 조건, 확신도도 보존합니다. 보고서용 서식 축약·영어 순화 규칙은 적용하지 않습니다. 본문에 사실을 추가하거나 현행 설계와 대조해 기술 내용을 고치지 않습니다.
+
+## 정량 근거
+
+입력의 정량 블록을 확인했습니다. risk_band는 low이고, 장문 파일의 heavy 권고는 문서 길이에서 나옵니다. 영어 기술 term 반복은 장르상 필수이므로 lexical_diversity의 낮은 값만으로 수정하지 않습니다. 아래 수치는 탐지 보조이며 개별 문맥과 함께 판단합니다.
+
+## 겨냥 순서의 지배 패턴
+
+1. **D-14·D-5 — 시험·설계를 사람처럼 서술하는 표현**: "규칙이 여기서 처음 일합니다", "종료 규칙이 일해야", "FSM이 매달리지 않고", "이 발판 위", "circuit은 … 조용히 틀립니다", "끝까지 정직하게 계산" 등이 직접적인 동작 설명을 흐립니다. 조건과 보장 수준을 보존하고 구체적인 서술로 정리합니다.
+
+2. **A-18·A-7 — 장문·have 직역**: 정량 relative_clause_nesting=7, have_make_literal_count=1. 도입의 두 근거, 18.2절 ladder, 18.4절 예제, 18.7절 checkpoint 경로, 18.8절 비교 조건의 문장을 검토합니다. "오류를 갖고" 등 소유 직역과 여러 층의 수식을 겹친 문장만 국소 수정합니다.
+
+3. **D-8·C-8 — 핵심 강조·부정 대구의 반복**: "이 목록에서 얻을 교훈은 목록 그 자체가 아니라 태도", "주는 것은 속도가 아니라", "묻는 것은", "근사적으로 같은 정도가 아니라" 등이 반복됩니다. equivalence와 distribution, algorithm과 circuit, bit-exact와 오차 허용 구분처럼 기술적으로 필요한 대조는 반드시 보존합니다.
+
+4. **D-2·F-1 — 과한 중요성·평가 표현**: "공짜가 아닙니다", "영원히 일치하지 않고", "이보다 좋은 출발점은 없습니다", "실행된 적 없는 code가 옳을 probability는 낮습니다" 등 단정·평가의 수사만 줄입니다. 원문 사실이나 기준을 새로 해석하지 않습니다.
+
+5. **J-2·J-3·C-11 — 대시·따옴표·쉼표로 끊긴 설명**: 연속된 대시 부연과 수사형 따옴표를 확인합니다. 표·목록의 교육적 구조와 기존 콜아웃·강조를 보존하고 산문에서 불필요한 쉼표·감싸는 표현만 정리합니다.
+
+## 비적용·잔존 처리
+
+교육적 질문·표·연습문제·단계 목록·기존 비유는 그 자체로 결함이 아닙니다. 자연스러운 문장은 그대로 두고 확인된 구간만 보수적으로 다듬습니다. 수치/기술 주장에 의문이 있어도 이번 윤문에서는 보존합니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 3138
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.44  (n/a vs report 인간 baseline)
+- comma_usage_rate: 1.91  (z=+1.25 vs report 인간 baseline)  · S2 시그널
+- ending_comma_rate: 0.53  (n/a vs report 인간 baseline)
+- comma_segment_length: 6.01  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.004  (z=-1.87 vs report 인간 baseline)
+- lexical_diversity: 0.73  (z=+1.67 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.002
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 2
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 18.4 첫 test vector는 9.4절의 손계산
+
+verification을 어디서부터 시작할지는 이미 정해져 있습니다. **9.4절에서 손으로 푼 4-state 예제**입니다.
+
+uniform superposition $(\frac12, \frac12, \frac12, \frac12)$ 에서 출발해 oracle이 세 번째 칸의 sign을 뒤집으면 $(\frac12, \frac12, -\frac12, \frac12)$ 이 되고, mean $\bar a = \frac14$ 를 중심으로 반사하면 $(0, 0, 1, 0)$ 이 됩니다. iteration 한 번으로 probability 100%입니다. 이 예제를 Q1.22 규칙으로 따라가 보면 흥미로운 일이 생깁니다. $\texttt{INIT\_AMP} = 2^{22}/2 = 2{,}097{,}152$ 는 $0.5$ 의 정확한 표현이고, oracle 뒤 sum은 $2^{22}$, $2\bar a$ 는 $\text{number of qubits} - 1 = 1$ bit right shift라 $2^{21}$, 그리고 solution 칸은 $2^{21} - (-2^{21}) = 2^{22}$ — **정확히 1.0입니다.** 그런데 12.2절에서 봤듯 Q1.22는 $+1.0$ 을 담지 못합니다. 이 값은 symmetric saturation으로 $4{,}194{,}303$ 에 붙고, `amp_overflow` 가 섭니다. 가장 작은 손계산이 곧바로 **saturation 경로를 밟는 test**가 되는 셈입니다. 한 번 더 돌리면 sum이 $-4{,}194{,}303$ 이라 $2\bar a$ 가 $-2{,}097{,}151.5$ 로 **정확히 절반**에 걸립니다. 12.4절의 round-half-to-even 규칙이 여기서 처음 일합니다.
+
+하나를 더 붙입니다. 8 states · solution $\{1,3,5\}$ · 3 solutions 예제입니다($\theta = 37.761°$, 최적 iteration 1번). Q1.22에서 $\texttt{INIT\_AMP} = \mathrm{round}(2^{22}/\sqrt8) = 1{,}482{,}910$ 이고, iteration 한 번이면 세 solution 칸이 **정확히 2,224,365**, 다섯 non-solution 칸이 **정확히 $-741{,}455$** 가 됩니다. real number로 환산하면 $0.530330$ 과 $-0.176777$ 이니 이론값 $0.53033$ / $-0.17678$ 과 맞습니다. 이 예제가 값진 진짜 이유는 **두 번째 iteration**에 있습니다. 그 시점의 sum이 $-10{,}380{,}370$ 이라 $2\bar a = -10{,}380{,}370 / 4 = -2{,}595{,}092.5$ 로 **정확히 절반**에 걸립니다. round-half-to-even은 짝수 쪽인 $-2{,}595{,}092$ 를 고르고, arithmetic right shift를 그대로 쓰는 truncation은 $-2{,}595{,}093$ 을 고릅니다. 가장 흔한 순진한 implementation(truncation)과 우리 규칙이 갈리는 자리가 두 번째 iteration에서 자연히 나오는 것입니다. 18.3절 표의 첫 row를 검사하는 최소 test vector가 이렇게 손에 들어옵니다.
+
+다만 이 두 예제는 **RTL에 그대로 걸 수 없습니다.** RTL은 14 qubits로 합성되어 state space가 늘 16,384 states이고, reference model의 hardware profile도 14 qubits(와 폐기된 16 qubits 확장)만 받습니다. 그래서 4-state · 8-state 예제는 몇 줄짜리 별도 script로 규칙을 확인하는 데 쓰고, RTL의 첫 vector는 **실제 크기에서 손으로 확인되는 경우**를 고릅니다.
+
+그런 경우가 있습니다. 14 qubits · 1 solution · 1 iteration입니다. 초기 amplitude가 모두 $32{,}768$ 이고 solution 한 칸만 뒤집히므로 sum은 $16{,}382 \times 32{,}768 = 536{,}805{,}376$, 이것을 13 bits 밀면 $2\bar a = 65{,}528$ 로 **나누어떨어집니다.** 그러면 solution 칸은 $65{,}528 + 32{,}768 = 98{,}296$, 나머지는 $65{,}528 - 32{,}768 = 32{,}760$ 입니다. 이론값과 대조하면 $\sin 3\theta = 3/128 - 4/128^3$ 이라 $2^{22}$ 을 곱하면 $98{,}304 - 8 = 98{,}296$ — **rounding 없이 정확히 같습니다.** requested-j test vector의 방향성 case `dir_000001_eq_m1_j1` 이 바로 이것이고, 기대 amplitude file에 32,760이 16,383칸, 98,296이 한 칸 들어 있으며 iteration 추적에도 sum 536,805,376과 $2\bar a$ 65,528이 적혀 있습니다. waveform viewer에서 cycle을 짚어 가며 대조하기에 이보다 좋은 출발점은 없습니다. 같은 묶음이 0 · 4 · 8 · 16 · 64 iterations와 최적점 100 iterations, 범위 끝 127 iterations로 한 걸음씩 넓혀 갑니다.
+
+state가 적은 경우를 보고 싶을 때 RTL에서 할 수 있는 것은 **`DATA_COUNT` 를 작게** 두는 것입니다. state space는 16,384 states 그대로지만 그 뒤 칸은 전부 non-solution이 되므로, 한 칸짜리 data(`dir_000021_eq_data_count1_m1_j1`)나 row 경계를 걸치는 개수(31·32·33)로 padding 문과 lane 경계를 찔러 볼 수 있습니다. 이 발판 위에서라면 predicate 판정을 아예 빼고 solution index를 constant로 못 박은 최소 oracle을 잠깐 써도 좋습니다([13.3절](13_oracle_diffusion_measurement_datapath.md#133-oracle--predicate-4종이-subtractor-하나를-공유한다)) — 다만 그것은 verification용 발판이지 설계가 아닙니다.
+
+---
+[원문 끝]

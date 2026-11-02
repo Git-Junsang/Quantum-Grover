@@ -1,0 +1,25 @@
+1. sampling range를 1로 두고 시작한다.
+2. shot마다 number of iterations를 $[0,\ \text{sampling range})$ 에서 **무작위로** 뽑는다.
+3. 뽑은 횟수만큼 iteration을 돌고 측정한 뒤, 나온 후보로 solution check를 한다.
+4. 실패하면 $\text{sampling range} \leftarrow \min(\text{growth factor}\cdot\text{sampling range},\ \sqrt{\text{number of states}})$ 로 sampling range를 넓히고 2로 돌아간다. growth factor는 6/5다.
+
+학부생이 가장 먼저 걸리는 지점은 2번입니다 — **왜 number of iterations를 무작위로 뽑는가?** 그냥 sampling range − 1 처럼 가장 큰 값을 쓰거나, 매번 1씩 늘리면 안 되나요?
+
+success probability의 모양을 보면 이유를 알 수 있습니다. iteration을 돈 뒤 solution이 나올 probability는
+
+$$\text{success probability} = \sin^2\!\big((2\cdot\text{number of iterations}+1)\,\theta\big), \qquad \sin\theta = \sqrt{\text{number of solutions}/\text{number of states}}$$
+
+로, number of iterations에 대해 **진동**합니다. 14 qubits · 1 solution이면 $\theta = 0.4476°$ 이고 optimal number of iterations는 100인데, number of iterations를 바꿔 가며 재 보면 이렇습니다:
+
+| number of iterations | 0 | 1 | 10 | 25 | 50 | 75 | 100 | 125 | 127 | 150 | 175 | 200 |
+|:--|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|
+| success probability | 0.0% | 0.1% | 2.7% | 15.1% | 50.4% | 85.5% | 100.0% | 85.5% | 83.3% | 50.5% | 15.1% | 0.0% |
+
+100 iterations 근처는 100%지만 200 iterations는 **0%** 입니다. 최적점을 두 배쯤 지나치면 probability가 거의 0인 골짜기로 떨어진다는 뜻이죠. 만약 number of iterations를 고정한다면, 하필 그 값이 골짜기에 놓였을 때 그 shot은 몇 번을 반복해도 실패합니다. sampling range 안에서 무작위로 뽑으면 한 shot의 success probability가 골짜기 하나에 걸리지 않고 그 interval의 **mean**이 되고, BBHT의 핵심 lemma는 sampling range가 충분히 커진 뒤 이 mean이 $1/4$ 아래로 내려가지 않음을 보장합니다. number of iterations를 무작위로 뽑는 것은 편의가 아니라 algorithm의 정당성을 보장하는 요소입니다.
+
+4번의 growth factor 6/5도 임의의 숫자가 아닙니다. growth factor가 1보다 크고 $4/3$ 보다 작으면 총 비용의 상한이 보장된다는 것이 BBHT의 결과이고, $6/5$ 는 그 interval 안의 관습적 선택입니다. sampling range를 너무 천천히 넓히면 shot을 더 많이 실행해야 하고 너무 빨리 넓히면 최적점을 건너뛴 큰 number of iterations만 뽑히기 때문에 양쪽 다 손해입니다. 상한 $\sqrt{\text{number of states}}$ 는 solution이 하나일 때 optimal number of iterations가 대략 $\frac{\pi}{4}\sqrt{\text{number of states}}$ 라는 데서 옵니다 — 그보다 넓은 sampling range는 골짜기만 더 많이 담을 뿐입니다. 우리 14 qubits에서는 $\sqrt{\text{number of states}} = 128$ 이 **정확히** integer라, number of iterations는 7-bit $[0, 128)$ 안에서만 뽑힙니다. 위 표의 200 iterations 골짜기는 hardware가 아예 요청하지 못하는 자리이고, sampling range의 끝인 127 iterations에서도 success probability가 83%를 넘습니다. 이렇게 상한이 overshoot를 막습니다.
+
+hardware에서 1.2×를 매번 곱하지는 않습니다. sampling range의 수열을 미리 계산해 **28항 ROM**에 저장해 둡니다 — $\lceil 1.2^k \rceil$ 을 128에서 자른 값으로, $1, 2, 2, 2, 3, 3, 3, 4, 5, 6, 7, 8, 9, 11, 13, 16, 19, 23, 27, 32, 39, 47, 56, 67, 80, 96, 115, 128$ 이고 그 뒤로는 계속 128입니다. number of iterations는 이 경계 안에서 **정확히 균등하게** 뽑습니다. 32-bit Iteration-Count LFSR의 하위 bit를 경계 이상의 가장 작은 2의 거듭제곱 폭으로 잘라 후보로 쓰고, 후보가 경계 이상이면 버리고 다시 뽑는 rejection sampling입니다. 후보를 하나 뽑을 때마다 LFSR을 7 steps씩 전진시켜, 이어 뽑는 후보들이 같은 bit 창을 겹쳐 쓰지 않게 합니다.
+
+---
+

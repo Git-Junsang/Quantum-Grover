@@ -1,0 +1,80 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 4/12이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 윤문 진단
+
+## 장르·레지스터
+- 학부생용 quantum algorithm·FPGA 해설서(report), 친근한 합쇼체 중심이며 독자에게 말을 거는 해요체가 일부 섞인 기존 학습서 말투입니다. 격식을 올리거나 설명을 학술 논문체로 바꾸지 않습니다.
+- 제목·절 번호·목록·표·수식·code·link·기존 콜아웃 및 이모지 형식은 보존합니다. 한국어 서술만 국소적으로 다듬습니다.
+- 영어 용어·영어 토큰은 번역, 교체, 삭제, 추가하지 않습니다. SSOT는 documents/design_references/22_appendix_glossary_and_retired_specs.md §22.2와 기존 glossary입니다.
+- 사실·수치·조건·부정·인과·추측/당위·인용을 보존합니다. 원문의 기술 주장을 새 해설이나 사실 교정으로 확장하지 않습니다.
+
+## 정량 앵커
+- 26,357자, risk_band low, route_hint heavy(길이 기준). A-7 have_make_literal_count=1, A-19 double_particle_count=1, A-18 relative_clause_nesting=7. conclusion_pivot_count=2(그러므로), lexical_diversity=0.52(z=-2.54). 전문용어 반복을 줄이기 위해 영어를 바꾸지 않습니다. ending_comma_rate=0.47.
+## 지배 패턴과 겨냥 순서
+1. D-14·D-5: “여러 번 던져야”, “datapath가 통째로 무너집니다”, “남는 장사가 아닙니다”, “array를 훔쳐보는 반칙”, “Grover처럼 생긴 무언가”, “승부가 나기 시작”, “하드웨어가 쥡니다”, “state를 떨궈 두는”, “반드시 새는 곳” 등 일상 비유·의인화가 알고리즘·설계 설명을 덮습니다. 영어 표현은 두고 한국어 설명을 구체적으로 정돈하는 것이 우선입니다.
+2. D-8·I-2: “정직하게 짚고 갈 것이 하나”, “답은 … 모양에”, “이제 이 장의 본론”, “이 절이 이 장에서 가장 중요” 등 설명의 중요도를 선언하는 문장이 반복됩니다. 실제 주장과 조건을 유지하면서 군더더기를 덜어낼 후보입니다.
+3. A-18·C-11: 16.1의 QPE 도입 비용, 16.2의 BBHT 보장, 16.5의 policy 선택, 16.6의 재현성 논증에 조건과 후속 결과가 긴 문장으로 연결됩니다. causal order와 독립성·bit-exact 조건을 보존하며 한국어 연결을 다듬습니다.
+4. C-8·J-2: “속도가 아니라 충실도”, “저장 공간이 아니라 결정 비용”, “algorithm 지표가 아니라 emulation 시간”처럼 대조가 반복됩니다. 지표의 실질적 차이를 지우지 말고 가상 인용·감정적 평가 표현을 우선 정돈합니다.
+5. A-7·A-19: “checkpoint slot을 들고 있다”, “number of iterations마다의 amplitude” 같은 표현은 한국어 동사·조사 손질 후보입니다. ‘각 checkpoint slot에 값이 저장됨’ 같은 본래 뜻을 넘어서 새로운 동작을 추가하지 않습니다.
+6. F-1·D-2: “영원히”, “반드시”, “가장 극적인”, “거짓말” 등 강한 평가어가 많이 나옵니다. 요구 조건이나 명제의 강도를 바꾸지 않도록 감상적 수식만 검토합니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 2774
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.44  (n/a vs report 인간 baseline)
+- comma_usage_rate: 1.25  (z=+0.50 vs report 인간 baseline)
+- ending_comma_rate: 0.33  (n/a vs report 인간 baseline)
+- comma_segment_length: 6.20  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.002  (z=-1.93 vs report 인간 baseline)
+- lexical_diversity: 0.70  (z=+0.98 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 0
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+1. sampling range를 1로 두고 시작한다.
+2. shot마다 number of iterations를 $[0,\ \text{sampling range})$ 에서 **무작위로** 뽑는다.
+3. 뽑은 횟수만큼 iteration을 돌고 측정한 뒤, 나온 후보로 solution check를 한다.
+4. 실패하면 $\text{sampling range} \leftarrow \min(\text{growth factor}\cdot\text{sampling range},\ \sqrt{\text{number of states}})$ 로 sampling range를 넓히고 2로 돌아간다. growth factor는 6/5다.
+
+학부생이 가장 먼저 걸리는 지점은 2번입니다 — **왜 number of iterations를 무작위로 뽑는가?** 그냥 sampling range − 1 처럼 가장 큰 값을 쓰거나, 매번 1씩 늘리면 안 되나요?
+
+답은 success probability의 모양에 있습니다. iteration을 돈 뒤 solution이 나올 probability는
+
+$$\text{success probability} = \sin^2\!\big((2\cdot\text{number of iterations}+1)\,\theta\big), \qquad \sin\theta = \sqrt{\text{number of solutions}/\text{number of states}}$$
+
+로, number of iterations에 대해 **진동**합니다. 14 qubits · 1 solution이면 $\theta = 0.4476°$ 이고 optimal number of iterations는 100인데, number of iterations를 바꿔 가며 재 보면 이렇습니다:
+
+| number of iterations | 0 | 1 | 10 | 25 | 50 | 75 | 100 | 125 | 127 | 150 | 175 | 200 |
+|:--|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|
+| success probability | 0.0% | 0.1% | 2.7% | 15.1% | 50.4% | 85.5% | 100.0% | 85.5% | 83.3% | 50.5% | 15.1% | 0.0% |
+
+100 iterations 근처는 100%지만 200 iterations는 **0%** 입니다. 최적점을 두 배쯤 지나치면 probability가 거의 0인 골짜기로 떨어진다는 뜻이죠. 만약 number of iterations를 고정한다면, 하필 그 값이 골짜기에 놓였을 때 그 shot은 몇 번을 반복해도 영원히 실패합니다. sampling range 안에서 무작위로 뽑으면 한 shot의 success probability가 골짜기 하나에 걸리지 않고 그 interval의 **mean**이 되고, BBHT의 핵심 lemma는 sampling range가 충분히 커진 뒤 이 mean이 $1/4$ 아래로 내려가지 않음을 보장합니다. number of iterations를 무작위로 뽑는 것은 편의가 아니라 algorithm의 정당성을 떠받치는 요소입니다.
+
+4번의 growth factor 6/5도 임의의 숫자가 아닙니다. growth factor가 1보다 크고 $4/3$ 보다 작으면 총 비용의 상한이 보장된다는 것이 BBHT의 결과이고, $6/5$ 는 그 interval 안의 관습적 선택입니다. sampling range를 너무 천천히 넓히면 shot을 더 많이 던져야 하고, 너무 빨리 넓히면 최적점을 건너뛴 큰 number of iterations만 뽑히기 때문에 양쪽 다 손해입니다. 상한 $\sqrt{\text{number of states}}$ 는 solution이 하나일 때 optimal number of iterations가 대략 $\frac{\pi}{4}\sqrt{\text{number of states}}$ 라는 데서 옵니다 — 그보다 넓은 sampling range는 골짜기만 더 많이 담을 뿐입니다. 우리 14 qubits에서는 $\sqrt{\text{number of states}} = 128$ 이 **정확히** integer라, number of iterations는 7-bit $[0, 128)$ 안에서만 뽑힙니다. 위 표의 200 iterations 골짜기는 hardware가 아예 요청하지 못하는 자리이고, sampling range의 끝인 127 iterations에서도 success probability가 83%를 넘습니다. 상한이 overshoot를 막는 장치로 일하는 모습입니다.
+
+hardware에서 1.2×를 매번 곱하지는 않습니다. sampling range의 수열을 미리 계산해 **28항 ROM**에 구워 둡니다 — $\lceil 1.2^k \rceil$ 을 128에서 자른 값으로, $1, 2, 2, 2, 3, 3, 3, 4, 5, 6, 7, 8, 9, 11, 13, 16, 19, 23, 27, 32, 39, 47, 56, 67, 80, 96, 115, 128$ 이고 그 뒤로는 계속 128입니다. number of iterations는 이 경계 안에서 **정확히 균등하게** 뽑습니다. 32-bit Iteration-Count LFSR의 하위 bit를 경계 이상의 가장 작은 2의 거듭제곱 폭으로 잘라 후보로 쓰고, 후보가 경계 이상이면 버리고 다시 뽑는 rejection sampling입니다. 후보를 하나 뽑을 때마다 LFSR을 7 steps씩 전진시켜, 이어 뽑는 후보들이 같은 bit 창을 겹쳐 쓰지 않게 합니다.
+
+---
+[원문 끝]

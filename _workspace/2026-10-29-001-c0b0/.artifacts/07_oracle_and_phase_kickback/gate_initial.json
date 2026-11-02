@@ -1,0 +1,46 @@
+{
+  "genre": "report",
+  "change_rate": {
+    "rate": 0.0141,
+    "scope": "전문",
+    "verdict": "OK"
+  },
+  "s1_targets": [],
+  "antithesis": {
+    "before": 7,
+    "after": 7,
+    "verdict": "OK"
+  },
+  "golden": [],
+  "sentence_touch": {
+    "rate": 0.1409,
+    "touched": 21,
+    "total": 149
+  },
+  "numbers_dropped": [],
+  "modality": {
+    "lost_pairs": [
+      {
+        "kind": "당위",
+        "before": "출력 qubit에서 일어나야 할 변화가 입력 qubit의 phase로 되차인 것입니다.",
+        "after": "출력 qubit에 가하는 연산의 효과가 입력 qubit의 phase 변화로 나타난 것입니다."
+      }
+    ],
+    "uncertain_pairs": [],
+    "counts": {
+      "deontic": {
+        "before": 8,
+        "after": 7
+      },
+      "hedge": {
+        "before": 4,
+        "after": 5
+      }
+    },
+    "verdict": "FAIL — 서법 소실 1문장"
+  },
+  "gate": {
+    "verdict": "WARN — 경고. 사용자 고지 + finalize 승급",
+    "exit_code": 1
+  }
+}

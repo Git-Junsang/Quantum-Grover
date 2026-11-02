@@ -1,0 +1,17 @@
+## 18.10 이 장의 요약
+
+- **verification이 설계의 일부인 이유 셋**: 1차 자료가 틀리고([15.6절](15_paper_map_and_design_decisions.md#156-인용-시-주의--논문의-오류와-모호점)), 이론이 답을 못 주는 자리가 있으며(fraction bits 충분성, 12.7절), 이 IP의 값어치 자체가 재현 가능성이라 verification 절차가 곧 제품 사양입니다.
+- **3단 verification ladder + board**: float64·Qiskit(**algorithm**이 맞나) → Q1.22 bit-exact reference model(**수 표현**이 맞나) → RTL(**circuit**가 맞나) → board. 각 칸이 잡는 버그의 종류가 다르고, 한 칸을 건너뛰면 rounding 버그와 FSM 버그가 섞여 판정 기준을 세울 수 없습니다. **reference model은 2단**이고, BBHT trajectory가 같아야 하는 것은 같은 칸끼리입니다(1단의 float BBHT trajectory는 2단과 다를 수 있습니다).
+- **bit-exact 성립 조건**: rounding 규칙 · rounding 지점 · saturation 지점과 범위 · shift · accumulator 폭 · measurement arithmetic과 순서 · **Iteration-Count LFSR 규약** · **Measurement PRNG 규약** · policy의 동률 규칙. 초판이 미정으로 남긴 random number 두 줄이 정해진 뒤 reference model과 board가 BBHT trajectory 500/500, 동률 규칙까지 옮긴 뒤 executed iterations 500/500이 되었습니다. algorithm constant는 RTL header 한 곳에, CSR offset은 손으로 맞추는 두 곳에 있습니다.
+- **첫 test vector는 9.4절 손계산**: 4-state 예제는 Q1.22에서 solution amplitude가 정확히 1.0이 되어 **saturation 경로**를 밟고, 두 번째 iteration에서 절반에 걸립니다. 8 states·3 solutions 예제는 두 번째 iteration의 $2\bar a = -2{,}595{,}092.5$ 에서 round-half-to-even과 truncation이 갈립니다. RTL의 첫 vector는 실제 크기에서 손으로 확인되는 **14 qubits·1 solution·1 iteration** — solution 98,296, 나머지 32,760이 이론값과 rounding 없이 같습니다.
+- **predicate 경계값**: threshold와 같은 값(strict inequality 확인) · 16-bit signed data word 범위 양 끝(17-bit subtractor의 존재 이유) · 좁고 넓은 범위 · 0 solutions · 1 solution · solution이 state의 절반을 넘는 역주행 · FIFO가 차는 enumeration. data distribution은 uniform random number · 정렬 · **solution을 row·group 경계에 몰아넣은 인위적 array**.
+- **Born sampler는 두 시험이 다릅니다**: seed를 고정하면 결정적이라 **bit-exact equivalence check**가 되고, distribution 자체는 **chi-square test**로 따로 봅니다(cell은 group 단위로 묶고, 한 번의 $p<0.05$ 로 실패를 선언하지 않습니다). Two-Level Select는 integer 정확 계산이라 순차 prefix sum 선택과 **random number 하나하나에서 같아야** 하고, 연속된 rejection과 total weight 0 같은 드문 경로는 강제 주입으로 직접 시험합니다.
+- **checkpoint verification의 합격 기준은 전수 비교**: 이어 간 경로와 새 Init 경로의 amplitude 16,384칸이 **bit 단위로 전부 일치**해야 합니다. 무효화 조건 각각과 무효화하지 않아야 할 조건 각각에 regression을 두고, on/off가 같은 seed에서 **같은 결과·같은 shot count·같은 requested iterations**를 내고 **executed iterations와 cycle만** 다른지 확인합니다 — board와 RTL에서 500/500이었고, Plan Queue miss counter는 늘 0이어야 합니다.
+- **잰 수치**: fraction bits 충분성(error $< 10^{-3}$) · saturation(1,000회당 2.67) · mean 22.7 shots · executed iterations −69.5% · RTL 6.1401× · board 7.626× · resource와 timing. 비교 대상은 Qiskit Aer / NumPy / 같은 board의 순수 software며 **classical scan과는 비교하지 않습니다.** 같게 둘 것은 number of qubits·data·predicate·seed·BBHT schedule 전체, wall-clock time은 benchmark 경계를 반드시 밝힙니다.
+- **toolchain**: simulator·synthesis·firmware·SoC 생성이 전부 local이고, 작업 순서는 verification ladder를 따릅니다. reference model은 두 variant가 함께 쓰므로 `software/` 에 있습니다.
+
+이것으로 해설서를 마칩니다. index 에서 "왜 quantum computer인가"로 시작해 9장에서 Grover를 손으로 돌려 보았고, 11장부터 그 algorithm을 memory와 arithmetic과 제어와 bus로 구현했으며 이 장에서 그 구현이 맞는지 어떤 절차로 확인했는지 살펴보았습니다. board 위에서 도는 이 circuit은, 여러분이 1장에서 처음 본 amplitude라는 숫자가 끝까지 정해진 규칙에 따라 계산된 결과입니다.
+
+---
+
+> [← 17장 RVX SoC에 붙이기](17_rvx_soc_integration.md) · [index](index.md)

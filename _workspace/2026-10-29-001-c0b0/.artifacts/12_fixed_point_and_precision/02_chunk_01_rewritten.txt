@@ -1,0 +1,15 @@
+# 12장. amplitude를 숫자로 — fixed-point와 Q1.22
+
+> [← 11장 state vector emulator — memory map과 resource 예산](11_state_vector_emulator.md) · [index](index.md) · [13장 oracle과 diffusion operator — multiplier 없는 산술 →](13_oracle_diffusion_measurement_datapath.md)
+> **이 장을 읽기 위한 준비**: [1장 amplitude·normalization](01_qubits_and_states.md), [4장 Born rule](04_measurement.md), [11장 state vector emulator](11_state_vector_emulator.md).
+
+---
+
+11장에서 state vector를 array `amp[0..16383]` 로 펼쳤습니다. 그런데 array의 한 칸에 amplitude $\alpha_i$ 를 담으려면 **결국 몇 bit짜리 어떤 숫자 형식으로 담을지**를 정해야 합니다. 이것은 FPGA emulator를 설계할 때 처음 정해야 할 사항입니다. bit를 너무 적게 잡으면 error가 쌓여 solution을 찾기 어려워지고, 너무 많이 잡으면 memory와 logic를 낭비합니다(11장에서 봤듯 amplitude bit 폭은 곧 memory 폭이니까요).
+
+결론부터 적어 둡니다. 우리 amplitude 한 칸은 **23-bit fixed-point, Q1.22**입니다. rounding은 round-half-to-even, 넘치면 symmetric saturation, norm renormalization은 하지 않습니다. 계산 도중의 중간값만 더 넓은 register에서 다루고, memory에 되쓸 때 23 bits의 범위로 제한합니다. 이 장은 그 결정 하나하나가 **무엇을 재서** 나왔는지를 따라갑니다(값의 source of truth는 [15.4절 설계 결정표](15_paper_map_and_design_decisions.md#154-우리-project의-좌표--확정-설계-결정표)).
+
+길잡이가 되는 것은 두 편의 중앙대 연구실 논문입니다. 04번(Choi & Lee, 2024)은 "fixed-point로 하자, Q1.30으로"라는 **선택**을 내렸고, 05번(Choi 외, QIP 2026)은 "그럼 fraction bits는 정확히 몇 bit여야 하는가"라는 **이론**을 세웠습니다. 우리는 둘 중 어느 쪽 숫자도 그대로 쓰지 않는데, 왜 그런지가 이 장의 절반입니다.
+
+---
+

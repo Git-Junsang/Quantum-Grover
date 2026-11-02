@@ -1,0 +1,20 @@
+## 17.3 왜 APB와 AHB를 같이 쓰나
+
+bus를 두 개 쓰는 것이 낭비처럼 보일 수 있으니, 우리 IP가 bus로 하는 일이 성격이 완전히 다른 두 가지라는 점부터 짚겠습니다.
+
+첫째는 **설정과 status**입니다. predicate 두 bit, threshold 16 bits, 시작 한 bit, status 몇 bit, counter 몇 개. 한 번 실행에 몇백 byte가 오갈 뿐이고, 그나마 실행 전후에만 오갑니다. 여기에 필요한 것은 bandwidth가 아니라 **address로 register를 선택하는 기능**과 **적은 gate**입니다.
+
+둘째는 **array load**입니다. 14 qubits면 `data_mem` 에 32 KB를 채워야 하고, 이것은 system SRAM의 연속된 address를 죽 읽어 오는 일입니다. 여기에 필요한 것은 IP가 스스로 bus에 나가 읽어 오는 **master 능력**입니다. core가 한 data word씩 읽어 CSR로 넘겨 주는 방식은 core를 붙잡아 두고 bus를 두 번씩 건넙니다.
+
+AMBA 계열의 세 bus는 정확히 이 spectrum 위에 놓여 있습니다. **APB**는 가장 단순합니다 — setup/access 두 phase에 burst도 pipeline도 없고, 한 번에 data word 하나입니다. 대신 slave implementation이 combinational logic 몇 줄이면 끝납니다. **AHB**는 pipelined address/data phase와 burst를 지원하고, master를 직접 쓸 만한 복잡도입니다. **AXI**는 읽기와 쓰기 channel이 따로 있고 out-of-order completion과 multiple outstanding transaction을 지원합니다. 강력하지만 우리처럼 순차 load만 하는 IP에게는 쓰지 않을 기능에 대한 logic 비용입니다.
+
+그래서 결론은 **CSR은 APB slave, data load는 AHB master**입니다. RVX가 두 shim을 모두 제공하니, 우리는 검증된 routing을 그대로 따라가면 됩니다.
+
+load를 어떤 방식으로 하느냐는 따로 정했습니다. 초판은 AHB burst(`INCR16`)를 상정했지만, 최종 DMA Engine은 **32-bit SINGLE 읽기를 한 번에 하나씩(single outstanding)** 합니다. burst는 FIFO와 `BUSY` 처리가 붙어 복잡하고, 17.5절에서 보듯 SINGLE로도 load가 search 한 번과 비슷한 시간에 끝나기 때문입니다. burst는 benchmark에서 load가 실제 병목으로 드러난 뒤에 볼 일로 미뤄 두었습니다.
+
+여기서 초기 설계안 하나가 폐기되었음을 명시해 둡니다. 처음에는 data를 **AXI-Stream** 으로 흘려 넣는 DMA Engine을 상정했습니다. 이 안은 못 씁니다 — **RVX library에 AXI-Stream shim이 아예 없기 때문입니다.** RVX에 등록된 사용자 interface shim을 전부 열거하면 master 쪽이 `moi`·`ahb`·`axi`·`axi4`·`axi4l`, slave 쪽이 `apb`·`ahb`·`axi`·`axi4`·`axi4l` 이고(각각 `_clkin`/`_clkout` 두 벌), stream 계열은 한 줄도 없습니다. shim이 없으면 interconnect에 붙일 방법이 없고, 그러면 그 IP를 SoC에 연결할 수 없습니다. 도구가 제공하는 것과 설계가 요구하는 것이 어긋날 때는 대개 설계를 고치는 쪽이 싸며, 이 경우는 특히 그렇습니다.
+
+shim 이름 끝의 `_clkin` / `_clkout` 도 짚고 갈 값어치가 있습니다. `_clkin` 은 IP가 SoC의 clock을 **받아** core와 같은 도메인에서 도는 형태이고, `_clkout` 은 IP가 자기 clock을 **내보내** 별도 도메인에서 도는 형태입니다. 우리는 **`_clkout`** 을 씁니다. core와 bus는 50 MHz로 두고 accelerator만 100 MHz 전용 clock으로 돌리기 위해서입니다. 두 도메인 사이의 clock 경계 처리(CDC)는 RVX가 APB·AHB 쪽에 각각 생성해 주는 비동기 bridge가 맡습니다. 그러니 **우리 쪽에 CDC를 또 넣으면 안 됩니다** — RVX가 만들어 주는 것이 실제 board에서 검증된 구조이고, 중복 삽입은 그 verification을 무효로 만듭니다.
+
+---
+

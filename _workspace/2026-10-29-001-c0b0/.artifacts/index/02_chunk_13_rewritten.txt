@@ -1,0 +1,10 @@
+#### Part 4. 참조
+
+| 장 | file | 무엇을 배우나 |
+|----|------|--------------|
+| 10 | [용어정리와 cheat sheet](10_glossary_and_cheat_sheet.md) | 핵심 gate matrix·공식 요약, 용어집, 연습문제 답, 원문 대조표 |
+| 부록 A | [수학 빠른 복습](A_math_review.md) | 이 해설서가 쓰는 complex number(conjugate·absolute value·$e^{i\theta}$)·linear algebra(vector·matrix multiplication·dagger) 최소 정리 |
+
+
+> 여기서부터(Part 5~8)가 이 project가 **실제로 만드는 물건**입니다. 여섯 편의 논문(`papers/` 2·3·4번 directory)을 설계 질문별로 **함께** 읽으면서, 확정된 설계 결정을 하나씩 세워 나갑니다. 04·05·06은 이 project 지도교수 연구실(중앙대) 논문입니다.
+

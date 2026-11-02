@@ -1,0 +1,56 @@
+INFO: [Common 17-3922] A valid Vivado Design Suite BASIC license has been detected. Your current license is active and will expire on 22-sep-2027.
+
+****** Vivado v2026.1 (64-bit)
+  **** SW Build 6511674 on Tue Jun 16 11:01:26 MDT 2026
+  **** IP Build 6504888 on Tue Jun 09 09:05:25 MDT 2026
+  **** SharedData Build 6501428 on Mon Jun 08 17:34:18 MDT 2026
+  **** Start of session at: Tue Oct 27 10:53:00 2026
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+
+source /home/junsang/sdsl_fpga_runs/2026-10-27_200t_dse/source/dse_ooc.tcl
+# set src $::env(DSE_SRC)
+# set cell $::env(DSE_CELL)
+# set out $::env(DSE_OUT)
+# file mkdir $out
+# set_param general.maxThreads 1
+# set files [list]
+# foreach name {
+#     bbht_grover_main_ip.v grover_arithmetic.v grover_bbht.v grover_checkpoint.v
+#     grover_iteration.v grover_loader.v grover_measurement.v grover_memories.v
+#     grover_policy.v grover_status.v bbht_rvx_wrapper.v bbht_grover_mmio.v bbht_ahb_loader.v
+# } { lappend files [file join $src $name] }
+# lappend files [file join $cell adapter.v]
+# if {$::env(DSE_STAGE) eq "synth"} {
+#     read_verilog -include_dirs $src $files
+#     synth_design -top bbht_rvx_wrapper -part $::env(DSE_PART) \
+#         -mode out_of_context -flatten_hierarchy rebuilt
+#     create_clock -name accel_clk -period $::env(DSE_CLOCK_NS) [get_ports clk]
+#     report_utilization -file [file join $out util.rpt]
+#     report_timing_summary -file [file join $out timing.rpt]
+#     write_checkpoint -force [file join $out synth.dcp]
+# } else {
+#     open_checkpoint [file join $cell synth synth.dcp]
+#     opt_design
+#     place_design
+#     phys_opt_design
+#     route_design
+#     report_utilization -file [file join $out util.rpt]
+#     report_timing_summary -delay_type min_max -report_unconstrained \
+#         -file [file join $out timing.rpt]
+#     report_route_status -file [file join $out route_status.rpt]
+#     write_checkpoint -force [file join $out route.dcp]
+#     # Machine-readable metrics come from Vivado objects, avoiding version-
+#     # dependent timing-table parsing.  Negative hold/setup slack is preserved.
+#     set setup_paths [get_timing_paths -delay_type max -max_paths 1]
+#     set hold_paths [get_timing_paths -delay_type min -max_paths 1]
+#     if {[llength $setup_paths] == 0 || [llength $hold_paths] == 0} {
+#         error "No clocked paths found in OOC implementation"
+#     }
+#     set f [open [file join $out slack.csv] w]
+#     puts $f "wns_ns,whs_ns"
+#     puts $f "[get_property SLACK $setup_paths],[get_property SLACK $hold_paths]"
+#     close $f
+# }
+ERROR: [Common 17-170] Unknown option '-include_dirs', please type 'read_verilog -help' for usage info.
+INFO: [Common 17-206] Exiting Vivado at Tue Oct 27 10:53:02 2026...

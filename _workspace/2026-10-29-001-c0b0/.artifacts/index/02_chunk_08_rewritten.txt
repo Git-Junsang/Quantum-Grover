@@ -1,0 +1,4 @@
+## 6. 앞으로의 여정 — 장 목록과 읽는 법
+
+이 해설서는 algorithm의 수학적 model — qubit·superposition·gate·measurement·oracle·amplitude amplification — 을 기초부터 배운 뒤(0~10장), 같은 개념이 memory map·fixed-point data word·FSM·bus interface로 구현되는 과정을 따라갑니다(11~18장). 확정된 숫자(board, number of qubits, amplitude 형식, final configuration 등)의 source of truth는 [15.4절 설계 결정표](15_paper_map_and_design_decisions.md#154-우리-project의-좌표--확정-설계-결정표)이며, 해설서 어느 장에 같은 값이 적혀 있든 어긋나면 15.4절을 기준으로 삼습니다.
+

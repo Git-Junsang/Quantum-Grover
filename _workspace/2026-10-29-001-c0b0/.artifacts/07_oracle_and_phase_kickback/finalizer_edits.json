@@ -1,0 +1,10 @@
+[
+  {
+    "before": "출력 qubit에 가하는 연산의 효과가 입력 qubit의 phase 변화로 나타난 것입니다.",
+    "after": "출력 qubit에 일어나야 할 변화가 입력 qubit의 phase 변화로 나타난 것입니다."
+  },
+  {
+    "before": "를 이용하면 classical computer보다 적은 질의로 답을 얻는 과정을 전체 계산으로 확인합니다.",
+    "after": "를 이용해 classical computer보다 적은 질의로 답을 얻는 과정을 전체 계산으로 확인합니다."
+  }
+]

@@ -1,0 +1,10 @@
+#### Part 1. quantum computing의 언어 (기초)
+
+| 장 | file | 무엇을 배우나 |
+|----|------|--------------|
+| 1 | [qubit와 state](01_qubits_and_states.md) | bit vs qubit, state vector, computational basis $\|0\rangle\|1\rangle$, amplitude·superposition, normalization |
+| 2 | [Dirac 표기법과 linear algebra](02_dirac_notation_and_linear_algebra.md) | ket·bra, inner product $\langle\phi\|\psi\rangle$, conjugate transpose(dagger), $\|+\rangle\|-\rangle$ basis |
+| 3 | [단일 qubit gate](03_single_qubit_gates.md) | $X\|H\|Y\|Z$ gate, unitary matrix, circuit 표기, gate composition=matrix multiplication |
+| 4 | [measurement](04_measurement.md) | computational basis measurement, Born rule($\|\alpha\|^2$), collapse, measurement 불가 정보, global phase |
+
+

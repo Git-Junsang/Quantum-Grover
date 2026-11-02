@@ -1,0 +1,90 @@
+# make real (tb_bbht_rvx T1~T10, 이 판 소스)
+[T1] RW 라운드트립
+  ok   CONTROL = 0x0000000b
+  ok   THRESHOLD_A(-1) = 0x0000ffff
+  ok   SEED_J = 0xdeadbeef
+  ok   SHOT_CAP = 0x00003039
+  ok   ENUM_CFG = 0x00000041
+  ok   J_TARGET(7b clip) = 0x0000007f
+[T2] W1P 는 읽으면 0
+  ok   COMMAND rd = 0x00000000
+  ok   DMA_COMMAND rd = 0x00000000
+  ok   COMMAND 읽기는 부작용 없음
+[T3] 정렬 위반 / 미할당 주소
+  ok   정렬 위반 -> pslverr
+  ok   미할당 주소 -> pslverr
+[T4] DMA 정상 경로
+  ok   DMA_STATUS = 0x00000080
+[T5] DMA 거절
+  ok   정렬 위반 -> align_error
+  ok   count=0 -> count_error
+  ok   범위 밖 -> range_error
+  ok   DMA_STATUS 복구 = 0x00000080
+[T6] Single 탐색 -- EQ 33 은 인덱스 11
+  ok   result_valid
+  ok   RESULT_INDEX = 0x0000000b
+  ok   CYCLE_COUNT = 113593
+[T7] done_sticky 는 COMMAND 쓰기로만 클리어
+  ok   STATUS 읽기는 done_sticky 를 안 지움
+  ok   설정 쓰기는 done_sticky 를 안 지움
+[T9] start 수락 -- 직전 결과가 남은 채로 다시 start
+  ok   새 실행이 직전 result_valid 를 지웠음
+[T8] Enumeration -- GT 180 은 61,62,63
+  ok   enum_done
+  ok   FOUND_COUNT = 0x00000003
+  ok   FIFO_COUNT = 0x00000003
+  ok   FIFO_COUNT after pop = 0x00000002
+  ok   FIFO_COUNT after pop = 0x00000001
+  ok   FIFO_COUNT after pop = 0x00000000
+  ok   열거 집합 {61,62,63} (순서 무관)
+  ok   drain 후 fifo_empty
+  ok   FIFO_COUNT (idx 0 만) = 0x00000001
+  ok   FIFO_DATA = 0 은 정상값 = 0x00000000
+  ok   인덱스 0 pop 후 fifo_empty
+[T10] Normal vs K4 -- EQ 33, 같은 seed
+  ok   Normal RESULT_INDEX = 0x0000000b
+  ok   K4 RESULT_INDEX = 0x0000000b
+=== 결과: 오류 0 건 ===
+PASS
+
+# make driver (tb_driver, 펌웨어 드라이버 공동 시뮬)
+[D1] CSR probe
+  ok   bbht_probe                         OK
+[D2] pack16 / unpack16 (부호 확장 포함)
+  ok   unpack16[0]                        1234
+  ok   unpack16[1]                        -5678
+  ok   unpack16[2]                        -1
+  ok   unpack16[3]                        32767
+[D3] DMA 인자 검증 (하드웨어에 가기 전에 걸러야 함)
+  ok   count=0                            BAD_ARG
+  ok   count>N                            BAD_ARG
+  ok   정렬 위반                      BAD_ARG
+  ok   범위 밖                         BAD_ARG
+[D4] DMA 적재
+  ok   bbht_dma_load                      OK
+[D5] Single 탐색
+  ok   bbht_search_single                 OK
+  ok   result_index in {100,250,999}  999
+  ok   result_valid                       1
+  ok   cycle_count = 67127 (671 us)
+[D6] 음수 임계값 -- 부호를 흘리면 여기서 걸립니다
+  ok   EQ(-777)                           OK
+  ok   result_index                       777
+[D7] 해가 없을 때
+  ok   EQ(30000)                          NOT_FOUND
+  ok   result_valid                       0
+[D8] 열거 -- FIFO drain
+  ok   bbht_search_enum                   OK
+  ok   열거 개수                      3
+  ok   열거 집합 {100,250,999} (순서 무관)
+  ok   FOUND_COUNT                        3
+[D9] 열거 설정 오류 -- fail_limit 0
+  ok   fail_limit=0                       BAD_ARG
+[D10] RANGE 술어
+  ok   RANGE(499,501)                     OK
+  ok   result_index                       500
+[D11] 사이클 -> 시간 환산
+  ok   100 사이클 = 1 us               1
+  ok   1,000,000 사이클 = 10,000 us    10000
+=== 결과: 오류 0 건 (1360764 사이클) ===
+PASS

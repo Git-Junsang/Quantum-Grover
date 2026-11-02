@@ -1,0 +1,2 @@
+ec68a905e48a482c2f30d4942897a08af864465c67ca4a216a4ec6d2c1d8d2f6  bbht_grover_k3h3_e4_fpga.ax7a200b.bit
+e62e1cd92adae8b0537f5d849596204aae088d4e778f7e4aa042eeef837be24a  bbht_console.sram.hex

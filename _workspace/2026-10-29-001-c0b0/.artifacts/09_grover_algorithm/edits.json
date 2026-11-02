@@ -1,0 +1,137 @@
+{
+  "edits": [
+    {
+      "rule": "D-14",
+      "before": "solution이 튀어나오는 걸 확인한 뒤,",
+      "after": "solution을 얻는 과정을 확인한 뒤,"
+    },
+    {
+      "rule": "D-14",
+      "before": "이것 하나가 나중에 measurement circuit 전체를 바꿉니다.",
+      "after": "이 사실에 따라 나중에 measurement circuit 전체의 설계가 달라집니다."
+    },
+    {
+      "rule": "D-8",
+      "before": "여기서 하나 못 박아 둘 것이 있습니다.",
+      "after": "여기서 비교의 전제를 짚고 넘어가겠습니다."
+    },
+    {
+      "rule": "D-2",
+      "before": "이 이상한 횟수가 어디서 오는지는",
+      "after": "이 횟수가 어디서 오는지는"
+    },
+    {
+      "rule": "D-14",
+      "before": "그 predicate에 몇 칸이 걸리는지는 data가 정합니다",
+      "after": "그 predicate를 몇 칸이 만족하는지는 data에 따라 정해집니다"
+    },
+    {
+      "rule": "D-14",
+      "before": "여기서 마법이 일어납니다.",
+      "after": "두 동작을 거치면 다음과 같이 달라집니다."
+    },
+    {
+      "rule": "D-2",
+      "before": "말로만 하면 안 믿기니, 가장 작고 깔끔한 경우인 4 states(2 qubits)를 손으로 끝까지 돌려봅시다.",
+      "after": "작은 예제인 4 states(2 qubits)를 손으로 끝까지 계산해 봅시다."
+    },
+    {
+      "rule": "D-14",
+      "before": "막대 두 번 흔들었더니 solution이 튀어나온 거예요.",
+      "after": "두 동작만으로 solution을 얻은 거예요."
+    },
+    {
+      "rule": "D-14",
+      "before": "circuit은 손끝 하나 바꾸지 않습니다.",
+      "after": "circuit은 그대로 씁니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "diffusion operator $a \\mapsto 2\\bar a - a = -a$ 를 먹이면:",
+      "after": "diffusion operator $a \\mapsto 2\\bar a - a = -a$ 를 적용하면:"
+    },
+    {
+      "rule": "D-14",
+      "before": "**같은 값에 같은 function을 먹인 것**뿐입니다.",
+      "after": "**같은 값에 같은 function을 적용한 것**뿐입니다."
+    },
+    {
+      "rule": "D-2",
+      "before": "두 막대의 높이는 소수점 끝까지 한 치도 어긋나지 않습니다.",
+      "after": "두 막대의 높이는 정확히 같습니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "Grover가 실제로 사는 곳은 딱 **2차원 평면**이에요.",
+      "after": "Grover의 계산이 이루어지는 공간은 딱 **2차원 평면**이에요."
+    },
+    {
+      "rule": "D-2",
+      "before": "놀랍게도 \"oracle + diffusion operator\" 한 번은,",
+      "after": "\"oracle + diffusion operator\" 한 번은"
+    },
+    {
+      "rule": "D-14",
+      "before": "**여러 각도를 무작위로 찔러 보는** 전략이고,",
+      "after": "**여러 각도를 무작위로 시도하는** 전략이고"
+    },
+    {
+      "rule": "D-14",
+      "before": "sampling range가 거기까지 자라기 전의 shot들은 전부 헛수고입니다.",
+      "after": "sampling range가 거기까지 커지기 전의 shot들은 성공에 이르지 못합니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "\"지나치면 안 된다\"는 성질은 hardware에서 한층 더 날카로워집니다",
+      "after": "hardware에서는 \"지나치면 안 된다\"는 성질에 더 주의해야 합니다"
+    },
+    {
+      "rule": "D-14",
+      "before": "multiplication 없는 datapath로 내려갑니다.",
+      "after": "multiplication 없는 datapath로 구현됩니다."
+    },
+    {
+      "rule": "D-8",
+      "before": "여기서 중요한 부산물이 나옵니다.",
+      "after": "여기서 다음 성질도 알 수 있습니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "이 관찰이 hardware에서는 비용을 통째로 절반으로 자릅니다.",
+      "after": "이 성질 덕분에 hardware에서는 비용을 절반으로 줄일 수 있습니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "**세 전제에 통째로 기대고** 있으므로,",
+      "after": "**세 전제를 모두 필요로 하므로**,"
+    },
+    {
+      "rule": "D-14",
+      "before": "datapath를 complex number로 다시 지어야 합니다.",
+      "after": "datapath를 complex number에 맞게 다시 설계해야 합니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "이 장에서 쌓은 개념은 하나도 버려지지 않고 그대로 circuit의 어느 부분이 됩니다.",
+      "after": "이 장에서 배운 개념은 모두 circuit의 각 부분에 대응합니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "이 절의 요약만 읽고 comparator를 만들면 나중에 전면 재작업이 되는 지점이라 여기에 못 박아 둡니다.",
+      "after": "이 절의 요약만 읽고 comparator를 만들면 나중에 전면 재작업이 필요하므로 이 차이를 기억해 두세요."
+    },
+    {
+      "rule": "D-2",
+      "before": "축하합니다 — quantum computing 기초부터 Grover까지 완주했습니다!",
+      "after": "quantum computing 기초부터 Grover까지 살펴보았습니다."
+    }
+  ],
+  "self_check": {
+    "preserved_anchors": true,
+    "genre": true,
+    "register": true,
+    "no_added_claims": true,
+    "no_added_metaphors": true,
+    "protected_tokens": true
+  }
+}

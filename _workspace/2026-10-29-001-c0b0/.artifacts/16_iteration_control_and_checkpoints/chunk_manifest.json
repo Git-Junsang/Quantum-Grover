@@ -1,0 +1,151 @@
+{
+  "version": 1,
+  "created": "2026-10-29",
+  "source_file": "01_input.txt",
+  "source_chars": 26357,
+  "source_sha256": "e0235b0b0fbc20c392b6572bfc760724640d1f5e139967b3089b8df8e0619b15",
+  "genre": "report",
+  "target_chunk_chars": 7000,
+  "max_chunk_chars": 9000,
+  "route_hint": "heavy",
+  "route_reason": "26,357자 초장문(>15,000) — 진단 + 청킹 권장",
+  "chunk_count": 12,
+  "body_chunk_count": 12,
+  "passthrough_chunk_count": 0,
+  "lossless_check": "ok",
+  "warnings": [],
+  "chunks": [
+    {
+      "index": 1,
+      "start": 0,
+      "end": 1164,
+      "char_count": 1164,
+      "starts_with_heading": true,
+      "heading": "# 16장. 몇 번 돌릴지 모를 때 — BBHT shot loop와 checkpoint",
+      "passthrough": false,
+      "input_file": "01_chunk_01_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_01_rewritten.txt"
+    },
+    {
+      "index": 2,
+      "start": 1164,
+      "end": 3491,
+      "char_count": 2327,
+      "starts_with_heading": true,
+      "heading": "## 16.1 왜 solution이 몇 개인지 모르는가",
+      "passthrough": false,
+      "input_file": "01_chunk_02_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_02_rewritten.txt"
+    },
+    {
+      "index": 3,
+      "start": 3491,
+      "end": 3636,
+      "char_count": 145,
+      "starts_with_heading": true,
+      "heading": "## 16.2 BBHT — 무작위로 뽑는 number of iterations와 1.2× growth factor",
+      "passthrough": false,
+      "input_file": "01_chunk_03_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_03_rewritten.txt"
+    },
+    {
+      "index": 4,
+      "start": 3636,
+      "end": 6410,
+      "char_count": 2774,
+      "starts_with_heading": true,
+      "heading": "1. sampling range를 1로 두고 시작한다.",
+      "passthrough": false,
+      "input_file": "01_chunk_04_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_04_rewritten.txt"
+    },
+    {
+      "index": 5,
+      "start": 6410,
+      "end": 9071,
+      "char_count": 2661,
+      "starts_with_heading": true,
+      "heading": "## 16.3 shot 통계 — mean이 20 shots를 넘는 이유",
+      "passthrough": false,
+      "input_file": "01_chunk_05_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_05_rewritten.txt"
+    },
+    {
+      "index": 6,
+      "start": 9071,
+      "end": 11566,
+      "char_count": 2495,
+      "starts_with_heading": true,
+      "heading": "## 16.4 바깥 FSM — shot loop와 solution check",
+      "passthrough": false,
+      "input_file": "01_chunk_06_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_06_rewritten.txt"
+    },
+    {
+      "index": 7,
+      "start": 11566,
+      "end": 15654,
+      "char_count": 4088,
+      "starts_with_heading": true,
+      "heading": "## 16.5 checkpoint — measurement가 읽기 전용이라는 사실에서",
+      "passthrough": false,
+      "input_file": "01_chunk_07_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_07_rewritten.txt"
+    },
+    {
+      "index": 8,
+      "start": 15654,
+      "end": 18199,
+      "char_count": 2545,
+      "starts_with_heading": true,
+      "heading": "## 16.6 왜 결과가 달라지지 않는가",
+      "passthrough": false,
+      "input_file": "01_chunk_08_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_08_rewritten.txt"
+    },
+    {
+      "index": 9,
+      "start": 18199,
+      "end": 19539,
+      "char_count": 1340,
+      "starts_with_heading": true,
+      "heading": "## 16.7 무효화는 hardware가 한다",
+      "passthrough": false,
+      "input_file": "01_chunk_09_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_09_rewritten.txt"
+    },
+    {
+      "index": 10,
+      "start": 19539,
+      "end": 21397,
+      "char_count": 1858,
+      "starts_with_heading": true,
+      "heading": "## 16.8 기각한 대안",
+      "passthrough": false,
+      "input_file": "01_chunk_10_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_10_rewritten.txt"
+    },
+    {
+      "index": 11,
+      "start": 21397,
+      "end": 22989,
+      "char_count": 1592,
+      "starts_with_heading": true,
+      "heading": "## 16.9 초판의 미정 넷은 이렇게 정해졌다",
+      "passthrough": false,
+      "input_file": "01_chunk_11_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_11_rewritten.txt"
+    },
+    {
+      "index": 12,
+      "start": 22989,
+      "end": 26357,
+      "char_count": 3368,
+      "starts_with_heading": true,
+      "heading": "## 16.10 이 장의 요약",
+      "passthrough": false,
+      "input_file": "01_chunk_12_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_12_rewritten.txt"
+    }
+  ]
+}

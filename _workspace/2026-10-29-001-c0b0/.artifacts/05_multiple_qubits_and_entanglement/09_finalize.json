@@ -1,0 +1,41 @@
+{
+  "status": "corrected",
+  "genre": "report",
+  "review": "원문·윤문본·진단·게이트를 직접 대조한 의미 및 자연성 검토",
+  "correction_count": 2,
+  "corrections": [
+    {
+      "before": "state vector emulator의 속도가 산술 능력보다 memory의 제약을 받는",
+      "after": "state vector emulator의 속도가 산술 능력보다 memory의 제약에 더 크게 좌우되는",
+      "reason": "조사와 서술 연결을 자연스럽게 정리"
+    },
+    {
+      "before": "이 장의 CNOT은 직접 만들 circuit보다 **논문을 읽기 위한 표기**로 이해해 두면 됩니다.",
+      "after": "이 장에서 CNOT은 직접 만들 circuit이 아니라 **논문을 읽기 위한 표기**로 이해해 두면 됩니다.",
+      "reason": "비교 표현이 실제 설계에 CNOT을 쓴다는 여지를 만들지 않도록 원래 구별 복원"
+    }
+  ],
+  "fidelity_violations_remaining": [],
+  "overediting": [],
+  "residual_findings": [],
+  "baseline_gate_warnings": [],
+  "self_check": {
+    "passed": 6,
+    "total": 6
+  },
+  "grade": "A",
+  "categories": [
+    "A-18",
+    "D-14",
+    "D-2",
+    "D-8"
+  ],
+  "preservation_check": "PASS: 영어 token·영어 구·수치·수식·code·제목·link·콜아웃",
+  "final_gate": {
+    "exit_code": 0,
+    "change_rate": 0.0096,
+    "new_warnings": [],
+    "baseline_warning_count": 0,
+    "note": "공통 게이트 전 축 통과"
+  }
+}

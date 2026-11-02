@@ -1,0 +1,8 @@
+## 15.8 되돌아보며
+
+여기까지 이론을 **hardware로 구현**하는 과정을 살펴보았습니다. state vector가 array가 되고(11장), amplitude가 Q1.22 fixed-point 숫자가 되고(12장), oracle과 diffusion operator가 multiplier 없는 datapath가 되고(13장), measurement가 probability를 뽑는 circuit이 되어 enumeration까지 열린(14장) 과정을 따라왔습니다. 각 과정에서 여섯 논문의 선택을 비교했습니다.
+
+이제 여러분은 04번 논문을 "설계도"로 읽을 수 있고, 07번의 반대 선택이 왜 그럴듯한지 판단할 수 있으며, 논문의 수치를 그대로 믿지 않고 검증할 수 있습니다. 그리고 [15.4절](#154-우리-project의-좌표--확정-설계-결정표)의 표는 이제 계획이 아니라 **board에서 동작을 확인한 설계의 기록**입니다.
+
+초판은 아홉 가지를 **미정**으로 열어 두었습니다. RTL을 짓고 board에 올리면서 전부 정해졌고, 어떻게 정해졌는지를 그대로 적어 둡니다. 앞의 넷은 [16.9절](16_iteration_control_and_checkpoints.md#169-초판의-미정-넷은-이렇게-정해졌다)이, 뒤의 다섯은 [17.8절](17_rvx_soc_integration.md#178-초판의-미정-다섯은-이렇게-정해졌다)이 자세히 다룹니다.
+

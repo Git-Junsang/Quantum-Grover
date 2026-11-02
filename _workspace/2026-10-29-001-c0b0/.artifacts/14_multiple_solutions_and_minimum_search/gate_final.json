@@ -1,0 +1,45 @@
+{
+  "genre": "report",
+  "change_rate": {
+    "rate": 0.0105,
+    "scope": "전문",
+    "verdict": "OK"
+  },
+  "s1_targets": [],
+  "antithesis": {
+    "before": 9,
+    "after": 9,
+    "verdict": "OK"
+  },
+  "golden": [
+    {
+      "code": "footnote_anchor",
+      "message": "각주 32)이 원위치를 벗어났습니다 (인접 수치 앵커 '9' → '4'): 인용 출처 변조 위험"
+    }
+  ],
+  "sentence_touch": {
+    "rate": 0.1046,
+    "touched": 32,
+    "total": 306
+  },
+  "numbers_dropped": [],
+  "modality": {
+    "lost_pairs": [],
+    "uncertain_pairs": [],
+    "counts": {
+      "deontic": {
+        "before": 19,
+        "after": 21
+      },
+      "hedge": {
+        "before": 10,
+        "after": 11
+      }
+    },
+    "verdict": "OK"
+  },
+  "gate": {
+    "verdict": "WARN — 경고. 사용자 고지 + finalize 승급",
+    "exit_code": 1
+  }
+}

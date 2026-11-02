@@ -1,0 +1,2 @@
+75ae8d572bab8c161683ac4b505a24553480e674fed5cead768c9094ff203b3c  bbht_grover_upgrade_fpga.ax7a200b.bit
+fe8c9b1b1b18b3d98ecfd232ec344e6484b98692a06c9e23eb7ef5c7acfad2b2  bbht_console.sram.hex

@@ -1,0 +1,15 @@
+{
+  "platform": "bbht_grover_k3h3_e4_m2_rankfix_20261028",
+  "source_manifest": "../pipeline_inputs.json",
+  "platform_input_hashes_verified": 28,
+  "general_threads": 1,
+  "synthesis_threads": 1,
+  "synthesis_hook_sha256": "a79f645e31ea6679f4eea7d8225497f2710eefbb47f6b5d959fb23a447aeb6cf",
+  "pnr_hook_sha256": "82cf0193f6e8bbab147f571adec38e476814b3a21dc62823ef15a75ade5ab1fd",
+  "rtl_and_clock_constraints_changed": false,
+  "reason": "Three previous Vivado processes were Killed during synthesis; service memory limit is 10 GiB.",
+  "reused_checks": [
+    "same-source 500-workload RTL",
+    "90-check full SoC console"
+  ]
+}

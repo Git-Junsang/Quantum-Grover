@@ -1,0 +1,40 @@
+{
+  "genre": "report",
+  "change_rate": {
+    "rate": 0.0068,
+    "scope": "전문",
+    "verdict": "OK"
+  },
+  "s1_targets": [],
+  "antithesis": {
+    "before": 3,
+    "after": 3,
+    "verdict": "스킵 (원문 대구 < 5)"
+  },
+  "golden": [],
+  "sentence_touch": {
+    "rate": 0.0775,
+    "touched": 11,
+    "total": 142
+  },
+  "numbers_dropped": [],
+  "modality": {
+    "lost_pairs": [],
+    "uncertain_pairs": [],
+    "counts": {
+      "deontic": {
+        "before": 3,
+        "after": 4
+      },
+      "hedge": {
+        "before": 2,
+        "after": 2
+      }
+    },
+    "verdict": "OK"
+  },
+  "gate": {
+    "verdict": "OK — 수렴",
+    "exit_code": 0
+  }
+}

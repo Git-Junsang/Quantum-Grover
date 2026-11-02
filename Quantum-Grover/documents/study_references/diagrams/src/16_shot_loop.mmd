@@ -1,0 +1,13 @@
+flowchart TD
+    START([시작 · 두 random number seed 읽기]) --> SHOT["shot 시작<br/>ROM에서 sampling range (28 entries, 최대 128)<br/>Iteration-Count LFSR rejection sampling으로 number of iterations ∈ [0, sampling range)"]
+    SHOT --> POL["checkpoint policy (a Checkpoint-Capacity of 3 · 3-shot Lookahead)<br/>앞으로 올 3 requests를 보고 출발 checkpoint slot과 남길 state를 정함"]
+    POL --> INNER["안쪽 Grover iteration (13장)<br/>가장 가까운 checkpoint에서 남은 iterations만 · 없으면 Init 후 처음부터"]
+    INNER --> MEAS["measurement (14장) · amplitude는 읽기만"]
+    MEAS --> OK{"verification · 후보가 predicate를 만족?"}
+    OK -->|아니오| LIM{"shot cap 100 · BBHT budget 576에 닿았나?"}
+    LIM -->|아니오 · 다음 ROM entry| SHOT
+    LIM -->|예| STOP([종료 · shot_limit / budget_limit])
+    OK -->|예| EN{"enumeration mode인가?"}
+    EN -->|아니오| DONE([종료 · RESULT_INDEX])
+    EN -->|예| NEXT["Result FIFO 에 넣고 Found Mask bit 세우기<br/>checkpoint slot 무효화 · ROM 첫 entry부터 다시 (Iteration-Count LFSR은 이어서)"]
+    NEXT --> SHOT

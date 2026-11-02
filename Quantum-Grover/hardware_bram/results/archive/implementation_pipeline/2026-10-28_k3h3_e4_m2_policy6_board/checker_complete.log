@@ -1,0 +1,21 @@
+모델 K3H3_E4_M2
+  보드   /tmp/m2_board_checks_nhsp1vyw/complete.csv  (1000행)
+  벤치   /workspace/hardware_bram/models/hardware_bram_K3H3_E4_M2/results/2026-09-10_bench500_final_core/per_workload.csv
+
+=== mode0 NORMAL (500쌍) ===
+  ok   result_index   500/500
+  ok   trial_count    500/500
+  ok   L_BBHT         500/500
+  ok   actual_iter    500/500
+       cycle_count      0/500  합계 보드 42,300,932 대 벤치 11,785,382 (+258.93%)
+       실경과 합 425,502 us (보드 축)
+
+=== mode1 체크포인트 (500쌍) ===
+  ok   result_index   500/500
+  ok   trial_count    500/500
+  ok   L_BBHT         500/500
+  ok   actual_iter    500/500
+  ok   cycle_count    500/500  합계 보드 5,328,877 대 벤치 5,328,877 (+0.00%)
+       실경과 합 55,798 us (보드 축)
+
+통과

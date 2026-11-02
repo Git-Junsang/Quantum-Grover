@@ -1,0 +1,182 @@
+{
+  "edits": [
+    {
+      "rule": "A-15",
+      "before": "그 설계가 맞다는 것을 **어떻게 보였는가**를 정리합니다.",
+      "after": "그 설계가 맞다는 것을 **어떤 절차로 확인했는가**를 정리합니다."
+    },
+    {
+      "rule": "A-7",
+      "before": "여섯 편의 1차 자료가 하나도 빠짐없이 인용 사고를 낼 오류를 갖고 있음을 보이면서,",
+      "after": "여섯 편의 1차 자료 모두에 인용할 때 주의해야 할 오류가 있음을 보이면서"
+    },
+    {
+      "rule": "D-8",
+      "before": "두 결론이 가리키는 곳이 같습니다 — **재는 절차**.",
+      "after": "두 결론 모두 **재는 절차**가 필요하다는 뜻입니다."
+    },
+    {
+      "rule": "D-8",
+      "before": "이 목록에서 얻을 교훈은 목록 그 자체가 아니라 태도입니다 —",
+      "after": "이 사례들은 검증할 때 다음과 같은 태도가 필요함을 보여줍니다 —"
+    },
+    {
+      "rule": "D-14",
+      "before": "참조 implementation이 손에 있어야 합니다.",
+      "after": "참조 implementation을 갖추어야 합니다."
+    },
+    {
+      "rule": "D-8",
+      "before": "순서가 뒤집혀 있는 것이지요.",
+      "after": "설계를 확정하기 전부터 검증이 필요한 것이지요."
+    },
+    {
+      "rule": "D-14",
+      "before": "그 위에 마지막 확인으로 board가 얹힙니다.",
+      "after": "마지막에는 board에서 확인합니다."
+    },
+    {
+      "rule": "D-2",
+      "before": "2단과 3단이 bit 단위로 같아야 한다는 기준은 강력하지만, 공짜가 아닙니다.",
+      "after": "2단과 3단이 bit 단위로 같아야 한다는 기준은 강력하지만 저절로 성립하지는 않습니다."
+    },
+    {
+      "rule": "D-2",
+      "before": "reference model과 RTL은 영원히 일치하지 않고,",
+      "after": "reference model과 RTL은 일치하지 않고"
+    },
+    {
+      "rule": "D-14",
+      "before": "12.4절의 round-half-to-even 규칙이 여기서 처음 일합니다.",
+      "after": "12.4절의 round-half-to-even 규칙이 여기서 처음 적용됩니다."
+    },
+    {
+      "rule": "D-8",
+      "before": "이 예제가 값진 진짜 이유는 **두 번째 iteration**에 있습니다.",
+      "after": "이 예제에서는 **두 번째 iteration**도 살펴볼 필요가 있습니다."
+    },
+    {
+      "rule": "D-2",
+      "before": "가장 흔한 순진한 implementation(truncation)과",
+      "after": "흔히 쓰는 단순한 implementation(truncation)과"
+    },
+    {
+      "rule": "D-2",
+      "before": "waveform viewer에서 cycle을 짚어 가며 대조하기에 이보다 좋은 출발점은 없습니다.",
+      "after": "waveform viewer에서 cycle을 짚어 가며 대조하기에 적합한 출발점입니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "이 발판 위에서라면 predicate 판정을",
+      "after": "이 기본 예제를 확인한 뒤에는 predicate 판정을"
+    },
+    {
+      "rule": "D-14",
+      "before": "그것은 verification용 발판이지 설계가 아닙니다.",
+      "after": "그것은 verification용 예제이지 실제 설계가 아닙니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "발판을 지나면 실제 predicate circuit을 봅니다.",
+      "after": "기본 예제를 확인한 뒤에는 실제 predicate circuit을 봅니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "종료 규칙이 일해야 합니다.",
+      "after": "종료 규칙에 따라 멈춰야 합니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "FSM이 **매달리지 않고 빠져나오는가**",
+      "after": "FSM이 **멈춰 있지 않고 종료하는가**"
+    },
+    {
+      "rule": "D-14",
+      "before": "regression test가 무작위로 빨간불을 켜게 됩니다.",
+      "after": "regression test가 무작위로 실패를 보고하게 됩니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "**드문 경로를 직접 찔러 봐야 합니다.**",
+      "after": "**드문 경로도 직접 시험해야 합니다.**"
+    },
+    {
+      "rule": "D-2",
+      "before": "실행된 적 없는 code가 옳을 probability는 낮습니다.",
+      "after": "실행된 적 없는 code의 정확성을 높은 probability로 기대하기는 어렵습니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "보장을 갉아먹습니다.",
+      "after": "보장을 약화시킵니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "**가장 조용히 틀릴 수 있는** 부분입니다.",
+      "after": "**오류가 가장 드러나기 어려운** 부분입니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "checkpoint slot이 **살아 있어야** 합니다.",
+      "after": "checkpoint slot이 **유효하게 남아 있어야** 합니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "비워도 결과는 맞지만 이득이 사라지고, 그것도 조용히 사라집니다.",
+      "after": "비워도 결과는 맞지만 성능 이득이 사라져 결과만으로는 문제를 알아차리기 어렵습니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "답이 조용히 틀립니다",
+      "after": "겉으로 드러나지 않게 답이 틀립니다"
+    },
+    {
+      "rule": "D-14",
+      "before": "중간 state를 다른 checkpoint slot에 떨구는 경우입니다.",
+      "after": "중간 state를 다른 checkpoint slot에 저장하는 경우입니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "testbench가 값을 file로 떨어뜨리고 script가 대조합니다.",
+      "after": "testbench가 값을 file로 저장하고 script가 대조합니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "simulator harness가 결과를 file로 떨어뜨려 대조하는 형태가 자연스럽습니다.",
+      "after": "simulator harness가 결과를 file로 저장해 대조하는 형태가 자연스럽습니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "강제 주입으로 직접 찔러 봅니다.",
+      "after": "강제 주입으로 직접 시험합니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "이것으로 해설서가 닫힙니다.",
+      "after": "이것으로 해설서를 마칩니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "그 algorithm을 memory와 arithmetic과 제어와 bus로 내렸으며,",
+      "after": "그 algorithm을 memory와 arithmetic과 제어와 bus로 구현했으며"
+    },
+    {
+      "rule": "D-14",
+      "before": "그 내려온 것이 맞다는 걸 어떻게 보였는지까지 왔습니다.",
+      "after": "그 구현이 맞는지 어떤 절차로 확인했는지 살펴보았습니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "끝까지 정직하게 계산된 결과입니다.",
+      "after": "끝까지 정해진 규칙에 따라 계산된 결과입니다."
+    }
+  ],
+  "self_check": {
+    "preserved_anchors": true,
+    "genre": true,
+    "register": true,
+    "no_added_claims": true,
+    "no_added_metaphors": true,
+    "protected_tokens": true
+  }
+}

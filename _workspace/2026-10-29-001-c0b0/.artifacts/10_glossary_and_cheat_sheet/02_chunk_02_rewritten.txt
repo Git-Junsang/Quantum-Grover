@@ -1,0 +1,16 @@
+## 10.1 gate cheat sheet
+
+| gate | matrix | 작용 | 장 |
+|--------|------|------|:--:|
+| $I$ | $\begin{bmatrix}1&0\\0&1\end{bmatrix}$ | identity (quantum wire) | [3](03_single_qubit_gates.md) |
+| $X$ (NOT) | $\begin{bmatrix}0&1\\1&0\end{bmatrix}$ | $\|0\rangle\leftrightarrow\|1\rangle$ | [3](03_single_qubit_gates.md) |
+| $Y$ | $\begin{bmatrix}0&-i\\i&0\end{bmatrix}$ | bit flip + phase flip | [3](03_single_qubit_gates.md) |
+| $Z$ | $\begin{bmatrix}1&0\\0&-1\end{bmatrix}$ | $\|1\rangle$ sign flip (phase) | [3](03_single_qubit_gates.md) |
+| $H$ | $\frac{1}{\sqrt2}\begin{bmatrix}1&1\\1&-1\end{bmatrix}$ | computational basis↔superposition, interference | [3](03_single_qubit_gates.md) |
+| CNOT | $\begin{bmatrix}1&0&0&0\\0&1&0&0\\0&0&0&1\\0&0&1&0\end{bmatrix}$ | control qubit=1이면 target qubit 뒤집기 | [5](05_multiple_qubits_and_entanglement.md) |
+| Toffoli | (8×8) | control qubit 둘 다 1이면 target qubit 뒤집기 = 가역 AND | [6](06_quantum_circuit_model_and_universality.md) |
+
+**꼭 외울 것**: $X, Z, H$ 의 matrix와 작용. $HH = I$, $XX = I$, $Z\|1\rangle = -\|1\rangle$.
+
+---
+

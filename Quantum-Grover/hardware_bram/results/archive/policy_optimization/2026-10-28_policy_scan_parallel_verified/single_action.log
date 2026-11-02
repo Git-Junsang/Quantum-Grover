@@ -1,0 +1,2 @@
+SUMMARY single_action cases=268 errors=0 clears=3
+/workspace/hardware_bram/results/2026-10-28_policy_scan_parallel_verified/source/tb_policy_single_action.sv:150: $finish called at 111340000 (1ps)

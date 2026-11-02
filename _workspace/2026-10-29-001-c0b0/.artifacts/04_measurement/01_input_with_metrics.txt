@@ -1,0 +1,217 @@
+[진단]
+# 윤문 진단
+
+## 장르·레지스터
+- 학부생용 quantum algorithm·FPGA 해설서(report), 친근한 합쇼체 중심이며 독자에게 말을 거는 해요체가 일부 섞인 기존 학습서 말투입니다. 격식을 올리거나 설명을 학술 논문체로 바꾸지 않습니다.
+- 제목·절 번호·목록·표·수식·code·link·기존 콜아웃 및 이모지 형식은 보존합니다. 한국어 서술만 국소적으로 다듬습니다.
+- 영어 용어·영어 토큰은 번역, 교체, 삭제, 추가하지 않습니다. SSOT는 documents/design_references/22_appendix_glossary_and_retired_specs.md §22.2와 기존 glossary입니다.
+- 사실·수치·조건·부정·인과·추측/당위·인용을 보존합니다. 원문의 기술 주장을 새 해설이나 사실 교정으로 확장하지 않습니다.
+
+## 정량 앵커
+- 11,798자, risk_band low, route_hint standard. A-19 double_particle_count=2, A-18 relative_clause_nesting=5. conclusion_pivot_count=1(따라서), ending_comma_rate=0.47. A-8·A-9·A-7은 0으로 확정 패턴이 아닙니다.
+## 지배 패턴과 겨냥 순서
+1. D-14·D-5: “emulator에서는 유혹이 하나 생깁니다”, “quantum algorithm의 약속이 여기서 소리 없이 사라집니다”, “자연이 이 sampling을 공짜로 해 주지만”, “checkpoint의 뿌리”, “회로를 스스로 묶어 두려는” 등이 설명을 의인화하거나 비유로 돌립니다. 작용과 결과를 직접 적는 방향이 적합합니다. 학습용 동전·계단 비유 자체는 무조건 제거하지 않습니다.
+2. D-8·I-2: “measurement의 가장 중요한 성질:”, “규칙을 지키려면 규칙대로 뽑아야 합니다” 등 설명 앞의 예고·자명한 반복이 있습니다. 뒤의 실제 설명에 자연스럽게 잇는 후보입니다.
+3. A-18: 4.2·4.3·4.4절에서 amplitude 동률→argmax의 반복 출력, sampling→계층 구조, 실패 shot→checkpoint의 인과를 긴 문장에 몰아넣습니다. 조건을 보존하며 한국어 절 연결을 정돈할 수 있습니다.
+4. C-8·J-2: argmax와 sampling, 물리 장치와 emulator를 반복 대구·가상 따옴표로 구별합니다. 기술적 대립은 보존하되 “확률이니 sample이니”, “그럴듯한 약속” 같은 과장된 어감을 줄이는 후보입니다.
+5. A-19·C-11: 이중 조사와 “~이고,” “~이므로,” 등 연결어미 뒤 쉼표를 본문에서 확인합니다. 제목에 포함된 ‘circuit에서의’는 제목 보존 조건 때문에 고치지 않습니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+route_hint: standard  (권고 — 사용자·오케스트레이터가 무시 가능)
+route_reason: 카운트형 티 3건 · risk_band low — 진단 + 단일 윤문 권장
+genre: report
+char_count: 11798
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.33  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.42  (z=-0.45 vs report 인간 baseline)
+- ending_comma_rate: 0.47  (n/a vs report 인간 baseline)
+- comma_segment_length: 7.65  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 1  (lexicon 매치: '따라서')
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.001  (z=-1.96 vs report 인간 baseline)
+- lexical_diversity: 0.64  (z=-0.26 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 2
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 5
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+# 4장. measurement
+
+> [← 3장 single-qubit gate](03_single_qubit_gates.md) · [index](index.md) · [5장 multi-qubit와 entanglement →](05_multiple_qubits_and_entanglement.md)
+> **이 장을 읽기 위한 준비**: [1장](01_qubits_and_states.md) amplitude·normalization, [3장](03_single_qubit_gates.md) gate($H$).
+
+---
+
+지금까지 qubit state를 만들고([1장](01_qubits_and_states.md)) gate로 변형했습니다([3장](03_single_qubit_gates.md)). 하지만 state vector 자체는 숨은 정보라 직접 볼 수 없습니다([1.6절](01_qubits_and_states.md#16-measurement로-읽을-수-없는-정보--amplitude는-숨어-있다)). 계산 결과를 꺼내려면 **measurement**를 해야 합니다. 이 장에서는 measurement가 amplitude를 어떻게 probability로 바꾸는지(Born rule), measurement 후 state가 어떻게 collapse하는지, 그리고 왜 normalization condition이 여기서 나오는지를 배웁니다. measurement는 모든 quantum algorithm의 **마지막 단계**이며, Grover가 "solution을 높은 probability로" 준다는 말의 의미가 여기서 정확해집니다.
+
+---
+
+## 4.1 computational basis measurement와 Born rule
+
+qubit가 $|\psi\rangle = \alpha|0\rangle + \beta|1\rangle$ state에 있습니다. 이를 **computational basis measurement**를 하면:
+
+- probability $|\alpha|^2$ 로 결과 **0** 을 얻고,
+- probability $|\beta|^2$ 로 결과 **1** 을 얻습니다.
+
+이 규칙 — amplitude의 absolute value square가 probability — 을 **Born rule**이라 부릅니다. measurement 결과는 평범한 **classical bit** 하나입니다. 이 classical information을 가지고 이후 다른 처리를 할 수 있습니다.
+
+🔍 **계산 따라가기 — $|+\rangle$ 을 measurement하면?**
+
+$|+\rangle = \frac{1}{\sqrt2}|0\rangle + \frac{1}{\sqrt2}|1\rangle$ 이므로:
+
+$$\text{probability}(0) = \left|\tfrac{1}{\sqrt2}\right|^2 = \tfrac12, \qquad \text{probability}(1) = \left|\tfrac{1}{\sqrt2}\right|^2 = \tfrac12$$
+
+50:50. 동전 던지기와 같습니다.
+
+✏️ **연습 4-1**: state $|\psi\rangle = \frac12|0\rangle + \frac{\sqrt3}{2}|1\rangle$ 를 measurement하면 결과 1이 나올 probability는? *(answer: $\frac34$. [10장](10_glossary_and_cheat_sheet.md#106-연습문제-답)에 풀이.)*
+
+---
+
+## 4.2 argmax는 왜 measurement가 아닌가
+
+Born rule은 amplitude 하나하나에 **probability**를 배정합니다. 그런데 state vector를 memory array에 펼쳐 놓고 계산하는 emulator에서는 유혹이 하나 생깁니다. amplitude가 전부 눈앞에 있으니, random number 같은 것 없이 **가장 큰 amplitude를 가진 칸**을 골라 답으로 내놓으면 되지 않을까요? algorithm이 solution 쪽 amplitude를 키워 놓았을 테니 제일 높은 막대가 solution일 것이고, probability이니 sample이니 하는 것을 circuit으로 만들 필요도 없어 보입니다. maximum의 **위치**를 고르는 이 연산을 **argmax**라고 부릅니다.
+
+argmax는 measurement가 아닙니다. Born rule이 정의하는 것은 $|a_i|^2$ 이라는 **distribution**이고 measurement는 그 distribution에서 sample을 하나 뽑는 일인데, argmax는 distribution을 받아 순위 1등만 남기고 나머지를 통째로 버립니다. probability 0.9로 나올 답과 0.5로 나올 답이 argmax에게는 똑같이 1등이고, probability 0.49짜리 답은 아예 없는 것과 같아집니다. "높은 probability로 solution을 준다"는 quantum algorithm의 약속이 여기서 소리 없이 사라집니다.
+
+더 결정적인 문제는 **tie**입니다. predicate를 만족하는 답이 여럿인 문제 — 예컨대 "threshold보다 작은 값이 든 칸을 전부 찾아라" — 를 생각해 보면, algorithm은 그 답들을 완전히 대칭으로 다룹니다. 출발 amplitude가 서로 같고 이후의 연산이 index를 구별하지 않으므로, solution 여러 개의 amplitude는 매 순간 **정확히 같은 값**으로 나란히 자랍니다. 그러면 argmax circuit이 내놓는 것은 comparator의 우선순위가 정한 index **하나**이고, circuit이 결정론적이니 몇 번을 다시 돌려도 같은 하나입니다. 나머지 solution들은 probability가 낮아서 못 나오는 것이 아니라 **원리적으로 나올 수 없습니다.** predicate를 만족하는 element를 전부 enumeration해야 하는 우리 accelerator에게는 치명적이고, 그래서 Measurement Unit을 comparator가 아니라 probability sampler로 만듭니다. 이 논증을 숫자로 확인하는 자리는 [14.3절](14_multiple_solutions_and_minimum_search.md#143-amplitude-동률--argmax가-무너지는-지점)입니다.
+
+---
+
+## 4.3 classical hardware로 Born rule 흉내내기
+
+규칙을 지키려면 규칙대로 뽑아야 합니다. 진짜 quantum 장치에서는 자연이 이 sampling을 공짜로 해 주지만, emulator에서는 우리가 circuit으로 만들어야 합니다. 방법은 통계학에서 **inverse transform sampling**이라 부르는 고전적인 기법이고, 필요한 부품은 random number generator 하나와 accumulator 하나입니다.
+
+amplitude $a_0, a_1, \dots, a_{\text{number of states}-1}$ 의 absolute value square를 앞에서부터 차례로 더한 **prefix sum**을 생각합니다.
+
+$$\text{prefix sum}(i) = \sum_{k \le i} |a_k|^2$$
+
+prefix sum은 0에서 출발해 1까지 올라가는 계단이고, $i$ 번째 계단의 높이 차가 정확히 $|a_i|^2$ 입니다. 여기에 $[0, 1)$ 에서 균등하게 뽑은 random number $r$ 을 하나 떨어뜨린 뒤, $\text{prefix sum}(i) > r$ 이 되는 **첫 번째** $i$ 를 답으로 씁니다. $i$ 가 뽑히려면 $r$ 이 interval $[\text{prefix sum}(i-1),\, \text{prefix sum}(i))$ 안에 떨어져야 하는데 그 interval의 길이가 바로 $|a_i|^2$ 이므로, 이 절차는 Born rule을 정확히 재현합니다. [4.1절](#41-computational-basis-measurement와-born-rule)의 동전 던지기를 state 하나가 면 하나인 주사위로 늘린 것뿐입니다.
+
+여기서 hardware 설계에 두고두고 쓰이는 성질이 하나 나옵니다. **probability mass는 index에 붙어 있지, 훑는 순서에 붙어 있지 않습니다.** 0번부터 차례로 훑든, array를 여러 조각으로 나눠 조각을 먼저 고르고 그 안에서 다시 고르든, 각 index가 뽑힐 probability는 $|a_i|^2$ 그대로입니다. 순서를 마음대로 바꿔도 된다는 이 자유 덕분에 amplitude를 한 칸씩 직렬로 훑는 대신 여러 칸을 동시에 읽는 병렬 구조를 쓸 수 있고, 그것이 row를 먼저 고르고 그 안에서 칸을 고르는 우리 Measurement Unit의 계층 구조입니다([14.5절](14_multiple_solutions_and_minimum_search.md#145-2단-병렬-measurement)).
+
+이렇게 뽑아낸 measurement 결과는 결국 **index 번호 하나**입니다. qubit 하나에 bit 하나씩이라, 우리 설계의 14 qubits라면 16,384칸 중 몇 번째인지를 가리키는 14-bit integer 하나이고, 이 값이 status register를 거쳐 host로 올라갑니다([17.4절](17_rvx_soc_integration.md#174-csr-map)). amplitude array에는 real number가 16,384개나 들어 있지만 밖으로 나오는 것은 번호 하나뿐입니다. array를 통째로 읽어 낼 수도 있는 emulator가 굳이 그러지 않는 이유는, 실기 quantum이 할 수 있는 만큼만 하도록 circuit을 스스로 묶어 두려는 것입니다([1.6절](01_qubits_and_states.md#16-measurement로-읽을-수-없는-정보--amplitude는-숨어-있다)).
+
+---
+
+## 4.4 measurement는 state를 collapse시킨다
+
+measurement의 가장 중요한 성질: **measurement는 state를 가만두지 않습니다.** measurement 후 state는 관측된 결과에 해당하는 computational basis state로 **collapse**합니다.
+
+- 결과가 0이면 → measurement 후 state는 $|0\rangle$.
+- 결과가 1이면 → measurement 후 state는 $|1\rangle$.
+
+그리고 결정적으로, collapse 후에는 **$\alpha, \beta$ 가 완전히 사라집니다.** measurement 후 state $|0\rangle$ 이나 $|1\rangle$ 에는 원래 amplitude의 흔적이 없습니다.
+
+> ⚠️ **함정 — 한 번 measurement하면 되돌릴 수 없다**: gate는 reversible하지만([3.7절](03_single_qubit_gates.md#37-unitary의-또-다른-성질--reversibility)), **measurement는 irreversible**입니다. measurement하는 순간 superposition이 파괴됩니다. 그래서 algorithm은 계산을 다 끝낸 뒤에 measurement를 하며, **한 번의 실행에서 measurement는 한 번뿐**입니다.
+
+💡 **비유**: superposition state는 빠르게 돌고 있는 동전입니다. "measurement"는 손으로 탁 눌러 앞/뒤를 확정하는 것입니다. 누른 뒤에는 그냥 앞면(또는 뒷면)일 뿐, "얼마나 빠르게 돌고 있었는지($\alpha, \beta$)"는 알 수 없습니다.
+
+measurement가 확률적이면서 irreversible하다는 두 성질을 합치면 quantum computation의 실행 단위가 정해집니다. state를 준비하고, gate를 걸고, 마지막에 measurement로 classical bit를 꺼내면 한 번의 실행이 끝납니다. 이 한 번을 **shot**이라고 부릅니다. 한 shot이 주는 것은 probability distribution에서 뽑은 sample 하나뿐이므로, 원하는 답을 얻으려면 대개 **실행 자체를 여러 번 반복**합니다. Grover도 예외가 아닙니다 — Grover iteration을 몇 번 돌릴지 정확히 맞추면 한 shot으로 거의 확실하게 답이 나오지만, solution이 몇 개인지 몰라 그 횟수를 맞출 수 없으면 shot을 여러 번 던져 가며 더듬어야 합니다. 우리 설계의 조건(14 qubits, 1 solution, board benchmark와 같은 100 workloads)에서 그 mean이 **22.7 shots**입니다. 흔히 짐작하는 "네댓 번"이 아니고, shot을 몇 번 어떻게 던질지 정하는 바깥 loop가 [16장](16_iteration_control_and_checkpoints.md)의 주제입니다.
+
+그런데 실패한 shot이 무엇을 남기는가에서 물리 장치와 emulator가 갈라집니다. 진짜 quantum 장치에서는 measurement가 state를 collapse시키므로, 방금까지 애써 키워 놓은 amplitude가 그 자리에서 사라지고 다음 shot은 반드시 처음부터 다시 준비해야 합니다. 반면 emulator의 measurement는 [4.3절](#43-classical-hardware로-born-rule-흉내내기)의 절차 그대로 **array를 읽어 square의 prefix sum을 쌓는 일**이고, 읽기는 array를 바꾸지 않습니다. 강제되는 collapse가 없으니 shot이 실패한 뒤에도 amplitude array에는 직전까지 계산해 둔 state가 고스란히 남아 있습니다. 이 남은 state를 버리지 않고 몇 벌 남겨 두었다가 다음 shot의 출발점으로 재활용하는 것이 우리 설계의 **checkpoint**이고([16.5절](16_iteration_control_and_checkpoints.md#165-checkpoint--measurement가-읽기-전용이라는-사실에서)), 그 뿌리는 "emulator의 measurement는 읽기 전용"이라는 이 한 줄입니다. 실기 quantum은 흉내조차 낼 수 없는 일이라 공짜로 얻은 이득처럼 보이는데, 정말 공짜인지 — 결과가 달라지지는 않는지 — 는 따로 따져야 할 문제입니다([16.6절](16_iteration_control_and_checkpoints.md#166-왜-결과가-달라지지-않는가)).
+
+---
+
+## 4.5 normalization condition의 진짜 이유
+
+이제 [1장](01_qubits_and_states.md)에서 미뤄둔 질문에 답할 수 있습니다. 왜 $|\alpha|^2 + |\beta|^2 = 1$ 이어야 할까요?
+
+measurement 결과는 0 아니면 1, 둘 중 하나입니다. 두 probability의 sum은 반드시 1이어야 합니다:
+
+$$\text{probability}(0) + \text{probability}(1) = |\alpha|^2 + |\beta|^2 = 1$$
+
+**normalization condition은 곧 "measurement probability의 sum이 1"이라는 자명한 요구입니다.** 그리고 gate가 unitary(길이 보존)여야 하는 이유도 여기 있습니다([3.6절](03_single_qubit_gates.md#36-unitary-matrix--왜-이것만-gate가-되나)): gate가 길이를 바꾸면 measurement probability의 sum이 1이 아니게 되어 버립니다.
+
+> 🔑 **핵심 — 모든 게 맞물린다**: state는 normalization(길이 1) → measurement probability의 sum이 1이라서. gate는 unitary(길이 보존) → normalization을 유지해야 하니까. measurement는 Born rule($|\text{amplitude}|^2$) → 이 셋이 하나의 일관된 체계입니다.
+
+---
+
+## 4.6 circuit에서의 measurement notation
+
+circuit에서 measurement는 계량기(반원) 기호로 그리고, 나온 classical bit는 **이중선**으로 표시합니다.
+
+```
+ |ψ⟩ ──[ H ]──| D |═══ m  (classical bit 0 또는 1)
+```
+
+measurement 후 qubit는 보통 버려지므로(discard) 오른쪽에 quantum 선을 그리지 않는 것이 관례입니다.
+
+---
+
+## 4.7 왜 computational basis measurement만 배우면 되는가
+
+measurement에는 다른 종류(다른 basis에서의 measurement)도 있지만, **computational basis measurement + gate** 조합으로 임의의 measurement를 흉내 낼 수 있습니다. 그래서 원리적으로는 computational basis measurement만 알면 충분합니다.
+
+예를 들어 "$|+\rangle$ basis로 measurement"하고 싶으면, 먼저 $H$ gate를 적용한 뒤 computational basis로 measurement하면 됩니다. 이것이 다음 절의 핵심 예제입니다.
+
+---
+
+## 4.8 결정적 예제 — $|+\rangle$ 과 $|-\rangle$ 구별하기
+
+[1장](01_qubits_and_states.md)에서 $|+\rangle$ 과 $|-\rangle$ 은 "measurement하면 둘 다 50:50이라 그냥은 구별 못 한다"고 했습니다. 그런데 gate를 쓰면 **완벽히** 구별할 수 있습니다.
+
+핵심은 $H$ 가 자기 자신의 inverse라는 것($HH=I$, [3.4절](03_single_qubit_gates.md#34-hadamard-gate-h--superposition을-만드는-열쇠)):
+
+$$H|+\rangle = |0\rangle, \qquad H|-\rangle = |1\rangle$$
+
+🔍 **계산 따라가기**: $|+\rangle = H|0\rangle$ 이므로 $H|+\rangle = HH|0\rangle = |0\rangle$. 마찬가지로 $|-\rangle = H|1\rangle$ 이므로 $H|-\rangle = |1\rangle$.
+
+따라서 circuit **"$H$ 적용 → measurement"** 를 쓰면:
+- 입력이 $|+\rangle$ 이면 → 항상 0 (probability 1)
+- 입력이 $|-\rangle$ 이면 → 항상 1 (probability 1)
+
+computational basis에서는 구별 불가능하던 두 state가, $H$ 하나로 **결정적으로** 구별됩니다.
+
+> 🔑 **핵심 — 이것이 quantum algorithm의 축소판**: "measurement 직전에 적절한 gate를 걸어, 숨은 phase 정보(+/− sign)를 measurement 가능한 형태(0/1)로 바꾼다." [8장 Deutsch-Jozsa](08_deutsch_jozsa_algorithm.md)와 [9장 Grover](09_grover_algorithm.md)의 마지막 Hadamard가 정확히 이 일을 합니다.
+
+---
+
+## 4.9 global phase는 무의미하다
+
+measurement probability가 $|\text{amplitude}|^2$ 이라는 사실에서 중요한 corollary가 나옵니다. state 전체에 magnitude 1인 complex number $e^{i\theta}$ 를 곱한 것 — **global phase** — 는 아무 관측 결과에도 영향을 주지 않습니다.
+
+$$|\psi\rangle \quad\text{와}\quad e^{i\theta}|\psi\rangle \quad\text{는 물리적으로 같은 state}$$
+
+왜냐하면 $|e^{i\theta}\alpha|^2 = |\alpha|^2$ 이라 모든 measurement probability가 동일하기 때문입니다.
+
+> ⚠️ **global phase vs relative phase**: global phase(**모든** 항에 같은 $e^{i\theta}$)는 무의미하지만, 항들 **사이의** relative phase(예: $|+\rangle$ 의 $+$ 와 $|-\rangle$ 의 $-$)는 **매우 중요**합니다. [4.8절](#48-결정적-예제--rangle-과--rangle-구별하기)에서 봤듯 relative phase는 gate로 관측 가능해집니다. Grover에서 oracle이 만드는 sign $-1$ 도 relative phase라 의미가 있습니다.
+
+이 때문에 quantum computing에서는 $X$ 와 $-X$ 를 "global phase만큼 같다"며 구별하지 않기도 합니다. [9장 Grover](09_grover_algorithm.md)에서 state 전체에 $-1$ 을 곱하는 자리가 나오는데, 이는 결과에 영향이 없어 무시할 수 있습니다.
+
+---
+
+## 4.10 이 장의 요약
+
+- **Born rule**: $\alpha|0\rangle+\beta|1\rangle$ measurement 시 probability $|\alpha|^2$ 로 0, $|\beta|^2$ 로 1. 결과는 classical bit.
+- **argmax는 measurement가 아니다**: maximum의 위치를 고르는 것은 distribution을 버리는 일. solution이 여럿이면 amplitude가 정확히 같아 늘 같은 하나만 나오고, 나머지는 **원리적으로** 나올 수 없음.
+- **inverse transform sampling**: $\text{prefix sum}(i)=\sum_{k\le i}|a_k|^2$ 에 uniform random number를 떨어뜨려 Born rule을 circuit으로 재현. 훑는 순서를 바꿔도 distribution은 같으므로 병렬화가 가능.
+- **collapse**: measurement 후 state는 $|0\rangle$ 또는 $|1\rangle$ 로 collapse, amplitude $\alpha,\beta$ 는 소멸. **irreversible**.
+- **shot**: 준비 → gate → measurement 한 번이 한 번의 실행. sample 하나만 주므로 실행을 여러 번 반복함.
+- **emulator의 measurement는 읽기 전용**: 강제되는 collapse가 없어 실패한 shot 뒤에도 state가 남음 — checkpoint의 뿌리.
+- **normalization의 이유**: $|\alpha|^2+|\beta|^2=1$ = measurement probability의 sum. gate가 unitary인 이유와 한 체계.
+- **computational basis measurement + gate**로 임의 measurement 흉내 가능.
+- **$H$→measurement로 $|+\rangle,|-\rangle$ 결정적 구별**: 숨은 phase → measurement 가능한 0/1. algorithm의 축소판.
+- **global phase 무의미**: $e^{i\theta}|\psi\rangle \equiv |\psi\rangle$. 단, 항들 사이 **relative phase**는 결정적으로 중요.
+
+다음 장에서는 qubit를 여러 개로 늘립니다. tensor product로 dimension이 $2^{\text{number of qubits}}$ 인 state space가 열리고, CNOT gate와 **entanglement**라는 순수 quantum 현상을 만납니다.
+
+---
+
+> [← 3장 단일 qubit gate](03_single_qubit_gates.md) · [index](index.md) · [5장 다중 qubit와 entanglement →](05_multiple_qubits_and_entanglement.md)
+[원문 끝]

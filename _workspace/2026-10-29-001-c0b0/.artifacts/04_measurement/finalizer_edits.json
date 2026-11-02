@@ -1,0 +1,6 @@
+[
+  {
+    "before": "여기에 $[0, 1)$ 에서 균등하게 뽑은 random number $r$ 을 하나 뽑은 뒤",
+    "after": "$[0, 1)$ 에서 random number $r$ 을 균등하게 하나 뽑은 뒤"
+  }
+]

@@ -5,7 +5,7 @@
 
 ---
 
-[1장](01_qubits_and_states.md)에서 qubit state를 ket $|\psi\rangle$ 으로 썼습니다. 이 장에서는 그 짝인 **bra** $\langle\psi|$ 를 도입하고, 둘을 합친 **inner product**를 배웁니다. inner product는 "두 state가 얼마나 닮았는가"를 재는 도구이며, measurement probability·normalization·unitary condition이 모두 여기서 깔끔하게 표현됩니다. 이 notation(Dirac notation)에 익숙해지면 이후 모든 계산이 쉬워집니다.
+[1장](01_qubits_and_states.md)에서 qubit state를 ket $|\psi\rangle$ 으로 썼습니다. 이 장에서는 그 짝인 **bra** $\langle\psi|$ 를 도입하고, 둘을 합친 **inner product**를 배웁니다. inner product는 "두 state가 얼마나 닮았는가"를 재는 도구이며, measurement probability·normalization·unitary condition을 모두 이 도구로 표현할 수 있습니다. 이 notation(Dirac notation)에 익숙해지면 이후 모든 계산이 쉬워집니다.
 
 ---
 
@@ -25,7 +25,7 @@ $$
 
 즉 bra $\langle\psi|$ 는 ket의 component를 **complex conjugate**하고 **가로로 눕힌(transpose한)** row vector입니다. ket이 "ket", bra가 "bra"인데, 둘을 합치면 "bra-ket = bracket(괄호)"이 됩니다. 물리학자 Paul Dirac(1939)의 말장난입니다.
 
-💡 **비유**: ket $|\psi\rangle$ 이 세로로 선 화살표라면, bra $\langle\psi|$ 는 그 화살표를 "inner product를 받을 준비가 된" 가로 slot으로 바꾼 것입니다.
+💡 **비유**: ket $|\psi\rangle$ 이 세로로 선 화살표라면, bra $\langle\psi|$ 는 그 화살표를 inner product 계산에 쓰는 가로 slot으로 바꾼 것입니다.
 
 ---
 
@@ -45,7 +45,7 @@ $$
 
 이 $\dagger$ 는 "Hermitian conjugate"라고도 부릅니다. [3장](03_single_qubit_gates.md)에서 unitary condition $U^\dagger U = I$ 를 정의할 때 핵심 도구가 됩니다.
 
-> 🔑 **유용한 규칙**: product의 dagger는 순서를 뒤집습니다. $(A|\psi\rangle)^\dagger = \langle\psi| A^\dagger$. 마치 "신발 신고 양말 신기"를 되돌릴 때 역순으로 벗듯이.
+> 🔑 **유용한 규칙**: product의 dagger는 순서를 뒤집습니다. $(A|\psi\rangle)^\dagger = \langle\psi| A^\dagger$. 신발을 신고 양말을 신었다면, 되돌릴 때는 양말을 먼저 벗고 신발을 벗는 것과 같습니다.
 
 ---
 
@@ -84,7 +84,7 @@ $$
 
 ## 2.4 inner product로 표현한 길이(normalization)
 
-[1장](01_qubits_and_states.md)의 normalization condition을 inner product로 다시 쓰면 놀랍도록 깔끔합니다. state $|\psi\rangle$ 의 **길이의 square**는 자기 자신과의 inner product입니다.
+[1장](01_qubits_and_states.md)의 normalization condition은 inner product로 간단히 표현됩니다. state $|\psi\rangle$ 의 **길이의 square**는 자기 자신과의 inner product입니다.
 
 $$
 \||\psi\rangle\|^2 = \langle\psi|\psi\rangle = \alpha^*\alpha + \beta^*\beta = |\alpha|^2 + |\beta|^2
@@ -121,7 +121,7 @@ $$
 |\psi\rangle\langle\phi| = \begin{bmatrix} \alpha \\ \beta\end{bmatrix}\begin{bmatrix} \gamma^* & \delta^*\end{bmatrix} = \begin{bmatrix} \alpha\gamma^* & \alpha\delta^* \\ \beta\gamma^* & \beta\delta^* \end{bmatrix}
 $$
 
-특히 $|\psi\rangle\langle\psi|$ 는 "$|\psi\rangle$ 방향으로의 projection" operator입니다. 이 형태는 [9장](09_grover_algorithm.md) Grover diffusion operator $U_\psi = 2|\psi\rangle\langle\psi| - I$ 에서 결정적으로 등장하니 지금 눈에 익혀 두세요.
+특히 $|\psi\rangle\langle\psi|$ 는 $|\psi\rangle$ 방향으로 projection하는 operator입니다. 이 형태는 [9장](09_grover_algorithm.md) Grover diffusion operator $U_\psi = 2|\psi\rangle\langle\psi| - I$ 에 쓰이므로 지금 눈에 익혀 두세요.
 
 🔍 **계산 따라가기 — $|0\rangle\langle 0|$ 은?**
 
@@ -131,7 +131,7 @@ $$
 
 이 matrix를 임의 state에 곱하면 $|0\rangle$ component만 남습니다 (projection). 확인: $|0\rangle\langle 0|(\alpha|0\rangle + \beta|1\rangle) = \alpha|0\rangle$.
 
-다만 hardware는 이 matrix를 **만들지 않습니다.** 14 qubits면 $|\psi\rangle\langle\psi|$ 는 $16{,}384 \times 16{,}384$, 곧 2억 칸이 넘는 matrix라 FPGA에 올릴 방법이 없습니다. 그런데 $|\psi\rangle$ 가 uniform superposition일 때 $2|\psi\rangle\langle\psi| - I$ 를 amplitude array에 적용한 결과를 component별로 적어 보면, 각 칸이 `2 × mean − 자기 자신` 으로 바뀔 뿐입니다. matrix를 저장하고 곱하는 일이 array를 훑으며 sum을 모으고 빼는 일로 줄어드는 것이죠([13.5절](13_oracle_diffusion_measurement_datapath.md#135-diffusion-operator--2mean--amp가-circuit이-되는-순간)).
+다만 hardware는 이 matrix를 **만들지 않습니다.** 14 qubits면 $|\psi\rangle\langle\psi|$ 는 $16{,}384 \times 16{,}384$, 곧 2억 칸이 넘는 matrix라 FPGA에 올릴 방법이 없습니다. 그런데 $|\psi\rangle$ 가 uniform superposition일 때 $2|\psi\rangle\langle\psi| - I$ 를 amplitude array에 적용한 결과를 component별로 적어 보면, 각 칸이 `2 × mean − 자기 자신` 으로 바뀔 뿐입니다. matrix를 저장하고 곱하는 대신, array를 훑으며 sum을 구하고 빼면 됩니다([13.5절](13_oracle_diffusion_measurement_datapath.md#135-diffusion-operator--2mean--amp가-circuit이-되는-순간)).
 
 ---
 
@@ -154,8 +154,8 @@ $$
 - **ket·bra**: $|\psi\rangle$ 은 column vector, $\langle\psi| = |\psi\rangle^\dagger$ 는 conjugate transpose한 row vector. 합쳐서 bra-ket(Dirac notation).
 - **dagger $\dagger$**: transpose + complex conjugate. matrix는 $U^\dagger = (U^T)^*$. 곱은 순서 뒤집힘 $(A|\psi\rangle)^\dagger = \langle\psi|A^\dagger$.
 - **inner product $\langle\phi\|\psi\rangle$**: scalar. 0이면 orthogonal(구별 가능). $\{|0\rangle,|1\rangle\}$ 은 orthonormal basis.
-- **normalization**: $\langle\psi\|\psi\rangle = 1$ = 길이 1. 이후 unitary condition·measurement probability의 뿌리.
-- **outer product $\|\psi\rangle\langle\phi\|$**: matrix(operator). $|0\rangle\langle 0|$ 은 projection. Grover diffusion operator $2\|\psi\rangle\langle\psi\|-I$ 의 부품.
+- **normalization**: $\langle\psi\|\psi\rangle = 1$ = 길이 1. 이후 unitary condition·measurement probability를 설명하는 조건.
+- **outer product $\|\psi\rangle\langle\phi\|$**: matrix(operator). $|0\rangle\langle 0|$ 은 projection. Grover diffusion operator $2\|\psi\rangle\langle\psi\|-I$ 에 쓰이는 형태.
 
 다음 장에서는 이 state들을 **바꾸는** 방법 — quantum gate — 를 배웁니다. gate는 unitary matrix이고, dagger와 inner product가 그 정당성을 뒷받침합니다.
 

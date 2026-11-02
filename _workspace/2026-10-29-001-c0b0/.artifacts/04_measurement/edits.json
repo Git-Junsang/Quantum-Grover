@@ -1,0 +1,112 @@
+{
+  "edits": [
+    {
+      "rule": "D-14",
+      "before": "계산하는 emulator에서는 유혹이 하나 생깁니다.",
+      "after": "계산하는 emulator에서는 다른 방법을 생각해 볼 수 있습니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "amplitude가 전부 눈앞에 있으니,",
+      "after": "amplitude를 전부 읽을 수 있으니"
+    },
+    {
+      "rule": "D-14",
+      "before": "probability이니 sample이니 하는 것을 circuit으로 만들 필요도 없어 보입니다.",
+      "after": "probability에 따라 sample을 뽑는 과정을 circuit으로 만들 필요도 없어 보입니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "\"높은 probability로 solution을 준다\"는 quantum algorithm의 약속이 여기서 소리 없이 사라집니다.",
+      "after": "이렇게 하면 \"높은 probability로 solution을 준다\"는 quantum algorithm의 동작을 재현하지 못합니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "**정확히 같은 값**으로 나란히 자랍니다.",
+      "after": "**정확히 같은 값**을 유지하며 커집니다."
+    },
+    {
+      "rule": "A-18",
+      "before": "predicate를 만족하는 element를 전부 enumeration해야 하는 우리 accelerator에게는 치명적이고, 그래서",
+      "after": "predicate를 만족하는 element를 전부 enumeration해야 하는 우리 accelerator에서는 이 방식으로 목적을 달성할 수 없습니다. 그래서"
+    },
+    {
+      "rule": "D-8",
+      "before": "규칙을 지키려면 규칙대로 뽑아야 합니다. 진짜 quantum 장치에서는 자연이 이 sampling을 공짜로 해 주지만, emulator에서는 우리가 circuit으로 만들어야 합니다.",
+      "after": "진짜 quantum 장치에서는 물리적 과정으로 이 sampling이 이루어지지만, emulator에서는 우리가 circuit으로 만들어야 합니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "random number $r$ 을 하나 떨어뜨린 뒤,",
+      "after": "random number $r$ 을 하나 뽑은 뒤"
+    },
+    {
+      "rule": "C-11",
+      "before": "그 interval의 길이가 바로 $|a_i|^2$ 이므로,",
+      "after": "그 interval의 길이가 바로 $|a_i|^2$ 이므로"
+    },
+    {
+      "rule": "D-8",
+      "before": "여기서 hardware 설계에 두고두고 쓰이는 성질이 하나 나옵니다.",
+      "after": "이 방법에는 hardware 설계에 유용한 성질이 있습니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "순서를 마음대로 바꿔도 된다는 이 자유 덕분에",
+      "after": "훑는 순서를 바꿀 수 있으므로"
+    },
+    {
+      "rule": "D-14",
+      "before": "실기 quantum이 할 수 있는 만큼만 하도록 circuit을 스스로 묶어 두려는 것입니다",
+      "after": "실기 quantum에서 가능한 동작만 circuit으로 재현하려는 것입니다"
+    },
+    {
+      "rule": "D-14",
+      "before": "measurement의 가장 중요한 성질: **measurement는 state를 가만두지 않습니다.**",
+      "after": "measurement의 가장 중요한 성질: **measurement는 state를 바꿉니다.**"
+    },
+    {
+      "rule": "D-2",
+      "before": "그리고 결정적으로, collapse 후에는",
+      "after": "collapse 후에는"
+    },
+    {
+      "rule": "D-14",
+      "before": "shot을 여러 번 던져 가며 더듬어야 합니다.",
+      "after": "shot을 여러 번 실행하며 답을 찾아야 합니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "shot을 몇 번 어떻게 던질지 정하는",
+      "after": "shot을 몇 번 어떻게 실행할지 정하는"
+    },
+    {
+      "rule": "D-14",
+      "before": "방금까지 애써 키워 놓은 amplitude가 그 자리에서 사라지고",
+      "after": "방금까지 키워 놓은 amplitude가 사라지고"
+    },
+    {
+      "rule": "D-14",
+      "before": "그 뿌리는 \"emulator의 measurement는 읽기 전용\"이라는 이 한 줄입니다.",
+      "after": "이는 \"emulator의 measurement는 읽기 전용\"이라는 성질을 이용한 것입니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "실기 quantum은 흉내조차 낼 수 없는 일이라 공짜로 얻은 이득처럼 보이는데, 정말 공짜인지 — 결과가 달라지지는 않는지 — 는 따로 따져야 할 문제입니다",
+      "after": "실기 quantum에서는 할 수 없는 일이므로, 이런 재활용으로 계산 결과가 달라지지는 않는지 따로 확인해야 합니다"
+    },
+    {
+      "rule": "D-14",
+      "before": "condition은 곧 \"measurement probability의 sum이 1\"이라는 자명한 요구입니다.",
+      "after": "condition은 곧 \"measurement probability의 sum이 1\"이라는 조건입니다."
+    }
+  ],
+  "self_check": {
+    "fidelity": true,
+    "conservative": true,
+    "genre": true,
+    "register": true,
+    "targeted_patterns_reviewed": true,
+    "no_new_metaphors_or_claims": true
+  }
+}

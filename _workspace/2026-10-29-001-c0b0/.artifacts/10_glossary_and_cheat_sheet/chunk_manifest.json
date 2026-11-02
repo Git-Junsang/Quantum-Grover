@@ -1,0 +1,129 @@
+{
+  "version": 1,
+  "created": "2026-10-29",
+  "source_file": "01_input.txt",
+  "source_chars": 15337,
+  "source_sha256": "a5bb026581245a5ffc77e55a7efc579c993cf65cbdf3c93dca828afa23010a6d",
+  "genre": "report",
+  "target_chunk_chars": 7000,
+  "max_chunk_chars": 9000,
+  "route_hint": "heavy",
+  "route_reason": "15,337자 초장문(>15,000) — 진단 + 청킹 권장",
+  "chunk_count": 10,
+  "body_chunk_count": 10,
+  "passthrough_chunk_count": 0,
+  "lossless_check": "ok",
+  "warnings": [],
+  "chunks": [
+    {
+      "index": 1,
+      "start": 0,
+      "end": 352,
+      "char_count": 352,
+      "starts_with_heading": true,
+      "heading": "# 10장. 용어 정리와 cheat sheet",
+      "passthrough": false,
+      "input_file": "01_chunk_01_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_01_rewritten.txt"
+    },
+    {
+      "index": 2,
+      "start": 352,
+      "end": 1411,
+      "char_count": 1059,
+      "starts_with_heading": true,
+      "heading": "## 10.1 gate cheat sheet",
+      "passthrough": false,
+      "input_file": "01_chunk_02_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_02_rewritten.txt"
+    },
+    {
+      "index": 3,
+      "start": 1411,
+      "end": 1953,
+      "char_count": 542,
+      "starts_with_heading": true,
+      "heading": "## 10.2 핵심 state",
+      "passthrough": false,
+      "input_file": "01_chunk_03_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_03_rewritten.txt"
+    },
+    {
+      "index": 4,
+      "start": 1953,
+      "end": 3979,
+      "char_count": 2026,
+      "starts_with_heading": true,
+      "heading": "## 10.3 핵심 공식",
+      "passthrough": false,
+      "input_file": "01_chunk_04_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_04_rewritten.txt"
+    },
+    {
+      "index": 5,
+      "start": 3979,
+      "end": 5276,
+      "char_count": 1297,
+      "starts_with_heading": true,
+      "heading": "## 10.4 algorithm 한 줄 요약",
+      "passthrough": false,
+      "input_file": "01_chunk_05_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_05_rewritten.txt"
+    },
+    {
+      "index": 6,
+      "start": 5276,
+      "end": 7953,
+      "char_count": 2677,
+      "starts_with_heading": true,
+      "heading": "## 10.5 용어집",
+      "passthrough": false,
+      "input_file": "01_chunk_06_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_06_rewritten.txt"
+    },
+    {
+      "index": 7,
+      "start": 7953,
+      "end": 9849,
+      "char_count": 1896,
+      "starts_with_heading": true,
+      "heading": "## 10.6 연습문제 답",
+      "passthrough": false,
+      "input_file": "01_chunk_07_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_07_rewritten.txt"
+    },
+    {
+      "index": 8,
+      "start": 9849,
+      "end": 11701,
+      "char_count": 1852,
+      "starts_with_heading": true,
+      "heading": "## 10.7 자주 하는 실수 모음",
+      "passthrough": false,
+      "input_file": "01_chunk_08_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_08_rewritten.txt"
+    },
+    {
+      "index": 9,
+      "start": 11701,
+      "end": 12766,
+      "char_count": 1065,
+      "starts_with_heading": true,
+      "heading": "## 10.8 원문 자료 대조표",
+      "passthrough": false,
+      "input_file": "01_chunk_09_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_09_rewritten.txt"
+    },
+    {
+      "index": 10,
+      "start": 12766,
+      "end": 15337,
+      "char_count": 2571,
+      "starts_with_heading": true,
+      "heading": "## 10.9 다음 단계 — Part 5: 이론에서 hardware로",
+      "passthrough": false,
+      "input_file": "01_chunk_10_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_10_rewritten.txt"
+    }
+  ]
+}

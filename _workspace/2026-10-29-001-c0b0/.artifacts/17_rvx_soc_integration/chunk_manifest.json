@@ -1,0 +1,129 @@
+{
+  "version": 1,
+  "created": "2026-10-29",
+  "source_file": "01_input.txt",
+  "source_chars": 19627,
+  "source_sha256": "1a025b897393e0de5f716260ebfd31e0dcaddb74b170c7eb2d39bda56b371461",
+  "genre": "report",
+  "target_chunk_chars": 7000,
+  "max_chunk_chars": 9000,
+  "route_hint": "heavy",
+  "route_reason": "19,627자 초장문(>15,000) — 진단 + 청킹 권장",
+  "chunk_count": 10,
+  "body_chunk_count": 10,
+  "passthrough_chunk_count": 0,
+  "lossless_check": "ok",
+  "warnings": [],
+  "chunks": [
+    {
+      "index": 1,
+      "start": 0,
+      "end": 824,
+      "char_count": 824,
+      "starts_with_heading": true,
+      "heading": "# 17장. RVX SoC에 붙이기 — APB CSR · AHB DMA · UART",
+      "passthrough": false,
+      "input_file": "01_chunk_01_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_01_rewritten.txt"
+    },
+    {
+      "index": 2,
+      "start": 824,
+      "end": 1936,
+      "char_count": 1112,
+      "starts_with_heading": true,
+      "heading": "## 17.1 accelerator는 혼자 서지 않는다",
+      "passthrough": false,
+      "input_file": "01_chunk_02_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_02_rewritten.txt"
+    },
+    {
+      "index": 3,
+      "start": 1936,
+      "end": 4067,
+      "char_count": 2131,
+      "starts_with_heading": true,
+      "heading": "## 17.2 RVX가 무엇인가",
+      "passthrough": false,
+      "input_file": "01_chunk_03_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_03_rewritten.txt"
+    },
+    {
+      "index": 4,
+      "start": 4067,
+      "end": 6291,
+      "char_count": 2224,
+      "starts_with_heading": true,
+      "heading": "## 17.3 왜 APB와 AHB를 같이 쓰나",
+      "passthrough": false,
+      "input_file": "01_chunk_04_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_04_rewritten.txt"
+    },
+    {
+      "index": 5,
+      "start": 6291,
+      "end": 9786,
+      "char_count": 3495,
+      "starts_with_heading": true,
+      "heading": "## 17.4 CSR map",
+      "passthrough": false,
+      "input_file": "01_chunk_05_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_05_rewritten.txt"
+    },
+    {
+      "index": 6,
+      "start": 9786,
+      "end": 11917,
+      "char_count": 2131,
+      "starts_with_heading": true,
+      "heading": "## 17.5 data load — AHB master",
+      "passthrough": false,
+      "input_file": "01_chunk_06_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_06_rewritten.txt"
+    },
+    {
+      "index": 7,
+      "start": 11917,
+      "end": 14152,
+      "char_count": 2235,
+      "starts_with_heading": true,
+      "heading": "## 17.6 host UART protocol",
+      "passthrough": false,
+      "input_file": "01_chunk_07_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_07_rewritten.txt"
+    },
+    {
+      "index": 8,
+      "start": 14152,
+      "end": 16519,
+      "char_count": 2367,
+      "starts_with_heading": true,
+      "heading": "## 17.7 hardware와 firmware의 경계",
+      "passthrough": false,
+      "input_file": "01_chunk_08_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_08_rewritten.txt"
+    },
+    {
+      "index": 9,
+      "start": 16519,
+      "end": 17640,
+      "char_count": 1121,
+      "starts_with_heading": true,
+      "heading": "## 17.8 초판의 미정 다섯은 이렇게 정해졌다",
+      "passthrough": false,
+      "input_file": "01_chunk_09_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_09_rewritten.txt"
+    },
+    {
+      "index": 10,
+      "start": 17640,
+      "end": 19627,
+      "char_count": 1987,
+      "starts_with_heading": true,
+      "heading": "## 17.9 이 장의 요약",
+      "passthrough": false,
+      "input_file": "01_chunk_10_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_10_rewritten.txt"
+    }
+  ]
+}

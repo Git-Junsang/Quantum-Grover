@@ -1,0 +1,17 @@
+## 9.1 무슨 문제를 푸는가
+
+100개의 상자 중 하나에 민트 초콜릿이 들어 있습니다. 상자를 하나씩 열어봅니다.
+
+- **운이 좋으면**: 첫 상자에 있음 → 1번.
+- **운이 나쁘면**: 99개를 열어도 없어 100번째에서 발견 → 100번.
+
+mean으로 봐도 최악으로 봐도 상자 수에 비례합니다. search는 **$O(\text{number of states})$**. 상자를 열어 "이게 내가 찾는 거냐"를 확인하는 게 곧 oracle 호출이에요([7장](07_oracle_and_phase_kickback.md)).
+
+data가 **정렬**돼 있으면 binary search로 $O(\log \text{number of states})$ 에 찾지만, 정렬은 강한 전제이고 정렬이 불가능한 경우도 많습니다. Grover는 **정렬 안 된** data에서 **$O(\sqrt{\text{number of states}})$** 를 달성합니다 — binary search만큼 극적이진 않아도(quadratic speedup), 정렬 없이 얻는 확실한 이득이고, 이 $O(\sqrt{\text{number of states}})$ 가 **최적**임이 증명돼 있습니다.
+
+> 🔑 숫자로 느껴봅시다: 항목이 100만 개면 classical search는 최악 100만 번, Grover는 약 $\sqrt{10^6} = 1{,}000$ 번. 항목이 많을수록 격차가 벌어집니다.
+
+여기서 비교의 전제를 짚고 넘어가겠습니다. 방금의 $O(\text{number of states})$ 대 $O(\sqrt{\text{number of states}})$ 비교는 **진짜 quantum hardware**에서 성립하는 이야기입니다. 이 project가 만드는 것은 quantum computer가 아니라 Grover를 classical circuit으로 흉내 내는 **emulator**이고, emulator는 iteration 한 번마다 모든 state의 amplitude를 전부 훑어야 하므로 총비용이 $O\!\left(\text{number of states}\cdot\sqrt{\text{number of states}/\text{number of solutions}}\right)$ 입니다. 즉 우리 circuit은 **classical linear scan보다 오히려 느립니다.** 그래서 이 해설서는 우리 accelerator를 classical search와 비교하지 않습니다. 비교 대상은 같은 일을 하는 software state vector simulator — Qiskit AerSimulator나 NumPy로 짠 것 — 이고, 이 accelerator의 값어치는 속도 우위가 아니라 **quantum algorithm의 동작을 결정적이고 재현 가능하게 재현·검증하는 전용 hardware**라는 데 있습니다. algorithm의 $\sqrt{\text{number of states}}$ 는 우리가 흉내 내는 **대상의 성질**이지 우리 circuit의 성능 지표가 아닙니다.
+
+---
+

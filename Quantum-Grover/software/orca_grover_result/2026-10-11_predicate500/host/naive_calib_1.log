@@ -1,0 +1,15 @@
+[RVX/START] ORCA_BBHT_BASELINE
+SW_MODEL,1,NAIVE_DENSE_MATRIX_NORMAL
+SW_SOURCE,orca_bbht_c,2026-10-10b
+SW_CONTRACT,Q14,N=16384,Q1.22,BUDGET=576,SHOT_CAP=100,WORKLOAD=PREDICATE500
+SW_TIMING_SOURCE,RVX_REAL_CLOCK
+SW_TIMING_UNIT,microsecond_tick
+SW_TIMING_CORE_CLK_HZ,50000000
+SW_TIMING_SCOPE,bbht_search_only,oracle_setup_and_printf_excluded
+SW_RUN_HEADER,model,predicate,target_count,seed_index,seed_j,seed_meas,success,result_index,trial_count,L_BBHT,actual_grover_iterations,termination,saturations,timer_hi,timer_lo
+SW_PROFILE,CALIBRATE,EQ,M=1
+SW_CALIB_ITER,1,iterations=4,0,406022
+SW_CALIB_MEASURE,1,measurements=1,0,9
+[RVX/END] ORCA_BBHT_BASELINE
+HOST_CYCLES,0,2142994423
+HOST_CYCLES,1,25658

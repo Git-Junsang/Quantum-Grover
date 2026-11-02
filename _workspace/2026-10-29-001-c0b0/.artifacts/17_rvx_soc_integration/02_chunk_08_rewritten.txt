@@ -1,0 +1,28 @@
+## 17.7 hardware와 firmware의 경계
+
+지금까지 나온 역할 분담을 한 표로 모읍니다. 각 항목의 근거는 "왜 그쪽인가" 열에 있습니다.
+
+| 하는 일 | 어디서 | 왜 |
+|---|:-:|---|
+| amplitude 갱신 (oracle · diffusion operator · Init) | hardware | 128 lanes 병렬, 분기 없음 |
+| Born-rule sampling · solution check | hardware | amplitude array 전체를 읽어야 하고 `data_mem` 이 IP 안에 있음 (14.5절) |
+| number of iterations sampling · sampling range 갱신 | hardware | shot마다 필요, 왕복 latency가 아까움 (Manual mode에서는 firmware가 `J_TARGET` 을 씀) |
+| checkpoint policy · 무효화 | hardware | state를 software에 맡기면 관리가 누락됨 (16.7절) |
+| enumeration round · 종료 판정 | hardware | 새 답마다 Found Mask·checkpoint slot·BBHT를 되돌리는 일이 전부 IP 안 state |
+| enumeration 종료 한계값 | firmware | `fail_repeat_limit` 을 CSR로. 응용마다 다른 policy |
+| Result FIFO 비우기 | firmware | 도는 동안에도 계속 (FIFO 256 entries) |
+| predicate · threshold 결정 | firmware | 응용에 따라 바뀜 |
+| minimum search loop (threshold 낮추기) | firmware | `while` 한 줄로 충분 (14.9절) |
+| UART parsing · 결과 출력 | firmware | 분기 덩어리 |
+| data 준비 (`GEN` · SRAM · load 시작) | firmware | policy 결정 |
+
+**shot loop는 hardware가 돕니다.** 이 결정이 이 표에서 가장 논쟁적인 지점이라 근거를 적어 둡니다. 16.3절의 수치대로 14 qubits·1 solution에서 search 한 번에 mean 22.7 shots가 듭니다. shot마다 core를 깨워 status를 읽고 다음 shot이 돌 iteration을 계산해 CSR에 쓰면 왕복이 20번 넘게 생기는데, core가 50 MHz로 APB를 건너는 동안 100 MHz accelerator는 대기하고, 무엇보다 **checkpoint state가 hardware와 software 양쪽에 존재하게 됩니다.** 16.7절이 경계한 바로 그 구조입니다. 그래서 최종 형태는 시작 한 번에 "답을 찾거나 한도에 닿을 때까지" 돌고 완료 표시로 끝나는 **BBHT autonomous mode**이고, firmware가 보는 것은 "설정 → 시작 → polling → 결과 읽기" 네 줄입니다.
+
+그렇다고 firmware가 shot을 직접 실행하는 방법을 없애지는 않았습니다. **Manual mode**(`MANUAL_SINGLE`)에서는 app이 `J_TARGET` 에 원하는 값을 써서 한 shot씩 돌릴 수 있습니다. 이 mode는 solution이 몇 개인지 알고 iteration을 정해진 횟수로 고정해 도는 비교 실험과, software reference model과의 한 shot 단위 대조(18장)에 쓰입니다.
+
+초판과 달리 **enumeration round의 종료 판단도 hardware로 들어갔습니다.** 초판은 "몇 번 더 시도할지는 응용마다 다른 policy이니 firmware에 남긴다"고 적었는데, 새 답이 나올 때마다 Found Mask에 bit를 세우고 checkpoint slot을 비우고 BBHT를 처음부터 돌리는 일이 전부 IP 안 state라 경계를 IP 안에 두는 편이 깔끔했습니다. policy의 설정값 — 연속 실패 몇 번에 끝낼지 — 은 `ENUM_CFG` 로 firmware가 정합니다. 재합성 없이 바뀌어야 할 것은 여전히 firmware 쪽에 있는 셈입니다.
+
+직접 CSR에 접근하는 firmware가 지켜야 할 규약도 여기 모아 둡니다. 시작 전에 `STATUS` 를 확인하고, 완료는 `done_sticky` 로 판정하며(이 bit는 `COMMAND` 쓰기로만 지워집니다), 결과와 counter는 `busy` 가 내려간 뒤에 읽고, load 중에는 시작하지 않고, `FIFO_DATA` 는 읽는 것 자체가 꺼내기이며 index 0도 정상 결과일 수 있으니 비었는지는 `STATUS` 나 `FIFO_COUNT` 로 봅니다. driver(`bbht_grover_driver`)가 이 규약을 이미 따릅니다.
+
+---
+

@@ -1,0 +1,57 @@
+[RVX/START] EMU@FPGA
+============================================================
+ BBHT BOARD BENCHMARK : 50 SEEDS, NORMAL vs K4/H8
+============================================================
+DATA_COUNT=16384, TARGET_VALUE=12345
+TARGETS=1/4/16/64/256, SEEDS=50
+BACKGROUND_SEED=0x5eed1234, TARGET_POS_SEED=0xa17e2026
+
+RESULT target=1
+  pair_pass    = 50/50
+  success      = Normal 50/50, K4/H8 50/50
+  physical_iter= Normal 8414, K4/H8 2230, reduction 73.49%
+  cycles       = Normal 10186883, K4/H8 6443381, reduction 36.74%
+  policy_stall = 3186294
+  plan_mismatch= 0
+
+RESULT target=4
+  pair_pass    = 50/50
+  success      = Normal 50/50, K4/H8 50/50
+  physical_iter= Normal 3615, K4/H8 1007, reduction 72.14%
+  cycles       = Normal 4940549, K4/H8 3717106, reduction 24.76%
+  policy_stall = 1902711
+  plan_mismatch= 0
+
+RESULT target=16
+  pair_pass    = 50/50
+  success      = Normal 50/50, K4/H8 50/50
+  physical_iter= Normal 1882, K4/H8 532, reduction 71.73%
+  cycles       = Normal 2920180, K4/H8 2099548, reduction 28.10%
+  policy_stall = 919654
+  plan_mismatch= 0
+
+RESULT target=64
+  pair_pass    = 50/50
+  success      = Normal 50/50, K4/H8 50/50
+  physical_iter= Normal 662, K4/H8 234, reduction 64.65%
+  cycles       = Normal 1359349, K4/H8 1015193, reduction 25.31%
+  policy_stall = 329292
+  plan_mismatch= 0
+
+RESULT target=256
+  pair_pass    = 50/50
+  success      = Normal 50/50, K4/H8 50/50
+  physical_iter= Normal 310, K4/H8 131, reduction 57.74%
+  cycles       = Normal 822794, K4/H8 549578, reduction 33.20%
+  policy_stall = 78417
+  plan_mismatch= 0
+
+AGGREGATE
+  paired       = 250/250 PASS
+  success      = Normal 250/250, K4/H8 250/250
+  physical_iter= Normal 14883, K4/H8 4134, reduction 72.22%
+  cycles       = Normal 20229755, K4/H8 13824806, reduction 31.66%
+  policy_stall = 6416368
+  plan_mismatch= 0
+
+BBHT PAPER BOARD BENCHMARK PASS

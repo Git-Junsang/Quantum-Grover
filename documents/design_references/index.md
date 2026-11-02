@@ -73,7 +73,7 @@ interface 계약, 동작, verification과 운용, implementation, 다른 두 rev
 | 8 | [Accelerator Core 최상위와 BBHT 제어](08_accelerator_core_top_and_bbht_control.md) | module 지도, compile parameter 8개, Shot Controller, Iteration-Count LFSR, sampling range ROM, 종료 우선순위 |
 | 9 | [Iteration Datapath와 4 PEs](09_iteration_datapath_and_number_of_pes.md) | Init/Pass 1/Mean/Pass 2, oracle · adder tree · diffusion operator, row group(4 rows) 분할 |
 | 10 | [Measurement Unit과 Dual-Row Build · Two-Level Select](10_measurement_unit_and_microarchitecture.md) | Build/Select/Reread, integer Born-rule sampling 절차, Dual-Row Build, Two-Level Select |
-| 11 | [checkpoint와 Policy Engine](11_checkpoint_and_policy_engine.md) | a Checkpoint-Capacity of 3 · segment 규약, 3-shot Lookahead DP policy, Iteration-Count Predictor, compact memo table과 initialization 이력 |
+| 11 | [checkpoint와 Policy Engine](11_checkpoint_and_policy_engine.md) | a Checkpoint-Capacity of 3 · segment 규약, 3-shot Lookahead DP policy, Iteration-Count Predictor, compact memo table과 initialization 이력, checkpoint / Lookahead와 연산 병렬도의 관계 |
 
 ### Part Ⅴ. interface 계약
 
@@ -139,6 +139,7 @@ interface 계약, 동작, verification과 운용, implementation, 다른 두 rev
 | final configuration | a Checkpoint-Capacity of 3, 3-shot Lookahead, 4 PEs, Dual-Row Build · Two-Level Select | [1장](01_project_overview.md) |
 | 성능 세 축 | board wall-clock time · RTL cycle · ORCA 1 core 대비 (섞지 않음) | [1장 1.5절](01_project_overview.md#15-성능-지표와-인용-기준) |
 | implementation resource · timing | full SoC implementation report | [19장](19_synthesis_implementation_bitstream.md) |
+| checkpoint policy와 연산 병렬도의 관계 | 연산량 · 처리 속도 · policy overlap을 나누어 구성 비교 | [11장 11.8절](11_checkpoint_and_policy_engine.md#118-checkpoint-policy와-연산-병렬도의-관계) |
 
 ---
 

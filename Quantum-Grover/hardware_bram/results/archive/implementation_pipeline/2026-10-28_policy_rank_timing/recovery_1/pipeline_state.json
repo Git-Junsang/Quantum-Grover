@@ -1,0 +1,8 @@
+{
+  "stage": "failed",
+  "updated_utc": "2026-10-28T12:06:00.505907+00:00",
+  "pid": 1247180,
+  "platform": "bbht_grover_k3h3_e4_m2_rankfix_20261028",
+  "failed_stage": "rtl_common500",
+  "error": "console_build.log: command exited 1"
+}

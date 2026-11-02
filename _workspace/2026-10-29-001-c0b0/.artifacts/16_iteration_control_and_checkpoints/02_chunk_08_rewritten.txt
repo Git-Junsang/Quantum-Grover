@@ -1,0 +1,20 @@
+## 16.6 왜 결과가 달라지지 않는가
+
+실패한 shot의 state를 물려받아 이어 돌리는 것이 정말 **같은 algorithm**인지, 두 층위로 나눠 답해야 합니다.
+
+**첫째, state 재현성.** Grover 한 바퀴를 $G = D \cdot O$(oracle 뒤 diffusion operator)라 쓰면, checkpoint slot에서 이어 가는 경로가 만들어 내는 연산열은
+
+$$(D O)^{\text{number of iterations}_{\text{request}}} = (D O)^{\,\text{number of iterations}_{\text{request}} - \text{number of iterations}_{\text{checkpoint slot}}} \cdot (D O)^{\,\text{number of iterations}_{\text{checkpoint slot}}}$$
+
+입니다. 6.6절이 "circuit의 순효과는 하나의 unitary"라고 했던 그 associative law가 근거입니다 — unitary의 곱은 결합적이므로 어디서 끊어 읽든 순효과가 같습니다. 즉 이어 가는 경로는 새로 Init해서 같은 횟수만큼 돌린 것과 **문자 그대로 같은 연산열**이고, 우리 산술이 결정적(rounding은 round-half-to-even, saturation 지점과 accumulator width는 고정)이므로 결과는 근사적으로 같은 정도가 아니라 **bit 단위로 동일**합니다. checkpoint slot이 몇 벌이든, policy가 어떤 중간 state를 남기든 이 등식은 그대로입니다. 이 등식이 [18.7절](18_reference_model_verification.md#187-checkpoint를-어떻게-검증하나)에서 verification의 합격 기준이 됩니다.
+
+**둘째, 통계적 정당성.** 여기서 반드시 나오는 질문이 있습니다 — *"앞 shot의 계산을 물려받으면 그건 shot을 여러 번 던진 게 아니라 한 번 길게 돌린 거 아닌가? 반칙 아닌가?"*
+
+아닙니다. 이유는 두 가지입니다. 하나, **같은 횟수만큼 iteration을 돈 state는 도달 경로와 무관하게 유일합니다.** 위 등식이 말하는 것이 정확히 그것이죠. 앞선 shot을 거쳐 왔든 방금 Init했든, 같은 횟수만큼 iteration을 돈 amplitude array는 같은 하나입니다. 둘, **measurement random number는 shot마다 Measurement PRNG에서 새로 뽑습니다.** 그래서 각 shot은 여전히 $\sin^2\big((2\cdot\text{number of iterations}+1)\,\theta\big)$ probability로 solution을 내는 **서로 독립인 shot**입니다. 결과적으로 후보 index의 분포도, shot당 success probability도, 총 number of shots의 분포도 checkpoint를 끄나 켜나 똑같습니다. **관측 가능한 출력은 하나도 바뀌지 않고 wall-clock time만 줄어듭니다.** 실제로 같은 500 workloads에서 board의 Restart mode와 final configuration이 결과 index·number of shots·requested iterations를 500/500 같게 냈습니다.
+
+다만 제약도 있습니다. **실기 quantum computer는 이렇게 할 수 없습니다.** [4.4절](04_measurement.md#44-measurement는-state를-collapse시킨다)의 collapse 때문입니다 — 실제 장치에서는 측정하는 순간 superposition이 무너져 amplitude가 사라지므로, 다음 shot은 무조건 $|0\cdots0\rangle$ 부터 다시 만들어야 합니다. 우리가 이어 돌릴 수 있는 것은 amplitude를 memory에 펼쳐 놓았고 Born-rule sampling을 **읽기 전용**으로 구현했기 때문이지, quantum mechanics에서 가능한 동작이어서가 아닙니다. 앞으로 올 request를 미리 계산하는 policy도 마찬가지로 emulator만 할 수 있는 일이지만, 그것이 들여다보는 것은 BBHT가 스스로 만든 number of iterations 수열뿐이고 amplitude나 solution은 아닙니다. 11장에서 말한 "emulator가 실기보다 쉬운 것들"의 대표적인 사례입니다.
+
+그러므로 보고할 때 두 지표를 반드시 갈라 적습니다. **algorithm 지표(requested iterations)는 그대로이고, 줄어드는 것은 executed iterations(`EXECUTED_ITERATIONS`)와 wall-clock time뿐입니다.** 16.3절 표에서 두 열이 따로 적힌 것이 이 구분입니다. 이걸 섞어 "우리 방식이 Grover iteration을 70% 줄였다"고 쓰면 부정확합니다 — 줄어든 것은 emulation 시간이지 algorithm이 oracle에 던진 질의 횟수가 아닙니다.
+
+---
+

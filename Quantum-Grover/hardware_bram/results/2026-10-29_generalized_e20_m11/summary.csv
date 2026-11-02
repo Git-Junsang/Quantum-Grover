@@ -1,0 +1,7 @@
+evidence,k,h,e,m,validated_workloads,cycles,iter,policy_cycles,policy_stall,policy_actions,solver_jobs,errors
+baseline_common500,3,3,4,2,500,5148615,9582,67280,14013,20951,7903,0
+max_common500,10,10,20,11,500,1534934,8586,121707,31770,142422,7903,0
+odd_integration,5,7,19,7,10,63567,452,4301,371,2359,226,0
+measurement_heavy_integration,3,3,1,11,10,530893,480,2429,349,727,226,0
+max_mismatch,10,10,20,11,2,10332,79,1028,140,760,43,0
+max_epoch_reuse,10,10,20,11,2,10332,79,1027,140,759,43,0

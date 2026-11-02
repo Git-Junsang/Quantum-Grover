@@ -1,0 +1,140 @@
+{
+  "version": 1,
+  "created": "2026-10-29",
+  "source_file": "01_input.txt",
+  "source_chars": 29241,
+  "source_sha256": "07b44530b802496c5cd9784c5557508304db974e875e6107be1066582f9a9aa5",
+  "genre": "report",
+  "target_chunk_chars": 7000,
+  "max_chunk_chars": 9000,
+  "route_hint": "heavy",
+  "route_reason": "29,241자 초장문(>15,000) — 진단 + 청킹 권장",
+  "chunk_count": 11,
+  "body_chunk_count": 11,
+  "passthrough_chunk_count": 0,
+  "lossless_check": "ok",
+  "warnings": [],
+  "chunks": [
+    {
+      "index": 1,
+      "start": 0,
+      "end": 1051,
+      "char_count": 1051,
+      "starts_with_heading": true,
+      "heading": "# 18장. 무엇을 어떻게 증명하나 — 3단 reference model과 bit-exact",
+      "passthrough": false,
+      "input_file": "01_chunk_01_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_01_rewritten.txt"
+    },
+    {
+      "index": 2,
+      "start": 1051,
+      "end": 2388,
+      "char_count": 1337,
+      "starts_with_heading": true,
+      "heading": "## 18.1 왜 verification이 설계의 일부인가",
+      "passthrough": false,
+      "input_file": "01_chunk_02_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_02_rewritten.txt"
+    },
+    {
+      "index": 3,
+      "start": 2388,
+      "end": 5753,
+      "char_count": 3365,
+      "starts_with_heading": true,
+      "heading": "## 18.2 3단 verification ladder",
+      "passthrough": false,
+      "input_file": "01_chunk_03_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_03_rewritten.txt"
+    },
+    {
+      "index": 4,
+      "start": 5753,
+      "end": 9428,
+      "char_count": 3675,
+      "starts_with_heading": true,
+      "heading": "## 18.3 bit-exact가 성립하기 위한 조건",
+      "passthrough": false,
+      "input_file": "01_chunk_04_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_04_rewritten.txt"
+    },
+    {
+      "index": 5,
+      "start": 9428,
+      "end": 12566,
+      "char_count": 3138,
+      "starts_with_heading": true,
+      "heading": "## 18.4 첫 test vector는 9.4절의 손계산",
+      "passthrough": false,
+      "input_file": "01_chunk_05_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_05_rewritten.txt"
+    },
+    {
+      "index": 6,
+      "start": 12566,
+      "end": 15106,
+      "char_count": 2540,
+      "starts_with_heading": true,
+      "heading": "## 18.5 predicate 4종과 경계값",
+      "passthrough": false,
+      "input_file": "01_chunk_06_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_06_rewritten.txt"
+    },
+    {
+      "index": 7,
+      "start": 15106,
+      "end": 17738,
+      "char_count": 2632,
+      "starts_with_heading": true,
+      "heading": "## 18.6 Born sampler를 어떻게 검증하나",
+      "passthrough": false,
+      "input_file": "01_chunk_07_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_07_rewritten.txt"
+    },
+    {
+      "index": 8,
+      "start": 17738,
+      "end": 20158,
+      "char_count": 2420,
+      "starts_with_heading": true,
+      "heading": "## 18.7 checkpoint를 어떻게 검증하나",
+      "passthrough": false,
+      "input_file": "01_chunk_08_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_08_rewritten.txt"
+    },
+    {
+      "index": 9,
+      "start": 20158,
+      "end": 23976,
+      "char_count": 3818,
+      "starts_with_heading": true,
+      "heading": "## 18.8 잰 수치와 그 조건",
+      "passthrough": false,
+      "input_file": "01_chunk_09_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_09_rewritten.txt"
+    },
+    {
+      "index": 10,
+      "start": 23976,
+      "end": 26112,
+      "char_count": 2136,
+      "starts_with_heading": true,
+      "heading": "## 18.9 toolchain과 directory",
+      "passthrough": false,
+      "input_file": "01_chunk_10_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_10_rewritten.txt"
+    },
+    {
+      "index": 11,
+      "start": 26112,
+      "end": 29241,
+      "char_count": 3129,
+      "starts_with_heading": true,
+      "heading": "## 18.10 이 장의 요약",
+      "passthrough": false,
+      "input_file": "01_chunk_11_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_11_rewritten.txt"
+    }
+  ]
+}

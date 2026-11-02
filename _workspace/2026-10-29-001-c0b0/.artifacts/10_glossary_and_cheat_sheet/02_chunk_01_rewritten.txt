@@ -1,0 +1,11 @@
+# 10장. 용어 정리와 cheat sheet
+
+> [← 9장 Grover algorithm](09_grover_algorithm.md) · [index](index.md) · [11장 state vector emulator — memory map과 resource 예산 →](11_state_vector_emulator.md)
+> **성격**: 참조용. 앞 장들을 복습하거나 계산 중 빠르게 찾아볼 때 쓰세요.
+
+---
+
+이 장은 1~9장의 핵심을 **한눈에** 모은 참조 자료입니다. gate matrix, 핵심 공식, glossary, 연습문제 답, 원문 대조표를 담았습니다.
+
+---
+

@@ -1,0 +1,20 @@
+## 1. NumPy Grover core, per iteration (j=64, 20 reps)
+
+| code | us / iteration |
+| --- | ---: |
+| team run_grover | 74.5 |
+| ours NumpyEngine.evolve | 17.5 |
+
+team / ours = 4.27x
+
+## 2. Whole BBHT search, same workloads (warm-up excluded)
+
+Paths differ (different samplers), so the Grover work differs too: compare time per Grover iteration.
+
+| backend | workloads | iterations team / ours | team search us/iter | ours search us/iter | team / ours | team 'execution' us/iter | ours compute us/iter | same path |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| numpy | 30 | 2131 / 2042 | 152.9 | 34.8 | 4.39x | 98.3 | 23.4 | 2/30 |
+| qiskit | 6 | 308 / 420 | 17987.1 | 17152.4 | 1.05x | 17736.2 | 6092.4 | 0/6 |
+
+'execution' = what the team runner reports: NumPy core time only (NUMPY_CORE_ONLY) or the Aer run() wall time (AER_EXECUTION_ONLY). Ours: compute_ns (NumPy core / Aer C++ simulation time).
+Same path: identical (result_index, trial_count, L_BBHT). The samplers differ by design (see doc).

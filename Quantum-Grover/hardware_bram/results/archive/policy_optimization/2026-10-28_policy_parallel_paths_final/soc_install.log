@@ -1,0 +1,32 @@
+모델:      hardware_bram_K3H3_E4_M3_S6
+설치 대상: /opt/rvx/platform/bbht_grover_policy_parallel_paths_final
+  spec/generated                                       재생성
+  bbht_grover_policy_parallel_paths_final.xml          -> /opt/rvx/platform/bbht_grover_policy_parallel_paths_final/
+  user/rtl/{src,include}                               통신 계층 3 + 모델 어댑터 + Main IP 10 + 헤더
+      CHECKPOINT_ENABLE  = 1
+      CKPT_K             = 3
+      POLICY_H_FUTURE    = 3
+      POLICY_EXACT_PRUNE = 6
+      CKPT_MANUAL_ENABLE = 0
+      AUTO_SPEC_ENABLE   = 1
+      INTRA_ENGINES      = 4
+      MEAS_M1_ENABLE     = 1
+      MEAS_M2_ENABLE     = 1
+      MEAS_M3_ENABLE     = `GP_MEAS_M3_DEFAULT
+  user/env/set_rtl_syn_env.tcl                         user/rtl 을 합성 경로에 등록
+  user/env · user/sim                                 RVX 뼈대 중 빠진 것만 채움
+  user/api                                             driver + regs.h
+  app/bbht_console                                     hardware_bram/firmware
+
+다음 단계:
+  cd /opt/rvx/platform/bbht_grover_policy_parallel_paths_final
+  make syn                                   # 플랫폼 생성 (user_region 반영)
+  make sim_rtl                               # Questa 시뮬 환경
+  cd sim_rtl && make bbht_console.sim
+  cd /opt/rvx/platform/bbht_grover_policy_parallel_paths_final && make imp_fpga TARGET_IMP_CLASS=arty-100t
+  cd imp_arty-100t_<날짜> && make imp         # 합성 · 구현 · 비트스트림
+
+주의: make syn 이 user/template/ 의 새 template 을 만들 수 있습니다.
+      RVX 가 IP 를 추가/제거했다면 template 과 hardware_bram/rvx/
+      bbht_grover_user_region.vh.generated 를 대조해서 배선 이름이
+      바뀌지 않았는지 확인하십시오.

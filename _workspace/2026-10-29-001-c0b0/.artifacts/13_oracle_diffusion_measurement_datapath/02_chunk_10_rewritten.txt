@@ -1,0 +1,16 @@
+## 13.9 이 장의 요약
+
+- 안쪽 FSM은 `Init → (Pass 1: oracle + accumulation → Mean → Pass 2: diffusion operator) × iterations` 뿐입니다. shot loop·solution check·checkpoint는 [16장](16_iteration_control_and_checkpoints.md), measurement는 [14장](14_multiple_solutions_and_minimum_search.md)입니다.
+- **pass 1회 = 128 cycles**(4 PEs가 한 cycle에 4 rows), **iteration 1회 ≈ 268 cycles**(2 passes + pipeline, campaign 직선 맞춤), 100 MHz에서 약 2.7 µs. **oracle은 cycle을 쓰지 않습니다** — amplitude를 읽어 되쓰는 김에 sign을 뒤집습니다.
+- **Init**: 14 qubits는 짝수라 $1/\sqrt{\text{number of states}} = 2^{-7}$. Q1.22에서 $2^{22} \gg 7 =$ **32768**, error 0, 초기 norm 정확히 1.
+- **oracle**: comparator IP 없이 **sign extension한 subtraction의 MSB 하나**가 `<` 의 답. `>` 는 operand 교환(공짜), `=` 는 XOR-NOR, 범위는 두 비교의 AND, `DATA_COUNT` 밖은 항상 non-solution, enumeration mode는 `!found[i]` 를 AND. 뒷단은 two's complement negate 한 줄이고, symmetric saturation 덕에 negate가 늘 합법입니다.
+- **diffusion operator**: $a\mapsto 2\bar a - a$ = accumulation → **13칸(number of qubits − 1) shift**(∵ 필요한 건 mean이 아니라 2×mean) → subtraction → symmetric saturation. round-half-to-even이 적용되는 지점은 **이 shift 한 곳뿐**입니다.
+- **2 passes는 필연**입니다. mean이 전체 sum을 요구하기 때문입니다. 그 대가로 accumulator가 39 bits, 반사 중간값이 25 bits로 넓어지고, 되쓸 때 23 bits로 붙입니다.
+- **128 lanes**: index 하위 5 bits가 lane, row 번호 하위 2 bits가 row phase bank → 충돌 0, crossbar 불필요. PE마다 5단 adder tree와 accumulator가 하나씩이고, 네 accumulator의 sum에서 mean을 확정합니다. partial sum을 자르지 않아 integer 결과는 순서에 무관하지만, bit-exact 대조의 상대는 float64가 아니라 integer reference model입니다([18.3절](18_reference_model_verification.md#183-bit-exact가-성립하기-위한-조건)).
+- **multiplier**: Init·oracle·diffusion operator 경로 **0개**, measurement 경로 **128개**(23×23 squarer가 DSP 2개씩, 32 lanes × squarer 두 벌). "DSP가 잡히면 잘못 짠 것"이 아니라, **어느 경로에서** 잡혔는지를 보십시오.
+
+다음 장은 이 datapath가 만들어 낸 amplitude array에서 답을 뽑습니다. predicate를 만족하는 칸이 여럿일 때 그 amplitude들이 매 iteration 정확히 같아진다는 사실, 그래서 maximum을 고르는 방식이 원리적으로 실패한다는 사실, 그리고 Born-rule sampling을 circuit으로 만드는 방법을 봅니다.
+
+---
+
+> [← 12장 amplitude를 숫자로](12_fixed_point_and_precision.md) · [index](index.md) · [14장 multiple solutions →](14_multiple_solutions_and_minimum_search.md)

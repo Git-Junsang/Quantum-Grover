@@ -1,0 +1,78 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 2/13이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 15_paper_map_and_design_decisions.md 진단
+
+## 장르·레지스터와 보존 조건
+
+학부생용 기술 해설서(report). 본문은 친근한 존댓말(합니다/입니다, 일부 해요체 설명), 수식 풀이·표·요약은 압축형입니다. 문장 격식을 올리지 않습니다. 영어 용어와 영어 토큰은 번역·삭제·교체·대소문자 변경하지 않습니다. glossary 기준은 `documents/design_references/22_appendix_glossary_and_retired_specs.md` §22.2입니다. 수치·수식·code·제목·link·직접 인용·기존 콜아웃/이모지·문단 구조는 보존합니다. 실제 주장, 부정/긍정, 인과, 조건, 확신도도 보존합니다. 보고서용 서식 축약·영어 순화 규칙은 적용하지 않습니다. 본문에 사실을 추가하거나 현행 설계와 대조해 기술 내용을 고치지 않습니다.
+
+## 정량 근거
+
+입력의 정량 블록을 확인했습니다. risk_band는 low이고, 장문 파일의 heavy 권고는 문서 길이에서 나옵니다. 영어 기술 term 반복은 장르상 필수이므로 lexical_diversity의 낮은 값만으로 수정하지 않습니다. 아래 수치는 탐지 보조이며 개별 문맥과 함께 판단합니다.
+
+## 겨냥 순서의 지배 패턴
+
+1. **D-14·D-5 — 지형·계보·축 은유의 과도한 반복**: "15.4절이 이깁니다", "09번의 자리가 한 칸 내려갔습니다", "공통의 조상", "설계 결정 … 떠받치는", "해설서의 척추", "곁다리 참고" 등은 참조 자료에 과한 비유를 얹습니다. 표의 내용과 계보도·제목은 유지하고 본문 비유를 구체화합니다.
+
+2. **D-2·F-1 — 가치 판단·평가성 안내**: "가장 값집니다", "단단해집니다", "값어치는 충분", "이 절은 값을 합니다" 등 평가가 반복됩니다. 실제 오류·판단 근거를 앞세웁니다.
+
+3. **A-18 — 참조·조건이 겹친 긴 문장**: 정량 relative_clause_nesting=5. 15.1절 09번 위치, 15.2절 공통 출처와 BBHT, 15.5절 성능 축, 15.9절 simulation 방식 문단에서 긴 수식·참조를 보존하며 호흡을 조정합니다.
+
+4. **C-8·D-8 — 부정 대구와 정의 공식 반복**: "새 내용을 배우는 곳이 아니라", "참고문헌이 아니라", "목록 … 그 자체가 아닙니다", "게으른 선택이 아니라 합리적인 선택" 등 수사 대조를 선별합니다. 기술적 구별·성능 해석에 필수인 대조는 유지합니다.
+
+## 비적용·잔존 처리
+
+교육적 질문·표·연습문제·단계 목록·기존 비유는 그 자체로 결함이 아닙니다. 자연스러운 문장은 그대로 두고 확인된 구간만 보수적으로 다듬습니다. 수치/기술 주장에 의문이 있어도 이번 윤문에서는 보존합니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 1678
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.44  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.56  (z=-0.29 vs report 인간 baseline)
+- ending_comma_rate: 0.25  (n/a vs report 인간 baseline)
+- comma_segment_length: 9.93  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.007  (z=-1.76 vs report 인간 baseline)
+- lexical_diversity: 0.77  (z=+2.38 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 0
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 15.1 여섯 논문 한눈에
+
+| # | 논문 | 출처 | 한 줄 | 우리와의 거리 |
+|:-:|------|------|-------|---------------|
+| 04 | Developing a Grover's Emulator on Standalone FPGAs | **중앙대**, AIMS Math. 2024 | Grover 전용 최적화 4종 + RISC-V SoC 통합 | **직계 설계도** |
+| 05 | Precision-aware Fixed-point Emulation | **중앙대**, QIP 2026 | truncation error $O(2^{\text{number of qubits}-\text{fraction bits}})$ 증명 + minimum fraction bits 공식 | **bit width 판단의 나침반** |
+| 06 | Standalone FPGA QAOA Emulator | **중앙대**, arXiv 2025 | 같은 골격을 QAOA로 (multiplier 대비) | multiplier 없는 이유 |
+| 07 | Towards Complete & Scalable Emulation (HPRC) | Kansas, IEEE TC 2023 | 외부 DDR로 32 qubits, C2Q initialization | **대조군** (반대 진영) |
+| 08 | Generalized Grover for Multiple Phase Inversion | PRL 2018 | diffusion operator를 multiple solutions로 일반화 | 이론 배경 (implementation X) |
+| 09 | Quantum Minimum Searching for AUD in IoT | INSA Lyon, IEEE IoT J. 2024 | minimum search(DHA)를 무선 사용자 탐지에 | **확장 참고 사례** |
+
+핵심 사실 하나: **04·05·06은 이 project 지도교수 연구실(중앙대 이우주 교수님)의 논문**입니다. 특히 04번은 우리가 만들려는 것과 정확히 같은 물건(state vector를 fixed-point memory에 두고 oracle+diffusion operator를 FSM으로 $\sqrt{\text{number of states}}$ 번 도는 emulator)이라, 참고문헌이 아니라 사실상 **설계도**에 가깝습니다.
+
+이번 개정에서 09번의 자리가 한 칸 내려갔습니다. 이전 판은 09번을 14장의 원문처럼 다뤘지만, 우리 accelerator는 threshold를 계단처럼 낮추는 바깥 loop를 hardware에 넣지 않고 host firmware의 `while` 한 줄로 처리하기로 했고([14.9](14_multiple_solutions_and_minimum_search.md#149-확장--threshold를-낮추면-minimum-search)·[17.7](17_rvx_soc_integration.md#177-hardware와-firmware의-경계)), iteration schedule의 근거도 09번이 아니라 아래 15.2절의 BBHT 원전으로 옮겼습니다. 09번이 여전히 남기는 것은 **"oracle은 index가 아니라 predicate를 판정한다"** 는 관점 하나와, 그 관점을 실제 응용에 적용한 사례 하나입니다. 그 둘만으로도 인용할 값어치는 충분합니다.
+
+---
+[원문 끝]

@@ -1,0 +1,58 @@
+{
+  "backend": "QISKIT_AER_NORMAL_F64",
+  "policy": "normal",
+  "predicate": "LT",
+  "threads": 1,
+  "workers": 1,
+  "reps": 1,
+  "workloads": 100,
+  "success": 100,
+  "trials": 1452,
+  "L_BBHT": 5588,
+  "physical_iterations": 5588,
+  "campaign_wall_ns": 106708115345,
+  "campaign_wall_note": "warm-up + reps + prep for all workloads",
+  "throughput_searches_per_s": 1.9,
+  "per_target": {
+    "1": {
+      "search_ns_sum": 27946004224,
+      "compute_ns_sum": 9559739692,
+      "e2e_ns_sum": 29977098184
+    },
+    "4": {
+      "search_ns_sum": 13608129155,
+      "compute_ns_sum": 4640320063,
+      "e2e_ns_sum": 14373324815
+    },
+    "16": {
+      "search_ns_sum": 5785114601,
+      "compute_ns_sum": 1992507761,
+      "e2e_ns_sum": 6077129601
+    },
+    "64": {
+      "search_ns_sum": 2909314522,
+      "compute_ns_sum": 1017878751,
+      "e2e_ns_sum": 3078821302
+    },
+    "256": {
+      "search_ns_sum": 1282692375,
+      "compute_ns_sum": 461201609,
+      "e2e_ns_sum": 1405094775
+    }
+  },
+  "search_ns_sum": 51531254877,
+  "compute_ns_sum": 17671647876,
+  "e2e_ns_sum_per_workload_load": 54911468677,
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.14-8-pve-x86_64-with-glibc2.39",
+    "cpu": "x86_64",
+    "process_cpus": [
+      13
+    ],
+    "numpy": "2.4.6",
+    "qiskit": "2.5.2",
+    "qiskit_aer": "0.17.2",
+    "aer_statevector_parallel_threshold": "default (14)"
+  }
+}

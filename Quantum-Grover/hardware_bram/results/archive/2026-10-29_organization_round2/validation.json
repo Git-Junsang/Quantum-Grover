@@ -1,0 +1,47 @@
+{
+  "status": "passed",
+  "documentation_check": {
+    "documents": 202,
+    "errors": 0,
+    "warnings": 0
+  },
+  "verify_soc_from_new_location": {
+    "hardware_bram/results/archive/implementation_pipeline/2026-10-28_k3h3_e4_m2_policy6_board/verify_soc.py": {
+      "exit": 0,
+      "checks": 90,
+      "errors": 0
+    },
+    "hardware_bram/results/archive/implementation_pipeline/2026-10-28_policy_rank_timing/verify_soc.py": {
+      "exit": 0,
+      "checks": 90,
+      "errors": 0
+    },
+    "hardware_bram/results/archive/policy_optimization/2026-10-28_policy_gap_bound_final/verify_soc.py": {
+      "exit": 0,
+      "checks": 90,
+      "errors": 0
+    },
+    "hardware_bram/results/archive/policy_optimization/2026-10-28_policy_parallel_paths_verified/verify_soc.py": {
+      "exit": 0,
+      "checks": 90,
+      "errors": 0
+    },
+    "hardware_bram/results/archive/policy_optimization/2026-10-28_policy_scan_parallel_verified/verify_soc.py": {
+      "exit": 0,
+      "checks": 90,
+      "errors": 0
+    }
+  },
+  "helper_default_paths_exist": {
+    "kh_sweep.DEFAULT_OUT": "hardware_bram/results/archive/design_space/2026-10-26_kh_sweep",
+    "policy_search_method1.DEFAULT_OUT": "hardware_bram/results/archive/policy_search/2026-10-26_policy_search_method1",
+    "policy_full40_analysis.DEFAULT_SEARCH": "hardware_bram/results/archive/policy_search/2026-10-26_policy_search_full40_seedfull/method1_search.csv",
+    "policy_full40_analysis.DEFAULT_BASELINE": "hardware_bram/results/archive/design_space/2026-10-26_kh_sweep/kh_sweep.csv",
+    "policy_full40_analysis.DEFAULT_OUT": "hardware_bram/results/archive/policy_search/2026-10-26_policy_search_full40_seedfull"
+  },
+  "full_bound_pipeline_ooc_out_exists": "hardware_bram/results/archive/policy_search/2026-10-26_policy_search_full40_seedfull",
+  "catalog_targets_verified": 60,
+  "python_compile": "passed",
+  "background_status_queried": true,
+  "deleted_files": 0
+}

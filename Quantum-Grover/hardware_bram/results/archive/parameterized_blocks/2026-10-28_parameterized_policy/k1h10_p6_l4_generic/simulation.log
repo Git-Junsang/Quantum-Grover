@@ -1,0 +1,4 @@
+RESULT row=0 cycles=15 actions=1 hits=0 misses=0
+RESULT row=1 cycles=15 actions=1 hits=0 misses=0
+FATAL: /workspace/hardware_bram/testbench/tb_policy_parameterized.sv:38: row=2 source=0/0 count=1/1 tuple=03/03 cost=5/3 seg=1/1 elapsed=115
+       Time: 201540000  Scope: tb_policy_parameterized

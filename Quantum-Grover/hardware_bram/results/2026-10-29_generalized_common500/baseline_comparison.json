@@ -1,0 +1,6 @@
+{
+  "workloads": 500,
+  "csv_rows": 1000,
+  "all_bytes_equal": true,
+  "errors": 0
+}

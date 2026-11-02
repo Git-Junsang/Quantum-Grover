@@ -1,0 +1,10 @@
+모델 K3H3_E4_M2
+  보드   /tmp/m2_board_checks_nhsp1vyw/empty.csv  (0행)
+  벤치   /workspace/hardware_bram/models/hardware_bram_K3H3_E4_M2/results/2026-09-10_bench500_final_core/per_workload.csv
+  FAIL workload coverage: board=0, expected=1000, unique=0, missing=1000, extra=0
+
+=== mode0 NORMAL (0쌍) ===
+
+=== mode1 체크포인트 (0쌍) ===
+
+실패 1건

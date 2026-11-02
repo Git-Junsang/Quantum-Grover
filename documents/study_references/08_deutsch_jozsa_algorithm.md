@@ -5,7 +5,7 @@
 
 ---
 
-드디어 완전한 quantum algorithm 하나를 처음부터 끝까지 봅니다. **Deutsch–Jozsa algorithm**은 실용성은 떨어지지만, quantum computer가 classical computer를 **천문학적으로** 앞설 수 있음을 보여준 최초의 사례입니다. 무엇보다 [7장 phase kickback](07_oracle_and_phase_kickback.md)과 [6장 Hadamard interference](06_quantum_circuit_model_and_universality.md)가 어떻게 협력하는지를 명확한 계산으로 보여주기 때문에, [9장 Grover](09_grover_algorithm.md)를 이해하기 위한 완벽한 준비운동입니다.
+이제 quantum algorithm 하나를 처음부터 끝까지 살펴봅니다. **Deutsch–Jozsa algorithm**은 실용성은 떨어지지만, quantum computer가 classical computer를 **큰 차이로** 앞설 수 있음을 보여준 최초의 사례입니다. 무엇보다 [7장 phase kickback](07_oracle_and_phase_kickback.md)과 [6장 Hadamard interference](06_quantum_circuit_model_and_universality.md)가 어떻게 작용하는지를 계산으로 보여주므로, [9장 Grover](09_grover_algorithm.md)를 이해하는 데 도움이 됩니다.
 
 ---
 
@@ -29,7 +29,7 @@ classical computer로 확실히 판별하려면 최악의 경우 얼마나 많�
 
 즉 classical computer는 최악의 경우 **$2^{\text{number of qubits}-1}+1$ 번**의 oracle 호출이 필요합니다. qubit가 늘어나면 지수적으로 늘어납니다.
 
-이 비교에서 세는 단위는 처음부터 끝까지 **oracle을 몇 번 호출하는가**이고, 그 이득은 진짜 quantum hardware에서 성립하는 이야기입니다. $2^{\text{number of qubits}}$ 개의 amplitude를 memory에 펼쳐 놓고 계산하는 emulator는 oracle 한 번을 처리하는 데도 array 전체를 훑어야 하므로 호출 횟수의 이득을 그대로 물려받지 못합니다. emulator가 대신 보여 주는 것은 속도가 아니라, interference가 실제로 어떻게 답을 만들어 내는지를 한 칸씩 재현하고 검증할 수 있다는 점입니다.
+이 비교에서 세는 단위는 처음부터 끝까지 **oracle을 몇 번 호출하는가**이고, 그 이득은 진짜 quantum hardware에서 성립하는 이야기입니다. $2^{\text{number of qubits}}$ 개의 amplitude를 memory에 펼쳐 놓고 계산하는 emulator는 oracle 한 번을 처리하는 데도 array 전체를 훑어야 하므로 호출 횟수의 이득을 그대로 얻지는 못합니다. emulator에서는 속도의 이득 대신 interference가 답을 만드는 과정을 한 칸씩 재현하고 검증할 수 있습니다.
 
 > 🔑 **Deutsch–Jozsa의 충격**: quantum computer는 oracle을 **단 한 번** 호출해 100% 확실하게 답합니다. query complexity $O(1)$. classical computer의 $O(2^{\text{number of qubits}})$ 와 비교하면 exponential speedup입니다.
 
@@ -71,19 +71,19 @@ $$
 
 ### 3단계: oracle + phase kickback
 
-출력 qubit가 $|-\rangle$ 이므로 [7.3절 phase kickback](07_oracle_and_phase_kickback.md#73-phase-kickback--형태-a가-형태-b로-변신하는-마법)이 발동합니다. oracle이 입력 각 항에 $(-1)^{f(x)}$ 를 붙입니다:
+출력 qubit가 $|-\rangle$ 이므로 [7.3절 phase kickback](07_oracle_and_phase_kickback.md#73-phase-kickback--형태-a가-형태-b로-변신하는-마법)이 일어납니다. oracle이 입력 각 항에 $(-1)^{f(x)}$ 를 붙입니다:
 
 $$
 U_f\left(\frac{1}{\sqrt{2^{\text{number of qubits}}}}\sum_x|x\rangle\right)|-\rangle = \left(\frac{1}{\sqrt{2^{\text{number of qubits}}}}\sum_x (-1)^{f(x)}|x\rangle\right)|-\rangle
 $$
 
-출력 qubit $|-\rangle$ 은 이제부터 곁다리 constant이므로 떼어놓고, 입력 register만 봅니다:
+출력 qubit $|-\rangle$ 은 이후에도 그대로인 constant이므로 따로 두고, 입력 register만 봅니다:
 
 $$
 |\phi\rangle = \frac{1}{\sqrt{2^{\text{number of qubits}}}}\sum_x (-1)^{f(x)}|x\rangle
 $$
 
-함숫값 $f(x)$ 가 amplitude의 **sign**에 새겨졌습니다.
+함숫값 $f(x)$ 가 amplitude의 **sign**으로 표현되었습니다.
 
 ### 4단계: 다시 $H^{\otimes \text{number of qubits}}$ — interference
 
@@ -126,7 +126,7 @@ $+1$ 들과 $-1$ 들이 **완벽히 상쇄**됩니다. $|0\cdots0\rangle$ 의 am
 > - measurement 결과가 $|0\cdots0\rangle$ (전부 0) → **$f$ 는 constant**. (probability 100%)
 > - measurement 결과에 1이 하나라도 있음 → **$f$ 는 balanced**. (probability 100%)
 
-oracle 단 한 번으로 확실하게 판별했습니다. 이 마법의 정체는 **interference**입니다:
+oracle 단 한 번으로 확실하게 판별했습니다. 이 결과는 **interference**로 설명됩니다:
 
 - constant일 때: 모든 항의 phase가 같아 $|0\cdots0\rangle$ 로 **constructive interference**.
 - balanced일 때: phase가 반반이라 $|0\cdots0\rangle$ 에서 **destructive interference**.
@@ -139,7 +139,7 @@ oracle 단 한 번으로 확실하게 판별했습니다. 이 마법의 정체�
 
 ## 8.6 Deutsch–Jozsa에서 배울 것 — Grover로 가는 다리
 
-이 algorithm의 실용성은 낮습니다(constant/balanced 판별은 현실 문제가 아님). 하지만 **quantum algorithm의 3박자 구조**를 완벽히 보여줍니다:
+이 algorithm의 실용성은 낮습니다(constant/balanced 판별은 현실 문제가 아님). 하지만 **quantum algorithm의 3박자 구조**를 보여줍니다:
 
 | 단계        | Deutsch–Jozsa                        | 다음 장 Grover                        |
 | ----------- | ------------------------------------ | ------------------------------------- |
@@ -151,7 +151,7 @@ oracle 단 한 번으로 확실하게 판별했습니다. 이 마법의 정체�
 
 > ❓ **원문의 Deutsch algorithm과 Deutsch–Jozsa?**: 원래 Deutsch algorithm은 입력 qubit가 하나뿐인 초기 version이고, Deutsch–Jozsa는 이를 여러 qubit로 확장한 것입니다. 원리는 위 계산과 동일합니다.
 
-우리가 만드는 accelerator는 Deutsch–Jozsa를 돌리지 않습니다. accelerator가 아는 연산은 predicate 판정과 inversion about the mean뿐이고 이 장의 circuit은 그 목록에 없습니다. 그런데도 이 장이 해설서에 남아 있는 이유는 하나입니다 — **interference가 어떻게 답을 만들어 내는지를 처음부터 끝까지 수식으로 계산해 보이는 유일한 대목**이기 때문입니다. 8.4절에서 $\frac{1}{2^{\text{number of qubits}}}\sum_x(-1)^{f(x)}$ 가 phase가 같으면 보강해 $\pm1$ 이 되고 반반이면 상쇄해 $0$ 이 되는 것을 손으로 확인했는데, 다음 장에서 solution amplitude는 키우고 non-solution amplitude는 눌러 놓는 diffusion operator가 하는 일이 바로 그 constructive interference와 destructive interference입니다([9.3절](09_grover_algorithm.md#93-핵심-장면--막대-두-번-흔들기)). circuit에서는 그 interference가 inversion about the mean이라는 subtraction 한 줄로 나타납니다([13.5절](13_oracle_diffusion_measurement_datapath.md#135-diffusion-operator--2mean--amp가-circuit이-되는-순간)).
+우리가 만드는 accelerator는 Deutsch–Jozsa를 돌리지 않습니다. accelerator가 아는 연산은 predicate 판정과 inversion about the mean뿐이고 이 장의 circuit은 그 목록에 없습니다. 이 장에서는 **interference가 답을 만들어 내는 과정을 처음부터 끝까지 수식으로 계산**합니다. 해설서에서 이 과정을 모두 계산하는 곳은 이 장뿐입니다. 8.4절에서 $\frac{1}{2^{\text{number of qubits}}}\sum_x(-1)^{f(x)}$ 가 phase가 같으면 보강해 $\pm1$ 이 되고 반반이면 상쇄해 $0$ 이 되는 것을 손으로 확인했는데, 다음 장에서 solution amplitude는 키우고 non-solution amplitude는 눌러 놓는 diffusion operator가 하는 일이 바로 그 constructive interference와 destructive interference입니다([9.3절](09_grover_algorithm.md#93-핵심-장면--막대-두-번-흔들기)). circuit에서는 그 interference가 inversion about the mean이라는 subtraction 한 줄로 나타납니다([13.5절](13_oracle_diffusion_measurement_datapath.md#135-diffusion-operator--2mean--amp가-circuit이-되는-순간)).
 
 ---
 
@@ -159,13 +159,13 @@ oracle 단 한 번으로 확실하게 판별했습니다. 이 마법의 정체�
 
 - **문제**: $f$ 가 constant(전부 같은 값)인가 balanced(절반씩 0/1)인가?
 - **classical computer**: 최악 $2^{\text{number of qubits}-1}+1$ 회 oracle 호출 ($O(2^{\text{number of qubits}})$).
-- **quantum**: oracle **1회** — query complexity $O(1)$. exponential speedup(세는 단위는 oracle 호출 횟수이고, amplitude를 펼쳐 계산하는 emulator는 이 이득을 물려받지 못합니다).
+- **quantum**: oracle **1회** — query complexity $O(1)$. exponential speedup(세는 단위는 oracle 호출 횟수이고, amplitude를 펼쳐 계산하는 emulator는 이 이득을 얻지 못합니다).
 - **circuit**: $H^{\otimes \text{number of qubits}}$ → $U_f$(phase kickback, 출력 qubit $|-\rangle$) → $H^{\otimes \text{number of qubits}}$ → measurement.
 - **핵심 계산**: $|0\cdots0\rangle$ amplitude $= \frac{1}{2^{\text{number of qubits}}}\sum_x(-1)^{f(x)}$. constant면 $\pm1$(constructive interference), balanced면 $0$(destructive interference).
 - **판별**: measurement가 전부 0 → constant, 1이 있으면 → balanced. probability 100%.
 - **Grover로의 다리**: 펼치기-표시-interference의 3박자. Grover는 interference를 **Grover iteration마다** 되풀이해 점진 증폭 → $O(\sqrt{\text{number of states}})$ (조건을 만족하는 항이 여러 개면 $\frac{\pi}{4}\sqrt{\text{number of states}/\text{number of solutions}}-\frac12$ 회).
 
-다음 장은 이 해설서의 정점, **Grover algorithm**입니다. amplitude amplification·inversion about the mean·diffusion operator·geometric rotation을 모두 동원해, 정렬 안 된 항목들 가운데서 solution을 $O(\sqrt{\text{number of states}})$ 에 찾아내는 과정을 완전히 해부합니다.
+다음 장에서는 **Grover algorithm**을 다룹니다. amplitude amplification·inversion about the mean·diffusion operator·geometric rotation을 모두 동원해, 정렬 안 된 항목들 가운데서 solution을 $O(\sqrt{\text{number of states}})$ 에 찾아내는 과정을 살펴봅니다.
 
 ---
 

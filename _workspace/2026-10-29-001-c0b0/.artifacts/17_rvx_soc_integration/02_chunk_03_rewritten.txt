@@ -1,0 +1,22 @@
+## 17.2 RVX가 무엇인가
+
+**RVX**(RISC-V eXpress)는 ETRI(한국전자통신연구원)에서 만든 MCU급 저전력 SoC 개발 키트입니다. 우리가 하려는 일 — "직접 만든 accelerator IP를 RISC-V SoC에 붙여 FPGA에 올린다" — 이 정확히 RVX가 상정한 사용 시나리오입니다.
+
+RVX의 핵심은 **platform XML 하나에서 SoC 전체가 생성된다**는 점입니다. 우리 platform `bbht_grover_final` 의 XML은 짧습니다. accelerator 전용 clock `clk_accel` 을 100 MHz로 정의하고, system SRAM 크기를 128 KB로 잡고, IP instance를 셋 선언합니다 — RV32 core `rvc_orca` 를 `i_main_core` 로, 우리 IP의 제어 register 쪽을 APB slave shim `user_slaveif_apb_clkout`(memory map `0x1000`, address·data 32 bits)으로, data load 쪽을 AHB master shim `user_masterif_ahb_clkout`(32 bits)으로. core와 peripheral과 우리 IP 사이를 잇는 interconnect는 **munoc** 입니다.
+
+이 XML은 SoC RTL 외의 파일도 생성합니다. `make syn` 을 돌리면 다음이 전부 자동으로 나옵니다.
+
+- **memory map header** `memorymap_info.h` — 우리 CSR의 base address `I_GROVER_CSR_SLAVE_BASEADDR`(이 환경에서 `0xE2020000`), system SRAM 범위 `0xE0000000` ~ `0xE001FFFF`(128 KB).
+- **hardware 정보 header** `hw_info.h` — `SRAM_SIZE`, `SYSTEM_CLK_HZ`(50 MHz), 포함된 option macro들.
+- 같은 내용의 Verilog version(`platform_info.vh`), Vivado용 TCL, boot ROM, SoC simulation 환경.
+
+즉 "register address를 RTL과 C header에 두 번 적고 나중에 어긋나는" 고전적인 사고를 구조적으로 막아 줍니다. 이 점 하나만으로도 손으로 SoC를 조립하는 것보다 낫습니다. firmware는 base address를 숫자로 박지 않고 이 macro를 씁니다 — platform XML이 바뀌면 address가 옮겨 가기 때문입니다.
+
+board 정의는 `imp_class_info/` 아래에 따로 있고, 우리가 쓰는 `arty-100t` 항목에는 `part` 가 `xc7a100tcsg324-1`, 외부 clock 100 MHz, configuration flash `s25fl128s`(SPI x4), USB-UART bridge `0403:6010:01` 로 적혀 있습니다. board를 바꾸는 것은 `TARGET_IMP_CLASS` 를 바꾸는 일이 됩니다.
+
+이 project 환경에는 RVX가 `/opt/rvx` 에 **전체 설치**되어 있어, platform 생성부터 synthesis·implementation·bitstream·SoC 전체 RTL simulation까지 전부 local에서 돕니다. Vivado도 local에 있고 화면이 없는 batch mode로 씁니다. accelerator를 붙이는 방법은 RVX 예제 platform `tip_quantized_cnn`(accelerator + `user/rtl` · `user/api`)의 틀을 따랐습니다.
+
+<img src="diagrams/17_soc_block.svg" width="760" alt="host가 UART로 RVX SoC에 붙고, SoC 안의 rvc_orca core와 munoc interconnect(50 MHz)가 RVX가 생성한 비동기 bridge를 거쳐 APB로 accelerator CSR을, AHB로 DMA Engine을 연결하며, accelerator(100 MHz) 안에는 Accelerator Core와 amplitude·checkpoint memory·data_mem·Found Mask·Result FIFO가 있다">
+
+---
+

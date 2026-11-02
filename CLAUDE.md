@@ -30,7 +30,8 @@ accelerator**. host 가 UART 로 predicate와 threshold를 보내면 RVX SoC 안
 - 대화는 **한국어 존댓말**. 내부 추론은 영어 무방.
 - 문서의 용어는 [22장 22.2절](documents/design_references/22_appendix_glossary_and_retired_specs.md#222-용어)을 따릅니다. 용어는 영어로 쓰고
   한 개념에 하나만 씁니다. project 약자(K · H · E · M 등)와 양을 대신하는 기호는 본문 · 표 · 그림 · 수식 어디에도 쓰지
-  않습니다. code identifier · directory 이름 · benchmark 기록 · 이미 낸 tag는 그 시점의 이름 그대로 둡니다.
+  않습니다. code identifier · directory · RVX platform 이름도 이 용어를 따릅니다(2026-10-28). benchmark 기록 · 기록 열 이름 ·
+  console 출력 · 이미 낸 tag는 그 시점의 이름 그대로 둡니다(옛 이름 대응은 22.2절 「옛 code 이름」).
 - code 주석은 **자세히** 달되 이모지 등 AI 티를 내지 말 것.
   - 예외: `documents/study_references/` 해설서 본문의 💡🔍❓⚠️🔑✏️ 표기는 문서 고유 관습이라
     **기존 것만 보존**합니다. 새 콜아웃 박스는 만들지 말고 산문으로 녹이십시오.
@@ -80,8 +81,8 @@ accelerator**. host 가 UART 로 predicate와 threshold를 보내면 RVX SoC 안
 - board cycle과 RTL cycle로 speedup을 만들지 마십시오. BBHT trajectory는 같아도 checkpoint cycle은 직전 실행
   이력에 달려 있습니다. Board-Verified Build는 3,279 cycles, 최신 main a Checkpoint-Capacity of 3 and 3-shot Lookahead는 381 cycles의 memo table 청소를 사용합니다
   ([11장 11.5절](documents/design_references/11_checkpoint_and_policy_engine.md#115-memo-table-initialization-3279--381-cycles)).
-  console 한 번의 cycle을 500 runs 표와 맞대지 마십시오. console의 `us=` 는 cycle 환산값이고 wall-clock time
-  시간은 `wall_us` 입니다.
+  console 한 번의 cycle을 500 runs 표와 맞대지 마십시오. console의 `us=` 는 cycle 환산값이고 wall-clock time은
+  `wall_us` 입니다.
 - cycle은 RTL 이나 board에서 인용합니다. software reference model은 BBHT trajectory까지만 재현하고 cycle은
   일부러 흉내 내지 않습니다([4장](documents/design_references/04_software_reference_model_and_test_vectors.md)).
 - a Checkpoint-Capacity of 4 and 4-shot Lookahead · a Checkpoint-Capacity of 4 and 8-shot Lookahead board 묶음(2026-09-01 · 09-04)은 중간 단계이고 250쌍이라 500 workloads와 총합을

@@ -1,0 +1,6 @@
+## 14.5 2단 병렬 measurement
+
+<img src="diagrams/14_measure_2pass.svg" width="760" alt="measurement: Build에서 512 rows의 row weight와 16 groups의 group prefix sum을 만들고(Dual-Row Build는 cycle당 2 rows), 64-bit random number를 rejection sampling으로 total weight 미만에 맞춘 뒤, group → row → lane 순으로 prefix sum이 random number를 처음 넘는 곳을 찾아 후보를 내고 solution check로 넘기는 흐름">
+
+11.7절의 row 구조를 measurement에도 그대로 씁니다. sampling을 **row를 먼저 고르고 그 안에서 lane을 고르는** 두 단으로 쪼개는 것입니다. row가 512개나 되므로, final configuration은 row 고르기를 다시 **group → row**의 두 층으로 나눕니다.
+

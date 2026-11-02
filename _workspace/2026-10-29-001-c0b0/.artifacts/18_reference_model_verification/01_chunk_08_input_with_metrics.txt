@@ -1,0 +1,79 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 8/11이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 18_reference_model_verification.md 진단
+
+## 장르·레지스터와 보존 조건
+
+학부생용 기술 해설서(report). 본문은 친근한 존댓말(합니다/입니다, 일부 해요체 설명), 수식 풀이·표·요약은 압축형입니다. 문장 격식을 올리지 않습니다. 영어 용어와 영어 토큰은 번역·삭제·교체·대소문자 변경하지 않습니다. glossary 기준은 `documents/design_references/22_appendix_glossary_and_retired_specs.md` §22.2입니다. 수치·수식·code·제목·link·직접 인용·기존 콜아웃/이모지·문단 구조는 보존합니다. 실제 주장, 부정/긍정, 인과, 조건, 확신도도 보존합니다. 보고서용 서식 축약·영어 순화 규칙은 적용하지 않습니다. 본문에 사실을 추가하거나 현행 설계와 대조해 기술 내용을 고치지 않습니다.
+
+## 정량 근거
+
+입력의 정량 블록을 확인했습니다. risk_band는 low이고, 장문 파일의 heavy 권고는 문서 길이에서 나옵니다. 영어 기술 term 반복은 장르상 필수이므로 lexical_diversity의 낮은 값만으로 수정하지 않습니다. 아래 수치는 탐지 보조이며 개별 문맥과 함께 판단합니다.
+
+## 겨냥 순서의 지배 패턴
+
+1. **D-14·D-5 — 시험·설계를 사람처럼 서술하는 표현**: "규칙이 여기서 처음 일합니다", "종료 규칙이 일해야", "FSM이 매달리지 않고", "이 발판 위", "circuit은 … 조용히 틀립니다", "끝까지 정직하게 계산" 등이 직접적인 동작 설명을 흐립니다. 조건과 보장 수준을 보존하고 구체적인 서술로 정리합니다.
+
+2. **A-18·A-7 — 장문·have 직역**: 정량 relative_clause_nesting=7, have_make_literal_count=1. 도입의 두 근거, 18.2절 ladder, 18.4절 예제, 18.7절 checkpoint 경로, 18.8절 비교 조건의 문장을 검토합니다. "오류를 갖고" 등 소유 직역과 여러 층의 수식을 겹친 문장만 국소 수정합니다.
+
+3. **D-8·C-8 — 핵심 강조·부정 대구의 반복**: "이 목록에서 얻을 교훈은 목록 그 자체가 아니라 태도", "주는 것은 속도가 아니라", "묻는 것은", "근사적으로 같은 정도가 아니라" 등이 반복됩니다. equivalence와 distribution, algorithm과 circuit, bit-exact와 오차 허용 구분처럼 기술적으로 필요한 대조는 반드시 보존합니다.
+
+4. **D-2·F-1 — 과한 중요성·평가 표현**: "공짜가 아닙니다", "영원히 일치하지 않고", "이보다 좋은 출발점은 없습니다", "실행된 적 없는 code가 옳을 probability는 낮습니다" 등 단정·평가의 수사만 줄입니다. 원문 사실이나 기준을 새로 해석하지 않습니다.
+
+5. **J-2·J-3·C-11 — 대시·따옴표·쉼표로 끊긴 설명**: 연속된 대시 부연과 수사형 따옴표를 확인합니다. 표·목록의 교육적 구조와 기존 콜아웃·강조를 보존하고 산문에서 불필요한 쉼표·감싸는 표현만 정리합니다.
+
+## 비적용·잔존 처리
+
+교육적 질문·표·연습문제·단계 목록·기존 비유는 그 자체로 결함이 아닙니다. 자연스러운 문장은 그대로 두고 확인된 구간만 보수적으로 다듬습니다. 수치/기술 주장에 의문이 있어도 이번 윤문에서는 보존합니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 2420
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.40  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.63  (z=-0.20 vs report 인간 baseline)
+- ending_comma_rate: 0.62  (n/a vs report 인간 baseline)
+- comma_segment_length: 8.43  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.007  (z=-1.76 vs report 인간 baseline)
+- lexical_diversity: 0.86  (z=+4.28 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.005
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 0
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 18.7 checkpoint를 어떻게 검증하나
+
+checkpoint는 이 project의 headline 기여이면서 동시에 **가장 조용히 틀릴 수 있는** 부분입니다. 다행히 합격 기준이 아주 선명합니다.
+
+**기본 검사는 전수 비교입니다.** 16.6절이 $(DO)^{x+y} = (DO)^{x}(DO)^{y}$ 라는 associativity로 두 경로가 같은 연산열임을 보였고, 우리 arithmetic이 결정적이므로 결과는 근사적으로 같은 정도가 아니라 **bit 단위로 동일**해야 합니다. 그래서 같은 request에 대해 (a) 새로 Init하고 요청된 횟수만큼 전진한 array와 (b) checkpoint slot에 저장된 state에서 이어 차이만큼 전진한 array를 만들어, **16,384칸 전부를** 비교합니다. requested-j vector가 (a)의 expected result를 이미 갖고 있으므로, checkpoint 경로의 최종 amplitude를 그 hash와 대조하면 됩니다. 몇 칸만 sample로 뽑거나 error를 허용하는 비교는 하면 안 됩니다. 같아야 하는 근거가 수학적 항등식이므로, 한 bit라도 다르면 그것은 error가 아니라 버그입니다.
+
+**무효화 조건은 각각 하나씩 regression test를 세웁니다.** 16.7절이 무효화를 hardware에 맡긴 이유가 "software에 맡기면 반드시 새는 곳이 생긴다"였는데, hardware에 맡겨도 조건 하나를 빠뜨리면 같은 일이 벌어집니다. data load, predicate 종류, threshold A·B, data 개수, enumeration의 Found Mask — **하나하나에 대해** 바꾼 직후의 search가 Init부터 시작하는지 확인합니다. 반대 방향도 세웁니다. seed·shot cap·mode bit를 바꿨을 때는 checkpoint slot이 **살아 있어야** 합니다. 비워도 결과는 맞지만 이득이 사라지고, 그것도 조용히 사라집니다.
+
+여기서 **가장 위험한 버그의 모양**을 알아 두는 것이 중요합니다. 무효화가 빠지면 circuit은 겉으로 완벽히 정상 동작합니다. 첫 search도 맞고, 두 번째 search도 맞고, threshold를 바꾸지 않는 한 계속 맞습니다. 그러다 threshold를 바꾼 순간부터 **이전 predicate로 증폭된 amplitude array 위에서** 새 predicate의 oracle이 돌기 시작하고, 답이 조용히 틀립니다 — solution check가 non-solution은 걸러 주지만, shot count와 requested iterations가 Restart mode와 달라지는 형태로 드러납니다. 이런 고장은 무작위 regression으로는 잡히지 않습니다. "설정을 바꾼다 → checkpoint slot이 유효한 채로 남는다 → BBHT trajectory가 달라진다"는 시나리오를 **의도적으로 만들어** test에 넣어야 합니다.
+
+**checkpoint on/off equivalence**는 checkpoint가 관측량을 바꾸지 않는다는 16.6절 주장의 실험적 확인입니다. 같은 seed·같은 data·같은 predicate에서 Restart mode와 Checkpoint mode가 **동일한 결과 index**, **동일한 shot count와 requested iterations**를 내야 하고, 오직 **executed iterations와 cycle만** 달라야 합니다. 이 비교는 이미 여러 층에서 돌았습니다 — 최상단 testbench가 Restart mode/Checkpoint mode 짝을 대조하고, 500 workloads RTL campaign과 board benchmark가 모두 BBHT trajectory 500/500 일치였습니다. 여기에 policy까지 옮긴 reference model이 board와 **executed iterations까지** 500/500 맞았습니다.
+
+끝으로 policy의 드문 경로를 잊지 마십시오. request가 checkpoint slot의 iteration과 정확히 같아 비용이 0인 경우, request가 모든 checkpoint slot보다 작아 Init부터 가는 경우, 중간 state를 다른 checkpoint slot에 떨구는 경우입니다. BBHT에서 sampling range는 커지기만 하므로 뒤의 두 경우는 드물게 나옵니다. seed를 골라 강제로 만들거나 request 수열을 직접 주입해 경로를 밟아 보십시오. 그리고 policy가 미리 풀어 둔 계획과 실제 request가 어긋난 횟수(`PLAN_FIFO_MISMATCH_COUNT`)는 언제나 0이어야 합니다. 0이 아니면 앞으로 올 request를 예측하는 circuit이 실제 Iteration-Count LFSR 출력과 어긋났다는 직접 증거입니다.
+
+---
+[원문 끝]

@@ -1,0 +1,7 @@
+{
+  "reference": "hardware_bram/results/2026-10-29_generalized_common500/k3h3e4m2_fast/bench.csv",
+  "current": "hardware_bram/results/2026-10-29_generalized_e20_m11/baseline_common500/bench.csv",
+  "csv_byte_identical": true,
+  "rows": 1000,
+  "sha256": "b635e5f2ce2dc1ebaf56b860f499ecc3890a73f0d8c5b7bccdf6ebfb50afdd00"
+}

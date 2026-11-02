@@ -1,0 +1,83 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 3/14이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 12_fixed_point_and_precision.md 진단
+
+## 장르·레지스터와 보존 조건
+
+학부생용 기술 해설서(report). 본문은 친근한 존댓말(합니다/입니다, 일부 해요체 설명), 수식 풀이·표·요약은 압축형입니다. 문장 격식을 올리지 않습니다. 영어 용어와 영어 토큰은 번역·삭제·교체·대소문자 변경하지 않습니다. glossary 기준은 `documents/design_references/22_appendix_glossary_and_retired_specs.md` §22.2입니다. 수치·수식·code·제목·link·직접 인용·기존 콜아웃/이모지·문단 구조는 보존합니다. 실제 주장, 부정/긍정, 인과, 조건, 확신도도 보존합니다. 보고서용 서식 축약·영어 순화 규칙은 적용하지 않습니다. 본문에 사실을 추가하거나 현행 설계와 대조해 기술 내용을 고치지 않습니다.
+
+## 정량 근거
+
+입력의 정량 블록을 확인했습니다. risk_band는 low이고, 장문 파일의 heavy 권고는 문서 길이에서 나옵니다. 영어 기술 term 반복은 장르상 필수이므로 lexical_diversity의 낮은 값만으로 수정하지 않습니다. 아래 수치는 탐지 보조이며 개별 문맥과 함께 판단합니다.
+
+## 겨냥 순서의 지배 패턴
+
+1. **D-14·D-5 — 수치 동작에 의인화·과한 은유 부착**: "solution이 흐려지고", "몇 LSB 뿐", "solution 행세를 하고", "theorem은 … 두 번 일합니다", "전제로 서 있습니다", "formula는 … 나침반", "반대 진영의 목소리" 등이 반복됩니다. 내용 명사와 기술 term은 보존하고 동작·조건을 직접 설명합니다.
+
+2. **A-18 — 논거가 길게 누적된 문장**: 정량 relative_clause_nesting=7. 12.3절 저장 폭 결정, 12.4절 rounding 선택, 12.7절 공식 전제 비교, 12.9절 반론은 한 문장에 조건·평가·예시가 누적됩니다. 인과와 비교 범위를 보존하며 필요한 곳만 나눕니다.
+
+3. **D-2·D-8·F-1 — 평가성 도입·결론 반복**: "가장 실무적인 첫 결정", "정직하게 덧붙이면", "가장 값진 결과", "직관적으로 아름답습니다", "진짜 원하는 답" 등 내용에 덧붙인 평가가 많습니다. 설명을 직접 시작하되 전제·근거는 빼지 않습니다.
+
+4. **C-8 — 반복적인 부정 대구**: "정확도가 아니라 속도로", "공식이 준 답이 아니라 잰 답", "resolution이지 exponent 범위가 아님" 등은 핵심 개념 구분일 수 있습니다. 반복을 이유로 일괄 제거하지 않고 비유·평가성 대조만 선별합니다.
+
+5. **J-2·J-3 — 따옴표·대시 부연 밀집**: 강조용 따옴표와 대시가 설명을 자주 끊습니다. 발화자가 있는 실제 논문 인용은 보존하고, 필자 자신의 수사 표현만 평문으로 다듬습니다. 제목·수식·code·link와 기존 콜아웃은 손대지 않습니다.
+
+## 비적용·잔존 처리
+
+교육적 질문·표·연습문제·단계 목록·기존 비유는 그 자체로 결함이 아닙니다. 자연스러운 문장은 그대로 두고 확인된 구간만 보수적으로 다듬습니다. 수치/기술 주장에 의문이 있어도 이번 윤문에서는 보존합니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 2423
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.42  (n/a vs report 인간 baseline)
+- comma_usage_rate: 1.06  (z=+0.29 vs report 인간 baseline)
+- ending_comma_rate: 0.44  (n/a vs report 인간 baseline)
+- comma_segment_length: 6.58  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 1  (lexicon 매치: '따라서')
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.000  (z=-2.00 vs report 인간 baseline)
+- lexical_diversity: 0.74  (z=+1.90 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 1
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 12.2 fixed-point와 Q format 명명 규약
+
+**fixed-point**는 이름 그대로 radix point 위치를 **한 자리에 못 박아** 두는 방식입니다. radix point가 떠다니지 않으므로 alignment·normalization이 필요 없고, 숫자를 그냥 **integer처럼** 다루되 "이 integer의 아래 몇 bit는 fraction bits"라고 약속만 해 두면 됩니다.
+
+일상의 비유를 들면, 돈을 다룰 때 우리는 12,345원을 굳이 $1.2345\times 10^4$ 로 쓰지 않습니다. 그냥 "원" 단위 integer로 적고 radix point는 생각하지 않죠. fixed-point도 똑같습니다. 예를 들어 아래 22 bits를 fraction bits로 약속하면, memory에 저장된 integer $2{,}097{,}152$ 는 실제로는 $2^{21}/2^{22} = 0.5$ 를 뜻합니다. radix point는 "약속" 속에만 있고 hardware는 integer 연산만 합니다.
+
+이 약속을 **Q format**으로 표기합니다. `Q<integer bits>.<fraction bits>` 꼴입니다. 그런데 여기에 문헌마다 갈리는 함정이 있습니다 — **sign bit를 integer bits에 넣어 세는 곳과 따로 빼는 곳이 있어서**, 똑같은 32-bit data word가 어디서는 Q1.30으로, 어디서는 Q2.30으로 적힙니다.
+
+이 해설서는 이 혼란을 하나로 못 박습니다. **sign bit는 integer bits에 포함합니다.** 따라서 Q format의 data word width는 언제나 integer bits + fraction bits이고, 표현 범위는 $[-2^{\,\text{integer bits}-1},\ 2^{\,\text{integer bits}-1} - 2^{-\text{fraction bits}}]$, resolution은 $2^{-\text{fraction bits}}$ 입니다.
+
+이 규약으로 우리 설계를 적으면 이렇게 됩니다. amplitude data word width는 23 bits, fraction bits는 22 bits, 그래서 **Q1.22** — sign 1 + fraction 22이고, integer bits에 sign 말고는 아무것도 없습니다. 23-bit two's complement의 표현 범위는 $[-1,\ 1 - 2^{-22}]$ 이고 resolution은 $2^{-22} \approx 2.38\times 10^{-7}$ 입니다. 여기서 한 가지를 눈여겨보십시오 — **$+1.0$ 은 담기지 않습니다.** integer로 $2^{22} = 4{,}194{,}304$ 가 필요한데 23-bit two's complement의 maximum은 $4{,}194{,}303$ 입니다. 우리는 여기에 한 칸을 더 버려, 음수 쪽 끝 $-4{,}194{,}304$ 도 쓰지 않고 **$[-4{,}194{,}303,\ +4{,}194{,}303]$ 의 대칭 범위**만 합법 값으로 둡니다. 왜 그런지는 12.5절과 13.4절에서 드러납니다.
+
+<img src="diagrams/12_qformat.svg" width="700" alt="23-bit Q1.22 저장 data word(sign 1 + fraction 22)와 25-bit 중간값 register, diffusion operator 중간값 상한 1 + 2/√(number of states)이 저장 data word 천장을 넘으면 symmetric saturation으로 붙이는 그림">
+
+04번 논문의 표기도 이 규약으로 옮겨 읽어야 합니다. 논문은 32-bit data word를 "Q1.30"이라 부르는데, 이는 sign을 밖으로 뺀 표기입니다. 우리 규약으로는 **Q2.30**(sign 1 + integer 1 + fraction 30 = 32 bits)입니다. 앞으로 Q format 표기를 만나면 **"integer bits + fraction bits = data word width"가 성립하는지** 확인하십시오. 성립하지 않으면 sign을 따로 센 표기입니다. 이 사소해 보이는 구분이 memory 예산 계산에서 bit를 한 칸씩 어긋나게 만듭니다.
+
+마지막으로 이 규약이 곧바로 쓰이는 constant 하나. uniform amplitude는 $1/\sqrt{\text{number of states}}$ 인데, 14 qubits면 $1/\sqrt{16384} = 1/128 = 2^{-7}$ 로 **power of two**입니다. Q1.22 integer로는 $2^{22}/2^{7} = \mathbf{32{,}768}$ 이고, rounding이 전혀 없는 **정확한** 값입니다. initialization이란 array 16,384칸을 전부 32,768로 채우는 일입니다(13.2절).
+
+---
+[원문 끝]

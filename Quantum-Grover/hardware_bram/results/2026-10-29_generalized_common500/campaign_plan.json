@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "capacities": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "lookahead_shots": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "iteration_engines": 4,
+  "square_engines": 2,
+  "policy_mode": 6,
+  "force_generic": true,
+  "workloads": 500,
+  "cells": 40,
+  "workers": 2,
+  "full_soc_or_vivado": false,
+  "reason": "User narrowed the measurement grid from 100 cells to 40 cells on 2026-10-29."
+}

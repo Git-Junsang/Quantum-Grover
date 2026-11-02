@@ -1,0 +1,22 @@
+{
+  "universe_size": 21,
+  "expected_root_actions": 167960,
+  "source": 9,
+  "next": [
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    127
+  ],
+  "cost": 119,
+  "segments": 10,
+  "proof": "Current request costs 127-9=118. Endpoint 127 leaves nine slots for ten distinct future requests 100..109, so at least one future iteration is necessary. Holding 100..108 and 127 attains that bound with one iteration at 109 and is the lexicographically smallest attaining tuple.",
+  "rtl_binary": "/workspace/hardware_bram/results/2026-10-28_parameterized_policy_final/k10h10_p6_l4_generic/policy.vvp",
+  "rtl_binary_sha256": "6fe46973ad3c81da2291ea8c26201ba6d99ce70233aca35ad2dca7da50f81109"
+}

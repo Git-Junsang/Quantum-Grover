@@ -1,0 +1,87 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 8/12이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 윤문 진단
+
+대상: `11_state_vector_emulator.md`
+
+## 장르와 레지스터
+
+학부생용 공부 해설서입니다. 설명 본문은 합쇼체 중심의 친근한 존댓말이고, 질문·권유에는 해요체가 섞입니다. 요약·표의 간결한 명사형은 의도된 형식입니다. 이 register와 독자 수준을 그대로 유지합니다.
+
+## 겨냥 순서와 근거
+
+1. **D-14 / D-5 — 지나친 비유와 의인화**: 「algorithm을 … 짓는 이야기」·「대가」·「지수 벽」·「memory를 지불」·「진범」·「요리사만 늘리는 헛수고」·「우리가 파는 것은 속도」가 기술 설명 전체를 비유로 잇습니다. 실제 저장량·연산량·병렬 접근 제한으로 풀 수 있는 부분을 우선합니다. 기존 절 제목·그림·비유 박스 이름은 보존합니다.
+
+2. **D-8 / D-2 — 평가와 당부를 앞세운 도입**: 「반드시 새겨야 할 사실 하나」·「못 박아」·「결정적인 교훈」·「중요하게」가 문단마다 설명을 예고합니다. 필요한 주장을 바로 진술하고 기존 경고의 의미·강도는 보존합니다.
+
+3. **A-18 / A-16 — 긴 삽입구와 추상적 지시**: 11.1·11.3·11.4·11.6·11.7의 문단은 조건·비교·평가를 대시로 길게 붙입니다. relative_clause_nesting=8, pronoun_density=0.001. 관계가 분명한 문장만 나눠 주체를 드러내고 수치·인용·영어 토큰은 유지합니다.
+
+4. **C-8 / I-3 — 대립 공식과 간접 종결 누적**: 「…아니라」·「…것입니다」·「…셈」의 반복을 확인합니다. 저장 대 연산, 실제 quantum 대 emulator 등 개념 구별은 필요한 곳에 남기고, 같은 결론을 반복하는 간접 설명만 직접 서술로 바꿉니다.
+
+## 정량 앵커와 해석
+
+입력 정량 블록의 route_hint는 `heavy`, 원문은 25,858자입니다. 위에 적은 양성 카운트만 해당 ID의 보조 근거로 사용했습니다. lexical_diversity의 낮은 값은 전문용어 반복의 영향이 있으므로 영어 용어를 치환하는 근거로 쓰지 않습니다. 이중 피동·by 피동·have 직역은 카운트가 0이어서 지배 패턴으로 지목하지 않습니다.
+
+## 보존 지침
+
+- 영어 용어·영어 토큰의 철자와 대소문자를 그대로 둡니다. 영어를 한국어로 옮기거나 동의어로 바꾸지 않습니다. 용어집 SSOT는 `documents/design_references/22_appendix_glossary_and_retired_specs.md` 22.2절입니다.
+- 사실·주장·수치·단위·수식·code·identifier·인용·조건·부정/긍정·인과를 보존합니다. 내용 보충이나 과학적 사실 수정은 이번 윤문의 범위가 아닙니다.
+- 제목·절 번호·link·그림·기존 콜아웃·표 구조를 유지합니다. 기존 볼드·이모지는 교재 고유 관습이므로 일괄 삭제하지 않습니다.
+- 어색한 비유·한국어 연결·조사·수식어만 국소 수정합니다. 단순히 technical term이 많이 나온다는 이유로 B 계열 처방을 적용하지 않습니다.
+- 의무·가능·추정의 강도를 보존하고 원문에 없던 설명이나 평가를 넣지 않습니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 2833
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.50  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.58  (z=-0.26 vs report 인간 baseline)
+- ending_comma_rate: 0.75  (n/a vs report 인간 baseline)
+- comma_segment_length: 9.11  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.000  (z=-2.00 vs report 인간 baseline)
+- lexical_diversity: 0.78  (z=+2.54 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 0
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 11.7 병렬도와 banking
+
+우리 IP는 amplitude를 **row** 단위로 다룹니다. 한 row는 연속된 index **32개**, 곧 **32 lanes**이고, row 하나의 32칸이 한 번에 읽히고 한 번에 써집니다. index를 row와 lane으로 나누는 규칙은 가장 단순한 것을 씁니다 — **index의 하위 5 bits가 lane 번호, 상위 9 bits가 row 번호**입니다(14 qubits):
+
+$$i = \underbrace{\texttt{row}[8{:}0]}_{\text{row } 0\ldots511} \ \Vert\ \underbrace{\texttt{lane}[4{:}0]}_{\text{lane } 0\ldots31}$$
+
+이렇게 잘라 두면 array를 훑는 일이 row 번호 counter 하나로 끝납니다. row $r$ 를 읽으면 index $32r \ldots 32r+31$ 이 한꺼번에 나오고, 두 lane이 서로 다른 address를 동시에 원하는 일이 원리적으로 일어나지 않으니 **충돌이 0**입니다.
+
+row 하나는 memory data word 하나입니다. amplitude 32칸 × 23-bit = **736 bits**짜리 data word죠. BRAM 한 개는 이렇게 넓은 data word를 담지 못하므로 여러 개를 옆으로 붙입니다. 7 시리즈의 RAMB36은 한 port를 최대 72-bit 폭으로 쓸 수 있고, 23-bit lane 셋이 69 bits라 거기에 딱 들어갑니다. 그래서 32 lanes는 RAMB36 **11개**(3 lanes짜리 10개 + 2 lanes짜리 1개)에 담기고, 이것이 amplitude state 한 벌의 값입니다.
+
+여기에 한 겹이 더 붙습니다. final configuration은 Grover iteration 한 번 안에서 **4 PEs**(PE 하나가 32 lanes)가 협력해 **한 cycle에 4 rows**를 처리합니다. 4 rows를 동시에 읽으려면 row들을 **row phase**로 나눠 네 개의 bank에 흩어 둡니다 — row 번호의 하위 2 bits가 bank를, 나머지 7 bits가 bank 안 address를 정합니다. cycle $c$ 에는 네 bank가 모두 같은 address $c$ 를 읽어 row $4c, 4c+1, 4c+2, 4c+3$ 이 한꺼번에 나옵니다. 512 rows가 128 cycles에 끝나고, 여기서도 충돌은 원리적으로 0입니다.
+
+이 "충돌 0"이 공짜가 아니라는 것은 다른 simulator를 보면 압니다. 범용 gate simulator는 임의의 qubit에 임의의 gate를 걸어야 하므로 amplitude를 bank 사이로 **재배치**해야 하고, 그러려면 crossbar나 permutation network가 필요합니다. Belfore(2024)의 확장형 FPGA architecture는 그 **Beneš permutation network 하나에 전체 logic의 36%** 를 씁니다. 우리는 그 36%를 통째로 쓰지 않습니다. Grover의 두 연산이 둘 다 index 순서를 건드리지 않는 **순차 streaming**이기 때문입니다 — oracle은 index $i$ 의 amplitude를 index $i$ 의 data로 판정하고, diffusion operator는 모든 칸에 같은 값을 적용합니다. algorithm의 규칙성이 곧바로 logic 예산으로 환산되는, 이 project에서 가장 값싸게 얻은 이득입니다.
+
+row 구조는 resource 계산도 바꿉니다. [12.8절](12_fixed_point_and_precision.md#128-data-word와-bram-환산)의 표는 **용량**만 센 것이었는데, 실제로 잡히는 BRAM 개수는 data word를 몇 개로 쪼갰느냐가 함께 정합니다. state 한 벌이 RAMB36 11개인 것은 폭(736 bits)이 정한 값이고, 깊이 512 rows는 RAMB36 한 개의 깊이(72-bit 폭에서 512)와 딱 맞습니다. 그래서 **13 qubits나 12 qubits로 낮춰도 개수가 줄지 않습니다** — 512 rows가 256 rows·128 rows로 줄 뿐 폭은 그대로라, BRAM을 절반만 채운 채 11개를 그대로 물고 있기 때문입니다. resource 계산을 지배하는 것이 number of states가 아니라 **폭(number of lanes × data word width)** 인 범위인 셈이고, resource까지 아끼며 축소하려면 number of qubits가 아니라 **number of lanes를 함께 낮춰야** 합니다.
+
+마지막으로 04번 논문과의 거리를 재 두겠습니다. 11.5에서 본 04번의 전략은 연산 unit을 **number of states에 비례해 펼치는 것**이었습니다. 64 states(6 qubits) 이하에서만 성립하는 architecture입니다. 14 qubits에 그대로 적용하면 adder·comparator를 16,384벌 펼치라는 뜻이고, LUT 19.8× 곡선을 그대로 연장하면 어떤 FPGA로도 불가능합니다. 우리는 정반대를 택했습니다 — unit을 number of states가 아니라 **constant 128개**(32 lanes × 4 PEs)만 두고 array를 $\text{number of states}/128$ cycles에 걸쳐 흘려 보냅니다. 그러면 logic resource는 number of qubits와 **무관하게 일정**하고, 늘어나는 것은 시간뿐입니다. 04번이 시간을 resource로 바꿨다면 우리는 resource를 시간으로 되바꾼 것이고, 그 시간이 얼마인지가 다음 절입니다.
+
+---
+[원문 끝]

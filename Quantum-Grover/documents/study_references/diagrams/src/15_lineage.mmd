@@ -1,0 +1,18 @@
+flowchart TD
+    subgraph CAU["중앙대 이우주 교수님 연구실"]
+        P04["[04] Grover emulator<br/>AIMS Math 2024"]
+        P06["[06] QAOA emulator<br/>arXiv 2025"]
+        P05["[05] precision 이론<br/>QIP 2026"]
+    end
+    P07["[07] HPRC 확장성<br/>IEEE TC 2023<br/>대조군 · U. Kansas"]
+    P08["[08] 다중 phase 반전<br/>PRL 2018 · 이론"]
+    P09["[09] minimum search · active user detection<br/>IEEE IoT J 2024 · 응용"]
+    OURS(["우리 project<br/>Grover FPGA emulator"])
+
+    P04 -->|설계 철학| P06
+    P04 -->|precision 후속| P05
+    P06 -->|대조·인용| P07
+    P04 ==>|직계 설계도| OURS
+    P05 -.bit width 근거.-> OURS
+    P08 -.이론 배경.-> OURS
+    P09 -.oracle 확장.-> OURS

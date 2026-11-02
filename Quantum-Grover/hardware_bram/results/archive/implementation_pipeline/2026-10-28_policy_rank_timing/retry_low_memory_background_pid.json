@@ -1,0 +1,9 @@
+{
+  "pid": 1398345,
+  "created_utc": "2026-10-28T17:55:43.165109+00:00",
+  "worker": "/workspace/hardware_bram/results/2026-10-28_policy_rank_timing/retry_low_memory_20261029.py",
+  "worker_sha256": "0725942267850e2f7c55d78df01c10cbd4024c52ce31bbae8f3e13c1115418f9",
+  "purpose": "one frozen-source serial-synthesis recovery; no assistant polling after submission",
+  "general_threads": 1,
+  "synthesis_threads": 1
+}

@@ -1,0 +1,16 @@
+## 17.9 이 장의 요약
+
+- **경계**: amplitude 갱신과 shot loop처럼 규칙적이고 IP 안 state에 묶인 일은 hardware가, 설정·결과 처리·표시처럼 응용마다 바뀌는 일은 software가. 실제 quantum computer도 classical control computer가 circuit을 돌리는 구조라, 이 배치는 편의가 아니라 실기의 구조를 따르는 것입니다.
+- **RVX**: ETRI의 RISC-V eXpress. **platform XML 하나**에서 SoC RTL·memory map C header·Verilog header·boot ROM·Vivado script가 전부 생성됩니다. 우리 platform은 core `rvc_orca`, APB slave shim, AHB master shim 셋에 accelerator 전용 100 MHz clock과 SRAM 128 KB. `/opt/rvx` 에 전체 설치되어 생성부터 bitstream까지 local에서 돕니다.
+- **bus 두 개**: 설정·status는 **APB slave**, 32 KB array load는 **AHB master**. load는 SINGLE 읽기 하나씩으로 충분했고, **AXI-Stream은 RVX에 shim이 없어** 초기 원안을 폐기했습니다. IP는 `_clkout` shim으로 자기 clock domain에서 돌고, CDC는 RVX 생성 bridge가 맡습니다.
+- **CSR map**: 손으로 짠 APB slave, 32-bit **38개 · 4-byte 간격**, 접근 성격은 `RW` · `W1P` · `RO` · `RPOP`. 무효화 register가 없고(Accelerator Core가 스스로), algorithm 지표 `REQUESTED_ITERATIONS` 와 비용 지표 `EXECUTED_ITERATIONS` · `CYCLE_COUNT` 를 따로 둡니다. 시작 queue는 없고 firmware가 `STATUS` 를 먼저 봅니다.
+- **load**: 32-bit SINGLE, data word당 3 cycles → 8,192 data words **약 246 µs**(100 MHz). 정렬·개수·범위·실행 중 여부를 DMA Engine이 검사하고, load 중 시작 금지 · 홀수 개수의 마지막 상위 16-bit 생략 · load는 checkpoint 무효화. benchmark data는 firmware `GEN` 이 seed로부터 결정적으로 만듭니다.
+- **UART**: console app과 ASCII line protocol, 115200 8N1, 흐름 제어 없음. 명령과 결과만 오갑니다 — 32 KB를 UART로 보내면 **약 2.8초**로 search 시간의 만 배라 data 직송은 비현실적입니다.
+- **shot loop는 hardware**(BBHT autonomous mode)가 돌고, firmware가 number of iterations를 정하는 **Manual mode**도 비교 실험과 reference model 대조를 위해 남아 있습니다. **enumeration 종료 판정도 hardware**가 하고, 한계값만 firmware가 설정합니다.
+- **초판의 미정 다섯**은 전부 정해졌습니다: CSR 38개 · 4-byte · 256-entry Result FIFO · 별도 `M_max` 없음 · SoC 32 BRAM tiles · accelerator 100 MHz / core 50 MHz.
+
+system 경계까지 그렸으니 설계는 이제 board 위에서 동작합니다. 남은 질문은 하나입니다 — 이것이 맞다는 것을 어떻게 증명하나요? 다음 18장이 그 답입니다.
+
+---
+
+> [← 16장 몇 번 돌릴지 모를 때](16_iteration_control_and_checkpoints.md) · [index](index.md) · [18장 무엇을 어떻게 증명하나 →](18_reference_model_verification.md)

@@ -1,0 +1,152 @@
+# vsim -c BBHT_GROVER_K3H3_E4_M2_POLICY6_20261028_SIM -do "run.do" -l qtsim.log 
+# Start time: 17:24:59 on Oct 28,2026
+# ** Note: (vsim-3812) Design is being optimized...
+# //  Questa Sim-64
+# //  Version 2022.1_2 linux_x86_64 Apr  2 2022
+# //
+# //  Copyright 1991-2022 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  QuestaSim and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# Loading sv_std.std
+# Loading work.BBHT_GROVER_K3H3_E4_M2_POLICY6_20261028_SIM(fast)
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Loading work.utils_pkg(body)
+# Loading work.constants_pkg(body)
+# Loading work.rv_components
+# Loading work.orca(rtl)#1
+# Loading work.instruction_fetch(rtl)#1
+# Loading work.decode(rtl)#1
+# Loading ieee.std_logic_textio(body)
+# Loading work.execute(behavioural)#1
+# Loading work.arithmetic_unit(rtl)#1
+# Loading work.sys_call(rtl)#1
+# Loading work.memory_interface(rtl)#1
+# Loading work.cache_mux(rtl)#1
+# Loading work.oimm_register(rtl)#3
+# Loading work.cache_controller(rtl)#1
+# Loading work.ERVP_ORCA_CACHE_AXI_MASTER_OLD(fast)
+# Loading work.oimm_register(rtl)#2
+# Loading work.cache_controller(rtl)#2
+# Loading work.ERVP_ORCA_CACHE_AXI_MASTER_OLD(fast__1)
+# do run.do
+# 1
+# 
+# 
+# [NoC:INFO] micro NoC 4.5 is used 
+# [NoC:INFO] NOT monitoring routing error
+# [NoC:INFO] NOT monitoring undefined region access
+# [NoC:INFO] NOT monitoring transaction timeout
+# [NoC:INFO] NOT monitoring the bandwidth of IPs
+# [NoC:INFO] NOT monitoring the correctness of AXI protocol
+# 
+# 
+# [JTAG:INFO] initialized
+# [RESET CONTROLLER] all resets are released
+# [JTAG:INFO] release all reset
+# [JTAG:INFO] SRAM fast load start
+# [JTAG:INFO] SRAM load end
+# [JTAG:INFO] set app addr
+# [JTAG:INFO] set sim env
+# [JTAG:INFO] DR: 00000001
+# [JTAG:INFO] set ready-to-run
+# [JTAG:INFO] finished
+# 
+# 
+# [RVX/START] SIM@RTL
+# 
+# bbht_console -- HELP 를 치면 명령 목록이 나옵니다
+# OK
+# > ID
+# STAT name=bbht_console csr_ver=0.9.8
+# STAT platform=bbht_grover_k3h3_e4_m2_policy6_20261028 fw=2026-09-25
+# STAT csr_base=0xe2020000 q_bits=14 n_entries=16384 fifo_depth=256
+# STAT accel_clk_hz=100000000 sram_base=0xe0000000 sram_last=0xe001ffff
+# STAT dataset_addr=0xe000a7a0 dataset_count=0 loaded=0
+# OK
+# > RUN
+# ERR NOT_LOADED
+# > GEN COUNT=16384 TARGETS=0 VAL=12345 SEED=1
+# OK count=16384 targets=0 val=12345
+# > POKE IDX=507 VAL=12345
+# OK idx=507 val=12345
+# > POKE IDX=2852 VAL=12345
+# OK idx=2852 val=12345
+# > POKE IDX=4724 VAL=12345
+# OK idx=4724 val=12345
+# > POKE IDX=8685 VAL=12345
+# OK idx=8685 val=12345
+# > PEEK IDX=8685
+# STAT idx=8685 val=12345
+# OK
+# > LOAD
+# OK loaded=16384 addr=0xe000a7a0
+# > SET MODE=EQ A=12345 AUTO=1 BURST=0 SEEDJ=0x7B1DCDAF SEEDM=0x24370DF2
+# OK
+# > SHOW
+# CFG mode=EQ a=12345 b=0 count=16384 cap=100
+# CFG auto=1 burst=0 j=0 faillim=4 seedj=0x7b1dcdaf seedm=0x24370df2
+# OK
+# > RUN
+# HIT idx=8685 val=12345 trials=21 l=119 iters=119 cyc=41310 us=413 wall_us=418
+# OK
+# > STAT
+# STAT status=0x0000080c valid=1 idx=8685
+# STAT trials=21 l_bbht=119 actual_iter=119 cyc=41310 us=413
+# STAT found=0 consec_fail=0 max_fifo=0 fifo_stall=0
+# STAT policy_cyc=0 stall=0 actions=0 memo_hit=0 memo_miss=0
+# STAT plan_level=0 high=0 empty=0 hit=0 mismatch=0
+# STAT cold_solve=0 spec_solve=0 max_latency=0
+# OK
+# > SET BURST=1
+# OK
+# > RUN
+# HIT idx=8685 val=12345 trials=21 l=119 iters=38 cyc=17727 us=177 wall_us=183
+# OK
+# > STAT
+# STAT status=0x0000080c valid=1 idx=8685
+# STAT trials=21 l_bbht=119 actual_iter=38 cyc=17727 us=177
+# STAT found=0 consec_fail=0 max_fifo=0 fifo_stall=0
+# STAT policy_cyc=574 stall=415 actions=57 memo_hit=0 memo_miss=12
+# STAT plan_level=1 high=1 empty=1 hit=20 mismatch=0
+# STAT cold_solve=1 spec_solve=21 max_latency=382
+# OK
+# > RUN
+# HIT idx=8685 val=12345 trials=21 l=119 iters=38 cyc=17374 us=173 wall_us=179
+# OK
+# > STAT
+# STAT status=0x0000080c valid=1 idx=8685
+# STAT trials=21 l_bbht=119 actual_iter=38 cyc=17374 us=173
+# STAT found=0 consec_fail=0 max_fifo=0 fifo_stall=0
+# STAT policy_cyc=277 stall=62 actions=71 memo_hit=0 memo_miss=18
+# STAT plan_level=1 high=1 empty=2 hit=20 mismatch=0
+# STAT cold_solve=1 spec_solve=21 max_latency=30
+# OK
+# > SET MODE=NOPE
+# ERR BAD_KV
+# > ENUM
+# FOUND idx=8685 val=12345
+# FOUND idx=2852 val=12345
+# FOUND idx=507 val=12345
+# FOUND idx=4724 val=12345
+# END count=4 found=4 cyc=277401 us=2774
+# OK
+# > QUIT
+# OK
+# script done
+# 
+# [PROC_STATUS]  1 cores have finished @        464043880000 ns
+# ** Note: $finish    : /opt/rvx/rvx_hwlib/lib_sim/ncsim/src/ncsim_manager.v(68)
+#    Time: 464190728520 ps  Iteration: 0  Instance: /BBHT_GROVER_K3H3_E4_M2_POLICY6_20261028_SIM/i_ncsim_manager
+# End time: 17:30:04 on Oct 28,2026, Elapsed time: 0:05:05
+# Errors: 0, Warnings: 0

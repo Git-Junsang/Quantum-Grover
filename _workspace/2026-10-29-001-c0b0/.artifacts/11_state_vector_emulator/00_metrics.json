@@ -1,0 +1,103 @@
+{
+  "version": "v2.0",
+  "genre": "report",
+  "char_count": 25858,
+  "metrics": {
+    "comma_inclusion_rate": 0.3507692307692308,
+    "comma_usage_rate": 0.46153846153846156,
+    "ending_comma_rate": 0.4954954954954955,
+    "comma_segment_length": 9.128421052631579,
+    "conclusion_pivot_count": 0,
+    "safe_balance_count": 0,
+    "hanja_nominalizer_density": 0.0020954598370197903,
+    "lexical_diversity": 0.5527357392316647
+  },
+  "z_scores": {
+    "comma_inclusion_rate": null,
+    "comma_usage_rate": -0.3982417582417583,
+    "ending_comma_rate": null,
+    "comma_segment_length": null,
+    "hanja_nominalizer_density": -1.930151338766007,
+    "lexical_diversity": -1.945285215366706
+  },
+  "risk_band": "low",
+  "risk_score": 1,
+  "evidence": {
+    "conclusion_pivots": [],
+    "safe_balances": []
+  },
+  "v2_metrics": {
+    "lexical_diversity_ttr": 0.5527357392316647,
+    "lexical_density": 0.01071012805587893,
+    "ending_diversity": 0.04608294930875576,
+    "normalisation_score": 0.0,
+    "da_streak_rate": 20,
+    "inanimate_subject_rate": 0.0,
+    "by_passive_count": 0,
+    "double_passive_count": 0,
+    "pronoun_density": 0.0005578309185126466,
+    "deul_overuse_rate": 0.0,
+    "relative_clause_nesting": 8,
+    "have_make_literal_count": 0,
+    "double_particle_count": 0,
+    "progressive_aspect_rate": 0.003076923076923077,
+    "antithesis_count": 27
+  },
+  "v2_interference_index": {
+    "components": {
+      "T1_inanimate_subject_rate": 0.0,
+      "T2a_by_passive_per_1k": 0.0,
+      "T2b_double_passive_per_1k": 0.0,
+      "T3_pronoun_density": 0.0005578309185126466,
+      "T4_deul_overuse_rate": 0.0,
+      "T5_nested_clause_count": 8,
+      "T6_have_make_per_1k": 0.0,
+      "T7_double_particle_per_1k": 0.0,
+      "T8b_progressive_rate": 0.003076923076923077
+    },
+    "weighted_total": 0.4053082467509737,
+    "n_sentences": 325,
+    "n_chars": 25858
+  },
+  "v2_z_scores": {
+    "lexical_diversity_ttr": -0.8408032596041906,
+    "lexical_density": -4.132712456344586,
+    "ending_diversity": -4.199308755760369,
+    "normalisation_score": -3.3333333333333335,
+    "da_streak_rate": 32.66666666666667,
+    "inanimate_subject_rate": -1.6666666666666667,
+    "by_passive_count": -0.5,
+    "double_passive_count": -0.33333333333333337,
+    "pronoun_density": -1.1442169081487354,
+    "deul_overuse_rate": -0.625,
+    "relative_clause_nesting": 15.4,
+    "have_make_literal_count": -0.5,
+    "double_particle_count": -0.4285714285714286,
+    "progressive_aspect_rate": -1.2115384615384617,
+    "antithesis_count": null
+  },
+  "v2_baseline_warnings": [
+    "lexical_diversity_ttr",
+    "lexical_density",
+    "ending_diversity",
+    "normalisation_score",
+    "da_streak_rate",
+    "inanimate_subject_rate",
+    "by_passive_count",
+    "double_passive_count",
+    "pronoun_density",
+    "deul_overuse_rate",
+    "relative_clause_nesting",
+    "have_make_literal_count",
+    "double_particle_count",
+    "progressive_aspect_rate"
+  ],
+  "route_hint": "heavy",
+  "route_reason": "25,858자 초장문(>15,000) — 진단 + 청킹 권장",
+  "route_signals": {
+    "lexical_tell_count": 0,
+    "v26_tells": {},
+    "risk_band": "low",
+    "char_count": 25858
+  }
+}

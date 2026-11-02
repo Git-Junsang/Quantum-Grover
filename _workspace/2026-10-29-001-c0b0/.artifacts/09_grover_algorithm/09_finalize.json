@@ -1,0 +1,62 @@
+{
+  "status": "corrected",
+  "genre": "report / 학부생용 기술 해설서",
+  "route": "heavy",
+  "source_chars": 27645,
+  "final_chars": 27594,
+  "change_rate": 0.0079,
+  "grade": "B",
+  "grade_note": "교재 고유의 제목·목록·콜아웃·용어 반복을 보존한 국소 윤문. 과윤문 없이 지배 패턴을 완화함.",
+  "self_check": {
+    "passed": 6,
+    "total": 6,
+    "scope": "사용자가 보존을 지시한 영어 용어·수식·code·제목·link·기존 콜아웃 형식은 패턴 제거 대상에서 제외함"
+  },
+  "fidelity_violations": [],
+  "residual_findings": [
+    {
+      "kind": "preexisting_gate_false_positive",
+      "detail": "수식/목록의 1) 표기를 각주로 간주하는 golden 경고. 원문끼리 비교한 baseline과 내용·건수가 같고 보호된 수식/수치는 원형대로 보존됨.",
+      "count": 1
+    }
+  ],
+  "over_editing": false,
+  "correction_count": 2,
+  "corrections": [
+    {
+      "before": "이 성질 덕분에 hardware에서는 비용을 절반으로 줄일 수 있습니다.",
+      "after": "이 성질 덕분에 hardware에서는 비용이 절반으로 줄어듭니다.",
+      "reason": "원문의 직접적 비용 절감 주장을 가능성으로 약화한 구간 복구"
+    },
+    {
+      "before": "**세 전제를 모두 필요로 하므로**,",
+      "after": "**세 전제에 근거하므로**,",
+      "reason": "원문의 논증 전제를 필요조건처럼 강화한 표현 보정"
+    }
+  ],
+  "categories": [
+    "D-14",
+    "D-2",
+    "D-8"
+  ],
+  "review": "원문과 윤문본의 변경 구간·주변 문맥, 진단, gate를 직접 대조. 사실·부정/긍정·인과·조건·추측/당위와 의미를 보존. 불필요한 당위·가능성 주입 및 부자연스러운 조사·영어 용어 결합을 국소 보정.",
+  "preservation_check": "PASS: 영어 token·수치·수식·code fence·inline code·제목·link·콜아웃",
+  "gate_final": {
+    "verdict": "WARN — 경고. 사용자 고지 + finalize 승급",
+    "exit_code": 1
+  },
+  "baseline_golden_count": 1,
+  "new_golden_failures": 0,
+  "highlights": [
+    {
+      "rule": "D-14",
+      "before": "solution이 튀어나오는 걸 확인한 뒤,",
+      "after": "solution을 얻는 과정을 확인한 뒤,"
+    },
+    {
+      "rule": "D-14",
+      "before": "이것 하나가 나중에 measurement circuit 전체를 바꿉니다.",
+      "after": "이 사실에 따라 나중에 measurement circuit 전체의 설계가 달라집니다."
+    }
+  ]
+}

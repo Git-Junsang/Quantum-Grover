@@ -1,0 +1,60 @@
+{
+  "03_single_qubit_gates": [
+    [
+      "state들(\"바다\")로 계산할 수 있게 해 주어 지름길을 마련합니다.",
+      "state들(\"바다\")에서 계산하도록 해 지름길을 마련합니다.",
+      "부자연스러운 조사·서술 결합 보정"
+    ]
+  ],
+  "06_quantum_circuit_model_and_universality": [
+    [
+      "Toffoli와 CNOT은 우리가 synthesis할 circuit에는 쓰지 않지만, 논문의 circuit diagram을 읽으려면 알아야 합니다.",
+      "Toffoli와 CNOT은 우리가 synthesis할 circuit에 쓰이지 않고, 논문의 circuit diagram을 읽는 데 쓰입니다.",
+      "원문에 없던 당위 서법을 서술형으로 복구"
+    ],
+    [
+      "그 동작 원리인 **phase kickback** 입니다.",
+      "그 과정에 쓰이는 **phase kickback** 입니다.",
+      "oracle 전체의 동작 원리로 읽힐 수 있는 과한 재정의 완화"
+    ]
+  ],
+  "09_grover_algorithm": [
+    [
+      "이 성질 덕분에 hardware에서는 비용을 절반으로 줄일 수 있습니다.",
+      "이 성질 덕분에 hardware에서는 비용이 절반으로 줄어듭니다.",
+      "원문의 직접적 비용 절감 주장을 가능성으로 약화한 구간 복구"
+    ],
+    [
+      "**세 전제를 모두 필요로 하므로**,",
+      "**세 전제에 근거하므로**,",
+      "원문의 논증 전제를 필요조건처럼 강화한 표현 보정"
+    ]
+  ],
+  "12_fixed_point_and_precision": [
+    [
+      "따라서 rounding 방식은 설계 기준에 따라 정해야 합니다.",
+      "따라서 rounding 방식도 설계 결정의 하나입니다.",
+      "원문에 없던 당위를 원래의 설명으로 복구"
+    ]
+  ],
+  "15_paper_map_and_design_decisions": [
+    [
+      "여기서 짚을 점은 04번의 최적화",
+      "04번의 최적화",
+      "뒤의 주제 조사와 중복되는 예고 구문 제거"
+    ],
+    [
+      "04번이 중심이고 05·06은 그 후속 연구입니다.",
+      "04번이 중심이고 05·06은 그와 관련된 연구입니다.",
+      "위성이라는 원문의 관계 비유를 불필요한 시간 순서 주장 없이 표현"
+    ]
+  ],
+  "18_reference_model_verification": [
+    [
+      "실행된 적 없는 code의 정확성을 높은 probability로 기대하기는 어렵습니다.",
+      "실행된 적 없는 code가 정확할 probability는 낮습니다.",
+      "어색한 probability 결합을 원문의 명제에 맞게 복구"
+    ]
+  ],
+  "paper_outline": []
+}

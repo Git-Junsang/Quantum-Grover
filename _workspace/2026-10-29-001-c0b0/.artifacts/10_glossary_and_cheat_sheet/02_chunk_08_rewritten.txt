@@ -1,0 +1,19 @@
+## 10.7 자주 하는 실수 모음
+
+| 실수 | 바로잡기 | 장 |
+|------|----------|:--:|
+| $\|0\rangle$ 을 zero vector로 착각 | $\|0\rangle = (1,0)^T$, unit vector | [1](01_qubits_and_states.md) |
+| superposition을 "모르는 0/1"로 해석 | 진짜 동시 존재. amplitude는 complex number | [1](01_qubits_and_states.md) |
+| amplitude를 probability로 착각 | probability는 $\|\text{amplitude}\|^2$ (square) | [4](04_measurement.md) |
+| circuit 순서 = matrix 순서로 착각 | 반대. 나중 gate가 matrix 왼쪽 | [3](03_single_qubit_gates.md) |
+| measurement를 가역으로 착각 | measurement는 비가역, superposition 파괴 | [4](04_measurement.md) |
+| global phase와 relative phase 혼동 | global phase는 무의미, relative phase는 결정적 | [4](04_measurement.md) |
+| CNOT이 target qubit만 바꾼다고 일반화 | computational basis에서만. $\|+\rangle\|-\rangle$ 은 control qubit도 바뀜 | [5](05_multiple_qubits_and_entanglement.md) |
+| Grover를 많이 돌릴수록 좋다고 착각 | 최적 초과 시 probability 감소(진동) | [9](09_grover_algorithm.md) |
+| amplitude가 가장 큰 칸을 고르면 된다고 착각 | 모든 solution의 amplitude는 매 iteration **정확히 같음.** maximum comparator는 늘 같은 index 하나만 반환 | [9](09_grover_algorithm.md)·[14](14_multiple_solutions_and_minimum_search.md) |
+| $\|\alpha\| \le 1$ 이니 integer bits 1-bit면 된다고 착각 | diffusion operator 중간값 $2\cdot\text{mean} - \text{amplitude}$ 는 최대 $1 + 2/\sqrt{\text{number of states}}$ 까지 커져 1을 넘음 | [12](12_fixed_point_and_precision.md) |
+
+마지막 두 줄은 교과서적 오해가 아니라 **이 project에서 실제로 겪은 문제**입니다. Measurement Unit을 한동안 maximum comparator로 잡아 두었다가 solution이 둘 이상일 때 동률 때문에 실패하는 것을 확인하고 Born-rule sampling으로 바꾸었습니다([14.3절](14_multiple_solutions_and_minimum_search.md#143-amplitude-동률--argmax가-무너지는-지점)). 또 amplitude의 크기만 보고 integer bits를 sign 1-bit로 잡았다가 diffusion operator 중간값이 표현 범위를 넘는 것을 보고 한때 integer bits를 2 bits로 늘렸습니다. 최종 RTL은 저장 data word를 23-bit Q1.22로 두고 중간값 register만 넓혀 symmetric saturation을 거는 쪽으로 정리했습니다([12.3절](12_fixed_point_and_precision.md#123-integer-bits는-몇-bit인가--재는-대상이-셋이다)).
+
+---
+

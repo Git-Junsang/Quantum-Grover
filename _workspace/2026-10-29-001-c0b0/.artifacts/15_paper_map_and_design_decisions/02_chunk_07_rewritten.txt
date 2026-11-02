@@ -1,0 +1,35 @@
+## 15.5 확정 platform과 resource 예산
+
+| 항목 | 값 |
+|------|-----|
+| board | **Arty A7-100T**, part `xc7a100tcsg324-1` (Artix-7) |
+| board resource | BRAM36 **135개** · DSP **240개** · LUT 63,400 |
+| number of qubits | **14 qubits** (16,384 states) |
+| data word | 16-bit signed |
+| clock | accelerator **100 MHz**(전용 clock `clk_accel`) / RISC-V core와 bus 50 MHz |
+| SoC · bus | RVX(`rvc_orca` RV32 · `munoc` interconnect), APB slave + AHB master |
+| host | PC ─ UART ─ RISC-V app ─ CSR ─ accelerator |
+| configuration | **final configuration** — a Checkpoint-Capacity of 3 · 3-shot Lookahead · 4 PEs · Dual-Row Build · Two-Level Select |
+
+**이전 판의 XC7S100은 폐기합니다.** RVX에 `xc7s100` imp class 가 없기 때문이고, 이 판단은 그대로입니다.
+
+resource는 이제 추정이 아니라 **2026-09-07 implementation report의 실제 값**입니다.
+
+| 부분 | LUT | FF | BRAM tile | DSP |
+|------|----:|----:|----:|----:|
+| Accelerator Core (`u_main_ip`) | 32,242 | 28,223 | 84 | 128 |
+| Bus Interface · RVX SoC 나머지 | 13,042 | 17,000 | 32 | 4 |
+| **board 전체** | **45,284 / 63,400** | **45,223 / 126,800** | **116 / 135** | **132 / 240** |
+
+Accelerator Core의 84 BRAM tiles는 amplitude·checkpoint memory(RAMB36 44개, state 한 벌이 11개이고 checkpoint slot 네 벌 분량), `data_mem`(RAMB18 64개 = 32 tiles), `found_mask`·measurement row weight·policy memo table(RAMB36 2·2·4개)입니다. SoC 몫 32 tiles는 대부분 system SRAM 128 KB입니다. qubit를 하나 늘리면 state 한 벌이 두 배가 되어 amplitude·checkpoint memory만 88개가 되고 board를 넘깁니다([11.4절](11_state_vector_emulator.md#114-amplitude를-어디에-둘-것인가)).
+
+DSP 사용처는 둘로 갈립니다. diffusion operator·oracle·Init 경로에는 multiplier가 **하나도** 없고, Measurement Unit에만 23×23 squarer(DSP 2개씩)가 32 lanes × 두 벌, 즉 **DSP 128개**가 잡힙니다. synthesis report에 DSP가 잡혔다고 잘못 짠 것이 아닙니다 — Born-rule sampling을 쓰기로 한 순간 정상적으로 예상되는 값입니다. timing은 100 MHz에서 닫혔습니다(WNS +0.126 ns).
+
+시간은 축을 나눠 적어야 합니다. **RTL cycle 축**으로, Grover iteration 한 번이 약 268 cycles(100 MHz에서 2.7 µs)이고, 14 qubits · 1 solution search 한 번이 mean 25,345 cycles(약 0.25 ms)입니다. 매 shot 처음부터 도는 Restart mode는 같은 조건에서 mean 209,277 cycles이었습니다. 500 workloads 전체로는 42,308,335 → 6,890,470 cycles, **6.1401×**입니다. **board wall-clock time 축**으로는 같은 500 workloads가 Restart mode 425,502 µs → 55,798 µs, **7.626×**입니다. 두 축은 BBHT trajectory가 500/500 같지만 cycle 값 자체가 달라, 섞어 speedup을 만들면 안 됩니다.
+
+이 숫자들을 고전 선형 scan과 나란히 놓지 마십시오. `value[]` 를 한 번 훑는 데는 128 rows를 읽는 128 cycles 남짓이면 끝납니다. emulation 비용이 $O\big(\text{number of states}\cdot\sqrt{\text{number of states}/\text{number of solutions}}\big)$ 이라 원리적으로 그렇게 됩니다 — Grover의 $\sqrt{\text{number of states}}$ 이득은 **실기 quantum**의 이야기이고, amplitude array를 전부 훑어야 하는 emulator에는 해당하지 않습니다. 우리 accelerator의 비교 대상은 같은 일을 하는 **Qiskit AerSimulator·NumPy state vector simulator**, 그리고 같은 board 위에서 accelerator를 끄고 RISC-V core 하나로 같은 계산을 돌린 **순수 software baseline**입니다. 마지막 것과의 차이는 wall-clock time으로 116,426×인데, 이는 32 lanes 병렬과 두 배 빠른 clock 덕이지 algorithm 우위가 아닙니다. 값어치는 속도 우위가 아니라 **quantum algorithm의 동작을 결정적이고 재현 가능하게 재현·검증하는 전용 hardware**라는 데 있습니다.
+
+비교의 공정성에 관한 주의도 하나 — 04번의 resource 수치(LUT/FF)는 RISC-V SoC infrastructure를 포함한 값이라, 우리가 accelerator만 따로 재면 훨씬 작게 나옵니다. 게다가 04번 논문 스스로 "Vivado의 cross-optimization 때문에 이론적 역산이 불가능하다"고 경고합니다. 그러니 우리 수치를 04번과 나란히 놓을 때는 **무엇을 포함한 값인지**를 반드시 밝혀야 부당한 비교를 피할 수 있습니다. 위 표가 Accelerator Core와 board 전체를 따로 적은 이유가 이것입니다.
+
+---
+

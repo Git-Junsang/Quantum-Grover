@@ -1,0 +1,10 @@
+## 14.8 두 개의 함정
+
+**함정 1 — overshoot.** [9.6절](09_grover_algorithm.md#96-지나치면-안-된다)의 "지나치면 안 된다"가 hardware에서는 더 날카롭게 나타납니다. optimal number of iterations $\frac{\pi}{4}\sqrt{\text{number of states}/\text{number of solutions}} - \frac12$ 는 대개 integer로 떨어지지 않아 반올림해야 하는데, state가 적으면 그 error가 success probability에 그대로 반영됩니다. 위 8 states · 3 solutions 표가 그 자체로 경고입니다 — 최적값 0.692를 1로 올리면 84.4%지만, 한 번 더 돌려 2 iterations로 가면 solution 전체 probability가 **2.3%로 추락**합니다. probability가 단조 증가하다 포화하는 것이 아니라 **진동**하기 때문입니다. FSM의 종료 counter를 한 칸 잘못 세는 것이 success probability를 36× 깎을 수 있다는 뜻이니, qubit가 적을 때는 특히 조심해야 합니다.
+
+**함정 2 — 역주행(reverse amplification).** solution이 **너무 많으면**(전체 state의 절반 초과) 초기 각 $\theta$ 가 이미 45°를 넘어, 첫 iteration부터 solution 축을 지나쳐 non-solution 쪽으로 갑니다. 실기에서는 드문 상황이지만 **predicate search에서는 쉽게 일어납니다.** `value < thr_a` 에서 `thr_a` 를 data에 실린 maximum보다 크게 잡으면 **모든 칸이 predicate를 만족**해 모든 state가 solution이 되고, oracle이 사실상 $-I$ 가 되어 diffusion operator와 합쳐도 global phase만 남습니다 — iteration이 measurement 분포를 전혀 바꾸지 못합니다. 범위 predicate `thr_a < value < thr_b` 를 너무 넓게 잡아도 정도만 다를 뿐 같은 일이 벌어집니다. 다행히 이 극단은 [BBHT](16_iteration_control_and_checkpoints.md#162-bbht--무작위로-뽑는-number-of-iterations와-12-growth-factor)가 자연스럽게 견딥니다 — 초반 shot은 iteration을 거의 돌지 않아 사실상 uniform random sampling인데, solution이 많으면 그 sampling만으로 곧바로 맞으니까요. 대신 이 현상을 이해하지 못한 채 "iteration을 늘리면 정확해지겠지"라고 접근하면 원하는 결과를 얻지 못할 수 있습니다.
+
+**반대 극단도 짝으로 기억해 두세요.** enumeration mode는 enumeration round가 진행될수록 남은 solution이 하나로 줄어들어 함정 2에서 함정 1 쪽으로 건너갑니다. 14 qubits · 1 solution이면 optimal number of iterations가 100인데, 이 근처에서 probability 곡선의 골짜기가 깊습니다 — 100 iterations에서 100%인 success probability가 두 배쯤 지나친 200 iterations에서는 사실상 0입니다. 우리 hardware는 number of iterations를 $[0, 128)$ 에서만 뽑으므로 그 골짜기까지 가지는 않지만(16.2절), 이 상한 자체가 overshoot를 막으려고 BBHT가 둔 장치입니다. 즉 enumeration의 앞쪽 enumeration round는 "solution이 너무 많아서" 위험하고 뒤쪽 enumeration round는 "optimal number of iterations가 너무 커서" 위험합니다. 양쪽 다 solution이 몇 개인지 모르는 채로 통과해야 하고, 그 통과 방법이 16장입니다.
+
+---
+

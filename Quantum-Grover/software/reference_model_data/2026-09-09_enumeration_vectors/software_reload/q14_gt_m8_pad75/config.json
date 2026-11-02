@@ -1,0 +1,15 @@
+{
+  "profile": "RTL_V07G_Q14",
+  "qubits": 14,
+  "parallelism": 32,
+  "data_w": 16,
+  "frac_bits": 22,
+  "amp_w": 23,
+  "predicate_mode": "GT",
+  "threshold_a": 0,
+  "threshold_b": 0,
+  "data_count": 12288,
+  "seed_j": 270544963,
+  "seed_meas": 305418363,
+  "exclude_backend": "SOFTWARE_RELOAD"
+}

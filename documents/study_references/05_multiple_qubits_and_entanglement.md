@@ -5,7 +5,7 @@
 
 ---
 
-지금까지는 qubit 하나만 다뤘습니다. 하지만 유용한 계산을 하려면 여러 qubit가 필요하고, qubit들이 **서로 상호작용**해야 합니다. 이 장에서는 여러 qubit의 state가 어떻게 표현되는지(qubit가 하나 늘 때마다 dimension이 두 배!), qubit를 상호작용시키는 **CNOT gate**, 그리고 순수 quantum 현상인 **entanglement**를 배웁니다. 이렇게 지수적으로 커지는 dimension이 바로 [0장](index.md)에서 말한 quantum computer의 힘의 원천이며, [9장 Grover](09_grover_algorithm.md)가 qubit 몇 개로 $2^{\text{number of qubits}}$ 개 항목을 한꺼번에 다루는 근거입니다.
+지금까지는 qubit 하나만 다뤘습니다. 하지만 유용한 계산을 하려면 여러 qubit가 필요하고, qubit들이 **서로 상호작용**해야 합니다. 이 장에서는 여러 qubit의 state가 어떻게 표현되는지(qubit가 하나 늘 때마다 dimension이 두 배가 됩니다), qubit를 상호작용시키는 **CNOT gate**, 그리고 순수 quantum 현상인 **entanglement**를 배웁니다. 이렇게 지수적으로 커지는 dimension이 바로 [0장](index.md)에서 말한 quantum computer의 힘의 원천이며, [9장 Grover](09_grover_algorithm.md)가 qubit 몇 개로 $2^{\text{number of qubits}}$ 개 항목을 한꺼번에 다루는 근거입니다.
 
 ---
 
@@ -59,7 +59,7 @@ $$
 
 여덟 state가 모두 amplitude $\frac{1}{\sqrt8}$ 로 동등하게 담깁니다. ($\frac{1}{\sqrt8} = \frac{1}{\sqrt{2^3}}$, normalization: $8 \times \frac18 = 1$.) [9장](09_grover_algorithm.md)에서 이 state가 Grover의 시작점이 됩니다.
 
-amplitude가 complex number라는 것은 **일반적인** state의 이야기입니다. 우리가 만들 emulator는 표준 Grover 하나만 돌리는데, 그 algorithm이 밟는 경로 — uniform superposition에서 출발해 sign을 뒤집고 inversion about the mean을 하는 것 — 는 amplitude를 한 번도 real number 바깥으로 내보내지 않습니다. 그래서 amplitude 하나당 real part·imaginary part 두 칸을 잡을 필요 없이 **real-valued fixed-point 한 벌**만 저장합니다. 여기서는 결론만 알아 두고, 어떤 세 조건이 맞물려 이 성질을 만드는지는 [9.8절](09_grover_algorithm.md#98-전체-그림-정리--amplitude는-왜-real-number뿐인가)에서 닫습니다. 다만 이 절약은 공짜가 아니어서, amplitude에 complex phase를 직접 곱하는 기법을 얹는 순간 datapath를 complex number로 다시 지어야 합니다 — solution이 몇 개인지 세는 표준 기법인 quantum counting(phase estimation)을 설계에서 제외한 이유가 그것입니다([16.1절](16_iteration_control_and_checkpoints.md#161-왜-solution이-몇-개인지-모르는가)).
+amplitude가 complex number라는 것은 **일반적인** state의 이야기입니다. 우리가 만들 emulator는 표준 Grover 하나만 돌리는데, 그 algorithm의 연산 과정 — uniform superposition에서 출발해 sign을 뒤집고 inversion about the mean을 하는 것 — 에서는 amplitude가 항상 real number로 유지됩니다. 그래서 amplitude 하나당 real part·imaginary part 두 칸을 잡을 필요 없이 **real-valued fixed-point 한 벌**만 저장합니다. 여기서는 결론만 알아 두고, 이 성질이 성립하는 세 조건은 [9.8절](09_grover_algorithm.md#98-전체-그림-정리--amplitude는-왜-real-number뿐인가)에서 설명합니다. 다만 이 저장 방식에는 제약이 있어서, amplitude에 complex phase를 직접 곱하는 기법을 얹는 순간 datapath를 complex number에 맞게 다시 설계해야 합니다 — solution이 몇 개인지 세는 표준 기법인 quantum counting(phase estimation)을 설계에서 제외한 이유가 그것입니다([16.1절](16_iteration_control_and_checkpoints.md#161-왜-solution이-몇-개인지-모르는가)).
 
 ---
 
@@ -113,7 +113,7 @@ CNOT도 물론 unitary이고($\text{CNOT}^\dagger\,\text{CNOT} = I$), superposit
 
 ## 5.5 entanglement — 나눌 수 없는 state
 
-이제 마법이 일어납니다. $|00\rangle$ 에서 시작해 **첫 qubit에 $H$, 그다음 CNOT** 을 적용해 봅시다.
+다음 계산을 살펴봅시다. $|00\rangle$ 에서 시작해 **첫 qubit에 $H$, 그다음 CNOT** 을 적용해 봅시다.
 
 🔍 **계산 따라가기**
 
@@ -135,7 +135,7 @@ $$
 
 이 state는 **두 개의 독립된 single-qubit state의 tensor product로 쓸 수 없습니다.** 즉 $|a\rangle \otimes |b\rangle$ 형태로 분해가 안 됩니다 (product state가 아님).
 
-measurement로 보면 놀랍습니다:
+measurement 결과는 다음과 같습니다:
 
 - 첫 qubit의 measurement에서 0이 나오면, 둘째 qubit는 **반드시** 0.
 - 첫 qubit가 1이면, 둘째는 **반드시** 1.
@@ -153,7 +153,7 @@ entanglement는 quantum teleportation, quantum error correction, 그리고 빠�
 
 ✏️ **연습 5-1**: $\frac{|00\rangle + |01\rangle}{\sqrt2}$ 는 product state일까요, entangled state일까요? *(answer: product state. 첫 qubit로 묶어내 보세요 — [10장](10_glossary_and_cheat_sheet.md#106-연습문제-답)에 풀이.)*
 
-이 "분해 불가능"이 hardware budget에 그대로 값을 매깁니다. state가 늘 product state로 유지된다면 qubit 하나를 amplitude 두 개로 적어 $2 \times \text{number of qubits}$ 개의 수만 들고 있으면 됩니다. entangled state는 그렇게 쪼갤 수 없으니 $2^{\text{number of qubits}}$ 개의 amplitude를 **전부** 들고 있어야 하고, qubit당 몇 개의 수로 압축할 방법이 없습니다. Grover의 시작점인 uniform superposition은 아직 product state($|+\rangle^{\otimes \text{number of qubits}}$)이지만, oracle이 한 칸의 sign을 뒤집는 순간 product state로 분해되지 않는 state가 됩니다 — 2 qubits에서 $\frac12(|00\rangle+|01\rangle+|10\rangle-|11\rangle)$ 을 연습 5-1과 같은 방법으로 묶어내 보면 실패합니다. 즉 **entanglement = 압축 불가 = 지수 memory**이고, algorithm이 도는 내내 amplitude array를 통째로 들고 있어야 한다는 뜻입니다. state vector emulator의 속도가 산술 능력이 아니라 memory에 발목 잡히는([11.6절](11_state_vector_emulator.md#116-memory-bound의-두-얼굴--용량과-port)) 근본 이유가 여기 있습니다.
+이처럼 분해할 수 없다는 성질이 hardware budget을 결정합니다. state가 늘 product state로 유지된다면 qubit 하나를 amplitude 두 개로 적어 $2 \times \text{number of qubits}$ 개의 수만 들고 있으면 됩니다. entangled state는 그렇게 쪼갤 수 없으니 $2^{\text{number of qubits}}$ 개의 amplitude를 **전부** 들고 있어야 하고, qubit당 몇 개의 수로 압축할 방법이 없습니다. Grover의 시작점인 uniform superposition은 아직 product state($|+\rangle^{\otimes \text{number of qubits}}$)이지만, oracle이 한 칸의 sign을 뒤집는 순간 product state로 분해되지 않는 state가 됩니다 — 2 qubits에서 $\frac12(|00\rangle+|01\rangle+|10\rangle-|11\rangle)$ 을 연습 5-1과 같은 방법으로 묶어내 보면 실패합니다. 즉 **entanglement = 압축 불가 = 지수 memory**이고, algorithm이 도는 내내 amplitude array를 통째로 들고 있어야 한다는 뜻입니다. state vector emulator의 속도가 산술 능력보다 memory의 제약에 더 크게 좌우되는([11.6절](11_state_vector_emulator.md#116-memory-bound의-두-얼굴--용량과-port)) 근본 이유가 여기 있습니다.
 
 ---
 
@@ -167,7 +167,7 @@ $$
 
 첫 qubit $x$ 는 관여 안 하니 그대로, control qubit $y$ 도 그대로, target qubit $z$ 만 $y$ 가 1일 때 뒤집힙니다. 이런 식으로 여러 qubit 사이에 conditional logic를 쌓아 복잡한 계산을 만듭니다.
 
-이 장의 부품 가운데 CNOT은 우리 RTL에 module로 등장하지 않습니다. emulator가 gate를 하나씩 state vector에 적용하는 기계가 아니라, oracle과 diffusion operator라는 **operator 단위**로 amplitude array 전체를 한 번에 훑는 기계이기 때문입니다(그 차이는 바로 다음 [6.1절](06_quantum_circuit_model_and_universality.md#61-quantum-computation--딱-세-단계)에서 정확히 짚습니다). 그렇다고 CNOT을 흘려보내도 되는 것은 아닙니다 — 논문의 circuit diagram과 Qiskit code는 여전히 gate로 적혀 있어서, 그 그림을 읽고 우리 operator와 대응시키려면 CNOT과 $\oplus$ 표기가 필요합니다. 이 장에서 CNOT은 만들 circuit이 아니라 **읽을 언어**로 챙겨 두면 됩니다.
+이 장의 부품 가운데 CNOT은 우리 RTL에 module로 등장하지 않습니다. emulator가 gate를 하나씩 state vector에 적용하는 기계가 아니라, oracle과 diffusion operator라는 **operator 단위**로 amplitude array 전체를 한 번에 훑는 기계이기 때문입니다(그 차이는 바로 다음 [6.1절](06_quantum_circuit_model_and_universality.md#61-quantum-computation--딱-세-단계)에서 정확히 짚습니다). 그렇다고 CNOT을 흘려보내도 되는 것은 아닙니다 — 논문의 circuit diagram과 Qiskit code는 여전히 gate로 적혀 있어서, 그 그림을 읽고 우리 operator에 대응시키려면 CNOT과 $\oplus$ 표기가 필요합니다. 이 장에서 CNOT은 직접 만들 circuit이 아니라 **논문을 읽기 위한 표기**로 이해해 두면 됩니다.
 
 ---
 

@@ -1,0 +1,7 @@
+{
+  "elaboration": "passed",
+  "new_latches": 0,
+  "new_multiple_drivers": 0,
+  "known_arithmetic_pre_node_warning": true,
+  "generic_prefix_warning": false
+}

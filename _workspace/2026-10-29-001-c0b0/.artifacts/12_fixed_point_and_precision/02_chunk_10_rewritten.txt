@@ -1,0 +1,12 @@
+1. **rounding이 truncation입니다.** error가 매 iteration 같은 방향으로 쌓이는 것이 square 누적의 근거인데, 우리는 round-half-to-even으로 그 편향을 없앴습니다(12.4절).
+2. **data word 구성이 다릅니다.** 05번은 integer bits를 number of qubits만큼 넉넉히 잡은 **하나의 넓은 data word**를 전제합니다. 우리는 저장 data word를 23 bits로 좁히고 중간값과 accumulator만 따로 넓혔습니다(12.3절).
+3. **판정 지표가 다릅니다.** 05번의 $\ell_2$ 는 measurement probability distribution **전체**가 참값에서 얼마나 벌어졌는가입니다. 우리 합격 기준은 그것이 아닙니다 — shot 하나가 후보 index를 하나 내면, 그 index는 **solution check**를 거쳐 predicate를 실제로 만족할 때만 채택됩니다(16.4절). distribution이 조금 흐려지면 shot이 몇 번 더 필요할 뿐, 틀린 답이 출력되지는 않습니다. precision error가 **정확도가 아니라 속도로** 나타나는 구조입니다.
+
+세 전제가 모두 다르니 공식의 수를 우리 설계의 예측으로 읽어서는 안 됩니다. 그래서 우리는 fraction bits를 공식으로 정하지 않고 **직접 쟀습니다.** 두 가지 benchmark가 있습니다.
+
+첫째, float64 기준과 같은 mask·같은 iterations로 fraction bits 폭만 바꿔 돌린 precision 분석입니다(1 · 4 · 64 solutions와 state 절반이 solution인 경우). probability distribution $\ell_2$ 가 $10^{-3}$ 이하가 되는 것은 fraction bits 20 bits부터, $10^{-5}$ 이하가 되는 것은 **22 bits**부터였습니다. 같은 분석에서 15 qubits · 16 qubits는 fraction bits 24 bits까지 늘려도 $10^{-5}$ 에 닿지 못했습니다 — 14 qubits로 굳힌 근거 중 하나가 이것입니다([실험 02 amplitude precision](../reports/02_amplitude_precision.md)). 둘째, 12.3절의 671,600-run campaign입니다. Q1.22로 돈 모든 run에서 amplitude $\ell_2$ · probability $\ell_2$ · success probability error · norm error의 maximum이 전부 $10^{-3}$ 아래였습니다([같은 실험 02](../reports/02_amplitude_precision.md)).
+
+즉 22 fraction bits는 공식이 준 답이 아니라 **잰 답**입니다. 공식으로 경향을 파악하되 전제가 다르면 benchmark로 확인합니다. 18장 verification ladder도 이 원칙을 따릅니다.
+
+---
+

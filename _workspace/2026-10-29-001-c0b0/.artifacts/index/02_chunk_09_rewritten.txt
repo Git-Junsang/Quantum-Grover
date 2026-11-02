@@ -1,0 +1,9 @@
+### 장 목록
+
+#### Part 0. 왜 quantum computer인가
+
+| 장 | file | 무엇을 배우나 |
+|----|------|--------------|
+| — | [index — quantum computing 시작하기](index.md) (이 글) | computer의 기원, 왜 quantum computer인가, classical vs quantum, 이 project가 Grover를 다루는 이유 |
+
+

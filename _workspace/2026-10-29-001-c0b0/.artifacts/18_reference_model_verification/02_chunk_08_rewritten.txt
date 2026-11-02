@@ -1,0 +1,16 @@
+## 18.7 checkpoint를 어떻게 검증하나
+
+checkpoint는 이 project의 headline 기여이면서 동시에 **오류가 가장 드러나기 어려운** 부분입니다. 다행히 합격 기준이 아주 선명합니다.
+
+**기본 검사는 전수 비교입니다.** 16.6절이 $(DO)^{x+y} = (DO)^{x}(DO)^{y}$ 라는 associativity로 두 경로가 같은 연산열임을 보였고, 우리 arithmetic이 결정적이므로 결과는 근사적으로 같은 정도가 아니라 **bit 단위로 동일**해야 합니다. 그래서 같은 request에 대해 (a) 새로 Init하고 요청된 횟수만큼 전진한 array와 (b) checkpoint slot에 저장된 state에서 이어 차이만큼 전진한 array를 만들어, **16,384칸 전부를** 비교합니다. requested-j vector가 (a)의 expected result를 이미 갖고 있으므로, checkpoint 경로의 최종 amplitude를 그 hash와 대조하면 됩니다. 몇 칸만 sample로 뽑거나 error를 허용하는 비교는 하면 안 됩니다. 같아야 하는 근거가 수학적 항등식이므로, 한 bit라도 다르면 그것은 error가 아니라 버그입니다.
+
+**무효화 조건은 각각 하나씩 regression test를 세웁니다.** 16.7절이 무효화를 hardware에 맡긴 이유가 "software에 맡기면 반드시 새는 곳이 생긴다"였는데, hardware에 맡겨도 조건 하나를 빠뜨리면 같은 일이 벌어집니다. data load, predicate 종류, threshold A·B, data 개수, enumeration의 Found Mask — **하나하나에 대해** 바꾼 직후의 search가 Init부터 시작하는지 확인합니다. 반대 방향도 세웁니다. seed·shot cap·mode bit를 바꿨을 때는 checkpoint slot이 **유효하게 남아 있어야** 합니다. 비워도 결과는 맞지만 성능 이득이 사라져 결과만으로는 문제를 알아차리기 어렵습니다.
+
+여기서 **가장 위험한 버그의 모양**을 알아 두는 것이 중요합니다. 무효화가 빠지면 circuit은 겉으로 완벽히 정상 동작합니다. 첫 search도 맞고, 두 번째 search도 맞고, threshold를 바꾸지 않는 한 계속 맞습니다. 그러다 threshold를 바꾼 순간부터 **이전 predicate로 증폭된 amplitude array 위에서** 새 predicate의 oracle이 돌기 시작하고, 겉으로 드러나지 않게 답이 틀립니다 — solution check가 non-solution은 걸러 주지만, shot count와 requested iterations가 Restart mode와 달라지는 형태로 드러납니다. 이런 고장은 무작위 regression으로는 잡히지 않습니다. "설정을 바꾼다 → checkpoint slot이 유효한 채로 남는다 → BBHT trajectory가 달라진다"는 시나리오를 **의도적으로 만들어** test에 넣어야 합니다.
+
+**checkpoint on/off equivalence**는 checkpoint가 관측량을 바꾸지 않는다는 16.6절 주장의 실험적 확인입니다. 같은 seed·같은 data·같은 predicate에서 Restart mode와 Checkpoint mode가 **동일한 결과 index**, **동일한 shot count와 requested iterations**를 내야 하고, 오직 **executed iterations와 cycle만** 달라야 합니다. 이 비교는 이미 여러 층에서 돌았습니다 — 최상단 testbench가 Restart mode/Checkpoint mode 짝을 대조하고, 500 workloads RTL campaign과 board benchmark가 모두 BBHT trajectory 500/500 일치였습니다. 여기에 policy까지 옮긴 reference model이 board와 **executed iterations까지** 500/500 맞았습니다.
+
+끝으로 policy의 드문 경로를 잊지 마십시오. request가 checkpoint slot의 iteration과 정확히 같아 비용이 0인 경우, request가 모든 checkpoint slot보다 작아 Init부터 가는 경우, 중간 state를 다른 checkpoint slot에 저장하는 경우입니다. BBHT에서 sampling range는 커지기만 하므로 뒤의 두 경우는 드물게 나옵니다. seed를 골라 강제로 만들거나 request 수열을 직접 주입해 경로를 밟아 보십시오. 그리고 policy가 미리 풀어 둔 계획과 실제 request가 어긋난 횟수(`PLAN_FIFO_MISMATCH_COUNT`)는 언제나 0이어야 합니다. 0이 아니면 앞으로 올 request를 예측하는 circuit이 실제 Iteration-Count LFSR 출력과 어긋났다는 직접 증거입니다.
+
+---
+

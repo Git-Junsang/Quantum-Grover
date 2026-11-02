@@ -1,0 +1,2 @@
+model,config,build,device,vivado,clock_MHz,WNS,TNS,WHS,THS,timing_met,LUT,FF,BRAM_tile,DSP,Slices,LUT_avail,FF_avail,BRAM_avail,DSP_avail,mainip_LUT,mainip_FF,mainip_RAMB36,mainip_RAMB18,mainip_DSP,power_W
+K3H3_E4,K3/H3-E4,arty100t_build,xc7a100tcsg324-1,2026.1,100,0.083,0.0,0.028,0.0,1,42277,42606,115,68,14850,63400,126800,135,240,28842,25617,51.0,64.0,64,0.536

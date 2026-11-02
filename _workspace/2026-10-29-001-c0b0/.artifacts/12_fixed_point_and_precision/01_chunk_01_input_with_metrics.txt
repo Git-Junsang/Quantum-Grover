@@ -1,0 +1,78 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 1/14이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 12_fixed_point_and_precision.md 진단
+
+## 장르·레지스터와 보존 조건
+
+학부생용 기술 해설서(report). 본문은 친근한 존댓말(합니다/입니다, 일부 해요체 설명), 수식 풀이·표·요약은 압축형입니다. 문장 격식을 올리지 않습니다. 영어 용어와 영어 토큰은 번역·삭제·교체·대소문자 변경하지 않습니다. glossary 기준은 `documents/design_references/22_appendix_glossary_and_retired_specs.md` §22.2입니다. 수치·수식·code·제목·link·직접 인용·기존 콜아웃/이모지·문단 구조는 보존합니다. 실제 주장, 부정/긍정, 인과, 조건, 확신도도 보존합니다. 보고서용 서식 축약·영어 순화 규칙은 적용하지 않습니다. 본문에 사실을 추가하거나 현행 설계와 대조해 기술 내용을 고치지 않습니다.
+
+## 정량 근거
+
+입력의 정량 블록을 확인했습니다. risk_band는 low이고, 장문 파일의 heavy 권고는 문서 길이에서 나옵니다. 영어 기술 term 반복은 장르상 필수이므로 lexical_diversity의 낮은 값만으로 수정하지 않습니다. 아래 수치는 탐지 보조이며 개별 문맥과 함께 판단합니다.
+
+## 겨냥 순서의 지배 패턴
+
+1. **D-14·D-5 — 수치 동작에 의인화·과한 은유 부착**: "solution이 흐려지고", "몇 LSB 뿐", "solution 행세를 하고", "theorem은 … 두 번 일합니다", "전제로 서 있습니다", "formula는 … 나침반", "반대 진영의 목소리" 등이 반복됩니다. 내용 명사와 기술 term은 보존하고 동작·조건을 직접 설명합니다.
+
+2. **A-18 — 논거가 길게 누적된 문장**: 정량 relative_clause_nesting=7. 12.3절 저장 폭 결정, 12.4절 rounding 선택, 12.7절 공식 전제 비교, 12.9절 반론은 한 문장에 조건·평가·예시가 누적됩니다. 인과와 비교 범위를 보존하며 필요한 곳만 나눕니다.
+
+3. **D-2·D-8·F-1 — 평가성 도입·결론 반복**: "가장 실무적인 첫 결정", "정직하게 덧붙이면", "가장 값진 결과", "직관적으로 아름답습니다", "진짜 원하는 답" 등 내용에 덧붙인 평가가 많습니다. 설명을 직접 시작하되 전제·근거는 빼지 않습니다.
+
+4. **C-8 — 반복적인 부정 대구**: "정확도가 아니라 속도로", "공식이 준 답이 아니라 잰 답", "resolution이지 exponent 범위가 아님" 등은 핵심 개념 구분일 수 있습니다. 반복을 이유로 일괄 제거하지 않고 비유·평가성 대조만 선별합니다.
+
+5. **J-2·J-3 — 따옴표·대시 부연 밀집**: 강조용 따옴표와 대시가 설명을 자주 끊습니다. 발화자가 있는 실제 논문 인용은 보존하고, 필자 자신의 수사 표현만 평문으로 다듬습니다. 제목·수식·code·link와 기존 콜아웃은 손대지 않습니다.
+
+## 비적용·잔존 처리
+
+교육적 질문·표·연습문제·단계 목록·기존 비유는 그 자체로 결함이 아닙니다. 자연스러운 문장은 그대로 두고 확인된 구간만 보수적으로 다듬습니다. 수치/기술 주장에 의문이 있어도 이번 윤문에서는 보존합니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 1307
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.39  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.67  (z=-0.16 vs report 인간 baseline)
+- ending_comma_rate: 1.00  (n/a vs report 인간 baseline)
+- comma_segment_length: 6.40  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.000  (z=-2.00 vs report 인간 baseline)
+- lexical_diversity: 0.91  (z=+5.21 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 0
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+# 12장. amplitude를 숫자로 — fixed-point와 Q1.22
+
+> [← 11장 state vector emulator — memory map과 resource 예산](11_state_vector_emulator.md) · [index](index.md) · [13장 oracle과 diffusion operator — multiplier 없는 산술 →](13_oracle_diffusion_measurement_datapath.md)
+> **이 장을 읽기 위한 준비**: [1장 amplitude·normalization](01_qubits_and_states.md), [4장 Born rule](04_measurement.md), [11장 state vector emulator](11_state_vector_emulator.md).
+
+---
+
+11장에서 state vector를 array `amp[0..16383]` 로 펼쳤습니다. 그런데 array의 한 칸에 amplitude $\alpha_i$ 를 담으려면 **결국 몇 bit짜리 어떤 숫자 형식으로 담을지**를 정해야 합니다. 이것이 FPGA emulator 설계자가 마주하는 가장 실무적인 첫 결정입니다. bit를 너무 적게 잡으면 error가 쌓여 solution이 흐려지고, 너무 많이 잡으면 memory와 logic를 낭비합니다(11장에서 봤듯 amplitude bit 폭은 곧 memory 폭이니까요).
+
+결론부터 적어 둡니다. 우리 amplitude 한 칸은 **23-bit fixed-point, Q1.22**입니다. rounding은 round-half-to-even, 넘치면 symmetric saturation, norm renormalization은 하지 않습니다. 계산 도중의 중간값만 더 넓은 register에서 다루고, memory에 되쓸 때 23 bits로 붙입니다. 이 장은 그 결정 하나하나가 **무엇을 재서** 나왔는지를 따라갑니다(값의 source of truth는 [15.4절 설계 결정표](15_paper_map_and_design_decisions.md#154-우리-project의-좌표--확정-설계-결정표)).
+
+길잡이가 되는 것은 두 편의 중앙대 연구실 논문입니다. 04번(Choi & Lee, 2024)은 "fixed-point로 하자, Q1.30으로"라는 **선택**을 내렸고, 05번(Choi 외, QIP 2026)은 "그럼 fraction bits는 정확히 몇 bit여야 하는가"라는 **이론**을 세웠습니다. 우리는 둘 중 어느 쪽 숫자도 그대로 쓰지 않는데, 왜 그런지가 이 장의 절반입니다.
+
+---
+[원문 끝]

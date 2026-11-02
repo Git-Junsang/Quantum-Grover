@@ -1,0 +1,18 @@
+## 11.8 cycle 비용 model
+
+병렬도를 정하고 나면 이 IP의 시간은 전부 **pass** 단위로 셀 수 있습니다. pass 하나는 array를 처음부터 끝까지 한 번 훑는 것입니다. 1 PE면 한 cycle에 1 row라 512 cycles, final configuration(4 PEs)이면 한 cycle에 4 rows라 128 cycles입니다.
+
+실제 cycle은 이 이상값에 pipeline 채우기·mean 확정·measurement 같은 고정비가 붙습니다. 그래서 여기서는 이론값 대신, 500 workloads RTL campaign(Six-Stage Ablation, 16.3절)의 총 cycle을 "number of iterations × iteration당 비용 + number of shots × shot당 비용 + constant"라는 직선에 맞춘 값을 적습니다. coefficient of determination $R^2$ 가 모든 configuration에서 0.99 이상이라 이 model이 실제 cycle을 거의 그대로 설명합니다.
+
+| 단위 | Stage 1 (1 PE, measurement 최적화 없음) | final configuration | 근거 |
+|---|--:|--:|---|
+| pass 1회 (array 한 번 훑기) | 512 | 128 | 512 rows ÷ cycle당 rows |
+| **Grover iteration 1회 = 2 passes + 고정비** | **≈ 1,033** | **≈ 268** | [13.6](13_oracle_diffusion_measurement_datapath.md#136-왜-2-passes인가) · campaign 직선 맞춤 |
+| shot 1회의 나머지 (Init·measurement·solution check·policy) | ≈ 1,327 | ≈ 354 | [14.5](14_multiple_solutions_and_minimum_search.md#145-2단-병렬-measurement) · campaign 직선 맞춤 |
+
+iteration 하나가 왜 하필 두 pass인지는 [13.6절](13_oracle_diffusion_measurement_datapath.md#136-왜-2-passes인가)의 주제입니다. 짧게만 적으면, diffusion operator가 요구하는 mean은 **모든 amplitude를 다 더해야** 나오므로 "전부 읽어 더하는 pass"와 "그 값으로 되쓰는 pass"가 순서상 겹칠 수 없습니다. oracle은 이 model에서 **별도의 항이 아닙니다** — Pass 1이 amplitude를 읽어 되쓰는 김에 predicate 판정 결과대로 sign을 뒤집으므로 cycle을 더 쓰지 않습니다.
+
+여기까지가 **한 shot** 안쪽의 비용입니다. 그런데 Grover는 몇 번 돌릴지를 미리 알 수 없고(number of solutions를 모르기 때문입니다), 그래서 실제 실행 시간에는 **number of shots가 곱해집니다.** 이 multiplication이 [16장](16_iteration_control_and_checkpoints.md)의 주제입니다. 결과만 미리 적어 두면, 14 qubits · 1 solution인 100 workloads에서 mean **22.7 shots**(median 23)가 들고, requested iterations가 mean 173.5 iterations입니다. 매 shot 처음부터 도는 Restart mode는 그 173.5 iterations를 전부 물리적으로 돌려 mean 209,277 cycles(100 MHz에서 약 2.1 ms)이고, final configuration은 checkpoint 덕에 executed iterations를 mean 51.9 iterations로 줄이고 4 PEs와 measurement 최적화까지 더해 mean 25,345 cycles(약 0.25 ms)입니다. 이 값은 **RTL cycle 축**입니다 — board에서 잰 wall-clock time은 다른 축이라 섞어 speedup을 만들면 안 됩니다(18.8절). 그리고 이 숫자가 "data를 고전적으로 한 번 훑는 비용"(128 rows를 읽는 128 cycles 남짓)보다 훨씬 크다는 사실도 함께 봐야 합니다(11.1). 우리의 목표는 속도 우위를 내세우는 데 있지 않습니다.
+
+---
+

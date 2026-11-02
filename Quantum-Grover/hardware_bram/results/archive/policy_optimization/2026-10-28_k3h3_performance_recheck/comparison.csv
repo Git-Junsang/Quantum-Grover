@@ -1,0 +1,7 @@
+baseline,metric,before,after,saved_cycles,reduction_pct
+before_build_cache,policy_cycles,239873,80719,159154,66.34927649214376
+before_build_cache,policy_stall,22298,17483,4815,21.593864920620682
+before_build_cache,cycles,4549854,4522830,27024,0.5939531246497141
+previous,policy_cycles,161272,80719,80553,49.948534153479834
+previous,policy_stall,17715,17483,232,1.3096246119108101
+previous,cycles,4523062,4522830,232,0.005129268623777432

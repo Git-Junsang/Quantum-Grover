@@ -1,0 +1,144 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 9/12이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 09_grover_algorithm.md 진단
+
+## 장르·레지스터와 보존 조건
+
+학부생용 기술 해설서(report). 본문은 친근한 존댓말(합니다/입니다, 일부 해요체 설명), 수식 풀이·표·요약은 압축형입니다. 문장 격식을 올리지 않습니다. 영어 용어와 영어 토큰은 번역·삭제·교체·대소문자 변경하지 않습니다. glossary 기준은 `documents/design_references/22_appendix_glossary_and_retired_specs.md` §22.2입니다. 수치·수식·code·제목·link·직접 인용·기존 콜아웃/이모지·문단 구조는 보존합니다. 실제 주장, 부정/긍정, 인과, 조건, 확신도도 보존합니다. 보고서용 서식 축약·영어 순화 규칙은 적용하지 않습니다. 본문에 사실을 추가하거나 현행 설계와 대조해 기술 내용을 고치지 않습니다.
+
+## 정량 근거
+
+입력의 정량 블록을 확인했습니다. risk_band는 low이고, 장문 파일의 heavy 권고는 문서 길이에서 나옵니다. 영어 기술 term 반복은 장르상 필수이므로 lexical_diversity의 낮은 값만으로 수정하지 않습니다. 아래 수치는 탐지 보조이며 개별 문맥과 함께 판단합니다.
+
+## 겨냥 순서의 지배 패턴
+
+1. **D-14·D-5 — 설명용 비유가 본문까지 관통하는 반복**: "Grover가 실제로 사는 곳", "손끝 하나 바꾸지 않습니다", "function을 먹인 것", "전부 헛수고", "hardware에서 한층 더 날카로워집니다" 등은 동작 설명에 어색한 행위 술어를 붙입니다. 막대·reflection·rotation의 교육적 비유와 기존 비유 상자는 유지하고 과장된 연결 표현만 구체화합니다.
+
+2. **D-2·F-1 — 지나친 감탄과 확언**: "말로만 하면 안 믿기니", "소수점 끝까지 한 치도 어긋나지", "축하합니다 … 완주했습니다" 등 독자를 대신 평가하는 표현을 완화합니다. 수학적으로 정확히 같다는 주장은 그대로 보존합니다.
+
+3. **A-18 — 긴 관형절·삽입 설명**: 정량 relative_clause_nesting=3. 도입의 절 안내, 9.1절 emulator 비용, 9.6절 BBHT, 9.8절 real number 전용 논증, 9.9절 hardware 안내가 장문입니다. 조건·한계와 모든 수식·수치를 보존하며 필요한 문장만 분리합니다.
+
+4. **C-8·D-8 — 반복적인 부정 대구·정의 강조**: "대상의 성질이지 … 성능 지표가 아닙니다", "표준 문제라서가 아닙니다", "고장이 아니라", "신비로운 constant가 아니라" 등 반복을 확인합니다. algorithm과 emulator의 구분처럼 기술적으로 필요한 대조는 유지하고 감탄용 대조만 줄입니다.
+
+5. **C-11·I-3 — 연결어미 쉼표·설명 끝의 군더더기**: 연결어미 뒤 쉼표와 "것뿐이에요", "것이죠", "뜻인데" 등으로 결론을 감싸는 문장을 국소 검토합니다. 정량 conclusion_pivot_count=1은 과다 기준 미달이므로 삭제 목표로 삼지 않습니다.
+
+## 비적용·잔존 처리
+
+교육적 질문·표·연습문제·단계 목록·기존 비유는 그 자체로 결함이 아닙니다. 자연스러운 문장은 그대로 두고 확인된 구간만 보수적으로 다듬습니다. 수치/기술 주장에 의문이 있어도 이번 윤문에서는 보존합니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 5815
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.29  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.33  (z=-0.54 vs report 인간 baseline)
+- ending_comma_rate: 0.27  (n/a vs report 인간 baseline)
+- comma_segment_length: 8.02  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 1  (lexicon 매치: '따라서')
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.000  (z=-2.00 vs report 인간 baseline)
+- lexical_diversity: 0.61  (z=-0.72 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 0
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 9.7 이제 수식으로 — 두 개의 reflection
+
+여기부터는 앞의 두 그림(막대·rotation)을 **operator(matrix) 언어**로 정확히 옮깁니다. 직관이 이미 잡혔다면 이 절은 "왜 그게 맞는지"의 증명이라고 보면 됩니다.
+
+**oracle = solution 방향의 reflection.** [7.4절](07_oracle_and_phase_kickback.md#74-conditional-sign-flip--operator로-쓰기)에서 phase oracle을 이렇게 썼습니다(solution이 하나인 경우):
+
+$$
+U_f = I - 2|\omega\rangle\langle\omega|
+$$
+
+이건 "solution $\omega$ 성분만 sign을 뒤집는" 연산이에요. 확인: $\omega$ 에 작용하면 $-|\omega\rangle$(뒤집힘), $\omega$ 와 orthogonal인 state엔 그대로. 기하로는 **non-solution 축 $|s'\rangle$ 에 대한 reflection**입니다.
+
+**diffusion operator = inversion about the mean.** diffusion operator는 이렇게 씁니다. $|\psi\rangle$ 은 uniform superposition입니다:
+
+$$
+U_\psi = 2|\psi\rangle\langle\psi| - I
+$$
+
+이게 왜 "inversion about the mean"($a \mapsto 2\bar a - a$)인지 봅시다. 임의 state $\sum_x a_x|x\rangle$ 에 작용하면, $\langle\psi|\big(\sum a_x|x\rangle\big) = \frac{1}{\sqrt{\text{number of states}}}\sum a_x = \sqrt{\text{number of states}}\,\bar a$ (mean의 $\sqrt{\text{number of states}}$ 배)이므로:
+
+$$
+U_\psi\sum_x a_x|x\rangle = 2|\psi\rangle(\sqrt{\text{number of states}}\,\bar a) - \sum_x a_x|x\rangle = \sum_x (2\bar a - a_x)|x\rangle
+$$
+
+정확히 $a_x \mapsto 2\bar a - a_x$ — **9.4절**에서 손으로 쓴 그 규칙입니다. ✓
+
+기하로 보면, $U_\psi$ 는 $|\psi\rangle$ 방향은 그대로 두고($U_\psi|\psi\rangle = |\psi\rangle$) 거기에 수직인 성분만 sign을 뒤집습니다. 즉 **$|\psi\rangle$ 방향을 거울로 삼는 reflection**이에요. oracle이 $|s'\rangle$ 축을 거울로 삼았던 것과 짝을 이룹니다 — 이제 Grover 한 번은 "거울 두 개에 연달아 비추기"가 됩니다.
+
+**gate로 만들기.** $|\psi\rangle = H^{\otimes \text{number of qubits}}|0\rangle^{\otimes \text{number of qubits}}$ 이므로 diffusion operator를 실제 gate로 풀 수 있어요:
+
+$$
+U_\psi = H^{\otimes \text{number of qubits}}\big(2|0\cdots0\rangle\langle0\cdots0| - I\big)H^{\otimes \text{number of qubits}}
+$$
+
+가운데 $2|0\cdots0\rangle\langle0\cdots0| - I$ 는 "$|0\cdots0\rangle$ 만 빼고 sign flip"인데, 실제로는 [7.5절 $Z$ trick](07_oracle_and_phase_kickback.md#75-oracle을-실제로-만들기--z-gate-trick)처럼 모든 qubit에 $X$ 를 걸어 $|0\cdots0\rangle$ 을 $|1\cdots1\rangle$ 로 옮긴 뒤 multi-controlled $Z$ 로 sign을 뒤집고 다시 $X$ 로 되돌리면 됩니다. 즉 diffusion operator는 **Hadamard → ($|0\cdots0\rangle$만 sign flip) → Hadamard**. 이 **Hadamard–diagonal–Hadamard sandwich** 구조가 [13.5절](13_oracle_diffusion_measurement_datapath.md#135-diffusion-operator--2mean--amp가-circuit이-되는-순간)에서 "accumulation → shift → subtraction"이라는 multiplication 없는 datapath로 내려갑니다.
+
+**두 reflection을 이으면 rotation — 왜 하필 $2\theta$인가.** 한 번의 Grover iteration은
+
+$$
+G = U_\psi\,U_f = (2|\psi\rangle\langle\psi| - I)(I - 2|\omega\rangle\langle\omega|)
+$$
+
+즉 "oracle reflection → diffusion operator reflection", **거울 두 개에 연달아 비추는 것**입니다. 두 거울은:
+
+- oracle $U_f$: **non-solution 축 $|s'\rangle$** 을 거울로 삼는 reflection.
+- diffusion operator $U_\psi$: **초기 state $|\psi\rangle$ 방향**을 거울로 삼는 reflection.
+
+그리고 이 두 거울은 정확히 **$\theta$ 만큼 벌어져** 있어요 — $|\psi\rangle$ 이 $|s'\rangle$ 축에서 $\theta$ 기울어 있으니까(**9.5절**, $\sin\theta = \frac{1}{\sqrt{\text{number of states}}}$). 여기서 기하학의 깔끔한 사실 하나를 씁니다:
+
+> **거울 두 개에 연달아 비추면, 그 결과는 "두 거울 사이 각의 2×"만큼 돌린 것과 같다.**
+
+왜 하필 2배인지, 각도를 직접 따라가 보면 바로 보입니다. 각도를 non-solution 축 $|s'\rangle$(=0°) 기준으로 재고, 화살표가 지금 각도 $\phi$ 에 있다고 하죠. **거울 하나(각도 $a$)에 비추면** 그 거울에 대해 대칭 이동하니 새 각도는 $2a - \phi$ 가 됩니다. 이걸 두 번 적용합니다:
+
+- 시작: 화살표는 $|\psi\rangle$ 위치, 즉 $\phi = \theta$.
+- **① oracle** (거울 = $|s'\rangle$ 축, $a=0$): $\ \theta \;\to\; 2\cdot 0 - \theta = -\theta$. → solution 성분 sign이 뒤집혀 축 **아래로** 접힘.
+- **② diffusion operator** (거울 = $|\psi\rangle$, $a=\theta$): $\ -\theta \;\to\; 2\theta - (-\theta) = 3\theta$.
+
+시작 $\theta$ 에서 끝 $3\theta$ — solution 축 쪽으로 **정확히 $2\theta$** 돌았습니다. 게다가 시작 각 $\phi$ 가 무엇이든 두 번 접으면 $\phi \to 2\theta - (2\cdot0 - \phi) = \phi + 2\theta$ 라, **언제나 $+2\theta$** 만큼 돕니다. 이게 "두 거울 사이 각($\theta$)의 2×만큼 rotation"의 정체예요.
+
+**9.5절**의 rotation 그림이 바로 이 세 걸음입니다: 파란 화살표 $|\psi\rangle$ 이 $\theta$, 회색 점선이 oracle로 축 아래 $-\theta$ 로 접힌 것, 주황 $G|\psi\rangle$ 이 $3\theta$. 그러니 반복할 때마다 화살표는 $\theta \to 3\theta \to 5\theta \to \cdots \to (2\cdot \text{number of iterations}+1)\theta$ 로 solution 축(90°=$\frac{\pi}{2}$)을 향해 $2\theta$ 씩 다가갑니다. solution 축에 닿을 조건 $(2\cdot \text{number of iterations}+1)\theta \approx \frac{\pi}{2}$ 에서 $\text{number of iterations} \approx \frac{\pi}{4\theta} - \frac12 \approx \frac{\pi}{4}\sqrt{\text{number of states}}$ 가 나오고요.
+
+**solution이 여럿이어도 평면은 2차원.** 지금까지 $|\omega\rangle$ 하나를 solution 축으로 삼았는데, solution 집합 $A$ 에 원소가 여럿이면 oracle은 항이 그만큼 늘어난 꼴이 됩니다:
+
+$$
+U_f = I - 2\sum_{x \in A}|x\rangle\langle x|
+$$
+
+항이 늘었으니 rotation 평면도 그만큼 많은 차원으로 퍼질 것 같지만 그렇지 않습니다. solution 성분을 하나로 묶은 **solution subspace의 unit vector**
+
+$$
+|\omega_A\rangle = \frac{1}{\sqrt{\text{number of solutions}}}\sum_{x \in A}|x\rangle
+$$
+
+를 새 solution 축으로 잡아 보세요. $U_f|\omega_A\rangle = -|\omega_A\rangle$ 이고 $|\omega_A\rangle$ 에 orthogonal인 성분은 그대로이니, $U_f$ 는 여전히 **한 축에 대한 reflection**입니다. uniform superposition은 $|\psi\rangle = \sin\theta\,|\omega_A\rangle + \cos\theta\,|s'\rangle$ 로 분해되고 이번엔 $\sin\theta = \sqrt{\text{number of solutions}/\text{number of states}}$ 이고요. diffusion operator는 원래부터 $|\psi\rangle$ 하나만 보는 연산이라 손댈 것이 없습니다. 두 거울이 여전히 같은 평면 안에 있으니 **rotation 평면은 solution이 몇 개든 2차원**이고, 앞의 유도가 $\sqrt{\text{number of states}} \to \sqrt{\text{number of states}/\text{number of solutions}}$ 만 바꿔 그대로 성립합니다.
+
+여기서 중요한 부산물이 나옵니다. 평면이 2차원이라는 것은 state가 언제나 $\alpha|\omega_A\rangle + \beta|s'\rangle$ 꼴이라는 뜻인데, $|\omega_A\rangle$ 는 $A$ 의 모든 칸에 **똑같은 계수** $\frac{1}{\sqrt{\text{number of solutions}}}$ 를 주는 vector입니다. 따라서 모든 solution의 amplitude는 어느 시점에서나 $\frac{\alpha}{\sqrt{\text{number of solutions}}}$ 로 **전부 같습니다.** 9.4절에서 2 solutions로 손계산해 본 그 동률이, 일반적인 경우에 대해 여기서 증명된 셈입니다. 이 정리가 [14.3절](14_multiple_solutions_and_minimum_search.md#143-amplitude-동률--argmax가-무너지는-지점)에서 measurement circuit의 설계를 통째로 바꿉니다.
+
+> 🔑 Grover의 전부는 결국 **두 reflection** $U_f$ 와 $U_\psi$ 를 번갈아 거는 것입니다. $U_f$ 는 solution에 표식을 달고, $U_\psi$ 는 그 표식을 큰 amplitude로 키웁니다.
+
+---
+[원문 끝]

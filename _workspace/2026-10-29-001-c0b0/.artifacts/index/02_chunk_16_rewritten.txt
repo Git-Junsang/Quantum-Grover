@@ -1,0 +1,7 @@
+#### Part 7. 설계 좌표
+
+| 장 | file | 무엇을 배우나 |
+|----|------|--------------|
+| 15 | [논문 지도와 설계 결정표](15_paper_map_and_design_decisions.md) | 6편 계보도, **여덟 개의 대립축**, 확정 설계 결정표(**숫자의 source of truth**), platform과 resource 예산, **인용 시 주의할 오류 목록**, hardware 용어집 |
+
+

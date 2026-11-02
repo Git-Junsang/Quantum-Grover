@@ -1,0 +1,22 @@
+LT    M=  1 A=-16384 B=0 fnv/sha256 OK
+LT    M=  4 A=-16384 B=0 fnv/sha256 OK
+LT    M= 16 A=-16384 B=0 fnv/sha256 OK
+LT    M= 64 A=-16384 B=0 fnv/sha256 OK
+LT    M=256 A=-16384 B=0 fnv/sha256 OK
+GT    M=  1 A=16383 B=0 fnv/sha256 OK
+GT    M=  4 A=16383 B=0 fnv/sha256 OK
+GT    M= 16 A=16383 B=0 fnv/sha256 OK
+GT    M= 64 A=16383 B=0 fnv/sha256 OK
+GT    M=256 A=16383 B=0 fnv/sha256 OK
+EQ    M=  1 A=12345 B=0 fnv/sha256 OK
+EQ    M=  4 A=12345 B=0 fnv/sha256 OK
+EQ    M= 16 A=12345 B=0 fnv/sha256 OK
+EQ    M= 64 A=12345 B=0 fnv/sha256 OK
+EQ    M=256 A=12345 B=0 fnv/sha256 OK
+RANGE M=  1 A=-4096 B=4096 fnv/sha256 OK
+RANGE M=  4 A=-4096 B=4096 fnv/sha256 OK
+RANGE M= 16 A=-4096 B=4096 fnv/sha256 OK
+RANGE M= 64 A=-4096 B=4096 fnv/sha256 OK
+RANGE M=256 A=-4096 B=4096 fnv/sha256 OK
+all 20 datasets match predicate500_datasets.csv
+bundled data/predicate500/datasets identical to the regenerated files

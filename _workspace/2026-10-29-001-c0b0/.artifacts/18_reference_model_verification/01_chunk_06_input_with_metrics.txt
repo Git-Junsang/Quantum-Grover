@@ -1,0 +1,82 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 6/11이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 18_reference_model_verification.md 진단
+
+## 장르·레지스터와 보존 조건
+
+학부생용 기술 해설서(report). 본문은 친근한 존댓말(합니다/입니다, 일부 해요체 설명), 수식 풀이·표·요약은 압축형입니다. 문장 격식을 올리지 않습니다. 영어 용어와 영어 토큰은 번역·삭제·교체·대소문자 변경하지 않습니다. glossary 기준은 `documents/design_references/22_appendix_glossary_and_retired_specs.md` §22.2입니다. 수치·수식·code·제목·link·직접 인용·기존 콜아웃/이모지·문단 구조는 보존합니다. 실제 주장, 부정/긍정, 인과, 조건, 확신도도 보존합니다. 보고서용 서식 축약·영어 순화 규칙은 적용하지 않습니다. 본문에 사실을 추가하거나 현행 설계와 대조해 기술 내용을 고치지 않습니다.
+
+## 정량 근거
+
+입력의 정량 블록을 확인했습니다. risk_band는 low이고, 장문 파일의 heavy 권고는 문서 길이에서 나옵니다. 영어 기술 term 반복은 장르상 필수이므로 lexical_diversity의 낮은 값만으로 수정하지 않습니다. 아래 수치는 탐지 보조이며 개별 문맥과 함께 판단합니다.
+
+## 겨냥 순서의 지배 패턴
+
+1. **D-14·D-5 — 시험·설계를 사람처럼 서술하는 표현**: "규칙이 여기서 처음 일합니다", "종료 규칙이 일해야", "FSM이 매달리지 않고", "이 발판 위", "circuit은 … 조용히 틀립니다", "끝까지 정직하게 계산" 등이 직접적인 동작 설명을 흐립니다. 조건과 보장 수준을 보존하고 구체적인 서술로 정리합니다.
+
+2. **A-18·A-7 — 장문·have 직역**: 정량 relative_clause_nesting=7, have_make_literal_count=1. 도입의 두 근거, 18.2절 ladder, 18.4절 예제, 18.7절 checkpoint 경로, 18.8절 비교 조건의 문장을 검토합니다. "오류를 갖고" 등 소유 직역과 여러 층의 수식을 겹친 문장만 국소 수정합니다.
+
+3. **D-8·C-8 — 핵심 강조·부정 대구의 반복**: "이 목록에서 얻을 교훈은 목록 그 자체가 아니라 태도", "주는 것은 속도가 아니라", "묻는 것은", "근사적으로 같은 정도가 아니라" 등이 반복됩니다. equivalence와 distribution, algorithm과 circuit, bit-exact와 오차 허용 구분처럼 기술적으로 필요한 대조는 반드시 보존합니다.
+
+4. **D-2·F-1 — 과한 중요성·평가 표현**: "공짜가 아닙니다", "영원히 일치하지 않고", "이보다 좋은 출발점은 없습니다", "실행된 적 없는 code가 옳을 probability는 낮습니다" 등 단정·평가의 수사만 줄입니다. 원문 사실이나 기준을 새로 해석하지 않습니다.
+
+5. **J-2·J-3·C-11 — 대시·따옴표·쉼표로 끊긴 설명**: 연속된 대시 부연과 수사형 따옴표를 확인합니다. 표·목록의 교육적 구조와 기존 콜아웃·강조를 보존하고 산문에서 불필요한 쉼표·감싸는 표현만 정리합니다.
+
+## 비적용·잔존 처리
+
+교육적 질문·표·연습문제·단계 목록·기존 비유는 그 자체로 결함이 아닙니다. 자연스러운 문장은 그대로 두고 확인된 구간만 보수적으로 다듬습니다. 수치/기술 주장에 의문이 있어도 이번 윤문에서는 보존합니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 2540
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.52  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.74  (z=-0.08 vs report 인간 baseline)
+- ending_comma_rate: 0.55  (n/a vs report 인간 baseline)
+- comma_segment_length: 8.09  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.009  (z=-1.69 vs report 인간 baseline)
+- lexical_diversity: 0.79  (z=+2.86 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.001
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 0
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 18.5 predicate 4종과 경계값
+
+발판을 지나면 실제 predicate circuit을 봅니다. 13.3절에서 네 predicate를 모두 **strict inequality**로 고정했으므로, 경계값 test는 그 약속이 circuit에 그대로 반영됐는지를 확인하는 일입니다.
+
+가장 먼저 볼 것은 **threshold와 정확히 같은 값**입니다. `value == thr_a` 인 칸은 `LT` 에서도 `GT` 에서도 solution이 아니어야 하고, `EQ` 에서만 solution이어야 하며, range predicate `thr_a < value < thr_b` 에서는 양 끝 모두 제외돼야 합니다. 이 네 가지가 한 data array에서 동시에 확인되도록 threshold와 같은 값을 data에 **일부러 심어 둡니다.** inequality sign을 한 칸 잘못 짠 circuit은 다른 test를 전부 통과하고 이 test에서만 걸립니다.
+
+다음은 data word의 **범위 양 끝**입니다. data word width가 16 bits(signed)이므로 값은 $[-32768,\ 32767]$ 입니다. `thr_a = -32768` 로 두면 `LT` 의 solution이 하나도 없고(0 solutions), `thr_a = 32767` 로 두면 `GT` 의 solution이 하나도 없습니다. 이때 확인할 것은 결과만이 아니라 **subtractor의 폭**입니다. 13.3절이 sign extension한 17-bit subtraction을 쓰는 이유가 정확히 이 극단에서 드러납니다 — 16 bits로 빼면 $32767 - (-32768)$ 이 넘쳐 MSB가 뒤집히고, predicate가 정반대 답을 냅니다. range predicate에서는 폭이 좁은 경우와 넓은 경우를 넣습니다. requested-j 묶음의 방향성 case(`gt_max_m0`, `lt_min_m0`, `range_narrow`, `range_wide`)가 이 자리입니다.
+
+그다음은 number of solutions의 극단입니다. 네 가지를 각각 시나리오로 둡니다.
+
+- **0 solutions — solution이 하나도 없다.** BBHT는 영원히 실패하므로 16.9절의 종료 규칙이 일해야 합니다. 확인할 것은 shot cap이나 requested iterations budget에서 FSM이 **매달리지 않고 빠져나오는가**, 그리고 해당 status bit가 서는가입니다.
+- **1 solution.** 최적 iteration이 100회인 표준 경우입니다. number of iterations별 success probability 표(100 iterations에서 100%)를 1단 model이 재현하는지, 그리고 100 iterations · 127 iterations 방향성 case가 2단·3단에서 bit 단위로 같은지 봅니다.
+- **$\text{number of solutions} > \text{number of states}/2$ — 역주행.** 14.8절의 함정 2입니다. solution을 절반 넘게, 혹은 전부 심으면(`eq_mhalf`, `eq_mall`) oracle이 사실상 $-I$ 에 가까워져 iteration이 measurement distribution을 거의 바꾸지 못합니다. 확인할 것은 "그래도 답이 나오는가"입니다 — 초반 shot은 iteration이 0 근처라 사실상 균등 무작위 추출이고, solution이 많으면 그것만으로 곧바로 맞아야 합니다.
+- **enumeration에서 solution이 256개를 넘을 때 — FIFO가 찬다.** solution이 FIFO 깊이보다 많은 data를 넣고 firmware가 일부러 늦게 뽑아, hardware가 멈췄다가(`FIFO_STALL` 증가) 뽑는 대로 다시 진행하는지, 결과가 하나도 빠지거나 겹치지 않는지 확인합니다.
+
+data distribution은 **세 종류**를 씁니다. 첫째, uniform random number — 기본 regression입니다. 둘째, 정렬된 data — solution이 index의 연속 interval에 몰립니다. 우리 indexing은 하위 5 bits가 lane이므로 연속 interval은 이웃한 row들의 lane에 골고루 퍼지고, 그 성질이 실제로 성립하는지 확인하는 것이 이 distribution의 목적입니다. 셋째, **solution이 한 row나 한 group 경계에 몰리는 인위적 data** — row weight의 prefix sum이 group 경계(32 rows마다)나 row 경계(lane 31/32)에서 넘어가는 자리입니다. Two-Level Select의 group·row 선택이 가장 까다로운 입력을 받는 경우이고, prefix sum의 off-by-one이 여기서 드러납니다(`eq_min_lane31`, `eq_max_lane32`, `d31`·`d32`·`d33` case). 중복 값이 많은 data를 넷째로 두면 `EQ` predicate에서 solution이 갑자기 많아지는 상황도 함께 볼 수 있습니다.
+
+---
+[원문 끝]

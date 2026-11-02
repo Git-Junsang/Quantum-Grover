@@ -1,0 +1,30 @@
+{
+  "status": "accept",
+  "genre": "report",
+  "review": "원문·윤문본·진단·게이트를 직접 대조한 의미 및 자연성 검토",
+  "correction_count": 0,
+  "corrections": [],
+  "fidelity_violations_remaining": [],
+  "overediting": [],
+  "residual_findings": [],
+  "baseline_gate_warnings": [],
+  "self_check": {
+    "passed": 6,
+    "total": 6
+  },
+  "grade": "A",
+  "categories": [
+    "A-18",
+    "D-14",
+    "D-2",
+    "D-8"
+  ],
+  "preservation_check": "PASS: 영어 token·영어 구·수치·수식·code·제목·link·콜아웃",
+  "final_gate": {
+    "exit_code": 0,
+    "change_rate": 0.0109,
+    "new_warnings": [],
+    "baseline_warning_count": 0,
+    "note": "공통 게이트 전 축 통과"
+  }
+}

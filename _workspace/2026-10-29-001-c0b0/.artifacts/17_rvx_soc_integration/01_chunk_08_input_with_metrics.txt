@@ -1,0 +1,95 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 8/10이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 윤문 진단
+
+대상: `17_rvx_soc_integration.md`
+
+## 장르와 레지스터
+
+학부생용 공부 해설서입니다. 설명 본문은 합쇼체 중심의 친근한 존댓말이고, 질문·권유에는 해요체가 섞입니다. 요약·표의 간결한 명사형은 의도된 형식입니다. 이 register와 독자 수준을 그대로 유지합니다.
+
+## 겨냥 순서와 근거
+
+1. **D-14 / D-5 — 기술 구성요소의 의인화와 구어 비유**: 「시작을 눌러 줄 사람」·「accelerator는 놀고」·「SoC 바깥의 섬」·「policy의 손잡이」·「state를 software에 맡기면 샙니다」·「CSR을 두드리는」 등의 비유가 역할 구분을 흐립니다. interface·상태 관리·CSR 접근이라는 실제 작업으로 표현합니다. 제목·표기·영어는 유지합니다.
+
+2. **D-8 / D-2 — 강한 예고·평가 표현**: 「압도적으로 유리」·「정확히」·「못 박아」·「이유는 자명」·「며칠을 좌우」가 기술적 근거보다 평가를 먼저 둡니다. 과한 수식만 덜고 설계 선택의 이유와 규약의 당위는 보존합니다.
+
+3. **A-18 / I-3 — 조건 열거를 한 문장에 몰기**: 17.2의 XML instance 설명, 17.4의 status·시작 수락 조건, 17.7의 firmware 규약이 긴 문장으로 이어집니다. relative_clause_nesting=11. 순서·동시 조건·원문 수치·macro는 그대로 두고 한국어 연결을 정리합니다.
+
+4. **C-8 — 반복되는 대립 규정**: 「편의가 아니라」·「타협이 아니라」·「종이 위가 아니라 board 위」처럼 이항 대립이 겹칩니다. hardware/software 경계의 실질 근거를 직접 쓰되 실제 quantum 구조와의 대응 주장을 바꾸지 않습니다.
+
+## 정량 앵커와 해석
+
+입력 정량 블록의 route_hint는 `heavy`, 원문은 19,627자입니다. 위에 적은 양성 카운트만 해당 ID의 보조 근거로 사용했습니다. lexical_diversity의 낮은 값은 전문용어 반복의 영향이 있으므로 영어 용어를 치환하는 근거로 쓰지 않습니다. 이중 피동·by 피동·have 직역은 카운트가 0이어서 지배 패턴으로 지목하지 않습니다.
+
+## 보존 지침
+
+- 영어 용어·영어 토큰의 철자와 대소문자를 그대로 둡니다. 영어를 한국어로 옮기거나 동의어로 바꾸지 않습니다. 용어집 SSOT는 `documents/design_references/22_appendix_glossary_and_retired_specs.md` 22.2절입니다.
+- 사실·주장·수치·단위·수식·code·identifier·인용·조건·부정/긍정·인과를 보존합니다. 내용 보충이나 과학적 사실 수정은 이번 윤문의 범위가 아닙니다.
+- 제목·절 번호·link·그림·기존 콜아웃·표 구조를 유지합니다. 기존 볼드·이모지는 교재 고유 관습이므로 일괄 삭제하지 않습니다.
+- 어색한 비유·한국어 연결·조사·수식어만 국소 수정합니다. 단순히 technical term이 많이 나온다는 이유로 B 계열 처방을 적용하지 않습니다.
+- 의무·가능·추정의 강도를 보존하고 원문에 없던 설명이나 평가를 넣지 않습니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 2367
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.23  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.35  (z=-0.52 vs report 인간 baseline)
+- ending_comma_rate: 0.36  (n/a vs report 인간 baseline)
+- comma_segment_length: 11.24  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.004  (z=-1.86 vs report 인간 baseline)
+- lexical_diversity: 0.71  (z=+1.23 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 2
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 17.7 hardware와 firmware의 경계
+
+지금까지 나온 역할 분담을 한 표로 모읍니다. 각 항목의 근거는 "왜 그쪽인가" 열에 있습니다.
+
+| 하는 일 | 어디서 | 왜 |
+|---|:-:|---|
+| amplitude 갱신 (oracle · diffusion operator · Init) | hardware | 128 lanes 병렬, 분기 없음 |
+| Born-rule sampling · solution check | hardware | amplitude array 전체를 읽어야 하고 `data_mem` 이 IP 안에 있음 (14.5절) |
+| number of iterations sampling · sampling range 갱신 | hardware | shot마다 필요, 왕복 latency가 아까움 (Manual mode에서는 firmware가 `J_TARGET` 을 씀) |
+| checkpoint policy · 무효화 | hardware | state를 software에 맡기면 샙니다 (16.7절) |
+| enumeration round · 종료 판정 | hardware | 새 답마다 Found Mask·checkpoint slot·BBHT를 되돌리는 일이 전부 IP 안 state |
+| enumeration 종료 한계값 | firmware | `fail_repeat_limit` 을 CSR로. 응용마다 다른 policy |
+| Result FIFO 비우기 | firmware | 도는 동안에도 계속 (FIFO 256 entries) |
+| predicate · threshold 결정 | firmware | 응용에 따라 바뀜 |
+| minimum search loop (threshold 낮추기) | firmware | `while` 한 줄로 충분 (14.9절) |
+| UART parsing · 결과 출력 | firmware | 분기 덩어리 |
+| data 준비 (`GEN` · SRAM · load 시작) | firmware | policy 결정 |
+
+**shot loop는 hardware가 돕니다.** 이 결정이 이 표에서 가장 논쟁적인 지점이라 근거를 적어 둡니다. 16.3절의 수치대로 14 qubits·1 solution에서 search 한 번에 mean 22.7 shots가 듭니다. shot마다 core를 깨워 status를 읽고 다음 shot이 돌 iteration을 계산해 CSR에 쓰면 왕복이 20번 넘게 생기는데, core가 50 MHz로 APB를 건너는 동안 100 MHz accelerator는 놀고, 무엇보다 **checkpoint state가 hardware와 software 양쪽에 존재하게 됩니다.** 16.7절이 경계한 바로 그 구조입니다. 그래서 최종 형태는 시작 한 번에 "답을 찾거나 한도에 닿을 때까지" 돌고 완료 표시로 끝나는 **BBHT autonomous mode**이고, firmware가 보는 것은 "설정 → 시작 → polling → 결과 읽기" 네 줄입니다.
+
+그렇다고 firmware가 shot을 직접 모는 길을 없애지는 않았습니다. **Manual mode**(`MANUAL_SINGLE`)에서는 app이 `J_TARGET` 에 원하는 값을 써서 한 shot씩 돌릴 수 있습니다. 이 mode는 solution이 몇 개인지 알고 iteration을 정해진 횟수로 고정해 도는 비교 실험과, software reference model과의 한 shot 단위 대조(18장)에 쓰입니다.
+
+초판과 달리 **enumeration round의 종료 판단도 hardware로 들어갔습니다.** 초판은 "몇 번 더 시도할지는 응용마다 다른 policy이니 firmware에 남긴다"고 적었는데, 새 답이 나올 때마다 Found Mask에 bit를 세우고 checkpoint slot을 비우고 BBHT를 처음부터 돌리는 일이 전부 IP 안 state라 경계를 IP 안에 두는 편이 깔끔했습니다. policy의 손잡이 — 연속 실패 몇 번에 끝낼지 — 는 `ENUM_CFG` 로 firmware가 쥡니다. 재합성 없이 바뀌어야 할 것은 여전히 firmware 쪽에 있는 셈입니다.
+
+직접 CSR을 두드리는 firmware가 지켜야 할 규약도 여기 모아 둡니다. 시작 전에 `STATUS` 를 확인하고, 완료는 `done_sticky` 로 판정하며(이 bit는 `COMMAND` 쓰기로만 지워집니다), 결과와 counter는 `busy` 가 내려간 뒤에 읽고, load 중에는 시작하지 않고, `FIFO_DATA` 는 읽는 것 자체가 꺼내기이며 index 0도 정상 결과일 수 있으니 비었는지는 `STATUS` 나 `FIFO_COUNT` 로 봅니다. driver(`bbht_grover_driver`)가 이 규약을 이미 따릅니다.
+
+---
+[원문 끝]

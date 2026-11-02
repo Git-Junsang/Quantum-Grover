@@ -1,0 +1,13 @@
+# 16장. 몇 번 돌릴지 모를 때 — BBHT shot loop와 checkpoint
+
+> [← 15장 논문 지도와 설계 결정표](15_paper_map_and_design_decisions.md) · [index](index.md) · [17장 RVX SoC에 붙이기 — APB CSR · AHB DMA · UART →](17_rvx_soc_integration.md)
+> **이 장을 읽기 위한 준비**: [4장 measurement](04_measurement.md), [6.6절 circuit의 순효과는 하나의 unitary](06_quantum_circuit_model_and_universality.md#66-circuit의-순효과는-하나의-unitary), [9.6절 지나치면 안 된다](09_grover_algorithm.md#96-지나치면-안-된다), [13장 oracle과 diffusion operator](13_oracle_diffusion_measurement_datapath.md)의 안쪽 FSM(13.1절), [14장 multiple solutions](14_multiple_solutions_and_minimum_search.md).
+
+---
+
+13장은 한 번의 initialization에서 시작해 iteration을 몇 바퀴 돌고 measurement로 끝나는 **한 shot** 안을 들여다봤고, 14장은 그 shot의 마지막 단계인 measurement를 확률적으로 만들었습니다. 그런데 13장은 내내 "number of iterations는 정해져 있다"고 가정했습니다. 이 장은 그 가정을 풉니다.
+
+optimal number of iterations를 계산하려면 number of solutions가 필요한데, 우리 accelerator는 solution이 몇 개인지 모릅니다. 모르면 shot 하나로 끝나지 않고 **여러 번 실행해야** 하고 그러면 곧바로 다음 질문이 따라옵니다 — 실패한 shot이 남긴 amplitude array를 그냥 버릴 것인가? 이 장의 후반부는 그 array를 버리지 않고 몇 벌 남겨 두었다가 이어 돌리는 **checkpoint**를 다룹니다. 이 점이 이 project와 기존 Grover emulator들의 차이이며 board에서 잰 가속의 가장 큰 몫이 여기서 나옵니다.
+
+---
+

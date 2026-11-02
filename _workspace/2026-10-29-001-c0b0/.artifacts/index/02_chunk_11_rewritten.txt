@@ -1,0 +1,8 @@
+#### Part 2. 여러 qubit와 circuit
+
+| 장 | file | 무엇을 배우나 |
+|----|------|--------------|
+| 5 | [다중 qubit와 entanglement](05_multiple_qubits_and_entanglement.md) | tensor product, multi-qubit state의 $2^{\text{number of qubits}}$ dimension, CNOT, Bell state·entanglement, product state |
+| 6 | [quantum circuit model과 universality](06_quantum_circuit_model_and_universality.md) | circuit 3단계, Hadamard로 uniform superposition 만들기, parallelism, universal gate·Toffoli, circuit의 순효과는 하나의 unitary |
+
+

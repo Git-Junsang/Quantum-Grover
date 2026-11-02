@@ -1,0 +1,16 @@
+## 17.8 초판의 미정 다섯은 이렇게 정해졌다
+
+초판은 system 층에서 다섯 가지를 미정으로 남겨 두었습니다. 지금은 board에서 동작한 build를 기준으로 정해졌습니다.
+
+**1. CSR map.** 32-bit register 38개, **4-byte 간격**, base `0xE2020000`(크기 `0x1000`)으로 확정했습니다. RVX 생성기 대신 손으로 짠 APB slave를 써서, 읽기 부작용과 완료 표시를 우리가 제어했습니다(17.4절).
+
+**2. enumeration 결과를 어떻게 돌려줄 것인가.** IP 안에 **256-entry Result FIFO**를 두고, firmware가 도는 동안에도 비웁니다. enumeration round마다 완료를 세워 firmware가 한 번씩 읽어 가는 안보다 왕복이 적고, FIFO 깊이는 BRAM이 아니라 LUT memory로 잡혀 싸게 끝났습니다.
+
+**3. `M_max` 값.** solution이 너무 많을 때 enumeration을 포기하는 별도의 상한은 두지 않았습니다. FIFO가 가득 차면 hardware가 멈추고 firmware가 비우는 만큼 진행합니다(14.7절).
+
+**4. RVX SoC가 실제로 얼마를 먹는가.** implementation report로 쟀습니다. SoC 몫(core·interconnect·UART·SRAM 128 KB 등)이 32 BRAM tiles · 4 DSPs이고, board 전체가 BRAM 116 / 135 · DSP 132 / 240 · LUT 45,284 / 63,400입니다(15.5절).
+
+**5. clock이 정말 100 MHz인가.** accelerator에 **전용 100 MHz clock**(`clk_accel`)을 주고, RISC-V core와 bus는 RVX 기본값인 50 MHz로 두었습니다. IP는 `_clkout` shim으로 자기 도메인에서 돌고, 경계는 RVX 생성 비동기 bridge가 맡습니다(17.3절). 100 MHz에서 timing이 닫혔습니다(WNS +0.126 ns). cycle counter `CYCLE_COUNT` 가 이 100 MHz 기준이라 **시간 = cycle ÷ 100 µs** 이고, 50으로 나누면 두 배 틀립니다.
+
+---
+

@@ -1,0 +1,17 @@
+## 14.2 oracle은 solution을 아는 circuit이 아니다
+
+이 해설서는 이 설명을 일관되게 따릅니다. Grover를 처음 배울 때 교과서는 흔히 "solution index $w$ 의 amplitude에 $-1$ 을 곱한다"고 씁니다. 그 표기는 $w$ 를 constant로 못 박은 것처럼 읽히지만, 그렇게 만든 circuit은 **search를 하지 않습니다** — 답을 이미 알고 있으니까요. [7장](07_oracle_and_phase_kickback.md)에서 oracle을 정의할 때 강조한 대로, oracle은 solution이 무엇인지 **모르면서** "이게 predicate를 만족하느냐"는 물음에만 답하는 Predicate Unit입니다.
+
+| | index를 아는 oracle | predicate를 판정하는 oracle |
+|---|---|---|
+| solution을 | **안다** — constant로 못 박음 | **모른다** — data가 정함 |
+| circuit | index comparator | `value − thr` 의 MSB 한 bit |
+| number of solutions | 설계 시점에 1로 고정 | 실행 시점에 결정, 0일 수도 모든 state일 수도 |
+| 쓸모 | algorithm 골격 확인 | 실제 search |
+
+우리 accelerator는 오른쪽입니다. host가 CSR에 쓰는 것은 **threshold** `THRESHOLD_A`(그리고 범위 predicate면 `THRESHOLD_B`)이지 solution index가 아닙니다. threshold를 아는 것과 solution을 아는 것은 다릅니다 — threshold는 **질문**이고, 어느 칸이 그 질문에 걸리는지는 `data_mem` 안의 값들이 정합니다. circuit은 실행 전에 어느 칸이 뒤집힐지 모르고, 알 필요도 없습니다.
+
+이 명제에서 두 가지가 곧바로 따라 나옵니다. 첫째, **solution이 몇 개인지 미리 셀 수 없습니다.** 그 개수는 predicate·threshold·data 셋 모두에 의존하므로 설계 시점에는 물론이고 실행 시작 시점에도 알 수 없습니다([16.1절](16_iteration_control_and_checkpoints.md#161-왜-solution이-몇-개인지-모르는가)). 둘째, **solution들 사이에는 아무 우열이 없습니다.** oracle이 보기에 모두 똑같이 "predicate를 만족하는 칸"입니다. 이 두 번째 성질 때문에 기존 measurement 방식이 작동하지 않습니다.
+
+---
+

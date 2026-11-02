@@ -1,0 +1,31 @@
+{
+  "scope": "Main-IP-connected generic solver declarations; not synthesis or necessary minimum storage",
+  "range": {
+    "k": [
+      1,
+      10
+    ],
+    "h": [
+      1,
+      10
+    ]
+  },
+  "memo_address_bits": 12,
+  "memo_epoch_bits": 16,
+  "direct_dependence_on_iteration_or_square_engines": false,
+  "device_bram36_tiles": 365.0,
+  "device_bram_kib": 1642.5,
+  "assumptions": [
+    "Generic solver is selected, including force_generic where applicable.",
+    "Physical RAM usage also depends on banking, ports and aspect ratios.",
+    "Unique-action and unused-depth synthesis pruning is not estimated.",
+    "Memo, amplitude, dataset, SoC and all other state are excluded from the candidate heatmap.",
+    "Default memo table capacity and tag widths are held fixed."
+  ],
+  "sha256": {
+    "hardware_bram/src/grover_policy_parameterized.sv": "119f2bb54d308f2a77b33a34ccfcf9b2177927439b68d8872f09ed53cb250c05",
+    "hardware_bram/src/bbht_grover_main_ip.v": "4b07176d2aa93645de9a63cf285c0d1a5a39ab0995d04629c6a970e7db05e10f",
+    "hardware_bram/results/2026-10-29_engine_sweep/resource_model.json": "722b96b6205fc62d801f29b78259731fe2ea4324cb5934558f78bdc26744748f"
+  },
+  "rows": 100
+}

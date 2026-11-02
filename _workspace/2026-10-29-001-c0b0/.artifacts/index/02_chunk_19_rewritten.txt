@@ -1,0 +1,8 @@
+### 독자에게 가정하는 것
+
+- **알고 있다고 가정**: complex number(magnitude·conjugate·$e^{i\theta}$), linear algebra(vector·matrix·matrix multiplication·transpose), classical logic gate(AND·OR·NOT·XOR), 기초 programming, big-O notation($O(n)$, $O(\log n)$).
+- **처음이라고 가정하고 설명**: qubit·state·superposition, Dirac(bra-ket) 표기법, quantum gate와 unitary matrix, measurement와 collapse, entanglement, oracle·phase kickback, amplitude amplification, Grover·Deutsch-Jozsa algorithm. → 이 개념들을 **1장부터 차근차근** 설명합니다.
+- **Part 5~8(11~18장)에서 추가로 가정**: FPGA 기초(LUT·FF·BRAM·DSP, RTL, clock). 이 project 사용자는 FPGA 경험이 있습니다. 이 배경이 없어도 1~10장(quantum 이론)은 그대로 읽을 수 있고, hardware 용어는 [15.7절 용어집](15_paper_map_and_design_decisions.md#157-hardware-용어집)에 모아 두었습니다.
+
+> 이 정도 수학 배경이 없거나 오래 잊었다면, 먼저 [부록 A. 수학 빠른 복습](A_math_review.md) 을 보세요 — 이 해설서가 실제로 쓰는 complex number·linear algebra만 추려 두었습니다. 더 깊이 원하면 3Blue1Brown의 linear algebra 영상 시리즈와 complex number 기초를 권합니다. 원문 QCVC 에세이도 같은 배경을 가정합니다.
+

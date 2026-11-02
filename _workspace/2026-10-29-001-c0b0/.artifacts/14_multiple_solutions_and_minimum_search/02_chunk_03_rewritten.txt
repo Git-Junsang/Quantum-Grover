@@ -1,0 +1,14 @@
+## 14.1 solution이 여럿이면 — oracle에서는 공짜
+
+solution이 여러 개일 때 optimal number of iterations는 [9.5절](09_grover_algorithm.md#95-왜-여러-번--왜-sqrttextnumber-of-states-번--왜-pi)의 회전 그림에서 그대로 나옵니다. 초기 각이 $\sin\theta = \sqrt{\text{number of solutions}/\text{number of states}}$ 가 되어, solution이 많을수록 시작부터 solution 축 쪽으로 더 기울어 있고 그만큼 덜 돌아도 됩니다:
+
+$$\text{optimal number of iterations} = \frac{\pi}{4}\sqrt{\frac{\text{number of states}}{\text{number of solutions}}} - \frac12$$
+
+**oracle에서는 추가 비용이 들지 않습니다.** [13.3절](13_oracle_diffusion_measurement_datapath.md#133-oracle--predicate-4종이-subtractor-하나를-공유한다)의 Predicate Unit은 `value[i] − thr` 의 MSB 한 bit로 각 칸을 독립적으로 판정합니다. predicate를 만족하는 칸이 하나든 300개든 circuit은 같고, 걸리는 cycle도 같습니다 — 어차피 128 lanes가 array 전체를 한 번 훑으니까요. **diffusion operator에서도 추가 비용이 들지 않습니다.** inversion about the mean $a_i \mapsto 2\bar a - a_i$ 는 어느 칸이 solution인지 아예 보지 않는 전역 연산이라, solution이 몇 개로 바뀌어도 circuit은 달라지지 않습니다.
+
+**그러나 iteration 제어에서는 해결할 문제가 있습니다.** 위 식에는 number of solutions가 들어 있는데 우리는 그 값을 모릅니다. 몇 번 돌릴지를 모르는 채로 시작해야 하고, 이 문제를 푸는 것이 [16장](16_iteration_control_and_checkpoints.md)의 BBHT shot loop입니다.
+
+**measurement에서도 설계를 다시 살펴봐야 합니다.** solution이 여럿이면 measurement circuit이 지금까지의 방식으로는 **작동하지 않습니다.** 왜 그런지 보려면 oracle이 무엇을 아는 circuit인지부터 다시 확인해야 합니다.
+
+---
+

@@ -1,0 +1,14 @@
+## 12.5 overflow policy — saturation·wraparound 금지·renormalization 없음
+
+12.3절에서 중간값만 넓게 잡고 되쓸 때 23 bits로 붙이기로 했습니다. 그러면 "붙인다"가 정확히 무엇인지 정해야 합니다.
+
+**wraparound는 금지입니다.** two's complement 산술에서 넘침을 방치하면 maximum 바로 위가 minimum이 됩니다 — $+0.99\ldots$ 에 조금 더하면 $-1$ 이 나옵니다. amplitude가 **sign까지 뒤집혀 정반대 값**이 되는 것입니다. Grover에서 sign은 장식이 아닙니다. oracle이 하는 일 전부가 sign 반전이고, diffusion operator는 sign이 뒤집힌 칸을 mean 위로 끌어올립니다(9장). 한 칸의 sign이 잘못 뒤집히면 그 칸은 다음 iteration부터 solution처럼 처리되고 오염된 값이 mean에 섞여 **모든 칸으로 번집니다.** 조용히 틀린 답을 내는 circuit이 되는 것이고, 이런 고장은 simulation에서도 찾아내기 어렵습니다.
+
+**그래서 symmetric saturation을 씁니다.** 25-bit 중간값이 $+4{,}194{,}303$ 을 넘으면 $+4{,}194{,}303$ 에, $-4{,}194{,}303$ 을 밑돌면 $-4{,}194{,}303$ 에 붙입니다. error는 남지만 sign과 크기 순서는 보존되고, 무엇보다 error가 그 칸에 **국소적으로** 머뭅니다. 비용은 comparator 하나와 mux 하나입니다. 아래쪽 끝을 $-4{,}194{,}304$ 가 아니라 $-4{,}194{,}303$ 으로 잡는 이유는 13.4절에서 보듯 **모든 합법 값의 sign 반전이 다시 합법 값**이 되게 하려는 것입니다.
+
+saturation이 한 번이라도 일어나면 `amp_overflow` bit가 서고, 다음 search가 시작될 때까지 내려가지 않습니다. saturation은 값을 상한에 붙일 뿐 아무 signal도 내지 않으므로, 이 bit가 없으면 saturation이 실제로 발동했는지 관측할 방법이 없습니다. 이 bit는 **진단용이고 결과 무효 표시가 아닙니다** — 12.3절의 benchmark대로 saturation이 기능 결과를 바꾼 경우는 없었고, 뽑힌 후보는 어차피 solution check를 통과해야 채택됩니다(16.4절).
+
+**norm renormalization은 하지 않습니다.** 매 iteration 끝에 $\sum_i \alpha_i^2$ 를 다시 1로 맞추는 것은 수치해석에서 흔한 처방이지만, 우리는 세 가지 이유로 하지 않습니다. 첫째, Grover iteration은 이론상 unitary라 norm이 보존되고 실제로 어긋나는 양은 rounding error 규모뿐입니다. 둘째, norm을 1로 되돌리려면 $1/\|a\|$ 를 곱해야 하는데 inverse square root와 multiplication이 들어옵니다 — 12.1절에서 확보한 "diffusion operator·oracle 경로에 0 multipliers"가 그 자리에서 무너집니다. 셋째, 애초에 필요가 없습니다. measurement가 Born-rule sampling이고, sampler는 amplitude square를 **전체 sum으로 나눈 상대 비율**만 쓰므로(14.4절) norm이 정확히 1이 아니어도 probability distribution은 제대로 정의됩니다.
+
+---
+

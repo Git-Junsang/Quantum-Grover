@@ -1,0 +1,31 @@
+## 15.6 인용 시 주의 — 논문의 오류와 모호점
+
+여섯 논문을 원문과 한 줄씩 대조한 결과, 전부에 인용할 때 주의해야 할 오류·모호점이 있었습니다. "논문은 옳다"고 믿고 베끼면 circuit이 동작하지 않거나 틀린 값을 인용하게 됩니다. 특히 ★ 표시는 **그대로 옮기면 결과가 틀어지는** 것들입니다.
+
+| 논문 | 오류·모호점 | 인용 시 대응 |
+|:-:|------|------|
+| 04 | ★ pseudocode 오타 다수: `>> NUM_STATE`(→`NUM_QUBIT`), `amp_state` index 누락, `i-1 << k` 괄호(operator 우선순위) | **그대로 짜면 동작 안 함** — 직접 고쳐서 |
+| 04 | ★ magic number 2개 LSB 어긋남: `0x2D41_3CCE`(→`…CCD`), `0x1_1C58_31AC`(→`…AE`) | 직접 계산해 넣을 것([13.2](13_oracle_diffusion_measurement_datapath.md#132-init--uniform-amplitude를-square-root-unit-없이)·[16.2](16_iteration_control_and_checkpoints.md#162-bbht--무작위로-뽑는-number-of-iterations와-12-growth-factor)) |
+| 04 | Table 1의 Pauli-$Y$ = $\begin{bmatrix}0&-i\\i&1\end{bmatrix}$ (→ 우하단 0) | [3장](03_single_qubit_gates.md)과 충돌 — 3장이 옳음 |
+| 04 | "2 qubits~6에서 error $2^{-12}$ 이하"가 Table 3과 모순 (2 qubits는 $2^{-4}$) | 본문 서술 인용 금지, Table 3 값 사용 |
+| 04 | "4 qubits $p=3$ → $\epsilon_r=0.4\%$"가 자기 식과 모순 (실제 0.024%; 0.4%는 $p=2$) | 이 수치 인용 금지 |
+| 04 | Table 6 단위 불명("clock cycles"인데 값이 10.21) | 비율(191×)만 유효, 절대값 인용 주의 |
+| 04 | Theorem 6 증명이 실제 algorithm(shift) 아닌 나눗셈 version을 증명 — 정리 형식이 장식적 | "정리+증명"을 근거로 신뢰하지 말 것 |
+| 05 | 12 qubits · 28 fraction bits의 $\ell_2$ 가 세 곳에서 다름 (7.49 / 7.492 / 7.493 ×$10^{-6}$) | reference model 목표값을 하나로 지정 후 재현 |
+| 05 | solution amplitude $\alpha_S\approx n_s^{-1}$ (→ $n_s^{-1/2}$ 로 보임) | solution이 여럿인 경우로 확장 시 직접 재유도 |
+| 05 | $r_{\text{num\_q}}$ 가 2.04→2.24로 drift하는데 설명 없음 | qubit가 더 많은 쪽으로 외삽 시 safety margin 주의 |
+| 06 | ★ 식 (6)에서 $l$ 과 $(i,j)$ 의 역할이 뒤바뀌어 인쇄 | §IV-B code가 정답지 |
+| 06 | 852× vs 854× (초록/서론 불일치), Fig.1 caption $\gamma\leftrightarrow\beta$ | 두 값 병기 |
+| 07 | 식 (21) `2n`을 `2^n`으로 오독하기 쉬움; `n_{d-1}`은 아래첨자(multiplication 아님) | 지수 아님에 주의 |
+| 07 | Fig. 8의 (b)·(c)가 caption과 뒤바뀌어 배치 | 그림·caption 대조 확인 |
+| 07 | "32 qubits가 memory 천장"은 논문에 없는 추정 | 논문 주장으로 인용 금지 |
+| 08 | **초록은 $\alpha\approx 1$, 본문은 $\alpha\approx 0.9$** | 반드시 병기 |
+| 08 | 식 (6) $\delta_{nn'}$ 이 원문엔 $\delta_{nn}$ 으로 인쇄 (논문 오타로 판단) | 주석 달고 인용 |
+| 09 | ★ 식 (9)(12)의 sign 규약이 본문과 어긋남 — 그대로면 **minimum 아닌 maximum** | sign은 우리가 정하고 simulation으로 verification([13.3](13_oracle_diffusion_measurement_datapath.md#133-oracle--predicate-4종이-subtractor-하나를-공유한다)) |
+| 09 | ★ Algorithm 2(DHA)에 sampling range 갱신 줄 누락 (BBHT에만 있음) | 본문 기준으로 sampling range 증가 직접 추가([16.2](16_iteration_control_and_checkpoints.md#162-bbht--무작위로-뽑는-number-of-iterations와-12-growth-factor)) |
+| 09 | $N$(사용자 수)과 $K=2^N$(search space) 혼동 위험 | [14.0절](14_multiple_solutions_and_minimum_search.md#140-기호-충돌-주의) 표기 통일 규약 적용 |
+
+이 목록에서 확인하듯 **1차 자료도 틀립니다** — 그러니 hardware로 옮기기 전에 반드시 원문을 의심하고, 수치는 직접 계산해 보고, sign은 simulation으로 확인하라는 것입니다. 예를 들어 04번의 pseudocode를 그대로 옮기면 circuit이 동작하지 않습니다.
+
+---
+

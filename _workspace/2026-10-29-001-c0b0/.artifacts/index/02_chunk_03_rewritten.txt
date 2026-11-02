@@ -1,0 +1,14 @@
+## 2. Deutsch의 질문 — 물리학이 계산을 결정한다
+
+Turing의 논증에는 미묘한 허점이 있었습니다. "사람이 종이에 하는 계산"이라는 비형식적 근거에 기대고 있었던 것이죠. 1985년 물리학자 **David Deutsch** 는 더 깊은 접근을 제안합니다.
+
+> 모든 algorithm은 결국 **어떤 물리적 system**에서 수행된다 — 사람이든, 주판이든, electronic circuit든. 그렇다면 **다른 모든 물리 system을 효율적으로 simulation할 수 있는 단 하나의 범용 계산 장치**가 존재하는가?
+
+이 질문이 중요한 이유는, 만약 그런 장치가 있다면 물리 법칙 자체로 그것이 진정한 universal computer임을 증명할 수 있기 때문입니다. 그런데 Deutsch가 이 질문을 파고들자 문제가 드러났습니다: **평범한 (고전) computer는 quantum mechanical system을 simulation하는 데 극도로 느리고 비효율적**이었습니다.
+
+이 문제를 풀기 위해 Deutsch는 새로운 종류의 계산 장치, 곧 **quantum computer** 를 고안해야 했습니다. quantum computer는 classical computer가 하는 모든 것을 할 수 있으면서, quantum mechanical process도 효율적으로 simulation합니다.
+
+💡 **비유**: classical computer로 quantum 세계를 simulation하는 것은, 물속 세계를 육지의 규칙만으로 설명하려는 것과 같습니다. 억지로는 되지만 터무니없이 느립니다. quantum computer는 아예 물속에서 헤엄치는 장치입니다.
+
+---
+

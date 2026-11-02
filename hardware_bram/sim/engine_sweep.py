@@ -65,6 +65,10 @@ COLOR_RANGE = (3_000_000, 15_000_000)
 # heatmap 에 파란 박스로 표시하는 경계 후보 (iteration engines, square engines). 실험 38 다음 단계에서
 # 이 다섯 칸마다 Checkpoint-Capacity / Lookahead-Shots 100칸을 100 workloads 로 잽니다(checkpoint_sweep.py).
 BOUNDARY_CANDIDATES = ((9, 7), (8, 8), (10, 4), (9, 6), (8, 9))
+# synthesis 로 경계가 내려온 뒤 같은 sweep 에 더한 후보(자홍 박스).
+ADDED_CANDIDATES = ((8, 4), (8, 3), (7, 4), (6, 4))
+# synthesis 경계 모드에서 그리는 policy 조합 (Checkpoint-Capacity, Lookahead-Shots) 과 선 모양.
+POLICY_LINES = (((3, 3), "-", 2.6), ((6, 8), "--", 2.2))
 COMMON500_ITERATIONS = 31424
 COMMON500_MEASUREMENTS = 7403
 PER_M = 4
@@ -330,7 +334,13 @@ def outline(ax, mask, **style):
                     ax.plot(xs, ys, **style)
 
 
-def plot(base):
+def plot(base, boundary=None):
+    """Normal mode heatmap.
+
+    boundary 없이 부르면 실험 38 의 대략 판정(feasibility.csv) 경계를 그립니다. synth_calibration.py 의
+    calibrated_feasibility.csv 를 주면 범용 RTL OOC synthesis 로 다시 정한 경계를 지원 범위(iteration
+    engines 1~10, square engines 1~9) 안에서 그립니다. 칸의 cycle 값은 두 경우 모두 같습니다.
+    """
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -362,6 +372,9 @@ def plot(base):
             "common500_normal_predicted"], restval="", lineterminator="\n")
         writer.writeheader()
         writer.writerows(summary)
+    if boundary is not None:
+        plot_synthesis_boundary(base, grid, boundary, plt)
+        return
 
     fig, ax = plt.subplots(figsize=(11, 14))
     # 빨강(빠름) = 300만 cycle, 보라(느림) = 1,500만 cycle. 그보다 느린 칸(iteration engines 1~2)은
@@ -424,9 +437,101 @@ def plot(base):
     fig.savefig(base / "normal_mode_heatmap.svg")
 
 
+def outline_inset(ax, mask, inset, **style):
+    """outline 과 같지만 경계를 칸 안쪽으로 inset 만큼 들여 그려, 여러 경계가 겹쳐도 각각 보이게 합니다."""
+    rows, cols = mask.shape
+    for y in range(rows):
+        for x in range(cols):
+            if not mask[y, x]:
+                continue
+            lo_x, hi_x, lo_y, hi_y = x - .5, x + .5, y - .5, y + .5
+            edges = {(1, 0): ((lo_x, hi_x), (hi_y - inset, hi_y - inset)),
+                     (-1, 0): ((lo_x, hi_x), (lo_y + inset, lo_y + inset)),
+                     (0, 1): ((hi_x - inset, hi_x - inset), (lo_y, hi_y)),
+                     (0, -1): ((lo_x + inset, lo_x + inset), (lo_y, hi_y))}
+            for (dy, dx), (xs, ys) in edges.items():
+                ny, nx = y + dy, x + dx
+                if not (0 <= ny < rows and 0 <= nx < cols) or not mask[ny, nx]:
+                    ax.plot(xs, ys, **style)
+
+
+def plot_synthesis_boundary(base, grid, boundary, plt):
+    from matplotlib.colors import Normalize
+    rows = {(int(r["e"]), int(r["m"]), int(r["k"]), int(r["h"])): r for r in csv.DictReader(Path(boundary).open())}
+    e_max = max(key[0] for key in rows)
+    m_max = max(key[1] for key in rows)
+    sub = grid[:e_max, :m_max]
+    shape = sub.shape
+    best_path = Path(boundary).with_name("calibrated_best.csv")
+    best = {(int(r["e"]), int(r["m"])): r for r in csv.DictReader(best_path.open())} if best_path.exists() else {}
+    fig, ax = plt.subplots(figsize=(12, 11))
+    cmap = plt.get_cmap("rainbow_r").copy()
+    norm = Normalize(vmin=COLOR_RANGE[0] / 1e6, vmax=COLOR_RANGE[1] / 1e6, clip=True)
+    image = ax.imshow(np.ma.masked_invalid(sub / 1e6), origin="lower", cmap=cmap, norm=norm, aspect="auto")
+    fits = {}
+    for (k, h), _, _ in POLICY_LINES:
+        fits[(k, h)] = np.zeros(shape, bool)
+        for e in range(1, e_max + 1):
+            for m in range(1, m_max + 1):
+                fits[(k, h)][e - 1, m - 1] = rows[(e, m, k, h)]["feasible"] == "True"
+    base_kh = POLICY_LINES[0][0]
+    for e in range(1, e_max + 1):
+        for m in range(1, m_max + 1):
+            y, x = e - 1, m - 1
+            r = rows[(e, m, *base_kh)]
+            if not fits[base_kh][y, x]:
+                ax.add_patch(plt.Rectangle((x - .5, y - .5), 1, 1, facecolor="white", alpha=0.55,
+                                           hatch="///", edgecolor="0.55", lw=0))
+            # 첫 줄: Common500 Normal cycle(백만). 둘째 줄: 3/3 policy 에서의 LUT 사용률(SoC 포함) 또는
+            # 넘친 자원. * 는 그 iteration engines / square engines 를 synthesis 로 잰 칸입니다.
+            label = f"{sub[y, x] / 1e6:.2f}" if np.isfinite(sub[y, x]) else "-"
+            mark = "*" if r["engine_source"] == "measured" else ""
+            label += f"\n{r['lut_percent']}%{mark}" if fits[base_kh][y, x] else f"\n{r['over']}{mark}"
+            if fits[base_kh][y, x] and (e, m) in best and best[(e, m)]["best_k"]:
+                label += f"\nbest {best[(e, m)]['best_k']}/{best[(e, m)]['best_h']}"
+            red, green, blue, _ = cmap(norm(sub[y, x] / 1e6)) if np.isfinite(sub[y, x]) else (1, 1, 1, 1)
+            dark = 0.299 * red + 0.587 * green + 0.114 * blue < 0.5 and fits[base_kh][y, x]
+            ax.text(x, y, label, ha="center", va="center", fontsize=7, color="white" if dark else "black")
+    for index, ((k, h), style, width) in enumerate(POLICY_LINES):
+        outline_inset(ax, fits[(k, h)], 0.07 * index, color="black", lw=width, ls=style)
+    masked = np.where(fits[base_kh], sub, np.nan)
+    if np.isfinite(masked).any():
+        y, x = np.unravel_index(np.nanargmin(masked), shape)
+        ax.add_patch(plt.Rectangle((x - .5, y - .5), 1, 1, fill=False, ec="orange", lw=2.8))
+    for group, color in ((BOUNDARY_CANDIDATES, "blue"), (ADDED_CANDIDATES, "magenta")):
+        for e, m in group:
+            if e <= e_max and m <= m_max:
+                ax.add_patch(plt.Rectangle((m - 1 - .36, e - 1 - .36), .72, .72, fill=False, ec=color, lw=1.8))
+    ax.set_xticks(range(shape[1]), list(range(1, m_max + 1)))
+    ax.set_yticks(range(shape[0]), list(range(1, e_max + 1)))
+    ax.set_xlabel("square engines")
+    ax.set_ylabel("iteration engines")
+    names = ";  ".join(f"{'solid' if s == '-' else 'dashed'}: fits with checkpoint capacity {k} / lookahead shots {h}"
+                       for (k, h), s, _ in POLICY_LINES)
+    ax.set_title("NORMAL (RESTART) MODE compute cycles, Common500 (millions); not Checkpoint mode totals\n"
+                 "200T boundary from OOC synthesis of the generalized RTL (LUT / FF 75%, BRAM / DSP 90%, SoC "
+                 "included, timing excluded)\n"
+                 f"{names}\n"
+                 "line 2: LUT use at capacity / lookahead 3 / 3, or the resource over limit "
+                 "(* = this engine point synthesized; others built from synthesized blocks)\n"
+                 "line 3: best capacity / lookahead among the synthesized policy points that still fits "
+                 "(ranked by 100-workload total cycles)\n"
+                 "hatched: over even at 3 / 3;  orange box: fewest cycles inside the solid line;  "
+                 "blue / magenta box: sweep candidates (first five / added four)",
+                 fontsize=8.5)
+    from matplotlib.ticker import FuncFormatter
+    bar = fig.colorbar(image, ax=ax, label="RTL cycles (millions)", shrink=0.6, extend="max")
+    bar.ax.yaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}"))
+    fig.tight_layout()
+    fig.savefig(base / "normal_mode_heatmap.png", dpi=150)
+    fig.savefig(base / "normal_mode_heatmap.svg")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("stage", choices=["synth", "model", "sim", "plot"])
+    parser.add_argument("--boundary", type=Path,
+                        help="plot: synth_calibration.py calibrated_feasibility.csv (synthesis boundary mode)")
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--point", action="append", default=[],
                         help="synth: e,m (Checkpoint-Capacity / Lookahead-Shots 1/1) or k,h,e,m")
@@ -445,7 +550,7 @@ def main():
     elif args.stage == "sim":
         sim(base, args.workers)
     else:
-        plot(base)
+        plot(base, args.boundary)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,24 @@
+{
+  "observation": "User-requested query at the beginning of this integration task",
+  "platform": "bbht_grover_k3h3_e4_m2_rankfix_20261028",
+  "reported_stage": "implementation",
+  "attempt": 1,
+  "strategy": "explore",
+  "stage_started_utc": "2026-10-28T12:44:00.677836+00:00",
+  "status_cli": "running",
+  "same_source_soc_checks": 90,
+  "same_source_soc_errors": 0,
+  "same_source_soc_warnings": 0,
+  "implementation_or_board_completion_queried_again": true,
+  "note": "This records that observation, not a newly polled terminal status.",
+  "second_user_requested_observation": {
+    "reported_stage": "failed",
+    "failed_stage": "synthesis before place-and-route",
+    "attempts": 3,
+    "vivado_log_marker": "Killed",
+    "route_timing_available": false,
+    "bitstream_available": false,
+    "fourth_attempt_submission_receipt": "hardware_bram/results/2026-10-28_policy_rank_timing/retry_low_memory_background_pid.json",
+    "fourth_attempt_completion_polled": false
+  }
+}

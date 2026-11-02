@@ -1,0 +1,26 @@
+## 18.8 잰 수치와 그 조건
+
+초판의 이 절은 "다시 재야 하는 수치"의 목록이었습니다. 이제 그 수치들을 쟀고, 무엇을 어떤 조건에서 쟀는지 표로 정리합니다. 값의 source of truth는 [15.4절](15_paper_map_and_design_decisions.md#154-우리-project의-좌표--확정-설계-결정표)입니다.
+
+| 수치 | 값 | benchmark 조건 | 상세 |
+|---|---|---|:-:|
+| fraction bits 충분성 | 모든 실행에서 amplitude·probability·success probability·norm error $< 10^{-3}$. 14 qubits는 22 fraction bits에서 probability $\ell_2 \le 10^{-5}$ | 같은 arithmetic(14 qubits · Q1.22)의 reference model 671,600회 campaign과 precision 분석 | [12.7](12_fixed_point_and_precision.md#127-몇-bit면-되나--minimum-fraction-bits-공식과-그-전제) |
+| saturation | BBHT 1,000회당 2.67번, 기능 결과 불일치 0 | 같은 campaign | [12.3](12_fixed_point_and_precision.md#123-integer-bits는-몇-bit인가--재는-대상이-셋이다) |
+| mean shot count | 22.7 (median 23) | 1 solution, 500 workloads RTL campaign 중 100개 | [16.3](16_iteration_control_and_checkpoints.md#163-shot-통계--mean이-20-shots를-넘는-이유) |
+| executed iterations | 31,424 → 9,582 (−69.5%) | 500 workloads, Restart mode → a Checkpoint-Capacity of 3 and 3-shot Lookahead | [16.5](16_iteration_control_and_checkpoints.md#165-checkpoint--measurement가-읽기-전용이라는-사실에서) |
+| RTL cycle | 42,308,335 → 6,890,470 (6.1401×) | 같은 500 workloads, Six-Stage Ablation | [15.5](15_paper_map_and_design_decisions.md#155-확정-platform과-resource-예산) |
+| board wall-clock time | 425,502 µs → 55,798 µs (7.626×) | 같은 500 workloads, search 호출 interval만 | [15.5](15_paper_map_and_design_decisions.md#155-확정-platform과-resource-예산) |
+| 같은 board 순수 software 대비 | 116,426× (wall-clock time) | 같은 chip·같은 workload·같은 seed, RISC-V core 하나. 32 lanes 병렬과 clock 두 배 때문이지 algorithm 우위가 아님 | [15.5](15_paper_map_and_design_decisions.md#155-확정-platform과-resource-예산) |
+| resource · timing | LUT 45,284 · BRAM 116 · DSP 132, 100 MHz WNS +0.126 ns | 2026-09-07 implementation report (board 전체) | [15.5](15_paper_map_and_design_decisions.md#155-확정-platform과-resource-예산) |
+| reference model ↔ board | BBHT trajectory 500/500, executed iterations 500/500 | Common500 비교 | [18.2](#182-3단-verification-ladder) |
+
+아직 재지 않은 것도 적어 둡니다. software reference model은 cycle을 흉내 내지 않습니다 — policy가 결정을 내리는 latency, Plan Queue stall, 4 PEs와 Measurement Microarchitecture의 timing은 hardware의 몫이라, cycle은 언제나 RTL이나 board에서 인용합니다. iteration마다의 amplitude를 DRAM에 저장하는 두 번째 variant(DRAM Variant)는 동작 model 위의 RTL regression까지만 있고 board 수치가 없습니다.
+
+**비교 실험의 공정성 기준**도 여기서 정합니다. 비교 대상은 **Qiskit AerSimulator와 NumPy state vector simulator**, 그리고 같은 board의 순수 software baseline입니다. classical linear scan과는 비교하지 않습니다 — emulation 비용이 $O(\text{number of states}\sqrt{\text{number of states}/\text{number of solutions}})$ 이라 $O(\text{number of states})$ scan보다 느린 것이 당연하고, algorithm의 $\sqrt{\text{number of states}}$ 이득은 실제 quantum computer의 이야기입니다. 이 비교로 보이려는 것은 속도 우위가 아니라, **같은 algorithm을 같은 순서로 돌렸을 때 전용 hardware가 어느 지점에서 이득을 내는가**입니다.
+
+같게 두어야 할 것은 다음과 같습니다. number of qubits, data array(같은 seed로 생성한 같은 `value[]`), predicate와 threshold, random number seed, 그리고 **BBHT schedule 전체** — 같은 growth factor, 같은 sampling range 수열, 같은 Iteration-Count LFSR random number. shot마다 뽑히는 iteration이 다르면 전체 iteration이 달라지고, 그러면 무엇을 비교한 것인지 알 수 없게 됩니다. 성공 판정도 같은 기준(solution check 한 칸)으로 통일합니다. Common500 비교 실험이 정확히 이 조건으로, board와 같은 다섯 dataset과 seed 100쌍에 NumPy·Qiskit·fixed-point model을 걸었습니다.
+
+재는 것은 둘로 나눕니다. **wall-clock time**은 무엇을 포함했는지를 반드시 밝힙니다. NumPy는 state vector 계산 core만, Qiskit은 Aer 실행만, board는 명령 발행부터 결과까지를 쟀습니다. 예를 들어 1 solution의 median이 NumPy 약 9 ms, Qiskit Aer 약 1.8 s, board의 final configuration 약 0.21 ms였는데, 경계가 서로 달라 이 비율은 참고값입니다. 성능 주장에 쓰는 것은 같은 경계 안의 비교 — board configuration끼리의 speedup — 입니다. 그리고 마지막으로 밝혀 둘 것 — Aer는 double-precision complex number로 amplitude 하나에 16 bytes를 쓰고 우리는 23-bit real number를 씁니다. **같은 수 표현으로 같은 문제를 푸는 것이 아닙니다.** 그러므로 정확도를 나란히 놓고 우열을 논하지 말고, "같은 algorithm·같은 shot sequence를 도는 데 걸리는 시간"만 비교하십시오.
+
+---
+

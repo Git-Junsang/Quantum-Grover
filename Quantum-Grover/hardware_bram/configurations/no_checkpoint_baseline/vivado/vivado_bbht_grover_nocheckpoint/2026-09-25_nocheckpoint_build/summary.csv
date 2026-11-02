@@ -1,0 +1,2 @@
+platform,device,vivado,clock_MHz,WNS,TNS,WHS,THS,WPWS,TPWS,LUT,FF,BRAM_tile,DSP,Slices,power_W
+Full-RVX Normal-E4 (no checkpoint; M1/M2 off),xc7a100tcsg324-1,2026.1,100,0.193,0.000,0.012,0.000,3.000,0.000,38133,38634,111,68,14342,0.624

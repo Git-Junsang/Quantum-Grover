@@ -1,0 +1,14 @@
+# 15장. 논문 지도와 설계 결정표
+
+> [← 14장 multiple solutions — Born-rule sampling과 enumeration](14_multiple_solutions_and_minimum_search.md) · [index](index.md) · [16장 몇 번 돌릴지 모를 때 — BBHT shot loop와 checkpoint →](16_iteration_control_and_checkpoints.md)
+> **이 장을 읽기 위한 준비**: [11장 state vector emulator](11_state_vector_emulator.md) · [12장 fixed-point와 Q1.22](12_fixed_point_and_precision.md) · [13장 oracle과 diffusion operator](13_oracle_diffusion_measurement_datapath.md) · [14장 multiple solutions](14_multiple_solutions_and_minimum_search.md).
+> **성격**: 참조용(Part 7). 여섯 논문의 관계를 지도로 펼치고, **확정된 설계값을 한 표에 모읍니다.** 10장이 1~9장(quantum 이론)의 cheat sheet라면, 이 장은 hardware 쪽의 cheat sheet입니다.
+
+---
+
+이 장은 앞 장들에서 배운 내용을 **지도 한 장과 표 몇 개**로 압축한 참조 자료입니다. 논문을 다시 읽으러 갈 때, 설계 결정을 되짚을 때, 그리고 무엇보다 — 논문을 **인용하기 전에** 펼쳐 보세요. [15.6절](#156-인용-시-주의--논문의-오류와-모호점)이 "1차 자료도 틀린다"는 것을 실물 목록으로 보여줍니다.
+
+이 장의 숫자는 board에서 검증된 **final configuration**(Board-Verified Build: 2026-09-07 build, 2026-09-08 benchmark)을 따릅니다. 해설서 초판은 2026-08-15 에 설계를 한 번 확정했지만, 그 뒤 RTL을 실제로 짓고 board에 올리면서 number of qubits·amplitude 형식·checkpoint 구조가 바뀌었습니다. [15.4절](#154-우리-project의-좌표--확정-설계-결정표)이 그 최종값의 해설서 안 **단일 출처(source of truth)** 이고, 해설서 어느 장에 같은 숫자가 적혀 있든 어긋나면 15.4절을 기준으로 합니다. 해설서 바깥까지 포함한 저장소 전체의 기준은 board build 그 자체이고, 이 표는 그것을 해설서의 언어로 옮긴 것입니다.
+
+---
+

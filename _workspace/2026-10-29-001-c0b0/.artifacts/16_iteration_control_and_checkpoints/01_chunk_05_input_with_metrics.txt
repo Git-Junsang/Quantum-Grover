@@ -1,0 +1,79 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 5/12이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 윤문 진단
+
+## 장르·레지스터
+- 학부생용 quantum algorithm·FPGA 해설서(report), 친근한 합쇼체 중심이며 독자에게 말을 거는 해요체가 일부 섞인 기존 학습서 말투입니다. 격식을 올리거나 설명을 학술 논문체로 바꾸지 않습니다.
+- 제목·절 번호·목록·표·수식·code·link·기존 콜아웃 및 이모지 형식은 보존합니다. 한국어 서술만 국소적으로 다듬습니다.
+- 영어 용어·영어 토큰은 번역, 교체, 삭제, 추가하지 않습니다. SSOT는 documents/design_references/22_appendix_glossary_and_retired_specs.md §22.2와 기존 glossary입니다.
+- 사실·수치·조건·부정·인과·추측/당위·인용을 보존합니다. 원문의 기술 주장을 새 해설이나 사실 교정으로 확장하지 않습니다.
+
+## 정량 앵커
+- 26,357자, risk_band low, route_hint heavy(길이 기준). A-7 have_make_literal_count=1, A-19 double_particle_count=1, A-18 relative_clause_nesting=7. conclusion_pivot_count=2(그러므로), lexical_diversity=0.52(z=-2.54). 전문용어 반복을 줄이기 위해 영어를 바꾸지 않습니다. ending_comma_rate=0.47.
+## 지배 패턴과 겨냥 순서
+1. D-14·D-5: “여러 번 던져야”, “datapath가 통째로 무너집니다”, “남는 장사가 아닙니다”, “array를 훔쳐보는 반칙”, “Grover처럼 생긴 무언가”, “승부가 나기 시작”, “하드웨어가 쥡니다”, “state를 떨궈 두는”, “반드시 새는 곳” 등 일상 비유·의인화가 알고리즘·설계 설명을 덮습니다. 영어 표현은 두고 한국어 설명을 구체적으로 정돈하는 것이 우선입니다.
+2. D-8·I-2: “정직하게 짚고 갈 것이 하나”, “답은 … 모양에”, “이제 이 장의 본론”, “이 절이 이 장에서 가장 중요” 등 설명의 중요도를 선언하는 문장이 반복됩니다. 실제 주장과 조건을 유지하면서 군더더기를 덜어낼 후보입니다.
+3. A-18·C-11: 16.1의 QPE 도입 비용, 16.2의 BBHT 보장, 16.5의 policy 선택, 16.6의 재현성 논증에 조건과 후속 결과가 긴 문장으로 연결됩니다. causal order와 독립성·bit-exact 조건을 보존하며 한국어 연결을 다듬습니다.
+4. C-8·J-2: “속도가 아니라 충실도”, “저장 공간이 아니라 결정 비용”, “algorithm 지표가 아니라 emulation 시간”처럼 대조가 반복됩니다. 지표의 실질적 차이를 지우지 말고 가상 인용·감정적 평가 표현을 우선 정돈합니다.
+5. A-7·A-19: “checkpoint slot을 들고 있다”, “number of iterations마다의 amplitude” 같은 표현은 한국어 동사·조사 손질 후보입니다. ‘각 checkpoint slot에 값이 저장됨’ 같은 본래 뜻을 넘어서 새로운 동작을 추가하지 않습니다.
+6. F-1·D-2: “영원히”, “반드시”, “가장 극적인”, “거짓말” 등 강한 평가어가 많이 나옵니다. 요구 조건이나 명제의 강도를 바꾸지 않도록 감상적 수식만 검토합니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 2661
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.24  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.72  (z=-0.10 vs report 인간 baseline)
+- ending_comma_rate: 0.60  (n/a vs report 인간 baseline)
+- comma_segment_length: 9.56  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.000  (z=-2.00 vs report 인간 baseline)
+- lexical_diversity: 0.69  (z=+0.85 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 0
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 16.3 shot 통계 — mean이 20 shots를 넘는 이유
+
+"한 shot success probability가 $1/4$ 이상이니 mean 네 번쯤 던지면 되겠네"는 이 장에서 가장 흔한 오해입니다. 실제 수치는 이렇습니다. board benchmark와 같은 500 workloads(1 · 4 · 16 · 64 · 256 solutions마다 100 seeds)를 RTL simulation으로 돌린 Six-Stage Ablation campaign의 mean입니다(값의 source of truth는 [15.4절](15_paper_map_and_design_decisions.md#154-우리-project의-좌표--확정-설계-결정표)).
+
+| number of solutions | mean shots | requested iterations | executed iterations (Restart mode) | executed iterations (a Checkpoint-Capacity of 3 and 3-shot Lookahead) | 줄어든 몫 | mean cycles (Stage 1 → final configuration) |
+|:-:|--:|--:|--:|--:|--:|--:|
+| 1 | **22.7** | 173.5 | 173.5 | 51.9 | 70% | 209,277 → 25,345 |
+| 4 | 18.5 | 78.9 | 78.9 | 23.9 | 70% | 106,128 → 16,368 |
+| 16 | 15.1 | 40.0 | 40.0 | 12.1 | 70% | 61,458 → 11,993 |
+| 64 | 10.6 | 15.9 | 15.9 | 5.5 | 65% | 30,498 → 8,590 |
+| 256 | 7.2 | 6.0 | 6.0 | 2.5 | 59% | 15,723 → 6,610 |
+
+여기서 executed iterations는 datapath가 실제로 돈 Grover iteration의 개수입니다. 매 shot 처음부터 도는 Restart mode에서는 requested iterations와 같고, checkpoint를 쓰면 줄어듭니다(16.5절). number of shots와 requested iterations는 두 mode에서 같습니다 — 같은 seed면 같은 number of iterations 수열을 요청하기 때문입니다(16.6절).
+
+mean이 22.7 shots까지 올라가는 이유는 sampling range의 성장 곡선에 있습니다. sampling range는 1에서 출발해 1.2×씩 커지므로 처음 열 shot쯤은 아주 좁습니다 — 16.2절의 ROM 수열 그대로 $1, 2, 2, 2, 3, 3, 3, 4, 5, 6, \dots$ 입니다. 그 동안 number of iterations는 0에서 5 사이에서만 뽑히는데, 위 표에서 10 iterations일 때조차 success probability가 2.7%였습니다. 즉 **초반 shot은 거의 전부 실패하도록 설계되어 있습니다.** 승부가 나기 시작하는 것은 number of iterations가 75~100 근처(success probability 85~100%)에 닿을 만큼 sampling range가 커진 뒤이고, ROM 수열에서 그 자리가 스물다섯 번째 항 안팎입니다. 관측된 mean 22.7 shots(median 23)이 정확히 그 지점입니다.
+
+BBHT의 "$1/4$ 이상" 보장은 **sampling range가 충분히 커진 뒤의 lower bound**이지 첫 shot부터 성립하는 값이 아니라는 것 — 이 구분이 4~5 shots와 22.7 shots를 가릅니다.
+
+이 사실이 곧바로 **measurement를 싸게 만들어야 하는 동기**가 됩니다. shot이 22.7번이면 measurement도 22.7번이니까요. 1 solution에서 final configuration의 mean 25,345 cycles을 11.8절의 직선으로 쪼개 보면, executed iterations가 $51.9 \times 268 \approx 13{,}900$ cycles, shot마다의 measurement·verification이 $22.7 \times 354 \approx 8{,}000$ cycles, 나머지 고정비가 3,400 cycles 남짓입니다. checkpoint가 iteration을 70% 줄이고 나니 measurement가 전체의 3분의 1을 차지하게 된 것이고, 그래서 Measurement Unit을 줄인 Dual-Row Build와 Two-Level Select가 총 cycle을 각각 18% 넘게 더 벌었습니다(14.5절). **checkpoint와 measurement 최적화는 따로 고를 수 있는 option이 아니라 한 쌍입니다** — 한쪽을 줄이면 다른 쪽이 병목으로 드러납니다.
+
+shot이 끝없이 이어지지 않도록 보호 한도가 둘 있습니다. number of shots가 shot cap(`SHOT_CAP`, 기본 100)에 닿거나, 실패한 shot 뒤에 $1 + \text{requested iterations}$ 가 **BBHT budget 576**에 닿으면 search를 끝내고 각각 `shot_limit` · `budget_limit` status bit를 세웁니다. solution이 하나도 없는 search는 이 둘 중 하나로 끝납니다.
+
+---
+[원문 끝]

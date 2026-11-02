@@ -1,0 +1,112 @@
+{
+  "edits": [
+    {
+      "rule": "D-14",
+      "before": "이제 algorithm의 세계로 들어갑니다.",
+      "after": "이제 algorithm을 살펴봅니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "함숫값을 amplitude의 **sign**으로 바꿔치기하는 마법입니다.",
+      "after": "함숫값을 amplitude의 **sign**에 반영하는 방법입니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "를 떠받치는 기둥입니다.",
+      "after": "를 이해하는 바탕입니다."
+    },
+    {
+      "rule": "D-2",
+      "before": "는 말이 완전히 명확해집니다.",
+      "after": "는 말의 의미를 알 수 있습니다."
+    },
+    {
+      "rule": "D-8",
+      "before": "핵심은 우리가 function **내부 동작은 모른다**는 것입니다.",
+      "after": "우리는 function의 **내부 동작은 모른다**고 가정합니다."
+    },
+    {
+      "rule": "D-8",
+      "before": "이제 문제는 이 sign이 **measurement만으로는 드러나지 않는다**는 것입니다.",
+      "after": "다만 이 sign은 **measurement만으로는 드러나지 않습니다.**"
+    },
+    {
+      "rule": "D-14",
+      "before": "표식은 붙었으되 그냥 measurement만 해서는 아직 보이지 않는 것이죠.",
+      "after": "표식이 붙어도 measurement 결과에는 아직 차이가 없는 것이죠."
+    },
+    {
+      "rule": "D-8",
+      "before": "가장 중요한 부분입니다. oracle을",
+      "after": "oracle을"
+    },
+    {
+      "rule": "D-14",
+      "before": "로 두면, 마법처럼 **형태 B(phase oracle)** 가 튀어나옵니다.",
+      "after": "로 두면 **형태 B(phase oracle)** 와 같은 동작을 얻습니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "출력 qubit에서 일어나야 할 변화가 입력 qubit의 phase로 되차인 것입니다.",
+      "after": "출력 qubit에 가하는 연산의 효과가 입력 qubit의 phase 변화로 나타난 것입니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "곁다리(constant)로 남으므로,",
+      "after": "변하지 않은 상태(constant)로 남으므로"
+    },
+    {
+      "rule": "D-14",
+      "before": "관찰 하나를 미리 챙겨 두면 나중에 크게 씁니다.",
+      "after": "성질 하나를 미리 살펴두겠습니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "어느 항도 특별대우를 받지 않고",
+      "after": "어느 항도 따로 구별하지 않고"
+    },
+    {
+      "rule": "D-14",
+      "before": "solution이 여럿일 때 무너지는 뿌리가 바로 이 대칭성입니다.",
+      "after": "solution이 여럿일 때 실패하는 이유가 바로 이 대칭성입니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "이와 쌍둥이인",
+      "after": "이와 짝을 이루는"
+    },
+    {
+      "rule": "D-14",
+      "before": "이것은 **판정 function",
+      "after": "이는 **판정 function"
+    },
+    {
+      "rule": "D-14",
+      "before": "대상은 미리 못 박아 둔 solution index가 아니라",
+      "after": "대상은 미리 정해 둔 solution index가 아니라"
+    },
+    {
+      "rule": "D-14",
+      "before": "대신 대가도 이 장의 정의에서 그대로 따라옵니다 —",
+      "after": "이 장의 정의에 따른 제약도 있습니다 —"
+    },
+    {
+      "rule": "D-14",
+      "before": "쌍둥이 diffusion operator와 함께",
+      "after": "diffusion operator와 짝을 이루어"
+    },
+    {
+      "rule": "D-14",
+      "before": "가 어떻게 협력해 classical computer를 압도하는지, 완전한 계산으로 확인합니다.",
+      "after": "를 이용하면 classical computer보다 적은 질의로 답을 얻는 과정을 전체 계산으로 확인합니다."
+    }
+  ],
+  "self_check": {
+    "fidelity": true,
+    "conservative": true,
+    "genre": true,
+    "register": true,
+    "targeted_patterns_reviewed": true,
+    "no_new_metaphors_or_claims": true
+  }
+}

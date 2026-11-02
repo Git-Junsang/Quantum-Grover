@@ -1,0 +1,35 @@
+## 11.4 amplitude를 어디에 둘 것인가
+
+FPGA에는 숫자를 저장할 곳이 여러 종류이고, 어느 곳을 고르느냐가 다룰 수 있는 qubit 수를 결정합니다. 여섯 논문과 우리 설계는 세 가지 저장 방식을 씁니다.
+
+<img src="diagrams/11_storage_tradeoff.svg" width="640" alt="state vector 저장 방식의 세 storage layer: register / BRAM / 외부 DDR">
+
+| 저장 위치 | 누가 | 접근 방식 | number of qubits |
+|---|---|---|:---:|
+| **register array**(FF/LUT) | 04, 06 | 모든 amplitude를 온칩 register에 — 한 cycle에 전부 병렬 접근 | **6** (04, Kintex) · **8~9** (06) |
+| **온칩 BRAM** | **우리 IP** | 32칸짜리 row 단위로 저장하고 매 cycle 4 rows(128칸)씩 순차 streaming | **14** |
+| **외부 DDR memory** | 07 | board에 붙은 대용량 DRAM에 — 순차 streaming | **32** |
+
+세 방식의 차이는 **속도와 용량의 맞바꿈**입니다. register는 가장 빨라서(모든 칸을 같은 cycle에 읽고 씀) 연산을 극단적으로 병렬화할 수 있지만, FPGA에 register는 적으므로 금방 바닥납니다. 외부 DDR은 수 GB로 방대하지만 한 번에 몇 data word씩만 읽어 와야 해서 순차 처리를 강요합니다. 07번 논문이 32 qubits라는 압도적 규모를 달성한 것은 순전히 **외부 DDR4를 썼기 때문**입니다(16GB DIMM × 4). 04·06이 한 자릿수 qubit에 머문 것은 반대로 **전부 온칩 register에 저장했기 때문**이고요.
+
+우리는 가운데를 골랐습니다. 이 선택의 이유를 먼저 살펴보겠습니다. **board에서 검증된 우리 IP에는 외부 DDR이 등장하지 않습니다.** 첫째, 14 qubits라면 세 array가 checkpoint slot까지 포함해 온칩에 전부 들어갑니다 — 용량이 충분하므로 외부에 둘 필요가 없고, DRAM controller와 그 latency를 감출 buffer 구조는 통째로 순수한 추가 비용입니다. 둘째, 그리고 이쪽이 더 결정적인데, 우리는 amplitude만이 아니라 **data array까지** 온칩에 둬야 합니다. oracle이 한 cycle에 128칸을 판정하려면 `value[i]` 128개가 amplitude 128칸과 **같은 cycle에** 나와야 하기 때문입니다. 외부 DRAM 한 channel로는 그런 접근을 줄 수 없습니다. (저장소에는 iteration마다 amplitude를 DRAM에 전량 저장하는 두 번째 variant인 DRAM Variant(`hardware_dram`)가 초안으로 있지만, 거기서도 계산 자체는 BRAM 위에서 하고 DRAM은 amplitude 보관 창고로만 씁니다. Board-Verified Build는 이 장이 다루는 BRAM Variant입니다.)
+
+그 대가로 우리는 용량 예산을 빡빡하게 씁니다. 2026-09-07 implementation report에서 잰 실제 사용량은 이렇습니다(값의 source of truth는 [15.4절](15_paper_map_and_design_decisions.md#154-우리-project의-좌표--확정-설계-결정표)):
+
+| block | 구성 | BRAM |
+|---|---|--:|
+| amplitude · checkpoint memory | state 한 벌 = 512 rows × 736-bit = RAMB36 11개. row phase 4 banks에 checkpoint slot 4벌 | RAMB36 44 |
+| `data_mem` | 4 rows 동시 읽기용 | RAMB18 64 (= 32 tile) |
+| `found_mask` | 16,384 × 1-bit, 4 rows 동시 | RAMB36 2 |
+| measurement용 row-weight memory | 512 × 51-bit | RAMB36 2 |
+| checkpoint policy memo table | 16장의 policy 표 | RAMB36 4 |
+| **Accelerator Core 계** | | **84 tile** |
+| RVX SoC | system SRAM 128 KB 가 대부분 | 32 tile |
+| **board 전체** | | **116 / 135** |
+
+board는 Arty A7-100T(`xc7a100tcsg324-1`)이고 BRAM tile(BRAM36)이 **135개** 있습니다. 116개를 쓰니 남는 것이 19개입니다. 여기서 qubit를 하나 늘리면 어떻게 될까요. state 한 벌이 두 배(RAMB36 22개)가 되어 checkpoint slot 4벌만 88개, `data_mem` 도 64 tile 로 불어나 Accelerator Core 계가 대략 160 tile, board 전체를 넘깁니다(구조를 그대로 둔 채 깊이만 두 배로 잡은 추정입니다). 즉 **이 구조와 이 board에서 14 qubits가 천장**입니다. 14 qubits로 굳힌 근거는 이 resource 계산 하나가 아니라 precision benchmark도 함께인데, 그쪽은 [12.7절](12_fixed_point_and_precision.md#127-몇-bit면-되나--minimum-fraction-bits-공식과-그-전제)에 있습니다.
+
+> ⚠️ 여기서 흔히 하는 오해를 하나 짚고 갑니다. "register에 두니까 resource(LUT)가 터진다"는 설명은 **틀렸습니다.** 다음 절이 이 오해를 data로 반박합니다.
+
+---
+

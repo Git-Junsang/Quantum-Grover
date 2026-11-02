@@ -1,0 +1,6 @@
+Package: BBHT_Grover_Reproduction_Package_v1.0_20260909
+Date: 2026-09-09
+Purpose: Junsang-server reproduction package (not Final Master, not Public GitHub release)
+Current final architecture: K3/H3-E4-M2
+Publication baseline: fixed K4/H4(E1)
+Known optional gap: corrected historical DSE harness trio (see 00_START_HERE/MISSING_TO_ADD.md)

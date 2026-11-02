@@ -1,0 +1,81 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 11/11이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 18_reference_model_verification.md 진단
+
+## 장르·레지스터와 보존 조건
+
+학부생용 기술 해설서(report). 본문은 친근한 존댓말(합니다/입니다, 일부 해요체 설명), 수식 풀이·표·요약은 압축형입니다. 문장 격식을 올리지 않습니다. 영어 용어와 영어 토큰은 번역·삭제·교체·대소문자 변경하지 않습니다. glossary 기준은 `documents/design_references/22_appendix_glossary_and_retired_specs.md` §22.2입니다. 수치·수식·code·제목·link·직접 인용·기존 콜아웃/이모지·문단 구조는 보존합니다. 실제 주장, 부정/긍정, 인과, 조건, 확신도도 보존합니다. 보고서용 서식 축약·영어 순화 규칙은 적용하지 않습니다. 본문에 사실을 추가하거나 현행 설계와 대조해 기술 내용을 고치지 않습니다.
+
+## 정량 근거
+
+입력의 정량 블록을 확인했습니다. risk_band는 low이고, 장문 파일의 heavy 권고는 문서 길이에서 나옵니다. 영어 기술 term 반복은 장르상 필수이므로 lexical_diversity의 낮은 값만으로 수정하지 않습니다. 아래 수치는 탐지 보조이며 개별 문맥과 함께 판단합니다.
+
+## 겨냥 순서의 지배 패턴
+
+1. **D-14·D-5 — 시험·설계를 사람처럼 서술하는 표현**: "규칙이 여기서 처음 일합니다", "종료 규칙이 일해야", "FSM이 매달리지 않고", "이 발판 위", "circuit은 … 조용히 틀립니다", "끝까지 정직하게 계산" 등이 직접적인 동작 설명을 흐립니다. 조건과 보장 수준을 보존하고 구체적인 서술로 정리합니다.
+
+2. **A-18·A-7 — 장문·have 직역**: 정량 relative_clause_nesting=7, have_make_literal_count=1. 도입의 두 근거, 18.2절 ladder, 18.4절 예제, 18.7절 checkpoint 경로, 18.8절 비교 조건의 문장을 검토합니다. "오류를 갖고" 등 소유 직역과 여러 층의 수식을 겹친 문장만 국소 수정합니다.
+
+3. **D-8·C-8 — 핵심 강조·부정 대구의 반복**: "이 목록에서 얻을 교훈은 목록 그 자체가 아니라 태도", "주는 것은 속도가 아니라", "묻는 것은", "근사적으로 같은 정도가 아니라" 등이 반복됩니다. equivalence와 distribution, algorithm과 circuit, bit-exact와 오차 허용 구분처럼 기술적으로 필요한 대조는 반드시 보존합니다.
+
+4. **D-2·F-1 — 과한 중요성·평가 표현**: "공짜가 아닙니다", "영원히 일치하지 않고", "이보다 좋은 출발점은 없습니다", "실행된 적 없는 code가 옳을 probability는 낮습니다" 등 단정·평가의 수사만 줄입니다. 원문 사실이나 기준을 새로 해석하지 않습니다.
+
+5. **J-2·J-3·C-11 — 대시·따옴표·쉼표로 끊긴 설명**: 연속된 대시 부연과 수사형 따옴표를 확인합니다. 표·목록의 교육적 구조와 기존 콜아웃·강조를 보존하고 산문에서 불필요한 쉼표·감싸는 표현만 정리합니다.
+
+## 비적용·잔존 처리
+
+교육적 질문·표·연습문제·단계 목록·기존 비유는 그 자체로 결함이 아닙니다. 자연스러운 문장은 그대로 두고 확인된 구간만 보수적으로 다듬습니다. 수치/기술 주장에 의문이 있어도 이번 윤문에서는 보존합니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 3129
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.58  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.81  (z=-0.00 vs report 인간 baseline)
+- ending_comma_rate: 0.79  (n/a vs report 인간 baseline)
+- comma_segment_length: 11.00  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.006  (z=-1.80 vs report 인간 baseline)
+- lexical_diversity: 0.82  (z=+3.36 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.002
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 1
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 18.10 이 장의 요약
+
+- **verification이 설계의 일부인 이유 셋**: 1차 자료가 틀리고([15.6절](15_paper_map_and_design_decisions.md#156-인용-시-주의--논문의-오류와-모호점)), 이론이 답을 못 주는 자리가 있으며(fraction bits 충분성, 12.7절), 이 IP의 값어치 자체가 재현 가능성이라 verification 절차가 곧 제품 사양입니다.
+- **3단 verification ladder + board**: float64·Qiskit(**algorithm**이 맞나) → Q1.22 bit-exact reference model(**수 표현**이 맞나) → RTL(**circuit**가 맞나) → board. 각 칸이 잡는 버그의 종류가 다르고, 한 칸을 건너뛰면 rounding 버그와 FSM 버그가 섞여 판정 기준을 세울 수 없습니다. **reference model은 2단**이고, BBHT trajectory가 같아야 하는 것은 같은 칸끼리입니다(1단의 float BBHT trajectory는 2단과 다를 수 있습니다).
+- **bit-exact 성립 조건**: rounding 규칙 · rounding 지점 · saturation 지점과 범위 · shift · accumulator 폭 · measurement arithmetic과 순서 · **Iteration-Count LFSR 규약** · **Measurement PRNG 규약** · policy의 동률 규칙. 초판이 미정으로 남긴 random number 두 줄이 정해진 뒤 reference model과 board가 BBHT trajectory 500/500, 동률 규칙까지 옮긴 뒤 executed iterations 500/500이 되었습니다. algorithm constant는 RTL header 한 곳에, CSR offset은 손으로 맞추는 두 곳에 있습니다.
+- **첫 test vector는 9.4절 손계산**: 4-state 예제는 Q1.22에서 solution amplitude가 정확히 1.0이 되어 **saturation 경로**를 밟고, 두 번째 iteration에서 절반에 걸립니다. 8 states·3 solutions 예제는 두 번째 iteration의 $2\bar a = -2{,}595{,}092.5$ 에서 round-half-to-even과 truncation이 갈립니다. RTL의 첫 vector는 실제 크기에서 손으로 확인되는 **14 qubits·1 solution·1 iteration** — solution 98,296, 나머지 32,760이 이론값과 rounding 없이 같습니다.
+- **predicate 경계값**: threshold와 같은 값(strict inequality 확인) · 16-bit signed data word 범위 양 끝(17-bit subtractor의 존재 이유) · 좁고 넓은 범위 · 0 solutions · 1 solution · solution이 state의 절반을 넘는 역주행 · FIFO가 차는 enumeration. data distribution은 uniform random number · 정렬 · **solution을 row·group 경계에 몰아넣은 인위적 array**.
+- **Born sampler는 두 시험이 다릅니다**: seed를 고정하면 결정적이라 **bit-exact equivalence check**가 되고, distribution 자체는 **chi-square test**로 따로 봅니다(cell은 group 단위로 묶고, 한 번의 $p<0.05$ 로 실패를 선언하지 않습니다). Two-Level Select는 integer 정확 계산이라 순차 prefix sum 선택과 **random number 하나하나에서 같아야** 하고, 연속된 rejection과 total weight 0 같은 드문 경로는 강제 주입으로 직접 찔러 봅니다.
+- **checkpoint verification의 합격 기준은 전수 비교**: 이어 간 경로와 새 Init 경로의 amplitude 16,384칸이 **bit 단위로 전부 일치**해야 합니다. 무효화 조건 각각과 무효화하지 않아야 할 조건 각각에 regression을 두고, on/off가 같은 seed에서 **같은 결과·같은 shot count·같은 requested iterations**를 내고 **executed iterations와 cycle만** 다른지 확인합니다 — board와 RTL에서 500/500이었고, Plan Queue miss counter는 늘 0이어야 합니다.
+- **잰 수치**: fraction bits 충분성(error $< 10^{-3}$) · saturation(1,000회당 2.67) · mean 22.7 shots · executed iterations −69.5% · RTL 6.1401× · board 7.626× · resource와 timing. 비교 대상은 Qiskit Aer / NumPy / 같은 board의 순수 software며 **classical scan과는 비교하지 않습니다.** 같게 둘 것은 number of qubits·data·predicate·seed·BBHT schedule 전체, wall-clock time은 benchmark 경계를 반드시 밝힙니다.
+- **toolchain**: simulator·synthesis·firmware·SoC 생성이 전부 local이고, 작업 순서는 verification ladder를 따릅니다. reference model은 두 variant가 함께 쓰므로 `software/` 에 있습니다.
+
+이것으로 해설서가 닫힙니다. index 에서 "왜 quantum computer인가"로 시작해 9장에서 Grover를 손으로 돌려 보았고, 11장부터 그 algorithm을 memory와 arithmetic과 제어와 bus로 내렸으며, 이 장에서 그 내려온 것이 맞다는 걸 어떻게 보였는지까지 왔습니다. board 위에서 도는 이 circuit은, 여러분이 1장에서 처음 본 amplitude라는 숫자가 끝까지 정직하게 계산된 결과입니다.
+
+---
+
+> [← 17장 RVX SoC에 붙이기](17_rvx_soc_integration.md) · [index](index.md)
+[원문 끝]

@@ -1,0 +1,13 @@
+### 함께 보는 자료와 원문 출처
+
+| 문서 | 위치 | 성격 |
+|------|------|------|
+| **학습 해설서 (본 문서)** | `study_references/` | 배경지식 + algorithm 해설 + 확정 설계, 읽고 배우는 **주교재** |
+| 논문 해설본 | [../papers/papers_ko/](papers/papers_ko/) | 논문 6편의 한국어 해설, 원문 대조용 보조 자료 |
+| 원문 논문·강의자료 | [../papers/](papers/) | 원본 PDF (기초이론 3편 + FPGA·응용 논문 6편) |
+| 기술문서 | [../design_references/](../design_references/index.md) | 확정된 설계의 source of truth (RTL · port · CSR · 운용) |
+
+해설서가 주교재이고 논문 해설본은 원문 대조용 보조 자료입니다. 그래서 각 장은 **자체 완결**이어야 하며, 해설본을 읽어야만 이해되는 서술을 남기지 않습니다.
+
+이 해설서는 project `documents/study_references/papers/1. 양자컴퓨터 기초이론/` 의 세 자료를 학부생용으로 재구성·통합한 것입니다.
+

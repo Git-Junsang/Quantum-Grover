@@ -1,0 +1,42 @@
+## 15.7 hardware 용어집
+
+hardware 쪽에서 처음 나온 용어들을 모았습니다(quantum 이론 용어는 [10.5절](10_glossary_and_cheat_sheet.md#105-용어집)에 있습니다).
+
+| 용어 | 뜻 | 장 |
+|------|-----|:--:|
+| emulation | 전용 hardware(FPGA)로 state vector 계산을 가속하는 것. software simulation과 대비 | [11장](11_state_vector_emulator.md) |
+| LUT | look-up table. FPGA의 조합 logic resource. **연산 logic**이 여기 잡힘 | [11.5](11_state_vector_emulator.md#115-register의-진짜-대가) |
+| FF | flip-flop. FPGA의 순차(저장) resource. **register 저장**이 여기 잡힘 | [11.5](11_state_vector_emulator.md#115-register의-진짜-대가) |
+| BRAM | block RAM. FPGA 안의 block memory. port 수만큼만 동시에 접근. RAMB36 port 하나는 최대 72-bit 폭 | [11.4](11_state_vector_emulator.md#114-amplitude를-어디에-둘-것인가) |
+| DSP | 전용 multiplier block. 우리는 Measurement Unit에만 128개를 씀 | [13.8](13_oracle_diffusion_measurement_datapath.md#138-multiplier는-어디에-있고-어디에-없는가) |
+| row · lane | 연속한 index 32개가 row 하나, 그 안의 한 칸이 lane. index 하위 5 bits가 lane | [11.7](11_state_vector_emulator.md#117-병렬도와-banking) |
+| banking | array를 여러 memory로 쪼개 한 cycle에 여러 칸을 읽는 것. 우리는 row 번호 하위 2 bits로 4 banks 중 하나를 고름 | [11.7](11_state_vector_emulator.md#117-병렬도와-banking) |
+| PE · number of PEs | Iteration Datapath에서 한 cycle에 row 하나를 처리하는 circuit 한 벌과 그 개수. final configuration은 4 PEs | [13.1](13_oracle_diffusion_measurement_datapath.md#131-한-iteration-안의-fsm) |
+| Dual-Row Build · Two-Level Select | Measurement Unit에서 한 cycle에 2 rows의 row weight를 만드는 Build와, 16 groups → 32 rows 두 단으로 고르는 Select. final configuration의 Measurement Microarchitecture | [14.5](14_multiple_solutions_and_minimum_search.md#145-2단-병렬-measurement) |
+| memory-bound | 속도가 산술이 아니라 memory bandwidth · port에 묶인 state | [11.6](11_state_vector_emulator.md#116-memory-bound의-두-얼굴--용량과-port) |
+| fixed-point | 소수점 위치를 고정해 integer처럼 다루는 수 표현 | [12.2](12_fixed_point_and_precision.md#122-fixed-point와-q-format-명명-규약) |
+| Q format | `Q<integer bits>.<fraction bits>`. sign은 integer bits에 포함 → 우리는 Q1.22 | [12.2](12_fixed_point_and_precision.md#122-fixed-point와-q-format-명명-규약) |
+| round-half-to-even | 정확히 0.5인 값을 짝수 쪽으로 보내 rounding 편향을 없애는 규칙 | [12.4](12_fixed_point_and_precision.md#124-rounding--왜-half-to-even인가) |
+| saturation | 표현 범위를 넘으면 wraparound 대신 maximum · minimum에 붙이는 처리. 우리는 symmetric saturation | [12.5](12_fixed_point_and_precision.md#125-overflow-policy--saturationwraparound-금지renormalization-없음) |
+| truncation error | fraction bits가 유한해 아래 bit가 잘려 나가며 생기는 error | [12.6](12_fixed_point_and_precision.md#126-error는-어떻게-자라나) |
+| FSM | finite-state machine. state를 순서대로 밟으며 제어하는 circuit. emulator의 골격 | [13.1](13_oracle_diffusion_measurement_datapath.md#131-한-iteration-안의-fsm) |
+| datapath | data가 흐르며 연산되는 경로(adder · shifter · comparator 등) | [13장](13_oracle_diffusion_measurement_datapath.md) |
+| pipeline | 연산을 여러 단으로 나눠 매 cycle 하나씩 흘려 throughput을 높이는 구조 | [13.7](13_oracle_diffusion_measurement_datapath.md#137-32-lane-datapath와-accumulation-순서) |
+| CORDIC | shift와 addition만으로 임의 각도 회전을 계산하는 algorithm. 우리는 쓰지 않음 | [13.8](13_oracle_diffusion_measurement_datapath.md#138-multiplier는-어디에-있고-어디에-없는가) |
+| Born-rule sampling | amplitude square에 비례하는 probability로 index 하나를 뽑는 measurement. 우리 방식 | [14.4](14_multiple_solutions_and_minimum_search.md#144-born-rule-sampling--probability를-circuit으로) |
+| prefix sum | 앞에서부터 차례로 더한 partial sum. 우리 Measurement Unit은 row weight의 prefix sum을 32 rows마다 group prefix sum으로 적어 두고 group → row → lane 순으로 좁혀 감 | [14.5](14_multiple_solutions_and_minimum_search.md#145-2단-병렬-measurement) |
+| rejection sampling | 넓은 범위에서 뽑아 원하는 범위 밖이면 버리고 다시 뽑아 정확한 균등분포를 얻는 방법. number of iterations를 뽑을 때와 Measurement PRNG 둘 다 씀 | [14.4](14_multiple_solutions_and_minimum_search.md#144-born-rule-sampling--probability를-circuit으로) · [16.2](16_iteration_control_and_checkpoints.md#162-bbht--무작위로-뽑는-number-of-iterations와-12-growth-factor) |
+| argmax | array에서 maximum의 **index**를 찾는 것. amplitude 동률 때문에 **기각한** measurement 방식 | [14.3](14_multiple_solutions_and_minimum_search.md#143-amplitude-동률--argmax가-무너지는-지점) |
+| weighted random number generator | probability distribution을 따라 뽑는 random number 발생기(04번 논문의 measurement). 우리와 같은 방식 | [14.4](14_multiple_solutions_and_minimum_search.md#144-born-rule-sampling--probability를-circuit으로) |
+| LFSR | linear-feedback shift register. shift와 XOR만으로 만드는 의사난수 발생기. Iteration-Count LFSR이 씀 | [16.2](16_iteration_control_and_checkpoints.md#162-bbht--무작위로-뽑는-number-of-iterations와-12-growth-factor) |
+| BBHT | Boyer–Brassard–Høyer–Tapp. number of solutions를 모를 때 쓰는 iteration 스케줄(sampling range를 growth factor 6/5씩 키움) | [16.2](16_iteration_control_and_checkpoints.md#162-bbht--무작위로-뽑는-number-of-iterations와-12-growth-factor) |
+| checkpoint | 실패한 shot의 amplitude state를 몇 벌 남겨 두었다가 가장 가까운 것에서 이어 도는 기법. 우리는 a Checkpoint-Capacity of 3 | [16.5](16_iteration_control_and_checkpoints.md#165-checkpoint--measurement가-읽기-전용이라는-사실에서) |
+| policy | 앞으로 올 request 몇 개를 보고 checkpoint에 무엇을 남길지 정하는 규칙. Policy Engine이 계산. 우리는 3-shot Lookahead | [16.5](16_iteration_control_and_checkpoints.md#165-checkpoint--measurement가-읽기-전용이라는-사실에서) |
+| SoC | system-on-chip. CPU · memory · 주변장치 · accelerator를 한 chip에 담은 system | [17.2](17_rvx_soc_integration.md#172-rvx가-무엇인가) |
+| CSR | control/status register. software가 읽고 쓰는 제어 · status register. APB로 접근 | [17.4](17_rvx_soc_integration.md#174-csr-map) |
+| APB · AHB | 저속 · 단순 bus와, master를 둘 수 있는 고속 bus. 제어는 APB, data load는 AHB | [17.3](17_rvx_soc_integration.md#173-왜-apb와-ahb를-같이-쓰나) |
+| bit-exact | 두 implementation의 출력이 bit 하나까지 같음. reference model과 RTL의 합격 기준 | [18.3](18_reference_model_verification.md#183-bit-exact가-성립하기-위한-조건) |
+| classical-to-quantum loading | 고전 data를 quantum amplitude로 싣는 initialization. 07번 논문의 절반 | [11.9](11_state_vector_emulator.md#119-emulator가-실기보다-쉬운-것들) |
+
+---
+

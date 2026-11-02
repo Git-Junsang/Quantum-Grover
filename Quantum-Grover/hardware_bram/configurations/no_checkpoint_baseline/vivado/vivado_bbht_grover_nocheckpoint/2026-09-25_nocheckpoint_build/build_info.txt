@@ -1,0 +1,35 @@
+빌드 일시   2026-09-25 15:22~15:29 (KST, Vivado 세션 기준)
+플랫폼      bbht_grover_nocheckpoint (hardware_bram_nocheckpoint/rvx/bbht_grover_nocheckpoint.xml)
+            SoC 구성은 bbht_grover_upgrade 와 같음. make syn 이 만든 SoC RTL
+            (arch/rtl/src/*_rtl.v)이 플랫폼 이름과 생성 날짜 한 줄 말고는 같습니다
+타깃        arty-100t / xc7a100tcsg324-1
+구조        Normal-E4. hardware_bram_nocheckpoint/src/bbht_grover_core_adapter.v 기본값
+              CHECKPOINT_ENABLE=0  INTRA_ENGINES=4  MEAS_M1_ENABLE=0  MEAS_M2_ENABLE=0
+              burst_enable 은 Main IP 에 0 으로 넘김
+            통신 계층 · Main IP 는 hardware_bram_checkpoint/src/ (E4 를 CHECKPOINT_ENABLE
+            에서 떼어 낸 2026-09-25 판)
+클럭 목표   가속기 100 MHz / 시스템 50 MHz / NoC = clk_core (bram 플랫폼과 같음)
+Vivado      v2026.1 (64-bit)
+RVX         /opt/rvx (로컬 전체 설치)
+작업방      $RVX_MINI_HOME/platform/bbht_grover_nocheckpoint/imp_arty-100t_2026-09-25 (make imp)
+배치/배선   RVX 기본 흐름 (pnr_manually.tcl 없음. 체크포인트 판과 같은 조건)
+
+합성 대상 최상단   bbht_rvx_wrapper (user region 이 무는 것)
+user region 클럭   gclk_accel
+                   생성 RTL arch/rtl/src/bbht_grover_nocheckpoint_rtl.v:1455 가
+                   assign gclk_accel = clk_accel; -- 순수 별칭
+
+순서        hardware_bram_nocheckpoint/rvx/install_to_platform.sh
+            make syn
+            make imp_fpga TARGET_IMP_CLASS=arty-100t
+            cd imp_arty-100t_2026-09-25 && make imp && make bbht_console
+
+설치에서 한 번 막힌 것
+            RVX 는 make syn 때 user/ 가 없을 때만 자기 뼈대(set_sim_env.mh 등)를
+            복사하는데, 설치 스크립트가 user/ 를 먼저 만들어 건너뛰어졌습니다.
+            구현에는 영향이 없고(그 파일들이 더하는 user/fpga 는 체크포인트 판에서도
+            비어 있음) SoC 시뮬 컴파일만 user region 헤더를 못 찾았습니다.
+            설치 스크립트 3c 가 빠진 뼈대를 채웁니다.
+
+bbht_console       make bbht_console (TARGET_IMP_CLASS=arty-100t). ELF 에 "script done" 없음 = UART 판
+                   ELF 안의 PLATFORM_NAME = bbht_grover_nocheckpoint

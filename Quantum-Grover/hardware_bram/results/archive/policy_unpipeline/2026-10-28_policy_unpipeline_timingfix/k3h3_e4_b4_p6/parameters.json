@@ -1,0 +1,8 @@
+{
+  "CKPT_K": 3,
+  "INTRA_ENGINES": 4,
+  "MEAS_BUILD_ROWS": 4,
+  "MEAS_M2_ENABLE": 1,
+  "POLICY_EXACT_PRUNE": 6,
+  "POLICY_H_FUTURE": 3
+}

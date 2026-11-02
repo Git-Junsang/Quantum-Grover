@@ -1,0 +1,13 @@
+# 17장. RVX SoC에 붙이기 — APB CSR · AHB DMA · UART
+
+> [← 16장 몇 번 돌릴지 모를 때 — BBHT shot loop와 checkpoint](16_iteration_control_and_checkpoints.md) · [index](index.md) · [18장 무엇을 어떻게 증명하나 — 3단 reference model과 bit-exact →](18_reference_model_verification.md)
+> **이 장을 읽기 위한 준비**: [13장 oracle과 diffusion operator](13_oracle_diffusion_measurement_datapath.md), [16장 BBHT shot loop와 checkpoint](16_iteration_control_and_checkpoints.md).
+
+---
+
+13·14·16장에서 IP 안쪽은 다 만들었습니다. amplitude array가 있고, predicate를 판정하는 oracle이 있고, mean으로 되비추는 diffusion operator가 있고, Born sampler가 있고, 그 위에 shot loop와 checkpoint가 얹혀 있습니다. 그런데 이 circuit에는 아직 시작 명령을 받고, data를 입력받고, 답을 내보내는 경로가 없습니다.
+
+이 장에서는 외부 연결을 다룹니다. host가 UART로 명령을 보내고, RISC-V core가 APB로 설정 register를 쓰고, IP가 AHB master로 data를 끌어오는 경로입니다. FPGA를 다뤄 본 독자에게는 이 장이 가장 익숙한 장일 것입니다.
+
+---
+

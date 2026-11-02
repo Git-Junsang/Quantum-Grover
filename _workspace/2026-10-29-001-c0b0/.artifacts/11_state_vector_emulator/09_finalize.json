@@ -1,0 +1,41 @@
+{
+  "status": "corrected",
+  "genre": "report",
+  "review": "원문·윤문본·진단·게이트를 직접 대조한 의미 및 자연성 검토",
+  "correction_count": 2,
+  "corrections": [
+    {
+      "before": "문헌마다 같은 단어가 다른 것을 가리킬 수 있으므로 용법을 확인해야 합니다.",
+      "after": "문헌마다 같은 단어가 다른 것을 가리킬 수 있다는 점을 기억해 두세요.",
+      "reason": "가능성 표현과 원문의 교육적 권고를 그대로 보존"
+    },
+    {
+      "before": "algorithm의 규칙성 덕분에 이 project에서는 추가 logic를 쓰지 않고 이 이득을 얻습니다.",
+      "after": "algorithm의 규칙성 덕분에 이 project에서는 적은 비용으로 logic를 절약합니다.",
+      "reason": "추가 logic가 전혀 없다는 강화된 주장을 원문의 적은 비용이라는 의미로 복구"
+    }
+  ],
+  "fidelity_violations_remaining": [],
+  "overediting": [],
+  "residual_findings": [],
+  "baseline_gate_warnings": [],
+  "self_check": {
+    "passed": 6,
+    "total": 6
+  },
+  "grade": "A",
+  "categories": [
+    "D-14",
+    "D-2",
+    "D-5",
+    "D-8"
+  ],
+  "preservation_check": "PASS: 영어 token·영어 구·수치·수식·code·제목·link·콜아웃",
+  "final_gate": {
+    "exit_code": 0,
+    "change_rate": 0.0169,
+    "new_warnings": [],
+    "baseline_warning_count": 0,
+    "note": "공통 게이트 전 축 통과"
+  }
+}

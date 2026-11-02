@@ -1,0 +1,73 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 2/12이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 윤문 진단
+
+## 장르·레지스터
+- 학부생용 quantum algorithm·FPGA 해설서(report), 친근한 합쇼체 중심이며 독자에게 말을 거는 해요체가 일부 섞인 기존 학습서 말투입니다. 격식을 올리거나 설명을 학술 논문체로 바꾸지 않습니다.
+- 제목·절 번호·목록·표·수식·code·link·기존 콜아웃 및 이모지 형식은 보존합니다. 한국어 서술만 국소적으로 다듬습니다.
+- 영어 용어·영어 토큰은 번역, 교체, 삭제, 추가하지 않습니다. SSOT는 documents/design_references/22_appendix_glossary_and_retired_specs.md §22.2와 기존 glossary입니다.
+- 사실·수치·조건·부정·인과·추측/당위·인용을 보존합니다. 원문의 기술 주장을 새 해설이나 사실 교정으로 확장하지 않습니다.
+
+## 정량 앵커
+- 26,357자, risk_band low, route_hint heavy(길이 기준). A-7 have_make_literal_count=1, A-19 double_particle_count=1, A-18 relative_clause_nesting=7. conclusion_pivot_count=2(그러므로), lexical_diversity=0.52(z=-2.54). 전문용어 반복을 줄이기 위해 영어를 바꾸지 않습니다. ending_comma_rate=0.47.
+## 지배 패턴과 겨냥 순서
+1. D-14·D-5: “여러 번 던져야”, “datapath가 통째로 무너집니다”, “남는 장사가 아닙니다”, “array를 훔쳐보는 반칙”, “Grover처럼 생긴 무언가”, “승부가 나기 시작”, “하드웨어가 쥡니다”, “state를 떨궈 두는”, “반드시 새는 곳” 등 일상 비유·의인화가 알고리즘·설계 설명을 덮습니다. 영어 표현은 두고 한국어 설명을 구체적으로 정돈하는 것이 우선입니다.
+2. D-8·I-2: “정직하게 짚고 갈 것이 하나”, “답은 … 모양에”, “이제 이 장의 본론”, “이 절이 이 장에서 가장 중요” 등 설명의 중요도를 선언하는 문장이 반복됩니다. 실제 주장과 조건을 유지하면서 군더더기를 덜어낼 후보입니다.
+3. A-18·C-11: 16.1의 QPE 도입 비용, 16.2의 BBHT 보장, 16.5의 policy 선택, 16.6의 재현성 논증에 조건과 후속 결과가 긴 문장으로 연결됩니다. causal order와 독립성·bit-exact 조건을 보존하며 한국어 연결을 다듬습니다.
+4. C-8·J-2: “속도가 아니라 충실도”, “저장 공간이 아니라 결정 비용”, “algorithm 지표가 아니라 emulation 시간”처럼 대조가 반복됩니다. 지표의 실질적 차이를 지우지 말고 가상 인용·감정적 평가 표현을 우선 정돈합니다.
+5. A-7·A-19: “checkpoint slot을 들고 있다”, “number of iterations마다의 amplitude” 같은 표현은 한국어 동사·조사 손질 후보입니다. ‘각 checkpoint slot에 값이 저장됨’ 같은 본래 뜻을 넘어서 새로운 동작을 추가하지 않습니다.
+6. F-1·D-2: “영원히”, “반드시”, “가장 극적인”, “거짓말” 등 강한 평가어가 많이 나옵니다. 요구 조건이나 명제의 강도를 바꾸지 않도록 감상적 수식만 검토합니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 2327
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.36  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.43  (z=-0.44 vs report 인간 baseline)
+- ending_comma_rate: 0.41  (n/a vs report 인간 baseline)
+- comma_segment_length: 9.90  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.000  (z=-2.00 vs report 인간 baseline)
+- lexical_diversity: 0.80  (z=+2.94 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 3
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 16.1 왜 solution이 몇 개인지 모르는가
+
+우리 accelerator가 푸는 문제는 "`data_mem` 에 담긴 16,384개 값 중 predicate를 만족하는 index를 찾아라"입니다. predicate는 `value < thr_a` 같은 부등식이고, threshold는 host가 CSR로 넘겨줍니다. 그러면 number of solutions는 무엇에 달려 있을까요 — **predicate의 종류, threshold, 그리고 그 순간 memory에 실려 있는 data**입니다. 셋 다 실행 시점에 정해지므로, synthesis 시점에는 물론이고 시작 명령을 쓰는 순간에도 solution이 몇 개인지 알 수 없습니다.
+
+number of solutions를 모르면 optimal number of iterations를 계산할 수 없습니다:
+
+$$\text{optimal number of iterations} = \frac{\pi}{4}\sqrt{\frac{\text{number of states}}{\text{number of solutions}}} - \frac12$$
+
+number of solutions가 분모 안에 있으니까요(14 qubits · 1 solution이면 optimal number of iterations는 $100.03 \to 100$; 값의 source of truth는 [15.4절](15_paper_map_and_design_decisions.md#154-우리-project의-좌표--확정-설계-결정표)). 그렇다고 "모르니까 넉넉히 많이 돌리자"가 통하지도 않습니다. 9.6절에서 못 박았듯 Grover는 최적점을 지나치면 success probability가 **다시 떨어지고 진동**하기 때문입니다. 많이 돌리는 것이 안전한 쪽이 아니라는 점이 이 문제를 어렵게 만듭니다.
+
+quantum algorithm 쪽에는 정석 처방이 있습니다. **quantum counting** — Grover iteration의 eigenvalue에 담긴 각 $\theta$ 를 phase estimation(QPE)으로 읽어 내 solution이 몇 개인지 추정하는 방법입니다. 우리는 이것을 설계에서 제외했습니다. 이유는 성능이 아니라 **수 표현**입니다. QPE는 inverse quantum Fourier transform을 쓰고, QFT는 $e^{2\pi i k/2^{t}}$ 형태의 complex phase를 곱합니다. 9.8절이 정리한 "표준 Grover는 amplitude가 실수를 벗어나지 않는다"는 성질이 여기서 깨지고, 그러면 imaginary part array가 하나 더 생겨 amplitude memory가 두 배가 되며, 12장에서 세운 실수 전용 23-bit Q1.22 datapath와 13장의 multiplier 없는 산술이 통째로 무너집니다. counting 하나를 위해 accelerator 전체를 complex number로 바꾸는 거래는 남는 장사가 아닙니다.
+
+여기서 정직하게 짚고 갈 것이 하나 있습니다. **emulator에서는 solution을 그냥 세면 됩니다.** `data_mem` 을 한 번 훑으면 128 cycles이고, 이는 shot 하나에 드는 시간보다도 짧습니다. 순수 속도만 놓고 보면 세어 놓고 optimal number of iterations를 딱 계산해 도는 쪽이 BBHT보다 빠릅니다. 그럼에도 BBHT를 택하는 이유는 속도가 아니라 **실기 충실도**입니다. 진짜 quantum computer는 amplitude array를 들여다볼 수 없고, oracle을 호출해 보는 것 말고는 solution이 몇 개인지 알 방법이 없습니다. solution을 미리 세어 놓고 시작하는 것은 amplitude array를 훔쳐보는 것과 같은 반칙이고, 그렇게 만든 기계는 "Grover를 돌리는 기계"가 아니라 "Grover처럼 생긴 무언가"가 됩니다. 이 accelerator의 값어치는 고전 code보다 빠른 데 있지 않고 **quantum algorithm의 동작을 결정적이고 재현 가능하게 재현·검증하는 전용 hardware**라는 데 있으므로, 충실도가 속도를 이깁니다.
+
+다만 number of iterations를 바깥에서 정해 주는 **Manual mode**는 남겨 둡니다(`MANUAL_SINGLE`). firmware가 number of iterations를 직접 적어 한 shot만 돌리는 mode라, solution이 몇 개인지 아는 조건에서 optimal number of iterations로 딱 맞게 도는 비교 실험과 software reference model과의 한 shot 단위 대조에 씁니다.
+
+---
+[원문 끝]

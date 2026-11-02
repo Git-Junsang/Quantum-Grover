@@ -1,0 +1,110 @@
+LPSoC BBHT/Grover
+K4/H4 SINGLE-GROVER-OPERATOR FINAL RELEASE
+Date: 2026-09-04
+
+STATUS
+------
+This package freezes the paper-ready / near-complete single-Grover-
+operator K4/H4 design before development of a future multi-operator branch.
+
+FINAL CONFIGURATION
+-------------------
+FPGA       : Arty A7-100T
+Device     : xc7a100tcsg324-1
+Clock      : 100 MHz
+Q          : 14
+N          : 16384
+Parallelism: P32
+Policy     : K4/H4
+
+H4 policy constants:
+H_FUTURE   = 4
+WINDOW_LEN = 5
+U_MAX      = 9
+STATE_RANKS= 1093
+MEM_ENTRIES= 4372
+
+FINAL CLEAN PERFORMANCE
+-----------------------
+Workload:
+Targets = 1, 4, 16, 64, 256
+Seeds   = 50 per target
+Pairs   = 250
+
+Normal cycles : 20229755
+K4/H4 cycles  : 7796908
+Cycle reduction: 61.46 %
+Speedup        : 2.595x
+
+Normal physical iterations: 14883
+K4/H4 physical iterations : 4247
+Iteration reduction        : 71.46 %
+
+Correctness:
+Normal success      : 250/250
+K4/H4 success       : 250/250
+Paired consistency  : 250/250
+
+TRACE / POLICY
+--------------
+Policy cycles      : 1508706
+Policy cycles/shot : 413.684
+Policy stall       : 276027
+Stall / H4 cycles  : 3.5402 %
+
+PLAN_HIT            : 3397
+Late speculative    : 353
+Hidden speculative  : 3044
+Hidden fraction     : 89.6085 % (counter-derived)
+PLAN_MISMATCH       : 0
+
+SEMANTIC EQUIVALENCE
+--------------------
+Observed logical fields recorded by RUN_CSV matched for 250/250 pairs:
+- seed_j
+- seed_meas
+- trial_count
+- L_BBHT
+- success
+- result_valid
+- result_index
+- timeout
+- unexpected_error
+- terminal_limit
+- status
+
+Do not claim that every per-shot requested-j value was board-traced.
+
+IMPLEMENTATION
+--------------
+LUT  : 25440
+FF   : 30528
+BRAM : 98
+DSP  : 68
+
+Timing:
+WNS  = +0.236 ns
+TNS  = 0
+WHS  = +0.015 ns
+100 MHz timing closure PASS
+
+Post-route power estimate:
+Total   = 0.465 W
+Dynamic = 0.362 W
+Static  = 0.103 W
+
+IMPORTANT CLAIM BOUNDARY
+------------------------
+K4/H4 is the practical design-space knee.
+Do NOT claim exhaustive/global optimality over every K/H combination.
+
+Performance headline numbers come only from the minimally-instrumented
+clean Performance Run. Detailed Trace/Validation data are used only for
+mechanism/correctness analysis.
+
+NEXT RESEARCH BRANCH
+--------------------
+This single-operator version is frozen.
+Future work may explore a two-Grover-operator architecture, for which
+the K/H optimum must be reconsidered because available policy overlap
+will change.

@@ -1,0 +1,11 @@
+# 해설서 index — quantum computing 시작하기
+
+> [1장 qubit와 state →](01_qubits_and_states.md)
+> **Part 0** — 이 글은 사전 지식이 필요 없습니다. 편하게 읽으세요.
+
+---
+
+quantum computer를 처음 배울 때 가장 먼저 드는 질문은 "이게 대체 왜 필요한가?"입니다. 이 글은 수식 없이, quantum computer가 어디에서 왔고 왜 만들어졌는지, 그리고 우리 project가 왜 하필 **Grover algorithm**을 다루는지를 이야기합니다. 이 글을 읽고 나면 [1장](01_qubits_and_states.md)부터 이어지는 수학이 "무엇을 향해 가는지" 감이 잡힐 것입니다.
+
+---
+

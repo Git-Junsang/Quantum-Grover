@@ -11,12 +11,12 @@ emulation하고, predicate를 만족하는 원소의 index를 반환합니다.
 
 predicate는 네 가지입니다.
 
-| predicate | 뜻 | threshold |
-|---|---|---|
-| `LT` | `x < A` | `A` |
-| `GT` | `x > A` | `A` |
-| `EQ` | `x == A` | `A` |
-| `RANGE` | `A < x < B` (open interval) | `A`, `B` |
+| predicate | 뜻                            | threshold        |
+| --------- | ----------------------------- | ---------------- |
+| `LT`    | `x < A`                     | `A`            |
+| `GT`    | `x > A`                     | `A`            |
+| `EQ`    | `x == A`                    | `A`            |
+| `RANGE` | `A < x < B` (open interval) | `A`, `B아니` |
 
 전부 16-bit signed 비교이고 경계는 포함하지 않습니다. predicate를 만족하는 칸이 여러 개일 때
 하나만 돌려주는 single search와, 전부 차례로 돌려주는 enumeration이 둘 다 있습니다.
@@ -41,24 +41,24 @@ measurement로 나온 index를 solution check로 검사해서 틀렸으면 sampl
 
 ## 1.2 확정 spec
 
-| 항목 | 확정 값 | source of truth |
-|---|---|---|
-| qubit | 14 qubits (16,384 states) | `grover_param.vh` |
-| data word | 16-bit signed | [6장](06_data_representation_and_memory_map.md) |
-| amplitude | 23-bit signed, Q1.22 계열 | 같음 |
-| uniform amplitude | raw 32768 | `GP_INIT_AMP_RAW` |
-| parallelism | 32 lanes × 512 rows | `GP_P` · `GP_ROWS` |
-| predicate | `LT` `GT` `EQ` `RANGE` | `GP_MODE_*` |
-| execution mode | `MANUAL_SINGLE` `RESTART_SINGLE` `CHECKPOINT_SINGLE` `RESTART_ENUMERATION` `CHECKPOINT_ENUMERATION` | [13장](13_csr_registers_and_execution_modes.md) |
-| CSR | APB slave, base `0xE2020000`, 4-byte 간격, 32 bits, 38개 | [`bbht_grover_csr.json`](../../spec/bbht_grover_csr.json) |
-| data load | AHB master SINGLE, single outstanding | [7장](07_bus_interface.md) |
-| load 원본 | system SRAM `0xE0000000`~`0xE001FFFF` | 같음 |
-| Result FIFO | 깊이 256 | `GP_RESULT_FIFO_DEPTH` |
-| BBHT budget | `REQUESTED_ITERATIONS` 누적 576 | `GP_BBHT_BUDGET` |
-| shot cap | runtime 입력, 기본 100 | `GP_SHOT_CAP_DEFAULT` |
-| clock | accelerator 100 MHz / system 50 MHz | [`bbht_grover_final.xml`](../../hardware_bram/configurations/final/rvx/bbht_grover_final.xml) |
-| board | Arty A7-100T (`xc7a100tcsg324-1`) | 같음 |
-| final configuration | a Checkpoint-Capacity of 3, 3-shot Lookahead, 4 PEs, Dual-Row Build · Two-Level Select | 1.4절 |
+| 항목                | 확정 값                                                                                                       | source of truth                                                                                |
+| ------------------- | ------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| qubit               | 14 qubits (16,384 states)                                                                                     | `grover_param.vh`                                                                            |
+| data word           | 16-bit signed                                                                                                 | [6장](06_data_representation_and_memory_map.md)                                                 |
+| amplitude           | 23-bit signed, Q1.22 계열                                                                                     | 같음                                                                                           |
+| uniform amplitude   | raw 32768                                                                                                     | `GP_INIT_AMP_RAW`                                                                            |
+| parallelism         | 32 lanes × 512 rows                                                                                          | `GP_P` · `GP_ROWS`                                                                        |
+| predicate           | `LT` `GT` `EQ` `RANGE`                                                                                | `GP_MODE_*`                                                                                  |
+| execution mode      | `MANUAL_SINGLE` `RESTART_SINGLE` `CHECKPOINT_SINGLE` `RESTART_ENUMERATION` `CHECKPOINT_ENUMERATION` | [13장](13_csr_registers_and_execution_modes.md)                                                 |
+| CSR                 | APB slave, base `0xE2020000`, 4-byte 간격, 32 bits, 38개                                                    | [`bbht_grover_csr.json`](../../spec/bbht_grover_csr.json)                                     |
+| data load           | AHB master SINGLE, single outstanding                                                                         | [7장](07_bus_interface.md)                                                                      |
+| load 원본           | system SRAM `0xE0000000`~`0xE001FFFF`                                                                     | 같음                                                                                           |
+| Result FIFO         | 깊이 256                                                                                                      | `GP_RESULT_FIFO_DEPTH`                                                                       |
+| BBHT budget         | `REQUESTED_ITERATIONS` 누적 576                                                                             | `GP_BBHT_BUDGET`                                                                             |
+| shot cap            | runtime 입력, 기본 100                                                                                        | `GP_SHOT_CAP_DEFAULT`                                                                        |
+| clock               | accelerator 100 MHz / system 50 MHz                                                                           | [`bbht_grover_final.xml`](../../hardware_bram/configurations/final/rvx/bbht_grover_final.xml) |
+| board               | Arty A7-100T (`xc7a100tcsg324-1`)                                                                           | 같음                                                                                           |
+| final configuration | a Checkpoint-Capacity of 3, 3-shot Lookahead, 4 PEs, Dual-Row Build · Two-Level Select                       | 1.4절                                                                                          |
 
 ---
 
@@ -92,12 +92,12 @@ final configuration은 아래 네 축의 값으로 정합니다. 전부 RTL buil
 (`CHECKPOINT_SINGLE`이지 `K3H3_SINGLE`이 아닙니다: build가 바뀌면 이름이 틀려지고, 실제로
 a Checkpoint-Capacity of 4 and 8-shot Lookahead → a Checkpoint-Capacity of 4 and 4-shot Lookahead → a Checkpoint-Capacity of 3 and 3-shot Lookahead로 두 번 바뀌었습니다).
 
-| 축 | 뜻 | 확정 값 | 효과 |
-|---|---|:-:|---|
-| Checkpoint-Capacity | 한 번에 남겨 둘 수 있는 checkpoint의 최대 개수 | 3 | 실패한 shot의 iteration을 버리지 않고 이어 돌림 |
-| Lookahead-Shots | policy가 지금 shot 뒤로 미리 내다보는 shot의 개수 | 3 | 어느 checkpoint를 남길지 계획 |
-| number of PEs | Grover iteration 한 번에 협력하는 PE의 개수 | 4 | 512 rows를 4 rows씩 처리 |
-| Measurement Microarchitecture | Measurement Unit 최적화 단계 | Dual-Row Build · Two-Level Select | Build에서 cycle당 2 rows + 두 단계 row 선택 |
+| 축                            | 뜻                                                |              확정 값              | 효과                                            |
+| ----------------------------- | ------------------------------------------------- | :--------------------------------: | ----------------------------------------------- |
+| Checkpoint-Capacity           | 한 번에 남겨 둘 수 있는 checkpoint의 최대 개수    |                 3                 | 실패한 shot의 iteration을 버리지 않고 이어 돌림 |
+| Lookahead-Shots               | policy가 지금 shot 뒤로 미리 내다보는 shot의 개수 |                 3                 | 어느 checkpoint를 남길지 계획                   |
+| number of PEs                 | Grover iteration 한 번에 협력하는 PE의 개수       |                 4                 | 512 rows를 4 rows씩 처리                        |
+| Measurement Microarchitecture | Measurement Unit 최적화 단계                      | Dual-Row Build · Two-Level Select | Build에서 cycle당 2 rows + 두 단계 row 선택     |
 
 Checkpoint-Capacity와 Lookahead-Shots를 크게 설정한다고 항상 성능이 좋아지는 것은 아닙니다. a Checkpoint-Capacity of 4 and 4-shot Lookahead에서 a Checkpoint-Capacity of 3 and 3-shot Lookahead로
 줄였을 때 cycle이 7.66% 감소했습니다. 두 값을 분리해 benchmark한 실험
@@ -115,11 +115,11 @@ checkpoint 저장 공간이 아니라 유지할 checkpoint를 결정하는 과�
 shot cap 100)를 세 가지 기준으로 benchmark했습니다. benchmark 대상과 경계가 다르므로 각 수치는 해당
 기준 안에서만 비교해야 합니다.
 
-| 축 | Restart mode | final configuration | speedup | 근거 |
-|---|---:|---:|---:|---|
-| board wall-clock time | 425,502 µs | 55,798 µs | 7.626× | [board_500run](../../hardware_bram/configurations/final/vivado/vivado_bbht_grover_fpga/2026-09-08_k3h3_e4_m2_board_500run/evidence.md) |
-| RTL cycle (Six-Stage Ablation) | 42,308,335 | 6,890,470 | 6.1401× | [publication_6stage](../../hardware_bram/results/2026-09-08_publication_6stage/evidence.md) |
-| 같은 board ORCA 1 core 대비 | 6,496,338,005 µs | 55,798 µs | 116,426× | [orca_1core_baseline](../../hardware_bram/configurations/final/vivado/vivado_bbht_grover_fpga/2026-09-08_orca_1core_baseline/evidence.md) |
+| 축                             |      Restart mode | final configuration |   speedup | 근거                                                                                                                                     |
+| ------------------------------ | ----------------: | ------------------: | --------: | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| board wall-clock time          |       425,502 µs |          55,798 µs |   7.626× | [board_500run](../../hardware_bram/configurations/final/vivado/vivado_bbht_grover_fpga/2026-09-08_k3h3_e4_m2_board_500run/evidence.md)    |
+| RTL cycle (Six-Stage Ablation) |        42,308,335 |           6,890,470 |  6.1401× | [publication_6stage](../../hardware_bram/results/2026-09-08_publication_6stage/evidence.md)                                               |
+| 같은 board ORCA 1 core 대비    | 6,496,338,005 µs |          55,798 µs | 116,426× | [orca_1core_baseline](../../hardware_bram/configurations/final/vivado/vivado_bbht_grover_fpga/2026-09-08_orca_1core_baseline/evidence.md) |
 
 benchmark 조건과 evidence bundle은 [실험 12](../reports/12_board_verified_build_500_runs.md)에 있습니다.
 
@@ -148,18 +148,18 @@ resource는 [19장](19_synthesis_implementation_bitstream.md)입니다.
 실제 board까지 verification 범위를 확장한 과정을 시간순으로 정리했습니다. 마지막 row가 이
 reference의 기준 시점입니다.
 
-| 날짜 | 무엇 | 근거 |
-|---|---|---|
-| 2026-09-07 | board bitstream build.이 17개 RTL이 Board-Verified Build | [repro_package_v1.0](../../hardware_bram/configurations/final/results/2026-09-09_repro_package_v1.0/evidence.md) |
-| 2026-09-08 | board 500 runs benchmark 세 configuration (Restart mode · a Checkpoint-Capacity of 4 and 4-shot Lookahead · final configuration) | [board_500run](../../hardware_bram/configurations/final/vivado/vivado_bbht_grover_fpga/2026-09-08_k3h3_e4_m2_board_500run/evidence.md) |
-| 2026-09-08 | 같은 board ORCA 1 core baseline | [orca_1core_baseline](../../hardware_bram/configurations/final/vivado/vivado_bbht_grover_fpga/2026-09-08_orca_1core_baseline/evidence.md) |
-| 2026-09-10 | 현재 Bus Interface version으로 bench500 BBHT trajectory·cycle 대조 | [bench500_final_core](../../hardware_bram/configurations/final/results/2026-09-10_bench500_final_core/evidence.md) |
-| 2026-09-16 | SoC 전체 RTL simulation에서 실제 CPU가 구동, 261쌍 cycle 일치 | [soc_rtl_paper_bench](../../hardware_bram/configurations/final/results/2026-09-16_soc_rtl_paper_bench/evidence.md) |
-| 2026-09-16 | console 명령 21줄 왕복과 host CLI 재생 대조 | [soc_rtl_console](../../hardware_bram/configurations/final/results/2026-09-16_soc_rtl_console/evidence.md) |
-| 2026-09-16 | Bus Interface 교체 version synthesis·implementation, WNS +0.196 ns | [comm_layer_rebuild](../../hardware_bram/configurations/final/vivado/vivado_bbht_grover_fpga/2026-09-16_comm_layer_rebuild/evidence.md) |
-| 2026-09-17 | 해당 bitstream을 board에 기록하고 host에서 UART로 제어. selftest 7/7, 응답 26줄이 simulation과 일치 | [board_console](../../hardware_bram/configurations/final/vivado/vivado_bbht_grover_fpga/2026-09-17_board_console/evidence.md) |
-| 2026-10-08 | 원격 200T board에서 Six-Stage Ablation 여섯 build 500 workloads × 두 mode. 6,000 runs가 RTL bench500과 cycle까지 일치. 네 predicate 24,000 runs는 reference model과 전부 일치 (revision 사이 비교용) | [board500_6models](../../hardware_bram/results/2026-10-08_board500_6models/evidence.md) |
-| 2026-10-11 | 새 software baseline을 200T board ORCA와 server에서 네 predicate 2,000개. 세 model 모두 FPGA와 BBHT trajectory 2,000/2,000 일치 | [sw_baseline_predicate500](../../software/orca_grover_result/2026-10-11_predicate500/2026-10-11_predicate500.md) |
+| 날짜       | 무엇                                                                                                                                                                                                  | 근거                                                                                                                                     |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-09-07 | board bitstream build.이 17개 RTL이 Board-Verified Build                                                                                                                                              | [repro_package_v1.0](../../hardware_bram/configurations/final/results/2026-09-09_repro_package_v1.0/evidence.md)                          |
+| 2026-09-08 | board 500 runs benchmark 세 configuration (Restart mode · a Checkpoint-Capacity of 4 and 4-shot Lookahead · final configuration)                                                                    | [board_500run](../../hardware_bram/configurations/final/vivado/vivado_bbht_grover_fpga/2026-09-08_k3h3_e4_m2_board_500run/evidence.md)    |
+| 2026-09-08 | 같은 board ORCA 1 core baseline                                                                                                                                                                       | [orca_1core_baseline](../../hardware_bram/configurations/final/vivado/vivado_bbht_grover_fpga/2026-09-08_orca_1core_baseline/evidence.md) |
+| 2026-09-10 | 현재 Bus Interface version으로 bench500 BBHT trajectory·cycle 대조                                                                                                                                   | [bench500_final_core](../../hardware_bram/configurations/final/results/2026-09-10_bench500_final_core/evidence.md)                        |
+| 2026-09-16 | SoC 전체 RTL simulation에서 실제 CPU가 구동, 261쌍 cycle 일치                                                                                                                                         | [soc_rtl_paper_bench](../../hardware_bram/configurations/final/results/2026-09-16_soc_rtl_paper_bench/evidence.md)                        |
+| 2026-09-16 | console 명령 21줄 왕복과 host CLI 재생 대조                                                                                                                                                           | [soc_rtl_console](../../hardware_bram/configurations/final/results/2026-09-16_soc_rtl_console/evidence.md)                                |
+| 2026-09-16 | Bus Interface 교체 version synthesis·implementation, WNS +0.196 ns                                                                                                                                   | [comm_layer_rebuild](../../hardware_bram/configurations/final/vivado/vivado_bbht_grover_fpga/2026-09-16_comm_layer_rebuild/evidence.md)   |
+| 2026-09-17 | 해당 bitstream을 board에 기록하고 host에서 UART로 제어. selftest 7/7, 응답 26줄이 simulation과 일치                                                                                                   | [board_console](../../hardware_bram/configurations/final/vivado/vivado_bbht_grover_fpga/2026-09-17_board_console/evidence.md)             |
+| 2026-10-08 | 원격 200T board에서 Six-Stage Ablation 여섯 build 500 workloads × 두 mode. 6,000 runs가 RTL bench500과 cycle까지 일치. 네 predicate 24,000 runs는 reference model과 전부 일치 (revision 사이 비교용) | [board500_6models](../../hardware_bram/results/2026-10-08_board500_6models/evidence.md)                                                   |
+| 2026-10-11 | 새 software baseline을 200T board ORCA와 server에서 네 predicate 2,000개. 세 model 모두 FPGA와 BBHT trajectory 2,000/2,000 일치                                                                       | [sw_baseline_predicate500](../../software/orca_grover_result/2026-10-11_predicate500/2026-10-11_predicate500.md)                          |
 
 층별 설명은 [16장](16_verification_framework.md), board session 자체는 [실험 보고서 index 「board benchmark 묶음」](../reports/index.md#board-benchmark-묶음).
 

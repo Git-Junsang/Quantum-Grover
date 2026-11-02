@@ -1,0 +1,2 @@
+SUMMARY checkpoint capacity=5 cases=85 segments=112 bridges=49 commits=91 errors=0
+hardware_bram/testbench/tb_checkpoint_parameterized.sv:131: $finish called at 14140000 (1ps)

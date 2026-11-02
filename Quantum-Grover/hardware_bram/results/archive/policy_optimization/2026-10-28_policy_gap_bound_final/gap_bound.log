@@ -1,0 +1,3 @@
+SUMMARY gap_bound UB=13 cases=12012 errors=0
+SUMMARY gap_bound UB=7 cases=32780 errors=0
+hardware_bram/testbench/tb_policy_gap_bound.sv:124: $finish called at 327900000 (1ps)

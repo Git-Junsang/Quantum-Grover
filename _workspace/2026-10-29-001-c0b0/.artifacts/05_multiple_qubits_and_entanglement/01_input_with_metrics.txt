@@ -1,0 +1,254 @@
+[진단]
+# 윤문 진단
+
+대상: `05_multiple_qubits_and_entanglement.md`
+
+## 장르와 레지스터
+
+학부생용 공부 해설서입니다. 설명 본문은 합쇼체 중심의 친근한 존댓말이고, 질문·권유에는 해요체가 섞입니다. 요약·표의 간결한 명사형은 의도된 형식입니다. 이 register와 독자 수준을 그대로 유지합니다.
+
+## 겨냥 순서와 근거
+
+1. **D-14 / D-5 — 개념을 의인화한 비유**: 「algorithm이 밟는 경로」, 「amplitude를 … 바깥으로 내보내지 않습니다」, 「hardware budget에 그대로 값을 매깁니다」, 「읽을 언어로 챙겨」가 실제 동작보다 비유를 앞세웁니다. 연산·저장·읽기 목적을 직접 설명할 수 있는 부분만 고칩니다.
+
+2. **D-2 / F-1 — 흥분을 유도하는 도입**: 「이제 마법이 일어납니다」, 「measurement로 보면 놀랍습니다」는 다음 계산을 평가하는 문장입니다. 계산과 결과로 바로 연결하되 Bell state·상관관계의 주장은 보존합니다.
+
+3. **A-18 — 긴 관형 구조와 삽입 해설**: 5.2·5.5·5.6절의 hardware 연결 문단은 대시와 괄호 뒤에 결론이 밀립니다. relative_clause_nesting=3. 문장을 나눠 주어와 서술어를 가깝게 두고 원문 조건을 보존합니다.
+
+4. **C-8 / I-3 — 동일한 대립·해설 종결**: 「기계가 아니라 … 기계」, 「만들 circuit이 아니라 읽을 언어」와 「뜻입니다」가 hardware 설명에서 겹칩니다. 중요한 구별은 유지하면서 일부를 직접 서술로 바꿀 수 있습니다.
+
+## 정량 앵커와 해석
+
+입력 정량 블록의 route_hint는 `light`, 원문은 10,669자입니다. 위에 적은 양성 카운트만 해당 ID의 보조 근거로 사용했습니다. lexical_diversity의 낮은 값은 전문용어 반복의 영향이 있으므로 영어 용어를 치환하는 근거로 쓰지 않습니다. 이중 피동·by 피동·have 직역은 카운트가 0이어서 지배 패턴으로 지목하지 않습니다.
+
+## 보존 지침
+
+- 영어 용어·영어 토큰의 철자와 대소문자를 그대로 둡니다. 영어를 한국어로 옮기거나 동의어로 바꾸지 않습니다. 용어집 SSOT는 `documents/design_references/22_appendix_glossary_and_retired_specs.md` 22.2절입니다.
+- 사실·주장·수치·단위·수식·code·identifier·인용·조건·부정/긍정·인과를 보존합니다. 내용 보충이나 과학적 사실 수정은 이번 윤문의 범위가 아닙니다.
+- 제목·절 번호·link·그림·기존 콜아웃·표 구조를 유지합니다. 기존 볼드·이모지는 교재 고유 관습이므로 일괄 삭제하지 않습니다.
+- 어색한 비유·한국어 연결·조사·수식어만 국소 수정합니다. 단순히 technical term이 많이 나온다는 이유로 B 계열 처방을 적용하지 않습니다.
+- 의무·가능·추정의 강도를 보존하고 원문에 없던 설명이나 평가를 넣지 않습니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 1)
+route_hint: light  (권고 — 사용자·오케스트레이터가 무시 가능)
+route_reason: 카운트형 티 0건(라우터가 세는 항목 기준) · risk_band low — 단일 콜·최소 파이프라인 권장. 카운터 밖 티는 monolith 가 룰북으로 잡는다
+genre: report
+char_count: 10669
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.26  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.47  (z=-0.39 vs report 인간 baseline)
+- ending_comma_rate: 0.57  (n/a vs report 인간 baseline)
+- comma_segment_length: 6.05  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.001  (z=-1.95 vs report 인간 baseline)
+- lexical_diversity: 0.57  (z=-1.51 vs report 인간 baseline)  ★ S1 트리거
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 3
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+# 5장. multi-qubit와 entanglement
+
+> [← 4장 measurement](04_measurement.md) · [index](index.md) · [6장 quantum circuit model과 universality →](06_quantum_circuit_model_and_universality.md)
+> **이 장을 읽기 위한 준비**: [1장](01_qubits_and_states.md) state·superposition, [3장](03_single_qubit_gates.md) gate, [4장](04_measurement.md) measurement.
+
+---
+
+지금까지는 qubit 하나만 다뤘습니다. 하지만 유용한 계산을 하려면 여러 qubit가 필요하고, qubit들이 **서로 상호작용**해야 합니다. 이 장에서는 여러 qubit의 state가 어떻게 표현되는지(qubit가 하나 늘 때마다 dimension이 두 배!), qubit를 상호작용시키는 **CNOT gate**, 그리고 순수 quantum 현상인 **entanglement**를 배웁니다. 이렇게 지수적으로 커지는 dimension이 바로 [0장](index.md)에서 말한 quantum computer의 힘의 원천이며, [9장 Grover](09_grover_algorithm.md)가 qubit 몇 개로 $2^{\text{number of qubits}}$ 개 항목을 한꺼번에 다루는 근거입니다.
+
+---
+
+## 5.1 두 qubit의 state — 네 개의 computational basis
+
+qubit 하나의 computational basis는 $|0\rangle, |1\rangle$ 둘이었습니다. qubit **둘**이면 classical bit 2개처럼 네 가지 조합이 가능합니다:
+
+$$
+|00\rangle, \quad |01\rangle, \quad |10\rangle, \quad |11\rangle
+$$
+
+그리고 이들의 임의의 superposition도 가능합니다:
+
+$$
+|\psi\rangle = \alpha|00\rangle + \beta|01\rangle + \gamma|10\rangle + \delta|11\rangle
+$$
+
+amplitude $\alpha, \beta, \gamma, \delta$ 는 complex number이고, normalization condition은 마찬가지로:
+
+$$
+|\alpha|^2 + |\beta|^2 + |\gamma|^2 + |\delta|^2 = 1
+$$
+
+measurement하면 네 결과 00, 01, 10, 11 중 하나가 각각 $|\alpha|^2, |\beta|^2, |\gamma|^2, |\delta|^2$ 의 probability로 나옵니다([4장 Born rule](04_measurement.md)의 자연스러운 확장).
+
+---
+
+## 5.2 $2^{\text{number of qubits}}$ — 지수적으로 커지는 state space
+
+일반적으로 qubit가 여러 개면 computational basis state는 **$\text{number of states} = 2^{\text{number of qubits}}$** 개입니다.
+
+| number of qubits | number of states | 예                                  |
+| :------------: | :-----------------: | :---------------------------------- |
+|       1       |          2          | $\|0\rangle, \|1\rangle$          |
+|       2       |          4          | $\|00\rangle, ..., \|11\rangle$   |
+|       3       |          8          | $\|000\rangle, ..., \|111\rangle$ |
+|       10       |        1,024        |                                     |
+|      300      |     $2^{300}$     | 우주의 원자 수보다 많음             |
+
+qubit 여러 개의 state를 완전히 기술하려면 $2^{\text{number of qubits}}$ 개의 complex amplitude가 필요합니다. 이것이 [0장](index.md)에서 말한 핵심입니다: **300 qubits면 classical computer가 도저히 저장할 수 없는 수의 amplitude를 자연스럽게 담습니다.**
+
+> 🔑 **핵심 — 이것이 quantum parallelism의 근원**: 모든 qubit에 각각 $H$ gate를 걸면([6장](06_quantum_circuit_model_and_universality.md)) $2^{\text{number of qubits}}$ 개 computational basis state가 **전부 동시에** 담긴 uniform superposition이 만들어집니다. oracle 한 번으로 이 state 전부를 한꺼번에 처리하는 것이 [9장 Grover](09_grover_algorithm.md)의 출발점입니다. 3 qubits = 8 states, ..., search space $\text{number of states} = 2^{\text{number of qubits}}$.
+
+### 3-qubit 예제 (원문 notation)
+
+원문에서 3 qubits uniform superposition을 이렇게 씁니다:
+
+$$
+|\psi\rangle = \sum_{x=0}^{7} \frac{1}{\sqrt8}|x\rangle = \frac{1}{\sqrt8}\big(|000\rangle + |001\rangle + \cdots + |111\rangle\big)
+$$
+
+여덟 state가 모두 amplitude $\frac{1}{\sqrt8}$ 로 동등하게 담깁니다. ($\frac{1}{\sqrt8} = \frac{1}{\sqrt{2^3}}$, normalization: $8 \times \frac18 = 1$.) [9장](09_grover_algorithm.md)에서 이 state가 Grover의 시작점이 됩니다.
+
+amplitude가 complex number라는 것은 **일반적인** state의 이야기입니다. 우리가 만들 emulator는 표준 Grover 하나만 돌리는데, 그 algorithm이 밟는 경로 — uniform superposition에서 출발해 sign을 뒤집고 inversion about the mean을 하는 것 — 는 amplitude를 한 번도 real number 바깥으로 내보내지 않습니다. 그래서 amplitude 하나당 real part·imaginary part 두 칸을 잡을 필요 없이 **real-valued fixed-point 한 벌**만 저장합니다. 여기서는 결론만 알아 두고, 어떤 세 조건이 맞물려 이 성질을 만드는지는 [9.8절](09_grover_algorithm.md#98-전체-그림-정리--amplitude는-왜-real-number뿐인가)에서 닫습니다. 다만 이 절약은 공짜가 아니어서, amplitude에 complex phase를 직접 곱하는 기법을 얹는 순간 datapath를 complex number로 다시 지어야 합니다 — solution이 몇 개인지 세는 표준 기법인 quantum counting(phase estimation)을 설계에서 제외한 이유가 그것입니다([16.1절](16_iteration_control_and_checkpoints.md#161-왜-solution이-몇-개인지-모르는가)).
+
+---
+
+## 5.3 tensor product — 두 qubit를 합치기
+
+qubit 두 개를 각각 $|a\rangle = \alpha|0\rangle + \beta|1\rangle$, $|b\rangle = \gamma|0\rangle + \delta|1\rangle$ 로 준비한 뒤 나란히 놓으면, 합쳐진 state는 **tensor product**로 계산됩니다. 그냥 distributive law처럼 전개하면 됩니다:
+
+$$
+|a\rangle \otimes |b\rangle = (\alpha|0\rangle + \beta|1\rangle)(\gamma|0\rangle + \delta|1\rangle) = \alpha\gamma|00\rangle + \alpha\delta|01\rangle + \beta\gamma|10\rangle + \beta\delta|11\rangle
+$$
+
+notation: $|0\rangle|0\rangle$, $|0\rangle\otimes|0\rangle$, $|00\rangle$ 은 모두 같은 뜻입니다. 여러 gate를 여러 qubit에 동시에 적용할 때도 tensor product를 씁니다. 예를 들어 $H^{\otimes \text{number of qubits}}$ 는 "모든 qubit 각각에 $H$" 를 뜻하며([6장](06_quantum_circuit_model_and_universality.md)), Grover와 Deutsch-Jozsa의 첫 단계입니다.
+
+💡 **비유**: tensor product는 "각 qubit가 독립적으로 가질 수 있는 state를 Cartesian product처럼 전부 나열"하는 것입니다. qubit가 늘수록 조합이 곱으로 불어나 $2^{\text{number of qubits}}$ 이 됩니다.
+
+---
+
+## 5.4 CNOT gate — qubit를 상호작용시키기
+
+single-qubit gate만으로는 qubit들이 서로 영향을 못 줍니다. 계산하려면 **two-qubit gate**가 필요합니다. 대표가 **CNOT(controlled-NOT)** 입니다.
+
+두 개의 wire(qubit)가 있고, 하나는 **control qubit**, 다른 하나는 **target qubit**입니다. 규칙은 간단합니다:
+
+> **control qubit가 1이면 target qubit를 뒤집는다(NOT). 아니면 아무것도 안 한다.**
+
+네 computational basis state에 대한 작용:
+
+$$
+|00\rangle \to |00\rangle, \quad |01\rangle \to |01\rangle, \quad |10\rangle \to |11\rangle, \quad |11\rangle \to |10\rangle
+$$
+
+앞 qubit(control qubit)가 1인 마지막 두 경우에만 뒤 qubit가 뒤집혔습니다. 한 줄 공식으로:
+
+$$
+|x, y\rangle \to |x,\, y \oplus x\rangle
+$$
+
+여기서 $\oplus$ 는 **modulo-2 addition(XOR)**입니다 ($1\oplus1 = 0$). classical programming의 `if (control) target = NOT target;` 와 같습니다.
+
+> ❓ **왜 XOR인가?**: quantum computing의 CNOT이 classical computing의 XOR에 대응하기 때문입니다. 이 $\oplus$ notation은 [7장 oracle](07_oracle_and_phase_kickback.md) $U_f|x\rangle|y\rangle = |x\rangle|y\oplus f(x)\rangle$ 에서 다시 핵심으로 등장합니다.
+
+computational basis $\{|00\rangle, |01\rangle, |10\rangle, |11\rangle\}$ 순서로 matrix로 쓰면 이렇습니다 — 앞 두 computational basis state($|00\rangle, |01\rangle$)는 그대로 두고, 뒤 두 computational basis state($|10\rangle, |11\rangle$)의 자리만 맞바꾸는 형태입니다:
+
+$$
+\text{CNOT} = \begin{bmatrix} 1&0&0&0 \\ 0&1&0&0 \\ 0&0&0&1 \\ 0&0&1&0 \end{bmatrix}
+$$
+
+CNOT도 물론 unitary이고($\text{CNOT}^\dagger\,\text{CNOT} = I$), superposition에는 linear하게 작용합니다.
+
+---
+
+## 5.5 entanglement — 나눌 수 없는 state
+
+이제 마법이 일어납니다. $|00\rangle$ 에서 시작해 **첫 qubit에 $H$, 그다음 CNOT** 을 적용해 봅시다.
+
+🔍 **계산 따라가기**
+
+1단계 — 첫 qubit에 $H$: $|0\rangle \to \frac{|0\rangle+|1\rangle}{\sqrt2}$ 이므로 두 qubit state는
+
+$$
+|00\rangle \xrightarrow{H\otimes I} \frac{|00\rangle + |10\rangle}{\sqrt2}
+$$
+
+2단계 — CNOT (첫=control qubit, 둘째=target qubit): $|00\rangle$ 은 control qubit가 0이라 그대로, $|10\rangle$ 은 control qubit가 1이라 target qubit를 뒤집어 $|11\rangle$:
+
+$$
+\frac{|00\rangle + |10\rangle}{\sqrt2} \xrightarrow{\text{CNOT}} \frac{|00\rangle + |11\rangle}{\sqrt2}
+$$
+
+이 출력 state $\frac{|00\rangle + |11\rangle}{\sqrt2}$ 를 **Bell state**라 하고, **entangled state**의 대표 예입니다.
+
+### 왜 entanglement가 특별한가
+
+이 state는 **두 개의 독립된 single-qubit state의 tensor product로 쓸 수 없습니다.** 즉 $|a\rangle \otimes |b\rangle$ 형태로 분해가 안 됩니다 (product state가 아님).
+
+measurement로 보면 놀랍습니다:
+
+- 첫 qubit의 measurement에서 0이 나오면, 둘째 qubit는 **반드시** 0.
+- 첫 qubit가 1이면, 둘째는 **반드시** 1.
+
+두 qubit의 measurement 결과가 완벽히 **correlated**되어 있습니다. 아무리 멀리 떨어뜨려도 그렇습니다. 이것이 Einstein이 "spooky action at a distance"라 부른 entanglement입니다.
+
+> 🔑 **product state vs entangled state**
+>
+> - **product state**: $|a\rangle\otimes|b\rangle$ 로 분해됨. 각 qubit를 독립적으로 기술 가능. 예: $|00\rangle$, $|+\rangle|-\rangle$.
+> - **entangled state**: 분해 불가능. 예: $\frac{|00\rangle+|11\rangle}{\sqrt2}$. 부분들이 전체보다 정보가 적음.
+
+entanglement는 quantum teleportation, quantum error correction, 그리고 빠른 quantum algorithm의 핵심 resource입니다.
+
+⚠️ **함정 — CNOT은 target qubit만 바꾸는 게 아니다**: "control qubit는 그대로, target qubit만 바뀐다"는 computational basis에서만 맞습니다. 예컨대 $|+\rangle|-\rangle$ 을 CNOT에 넣으면 $|-\rangle|-\rangle$ 이 나와 **control qubit가 바뀝니다**. computational basis 직관을 다른 basis에 그대로 옮기면 틀립니다.
+
+✏️ **연습 5-1**: $\frac{|00\rangle + |01\rangle}{\sqrt2}$ 는 product state일까요, entangled state일까요? *(answer: product state. 첫 qubit로 묶어내 보세요 — [10장](10_glossary_and_cheat_sheet.md#106-연습문제-답)에 풀이.)*
+
+이 "분해 불가능"이 hardware budget에 그대로 값을 매깁니다. state가 늘 product state로 유지된다면 qubit 하나를 amplitude 두 개로 적어 $2 \times \text{number of qubits}$ 개의 수만 들고 있으면 됩니다. entangled state는 그렇게 쪼갤 수 없으니 $2^{\text{number of qubits}}$ 개의 amplitude를 **전부** 들고 있어야 하고, qubit당 몇 개의 수로 압축할 방법이 없습니다. Grover의 시작점인 uniform superposition은 아직 product state($|+\rangle^{\otimes \text{number of qubits}}$)이지만, oracle이 한 칸의 sign을 뒤집는 순간 product state로 분해되지 않는 state가 됩니다 — 2 qubits에서 $\frac12(|00\rangle+|01\rangle+|10\rangle-|11\rangle)$ 을 연습 5-1과 같은 방법으로 묶어내 보면 실패합니다. 즉 **entanglement = 압축 불가 = 지수 memory**이고, algorithm이 도는 내내 amplitude array를 통째로 들고 있어야 한다는 뜻입니다. state vector emulator의 속도가 산술 능력이 아니라 memory에 발목 잡히는([11.6절](11_state_vector_emulator.md#116-memory-bound의-두-얼굴--용량과-port)) 근본 이유가 여기 있습니다.
+
+---
+
+## 5.6 qubit가 많을 때의 CNOT
+
+CNOT은 qubit가 더 많은 계산에도 등장합니다. 예를 들어 3 qubits에서 "둘째=control qubit, 셋째=target qubit"인 CNOT은:
+
+$$
+|x, y, z\rangle \to |x, y, z\oplus y\rangle
+$$
+
+첫 qubit $x$ 는 관여 안 하니 그대로, control qubit $y$ 도 그대로, target qubit $z$ 만 $y$ 가 1일 때 뒤집힙니다. 이런 식으로 여러 qubit 사이에 conditional logic를 쌓아 복잡한 계산을 만듭니다.
+
+이 장의 부품 가운데 CNOT은 우리 RTL에 module로 등장하지 않습니다. emulator가 gate를 하나씩 state vector에 적용하는 기계가 아니라, oracle과 diffusion operator라는 **operator 단위**로 amplitude array 전체를 한 번에 훑는 기계이기 때문입니다(그 차이는 바로 다음 [6.1절](06_quantum_circuit_model_and_universality.md#61-quantum-computation--딱-세-단계)에서 정확히 짚습니다). 그렇다고 CNOT을 흘려보내도 되는 것은 아닙니다 — 논문의 circuit diagram과 Qiskit code는 여전히 gate로 적혀 있어서, 그 그림을 읽고 우리 operator와 대응시키려면 CNOT과 $\oplus$ 표기가 필요합니다. 이 장에서 CNOT은 만들 circuit이 아니라 **읽을 언어**로 챙겨 두면 됩니다.
+
+---
+
+## 5.7 이 장의 요약
+
+- **$\text{number of states} = 2^{\text{number of qubits}}$**: computational basis state마다 complex amplitude 하나. 지수적 state space가 quantum parallelism의 근원.
+- **tensor product**: qubit를 합칠 때 distributive law처럼 전개. $|a\rangle\otimes|b\rangle$. $H^{\otimes \text{number of qubits}}$ = 모든 qubit에 $H$.
+- **CNOT**: control qubit가 1이면 target qubit 뒤집기. $|x,y\rangle\to|x,y\oplus x\rangle$ ($\oplus$ = XOR). qubit 상호작용의 기본.
+- **entanglement**: $\frac{|00\rangle+|11\rangle}{\sqrt2}$ (Bell state)처럼 product state로 분해 안 되는 state. measurement 결과가 완벽히 correlated.
+- **product state vs entangled state**: 분해 가능 vs 불가능. entanglement는 빠른 algorithm·teleportation의 resource.
+- CNOT 직관("target qubit만 변함")은 computational basis에서만 유효.
+
+다음 장에서는 이 부품들 — single-qubit gate + CNOT + measurement — 을 합쳐 **완전한 quantum computation model**을 정의하고, $H^{\otimes \text{number of qubits}}$ 로 uniform superposition을 만드는 법과 universality를 봅니다. algorithm 직전의 마지막 준비입니다.
+
+---
+
+> [← 4장 measurement](04_measurement.md) · [index](index.md) · [6장 quantum circuit model과 범용성 →](06_quantum_circuit_model_and_universality.md)
+[원문 끝]

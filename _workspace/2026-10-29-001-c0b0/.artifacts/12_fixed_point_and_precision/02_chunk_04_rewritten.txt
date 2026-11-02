@@ -1,0 +1,44 @@
+## 12.3 integer bits는 몇 bit인가 — 재는 대상이 셋이다
+
+integer bits를 몇 bit로 잡을지는 **표현할 수 있어야 하는 maximum**이 정합니다. 여기서 혼동하기 쉬운 점이 있습니다. datapath가 만들어 내는 값이 **한 종류가 아니라 셋**이고, 셋의 maximum이 서로 다르다는 것입니다.
+
+**(a) array에 저장되는 amplitude.** 4장 Born rule에서 measurement probability는 $|\alpha_i|^2$ 이고 전체 probability의 sum이 1이므로, 어떤 amplitude도 $|\alpha_i|\le 1$ 입니다. 여기까지만 보면 integer bits는 $\pm 1$ 근방만 담으면 되니 **sign bit 하나로 충분**해 보입니다. 04번이 integer bits를 1-bit로 잡고 남는 30 bits를 전부 fraction bits로 몰아준 것이 이 논리입니다.
+
+**(b) diffusion operator 도중에 만들어지는 중간값 $2\bar a - \alpha_i$.** 그런데 amplitude는 memory에 저장된 뒤에도 매 iteration inversion about the mean을 거치며 바뀝니다. 그 결과값의 상한을 재 보면 이렇습니다. Cauchy–Schwarz inequality로 mean의 크기는
+
+$$|\bar a| = \frac{1}{\text{number of states}}\left|\sum_i \alpha_i\right| \le \frac{1}{\text{number of states}}\sqrt{\text{number of states}}\sqrt{\sum_i \alpha_i^2} = \frac{1}{\sqrt{\text{number of states}}}$$
+
+이고 $|\alpha_i| \le 1$ 이므로
+
+$$\left|2\bar a - \alpha_i\right| \le 1 + \frac{2}{\sqrt{\text{number of states}}}$$
+
+**이 값은 1을 넘을 수 있습니다.** 넘는 폭이 크지는 않습니다 — 14 qubits면 $2/\sqrt{16384} = 2/128 = 0.0156$ 이니 상한이 1.0156입니다. 하지만 Q1.22의 천장은 $1 - 2^{-22}$ 이라, 이 값을 23-bit data word에 그대로 담을 수는 없습니다.
+
+**(c) 전체 sum을 담는 accumulator $\sum_i \alpha_i$.** mean을 구하려면 먼저 모든 amplitude를 더해야 합니다. 최악의 경우 자릿수가 $\log_2(\text{number of states}) = \text{number of qubits}$ bits만큼 늘어납니다.
+
+integer bits 폭을 하나만 정해서 셋에 다 쓰겠다는 발상이 틀린 것입니다. **재는 대상이 다르면 필요한 폭도 다릅니다.** 그래서 우리 datapath는 셋을 따로 잡습니다.
+
+| 값 | 폭 | 이유 |
+|---|--:|---|
+| 저장 amplitude (a) | **23 bits** (Q1.22) | 수학적으로 $\lvert\alpha\rvert \le 1$. memory에 들어가는 유일한 값 |
+| $2\bar a$ 와 diffusion operator 중간값 (b) | **25 bits** | 상한 1.0156 을 넉넉히 담는 register. 되쓸 때 23 bits로 symmetric saturation |
+| sum accumulator (c) | **39 bits** | data word width + number of qubits + 2 = 23 + 14 + 2 |
+
+(b)를 어떻게 처리하느냐가 이 절의 핵심 결정입니다. 길은 둘입니다. 저장 data word 자체에 integer bit를 하나 더 두는 길(Q2.22, 24 bits)과, 저장 data word는 Q1.22 로 두고 **중간값만 넓은 register에서 계산한 뒤 되쓸 때 saturation하는** 길입니다. 우리 RTL은 뒤를 택했습니다. 근거는 셋입니다.
+
+첫째, **되쓰는 값은 수학적으로 1을 넘지 않습니다.** $2\bar a - \alpha_i$ 의 상한 $1 + 2/\sqrt{\text{number of states}}$ 은 Cauchy–Schwarz inequality가 주는 느슨한 한계일 뿐이고, diffusion operator를 마친 값은 정확한 산술에서 여전히 unit vector의 성분입니다 — Grover iteration은 unitary이기 때문입니다(9장). 1을 넘는 양은 rounding이 만든 몇 LSB 뿐이고, 그것도 solution amplitude가 1에 거의 닿는 iteration에서만 생깁니다. 둘째, 중간값은 **register 하나**라 두 bit 넓히는 비용이 미미하지만, 저장 data word를 넓히면 그 비용이 amplitude array 전체와 checkpoint slot 전부에 곱해집니다. 셋째, 그리고 결정적으로 **benchmark가 뒷받침합니다.** 같은 산술(14 qubits · Q1.22 · 같은 rounding과 saturation 규칙)로 돌린 2026-08 reference model campaign 671,600 runs에서 saturation이 걸린 경우는 이렇습니다([실험 02 amplitude precision](../reports/02_amplitude_precision.md)).
+
+| search | run | saturation event | 1,000 runs당 |
+|---|--:|--:|--:|
+| number of iterations 수동 지정 (최적 근처를 일부러 포함) | 41,280 | 2,520 | 61.05 |
+| BBHT Restart mode | 137,600 | 368 | 2.67 |
+| BBHT Checkpoint mode | 137,600 | 368 | 2.67 |
+
+saturation이 일어나도 **기능 결과가 달라진 경우는 0**이었고, Restart mode와 Checkpoint mode에서 saturation event가 똑같이 368번 나왔다는 것은 두 경로가 같은 state를 지난다는 추가 증거입니다. saturation은 조용히 넘어가지 않고 `amp_overflow` 라는 sticky bit로 남습니다(12.5절). 진단용이지 결과 무효 표시가 아닙니다.
+
+다만 이 선택으로 BRAM을 아낀 것은 아닙니다. 24-bit lane 셋은 72 bits로 RAMB36 한 port 폭에 정확히 들어가서, Q2.22로 잡았어도 state 한 벌이 RAMB36 11개로 같았을 것입니다(12.8절). 그러니 23 bits의 근거는 memory가 아니라 위의 셋 — 수학적 상한, register와 memory의 비용 차이, 그리고 benchmark입니다. (이 해설서의 옛 revision은 integer bits 2 bits를 결론으로 적었지만, 최종 RTL은 이 절의 방식을 택했습니다.)
+
+(c)의 accumulator는 amplitude와 같은 data word에 담을 수 없으니 따로 잡습니다. Cauchy–Schwarz 상한만 보면 7 bits(number of qubits / 2)면 되지만 최악값인 14 bits(number of qubits)로 잡았는데, accumulator는 memory가 아니라 register라서 몇 bit 더 잡는 비용이 미미하기 때문입니다. 나머지 2 bits는 sign extension과 뒷단 연산을 위한 여유입니다. Measurement Unit에는 또 다른 accumulator(amplitude square의 sum)가 있는데, 그 폭은 measurement circuit의 구조와 함께 14장에서 정합니다.
+
+---
+

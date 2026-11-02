@@ -1,0 +1,4 @@
+### 다루지 않는 것
+
+classical linear scan과의 속도 경쟁은 이 해설서의 주제가 아닙니다(5절). 그 밖에 두 가지 범위를 더 정해 둡니다. **minimum search는 주제가 아니라 확장입니다.** threshold를 계단처럼 낮춰 가며 minimum에 수렴시키는 Dürr–Høyer loop는 hardware에 넣지 않고 host firmware의 `while` 한 줄로 처리하기로 했습니다. 그래서 해설서에서도 [14.9절](14_multiple_solutions_and_minimum_search.md#149-확장--threshold를-낮추면-minimum-search) 한 절 분량입니다. superconducting·trapped-ion 같은 **quantum hardware의 물리**도 범위 밖입니다 — amplitude라는 숫자만 다루면 충분하다는 것이 [1.7절](01_qubits_and_states.md#17-물리적-실체는-잊어도-된다)의 결론입니다.
+

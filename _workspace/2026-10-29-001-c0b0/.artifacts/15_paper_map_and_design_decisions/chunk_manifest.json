@@ -1,0 +1,162 @@
+{
+  "version": 1,
+  "created": "2026-10-29",
+  "source_file": "01_input.txt",
+  "source_chars": 32774,
+  "source_sha256": "570de4ac5bb8f48710add1ea18b86ddb426a52da9e9b3c0ebd23a6d1eddd59c7",
+  "genre": "report",
+  "target_chunk_chars": 7000,
+  "max_chunk_chars": 9000,
+  "route_hint": "heavy",
+  "route_reason": "32,774자 초장문(>15,000) — 진단 + 청킹 권장",
+  "chunk_count": 13,
+  "body_chunk_count": 13,
+  "passthrough_chunk_count": 0,
+  "lossless_check": "ok",
+  "warnings": [],
+  "chunks": [
+    {
+      "index": 1,
+      "start": 0,
+      "end": 1322,
+      "char_count": 1322,
+      "starts_with_heading": true,
+      "heading": "# 15장. 논문 지도와 설계 결정표",
+      "passthrough": false,
+      "input_file": "01_chunk_01_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_01_rewritten.txt"
+    },
+    {
+      "index": 2,
+      "start": 1322,
+      "end": 3000,
+      "char_count": 1678,
+      "starts_with_heading": true,
+      "heading": "## 15.1 여섯 논문 한눈에",
+      "passthrough": false,
+      "input_file": "01_chunk_02_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_02_rewritten.txt"
+    },
+    {
+      "index": 3,
+      "start": 3000,
+      "end": 4616,
+      "char_count": 1616,
+      "starts_with_heading": true,
+      "heading": "## 15.2 계보도 — 누가 누구를 딛고 섰나",
+      "passthrough": false,
+      "input_file": "01_chunk_03_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_03_rewritten.txt"
+    },
+    {
+      "index": 4,
+      "start": 4616,
+      "end": 7406,
+      "char_count": 2790,
+      "starts_with_heading": true,
+      "heading": "## 15.3 여덟 개의 대립축",
+      "passthrough": false,
+      "input_file": "01_chunk_04_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_04_rewritten.txt"
+    },
+    {
+      "index": 5,
+      "start": 7406,
+      "end": 7763,
+      "char_count": 357,
+      "starts_with_heading": true,
+      "heading": "## 15.4 우리 project의 좌표 — 확정 설계 결정표",
+      "passthrough": false,
+      "input_file": "01_chunk_05_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_05_rewritten.txt"
+    },
+    {
+      "index": 6,
+      "start": 7763,
+      "end": 14691,
+      "char_count": 6928,
+      "starts_with_heading": false,
+      "heading": null,
+      "passthrough": false,
+      "input_file": "01_chunk_06_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_06_rewritten.txt"
+    },
+    {
+      "index": 7,
+      "start": 14691,
+      "end": 17933,
+      "char_count": 3242,
+      "starts_with_heading": true,
+      "heading": "## 15.5 확정 platform과 resource 예산",
+      "passthrough": false,
+      "input_file": "01_chunk_07_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_07_rewritten.txt"
+    },
+    {
+      "index": 8,
+      "start": 17933,
+      "end": 20704,
+      "char_count": 2771,
+      "starts_with_heading": true,
+      "heading": "## 15.6 인용 시 주의 — 논문의 오류와 모호점",
+      "passthrough": false,
+      "input_file": "01_chunk_08_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_08_rewritten.txt"
+    },
+    {
+      "index": 9,
+      "start": 20704,
+      "end": 26421,
+      "char_count": 5717,
+      "starts_with_heading": true,
+      "heading": "## 15.7 hardware 용어집",
+      "passthrough": false,
+      "input_file": "01_chunk_09_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_09_rewritten.txt"
+    },
+    {
+      "index": 10,
+      "start": 26421,
+      "end": 27136,
+      "char_count": 715,
+      "starts_with_heading": true,
+      "heading": "## 15.8 되돌아보며",
+      "passthrough": false,
+      "input_file": "01_chunk_10_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_10_rewritten.txt"
+    },
+    {
+      "index": 11,
+      "start": 27136,
+      "end": 28960,
+      "char_count": 1824,
+      "starts_with_heading": true,
+      "heading": "1. **solution이 없을 때의 종료 조건** — array를 고전적으로 훑어 확정하지 않고, shot cap 100과 BBHT budget 576 중 먼저 닿는 쪽으로 끝냅니다. enumeration mode는 이 \"실패로 끝난 BBHT\"가 연속 3번(기본값)이면 끝냅니다.",
+      "passthrough": false,
+      "input_file": "01_chunk_11_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_11_rewritten.txt"
+    },
+    {
+      "index": 12,
+      "start": 28960,
+      "end": 31630,
+      "char_count": 2670,
+      "starts_with_heading": true,
+      "heading": "## 15.9 여섯 논문 너머 — 더 읽을거리",
+      "passthrough": false,
+      "input_file": "01_chunk_12_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_12_rewritten.txt"
+    },
+    {
+      "index": 13,
+      "start": 31630,
+      "end": 32774,
+      "char_count": 1144,
+      "starts_with_heading": true,
+      "heading": "## 15.10 이 장의 요약",
+      "passthrough": false,
+      "input_file": "01_chunk_13_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_13_rewritten.txt"
+    }
+  ]
+}

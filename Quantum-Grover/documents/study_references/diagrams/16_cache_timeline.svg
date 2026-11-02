@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-90 0 890 430" font-family="'Helvetica Neue',Arial,'Malgun Gothic','Apple SD Gothic Neo',sans-serif">
+  <defs>
+    <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#444"/>
+    </marker>
+  </defs>
+  <rect x="-90" y="0" width="890" height="430" rx="10" fill="#ffffff"/>
+  <rect x="0.5" y="0.5" width="799" height="409" rx="10" fill="none" stroke="#e3e3e3"/>
+  <text x="400.0" y="30" text-anchor="middle" font-size="15" font-weight="bold" fill="#222">매번 initialization vs checkpoint — 같은 shot 수열, number of iterations = 1, 2, 5, 4, 9, 14</text>
+  <text x="400.0" y="49" text-anchor="middle" font-size="11.5" fill="#666">가로축은 시간(Grover iteration 단위). Init = 0.5, shot마다 measurement · solution check ≈ 1.3 (354 ÷ 268 cycles)</text>
+  <text x="138" y="104" text-anchor="end" font-size="12" fill="#222" font-weight="bold">Restart mode</text>
+  <rect x="150" y="86" width="6.5" height="28" rx="2" fill="#5b8def" stroke="none"/>
+  <rect x="156.5" y="86" width="13.0" height="28" rx="2" fill="#f4a37f" stroke="#e8663d"/>
+  <rect x="169.5" y="86" width="16.900000000000002" height="28" rx="2" fill="#e8d27a" stroke="none"/>
+  <text x="177.95000000000002" y="81" text-anchor="middle" font-size="9.5" fill="#777">1</text>
+  <rect x="186.4" y="86" width="6.5" height="28" rx="2" fill="#5b8def" stroke="none"/>
+  <rect x="192.9" y="86" width="26.0" height="28" rx="2" fill="#f4a37f" stroke="#e8663d"/>
+  <text x="205.9" y="104" text-anchor="middle" font-size="10.5" fill="#6b2a12">2</text>
+  <rect x="218.9" y="86" width="16.900000000000002" height="28" rx="2" fill="#e8d27a" stroke="none"/>
+  <text x="227.35000000000002" y="81" text-anchor="middle" font-size="9.5" fill="#777">2</text>
+  <rect x="235.8" y="86" width="6.5" height="28" rx="2" fill="#5b8def" stroke="none"/>
+  <rect x="242.3" y="86" width="65.0" height="28" rx="2" fill="#f4a37f" stroke="#e8663d"/>
+  <text x="274.8" y="104" text-anchor="middle" font-size="10.5" fill="#6b2a12">5</text>
+  <rect x="307.3" y="86" width="16.900000000000002" height="28" rx="2" fill="#e8d27a" stroke="none"/>
+  <text x="315.75" y="81" text-anchor="middle" font-size="9.5" fill="#777">5</text>
+  <rect x="324.2" y="86" width="6.5" height="28" rx="2" fill="#5b8def" stroke="none"/>
+  <rect x="330.7" y="86" width="52.0" height="28" rx="2" fill="#f4a37f" stroke="#e8663d"/>
+  <text x="356.7" y="104" text-anchor="middle" font-size="10.5" fill="#6b2a12">4</text>
+  <rect x="382.7" y="86" width="16.900000000000002" height="28" rx="2" fill="#e8d27a" stroke="none"/>
+  <text x="391.15" y="81" text-anchor="middle" font-size="9.5" fill="#777">4</text>
+  <rect x="399.59999999999997" y="86" width="6.5" height="28" rx="2" fill="#5b8def" stroke="none"/>
+  <rect x="406.09999999999997" y="86" width="117.0" height="28" rx="2" fill="#f4a37f" stroke="#e8663d"/>
+  <text x="464.59999999999997" y="104" text-anchor="middle" font-size="10.5" fill="#6b2a12">9</text>
+  <rect x="523.0999999999999" y="86" width="16.900000000000002" height="28" rx="2" fill="#e8d27a" stroke="none"/>
+  <text x="531.5499999999998" y="81" text-anchor="middle" font-size="9.5" fill="#777">9</text>
+  <rect x="539.9999999999999" y="86" width="6.5" height="28" rx="2" fill="#5b8def" stroke="none"/>
+  <rect x="546.4999999999999" y="86" width="182.0" height="28" rx="2" fill="#f4a37f" stroke="#e8663d"/>
+  <text x="637.4999999999999" y="104" text-anchor="middle" font-size="10.5" fill="#6b2a12">14</text>
+  <rect x="728.4999999999999" y="86" width="16.900000000000002" height="28" rx="2" fill="#e8d27a" stroke="none"/>
+  <text x="736.9499999999998" y="81" text-anchor="middle" font-size="9.5" fill="#777">14</text>
+  <text x="753.3999999999999" y="104" text-anchor="start" font-size="12" fill="#333" font-weight="bold">45.8</text>
+  <text x="138" y="194" text-anchor="end" font-size="12" fill="#222" font-weight="bold">Single-Slot Checkpoint (초판)</text>
+  <rect x="150" y="176" width="6.5" height="28" rx="2" fill="#5b8def" stroke="none"/>
+  <rect x="156.5" y="176" width="13.0" height="28" rx="2" fill="#f4a37f" stroke="#e8663d"/>
+  <rect x="169.5" y="176" width="16.900000000000002" height="28" rx="2" fill="#e8d27a" stroke="none"/>
+  <text x="177.95000000000002" y="171" text-anchor="middle" font-size="9.5" fill="#777">1</text>
+  <rect x="186.4" y="176" width="13.0" height="28" rx="2" fill="#f4a37f" stroke="#e8663d"/>
+  <rect x="199.4" y="176" width="16.900000000000002" height="28" rx="2" fill="#e8d27a" stroke="none"/>
+  <text x="207.85000000000002" y="171" text-anchor="middle" font-size="9.5" fill="#777">2</text>
+  <rect x="216.3" y="176" width="39.0" height="28" rx="2" fill="#f4a37f" stroke="#e8663d"/>
+  <text x="235.8" y="194" text-anchor="middle" font-size="10.5" fill="#6b2a12">3</text>
+  <rect x="255.3" y="176" width="16.900000000000002" height="28" rx="2" fill="#e8d27a" stroke="none"/>
+  <text x="263.75" y="171" text-anchor="middle" font-size="9.5" fill="#777">5</text>
+  <rect x="272.2" y="176" width="6.5" height="28" rx="2" fill="#5b8def" stroke="none"/>
+  <rect x="278.7" y="176" width="52.0" height="28" rx="2" fill="#f4a37f" stroke="#e8663d"/>
+  <text x="304.7" y="194" text-anchor="middle" font-size="10.5" fill="#6b2a12">4</text>
+  <rect x="330.7" y="176" width="16.900000000000002" height="28" rx="2" fill="#e8d27a" stroke="none"/>
+  <text x="339.15" y="171" text-anchor="middle" font-size="9.5" fill="#777">4</text>
+  <rect x="347.59999999999997" y="176" width="65.0" height="28" rx="2" fill="#f4a37f" stroke="#e8663d"/>
+  <text x="380.09999999999997" y="194" text-anchor="middle" font-size="10.5" fill="#6b2a12">5</text>
+  <rect x="412.59999999999997" y="176" width="16.900000000000002" height="28" rx="2" fill="#e8d27a" stroke="none"/>
+  <text x="421.04999999999995" y="171" text-anchor="middle" font-size="9.5" fill="#777">9</text>
+  <rect x="429.49999999999994" y="176" width="65.0" height="28" rx="2" fill="#f4a37f" stroke="#e8663d"/>
+  <text x="461.99999999999994" y="194" text-anchor="middle" font-size="10.5" fill="#6b2a12">5</text>
+  <rect x="494.49999999999994" y="176" width="16.900000000000002" height="28" rx="2" fill="#e8d27a" stroke="none"/>
+  <text x="502.94999999999993" y="171" text-anchor="middle" font-size="9.5" fill="#777">14</text>
+  <text x="519.3999999999999" y="194" text-anchor="start" font-size="12" fill="#333" font-weight="bold">27.8</text>
+  <text x="138" y="284" text-anchor="end" font-size="12" fill="#222" font-weight="bold">a Checkpoint-Capacity of 3</text>
+  <rect x="150" y="266" width="6.5" height="28" rx="2" fill="#5b8def" stroke="none"/>
+  <rect x="156.5" y="266" width="13.0" height="28" rx="2" fill="#f4a37f" stroke="#e8663d"/>
+  <rect x="169.5" y="266" width="16.900000000000002" height="28" rx="2" fill="#e8d27a" stroke="none"/>
+  <text x="177.95000000000002" y="261" text-anchor="middle" font-size="9.5" fill="#777">1</text>
+  <rect x="186.4" y="266" width="13.0" height="28" rx="2" fill="#f4a37f" stroke="#e8663d"/>
+  <rect x="199.4" y="266" width="16.900000000000002" height="28" rx="2" fill="#e8d27a" stroke="none"/>
+  <text x="207.85000000000002" y="261" text-anchor="middle" font-size="9.5" fill="#777">2</text>
+  <rect x="216.3" y="266" width="39.0" height="28" rx="2" fill="#f4a37f" stroke="#e8663d"/>
+  <text x="235.8" y="284" text-anchor="middle" font-size="10.5" fill="#6b2a12">3</text>
+  <rect x="255.3" y="266" width="16.900000000000002" height="28" rx="2" fill="#e8d27a" stroke="none"/>
+  <text x="263.75" y="261" text-anchor="middle" font-size="9.5" fill="#777">5</text>
+  <rect x="272.2" y="266" width="26.0" height="28" rx="2" fill="#f4a37f" stroke="#e8663d"/>
+  <text x="285.2" y="284" text-anchor="middle" font-size="10.5" fill="#6b2a12">2</text>
+  <rect x="298.2" y="266" width="16.900000000000002" height="28" rx="2" fill="#e8d27a" stroke="none"/>
+  <text x="306.65" y="261" text-anchor="middle" font-size="9.5" fill="#777">4</text>
+  <rect x="315.09999999999997" y="266" width="52.0" height="28" rx="2" fill="#f4a37f" stroke="#e8663d"/>
+  <text x="341.09999999999997" y="284" text-anchor="middle" font-size="10.5" fill="#6b2a12">4</text>
+  <rect x="367.09999999999997" y="266" width="16.900000000000002" height="28" rx="2" fill="#e8d27a" stroke="none"/>
+  <text x="375.54999999999995" y="261" text-anchor="middle" font-size="9.5" fill="#777">9</text>
+  <rect x="383.99999999999994" y="266" width="65.0" height="28" rx="2" fill="#f4a37f" stroke="#e8663d"/>
+  <text x="416.49999999999994" y="284" text-anchor="middle" font-size="10.5" fill="#6b2a12">5</text>
+  <rect x="448.99999999999994" y="266" width="16.900000000000002" height="28" rx="2" fill="#e8d27a" stroke="none"/>
+  <text x="457.44999999999993" y="261" text-anchor="middle" font-size="9.5" fill="#777">14</text>
+  <text x="473.8999999999999" y="284" text-anchor="start" font-size="12" fill="#333" font-weight="bold">24.3</text>
+  <text x="152" y="360" text-anchor="start" font-size="11.5" fill="#444">넷째 shot(4 iterations): Single-Slot Checkpoint는 직전 state(5 iterations)보다 작아 Init부터 4회.</text>
+<text x="152" y="378" text-anchor="start" font-size="11.5" fill="#444">checkpoint 세 벌이면 남겨 둔 2 iterations 지점에서 2회.</text>
+  <text x="152" y="396" text-anchor="start" font-size="11.5" fill="#444">어느 state를 남기느냐는 policy가 앞으로 올 request를 보고 정한다(16.5절). 이 그림은 여섯 shot짜리 축소 예시다.</text>
+  <rect x="152" y="314" width="12" height="12" rx="2" fill="#5b8def" stroke="none"/>
+  <text x="168" y="324" text-anchor="start" font-size="10.5" fill="#444">Init</text>
+  <rect x="230" y="314" width="12" height="12" rx="2" fill="#f4a37f" stroke="none"/>
+  <text x="246" y="324" text-anchor="start" font-size="10.5" fill="#444">iteration</text>
+  <rect x="308" y="314" width="12" height="12" rx="2" fill="#e8d27a" stroke="none"/>
+  <text x="324" y="324" text-anchor="start" font-size="10.5" fill="#444">measurement · solution check</text>
+</svg>

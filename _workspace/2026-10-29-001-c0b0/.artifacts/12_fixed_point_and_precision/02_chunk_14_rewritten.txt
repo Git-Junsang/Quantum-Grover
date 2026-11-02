@@ -1,0 +1,18 @@
+## 12.11 이 장의 요약
+
+- **floating-point는 비쌉니다.** addition 하나에 alignment·normalization·rounding이 딸려 옵니다(04번: addition 4 + 비교 4 + shift 3). fixed-point는 integer addition 1회이고, 이것이 "0 multipliers diffusion operator"의 전제입니다.
+- **명명 규약: sign은 integer bits에 포함.** Q format의 data word width = integer bits + fraction bits. 우리는 **Q1.22**(23 bits), 04번의 "Q1.30"은 우리 규약으로 **Q2.30**(32 bits). Q1.22는 $+1.0$ 을 담지 못하고, 우리는 $-1.0$ 도 버려 **대칭 범위**만 씁니다.
+- 14 qubits에서 $1/\sqrt{\text{number of states}} = 2^{-7}$ 이라 **초기 amplitude 32,768이 정확**합니다. initialization에서는 error가 생기지 않습니다.
+- **폭은 재는 대상이 셋**입니다: 저장 amplitude(23 bits) · diffusion operator 중간값(상한 $1 + 2/\sqrt{\text{number of states}} = 1.0156$, 25-bit register) · sum accumulator(39 bits). 저장 data word를 넓히는 대신 중간값만 넓히고 되쓸 때 **symmetric saturation**합니다. 되쓰는 값은 수학적으로 1을 넘지 않고, 671,600-run campaign에서 saturation은 드물었고(BBHT 1,000 runs당 2.67) 기능 결과를 바꾸지 않았습니다.
+- **rounding은 round-half-to-even.** loop 안에서 매 iteration 새로 생기는 truncation은 diffusion operator의 13-bit right shift 하나뿐인데, 그 error가 mean을 통해 전 칸에 퍼지고 1 solution이면 100 iterations 동안 되풀이됩니다. 한 방향 편향은 number of iterations에 비례해 쌓이고, 무편향은 $\sqrt{\text{number of iterations}}$ 로만 쌓이므로 truncation은 쓰지 않습니다.
+- **overflow는 symmetric saturation**과 `amp_overflow` 진단 bit. wraparound는 sign을 뒤집어 non-solution을 solution으로 만들고 mean을 통해 전체로 번집니다. **renormalization은 하지 않습니다** — Born sampler가 상대 비율만 쓰므로 필요가 없고, 하려면 multiplier가 들어옵니다.
+- **error 성장**: 05번의 $\ell_2 = O(2^{\text{number of qubits}-\text{fraction bits}})$, fraction bits 1 bit = error 절반, qubit 1개 = error 두 배. 단 이 이론은 **truncation 전제**입니다.
+- **minimum fraction bits 공식의 전제 셋**(truncation · 넓은 단일 data word · distribution 전체의 $\ell_2$)이 모두 우리와 다릅니다. 그래서 fraction bits를 공식으로 정하지 않고 **직접 쟀습니다** — 14 qubits에서 22 fraction bits면 probability $\ell_2 \le 10^{-5}$, campaign의 모든 run에서 error $< 10^{-3}$.
+- **data word 16-bit signed**, amplitude 23 bits. 23-bit 셋이 RAMB36 한 port(72 bits)에 들어가 state 한 벌이 11개, checkpoint slot 4벌이 44개. amplitude를 32 bits로 잡았다면 64개로 board를 넘겼을 것입니다.
+- **07번의 float32 비판**에 대한 답 셋: (1) dynamic range가 좁아 exponent field가 낭비, (2) Born-rule sampling으로 precision 요구가 **올라갔지만** 필요한 것은 resolution이지 exponent 범위가 아님, (3) 07번은 error 실험이 없고 우리는 쟀음.
+
+다음 장에서는 이 숫자 형식 위에서 oracle·diffusion operator가 **실제 circuit**이 되는 과정을 봅니다. 12장에서 "error의 주범"이라 부른 그 right shift가 13.5절에서 gate로 구현되는 모습을 보고 12.3절의 25-bit 중간값과 symmetric saturation이 왜 그 자리에 필요했는지도 그때 눈으로 확인하게 됩니다.
+
+---
+
+> [← 11장 state vector emulator](11_state_vector_emulator.md) · [index](index.md) · [13장 multiplier 없는 산술 →](13_oracle_diffusion_measurement_datapath.md)

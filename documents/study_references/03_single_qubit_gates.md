@@ -5,7 +5,7 @@
 
 ---
 
-qubit state를 알았으니, 이제 그 state를 **바꾸는** 방법을 배웁니다. classical computer가 AND·OR·NOT gate로 bit를 조작하듯, quantum computer는 **quantum gate**로 qubit를 조작합니다. quantum gate는 모두 **unitary matrix**이며, state vector에 matrix를 곱하는 것이 곧 gate를 적용하는 것입니다. 이 장에서 배울 $X$·$H$·$Z$ gate는 [7장](07_oracle_and_phase_kickback.md)·[8장](08_deutsch_jozsa_algorithm.md)·[9장](09_grover_algorithm.md) algorithm의 부품이 됩니다. 특히 **Hadamard($H$)** 는 superposition을 만드는 열쇠입니다.
+qubit state를 알았으니 이제 그 state를 **바꾸는** 방법을 배웁니다. classical computer가 AND·OR·NOT gate로 bit를 조작하듯, quantum computer는 **quantum gate**로 qubit를 조작합니다. quantum gate는 모두 **unitary matrix**이며, state vector에 matrix를 곱해 gate를 적용합니다. 이 장에서 배울 $X$·$H$·$Z$ gate는 [7장](07_oracle_and_phase_kickback.md)·[8장](08_deutsch_jozsa_algorithm.md)·[9장](09_grover_algorithm.md) algorithm의 부품이 됩니다. 특히 **Hadamard($H$)** 는 superposition을 만드는 데 쓰입니다.
 
 ---
 
@@ -19,7 +19,7 @@ quantum gate는 state vector에 **linear**하게 작용합니다. 즉 superposit
 
 $$U(\alpha|0\rangle + \beta|1\rangle) = \alpha\, U|0\rangle + \beta\, U|1\rangle$$
 
-이 linearity 덕분에, gate가 $|0\rangle$ 과 $|1\rangle$ 에 무엇을 하는지만 알면 모든 state에 대한 작용을 알 수 있습니다.
+이 linearity 덕분에 gate가 $|0\rangle$ 과 $|1\rangle$ 에 무엇을 하는지만 알면 모든 state에 대한 작용을 알 수 있습니다.
 
 ---
 
@@ -43,7 +43,7 @@ quantum circuit에서 gate는 상자로, qubit는 왼쪽에서 오른쪽으로 �
  |ψ⟩ ──[ X ]── X|ψ⟩
 ```
 
-⚠️ **함정 — 아무것도 안 하는 circuit이 물리적으로 가장 어렵다**: gate 없는 wire(identity operation)는 수학적으로 사소하지만, 실제 hardware에서는 qubit state를 **깨지지 않게 유지**하는 것이 가장 어려운 축에 듭니다. state는 극도로 부서지기 쉽기 때문입니다.
+⚠️ **함정 — 아무것도 안 하는 circuit이 물리적으로 가장 어렵다**: gate 없는 wire(identity operation)는 수학적으로 사소하지만, 실제 hardware에서는 qubit state를 **깨지지 않게 유지**하는 것이 가장 어려운 축에 듭니다. state는 외부 영향에 매우 민감하기 때문입니다.
 
 ---
 
@@ -73,7 +73,7 @@ $$H|0\rangle = \frac{1}{\sqrt2}\begin{bmatrix} 1&1\\1&-1\end{bmatrix}\begin{bmat
 
 $H$ 는 "$|0\rangle$ 이라는 확실한 state"를 "$|0\rangle$ 과 $|1\rangle$ 이 반반인 superposition"으로 펼칩니다.
 
-💡 **비유 (원문의 배 이야기)**: 고대에 북아프리카에서 이베리아 반도로 가려면 아프리카·유럽을 빙 둘러 육로로 가야 했습니다. 그런데 **배**를 발명하면 바다를 가로질러 지름길로 갑니다. Hadamard 같은 gate는 classical computer가 갈 수 없는 state들("바다")로 계산을 데려가, 지름길을 낼 수 있게 해 줍니다.
+💡 **비유 (원문의 배 이야기)**: 고대에 북아프리카에서 이베리아 반도로 가려면 아프리카·유럽을 빙 둘러 육로로 가야 했습니다. 그런데 **배**를 발명하면 바다를 가로질러 지름길로 갑니다. Hadamard 같은 gate는 classical computer가 갈 수 없는 state들("바다")에서 계산하도록 해 지름길을 마련합니다.
 
 ### H를 두 번 = identity (interference의 첫 맛)
 
@@ -85,9 +85,9 @@ $$H\!\left(\frac{|0\rangle+|1\rangle}{\sqrt2}\right) = \frac{1}{\sqrt2}\left(\fr
 
 $|1\rangle$ 항은 **서로 상쇄(cancel)** 되고 $|0\rangle$ 항은 **보강(reinforce)** 됩니다. 이것이 바로 **interference** 이며, $HH = I$ 입니다.
 
-> 🔑 **핵심 — interference가 quantum algorithm의 심장**: 많은 quantum algorithm은 (1) Hadamard로 state를 넓게 펼치고, (2) oracle로 solution에 표시한 뒤, (3) 영리한 상쇄·보강 패턴으로 solution state만 남기고 나머지를 지웁니다. [8장 Deutsch-Jozsa](08_deutsch_jozsa_algorithm.md)와 [9장 Grover](09_grover_algorithm.md)가 정확히 이 구조입니다.
+> 🔑 **핵심 — interference가 quantum algorithm의 심장**: 많은 quantum algorithm은 (1) Hadamard로 state를 넓게 펼치고, (2) oracle로 solution에 표시한 뒤, (3) 상쇄·보강 패턴으로 solution state만 남기고 나머지를 지웁니다. [8장 Deutsch-Jozsa](08_deutsch_jozsa_algorithm.md)와 [9장 Grover](09_grover_algorithm.md)가 정확히 이 구조입니다.
 
-qubit마다 $H$ 를 하나씩 걸면($H^{\otimes \text{number of qubits}}$, [6.2절](06_quantum_circuit_model_and_universality.md#62-uniform-superposition-만들기--hotimes-textnumber-of-qubits)) $\text{number of states} = 2^{\text{number of qubits}}$ 개의 computational basis state가 모두 amplitude $1/\sqrt{\text{number of states}}$ 를 나눠 갖는 uniform superposition이 됩니다. 우리 project의 14 qubits라면 16,384 states이고 $1/\sqrt{16{,}384} = 1/128 = 0.0078125$ 인데, 이 값을 23-bit fixed-point(Q1.22 — 표기의 뜻은 [12.2절](12_fixed_point_and_precision.md#122-fixed-point와-q-format-명명-규약))에 담으면 **integer 32,768 하나**이고 rounding 없이 정확합니다. 그래서 emulator의 initialization은 $2^{14}\times2^{14}$ 짜리 matrix를 곱하는 일이 아니라 **constant 32,768을 16,384칸에 채워 넣는 일**이 됩니다([13.2절](13_oracle_diffusion_measurement_datapath.md#132-init--uniform-amplitude를-square-root-unit-없이)). 수식과 circuit이 이렇게 달라 보이는 이유는 간단합니다 — 우리는 matrix를 만드는 대신, 그 matrix가 만들어 낼 **결과**를 곧장 적어 넣습니다.
+qubit마다 $H$ 를 하나씩 걸면($H^{\otimes \text{number of qubits}}$, [6.2절](06_quantum_circuit_model_and_universality.md#62-uniform-superposition-만들기--hotimes-textnumber-of-qubits)) $\text{number of states} = 2^{\text{number of qubits}}$ 개의 computational basis state가 모두 amplitude $1/\sqrt{\text{number of states}}$ 를 나눠 갖는 uniform superposition이 됩니다. 우리 project의 14 qubits라면 16,384 states이고 $1/\sqrt{16{,}384} = 1/128 = 0.0078125$ 입니다. 이 값을 23-bit fixed-point(Q1.22 — 표기의 뜻은 [12.2절](12_fixed_point_and_precision.md#122-fixed-point와-q-format-명명-규약))에 담으면 **integer 32,768 하나**이고 rounding 없이 정확합니다. 그래서 emulator의 initialization은 $2^{14}\times2^{14}$ 짜리 matrix를 곱하는 일이 아니라 **constant 32,768을 16,384칸에 채워 넣는 일**이 됩니다([13.2절](13_oracle_diffusion_measurement_datapath.md#132-init--uniform-amplitude를-square-root-unit-없이)). 수식과 circuit이 이렇게 달라 보이는 것은 우리가 matrix를 만드는 대신 그 matrix가 만들어 낼 **결과**를 곧장 적어 넣기 때문입니다.
 
 ---
 
@@ -117,7 +117,7 @@ $$U^\dagger U = I$$
 
 > 🔑 **unitary = 길이 보존**: unitary matrix는 vector의 **길이를 바꾸지 않습니다**. $\|U|\psi\rangle\| = \||\psi\rangle\|$. real vector space의 회전·반사가 길이를 안 바꾸는 것의 complex number version입니다.
 
-이것이 gate에 필수인 이유: 입력 state는 normalize(길이 1)되어 있고, 출력도 정당한 state이려면 길이 1이어야 합니다([1장](01_qubits_and_states.md), [4장](04_measurement.md)). unitary만이 이를 보장합니다. 사실 **길이를 보존하는 matrix는 unitary뿐**이라는 정리도 성립합니다.
+gate에서 이 성질이 필요한 까닭은 다음과 같습니다. 입력 state는 normalize(길이 1)되어 있고, 출력도 정당한 state이려면 길이 1이어야 합니다([1장](01_qubits_and_states.md), [4장](04_measurement.md)). unitary만이 이를 보장합니다. 사실 **길이를 보존하는 matrix는 unitary뿐**이라는 정리도 성립합니다.
 
 다만 이 보장은 amplitude를 정확한 real number로 다룰 때의 이야기입니다. amplitude를 유한한 bit 수로 적는 순간 operation마다 rounding이 끼어들어, 실제 hardware에서 norm은 정확히 1로 유지되지 않습니다. 우리 설계는 그 어긋남을 rounding error 규모로 보고 **감수하며, 매 iteration 끝에 길이를 1로 되돌리는 renormalization을 하지 않습니다**([12.5절](12_fixed_point_and_precision.md#125-overflow-policy--saturationwraparound-금지renormalization-없음)).
 
@@ -147,7 +147,7 @@ $U^\dagger U = I$ 는 $U^\dagger = U^{-1}$ 을 뜻합니다. 즉 **모든 quantu
 
 이 표는 [10장 cheat sheet](10_glossary_and_cheat_sheet.md)에 다시 정리되어 있습니다. $X$, $H$, $Z$ 셋은 반드시 손으로 계산할 수 있어야 합니다.
 
-이 장의 matrix들이 우리 FPGA emulator에서 어떤 circuit이 되는지 한 문단에 모아 둡니다. amplitude를 memory에 펼쳐 두는 구조에서 gate 적용은 원리적으로 $2^{\text{number of qubits}}\times2^{\text{number of qubits}}$ matrix multiplication이지만, 3.4절에서 본 것처럼 Grover가 쓰는 gate는 matrix를 세우지 않고 **뜻만** 옮기면 됩니다. $Z$ 류의 phase 반전이 특히 그렇습니다 — 표에 "$-1$ 을 곱한다"고 적힌 연산이 circuit에서는 multiplier가 아니라 **two's complement negate**(bit 반전 후 $+1$) 한 번이고, predicate에 걸린 칸에 대해 oracle이 amplitude에 하는 일은 그것이 전부입니다([13.4절](13_oracle_diffusion_measurement_datapath.md#134-sign-반전--twos-complement-negate-한-번)). 덧붙이면 이 표의 다섯 gate 가운데 우리 datapath가 실제로 circuit으로 만드는 것은 $H$ 의 **결과**와 $Z$ 의 **sign 반전** 둘뿐입니다. $X$·$Y$ 는 이론을 세우는 데 꼭 필요하지만, diffusion operator를 gate sequence로 분해하지 않고 inversion about the mean 산술로 곧장 계산하기 때문에 circuit에는 등장하지 않습니다([13.5절](13_oracle_diffusion_measurement_datapath.md#135-diffusion-operator--2mean--amp가-circuit이-되는-순간)).
+이 장의 matrix들이 우리 FPGA emulator에서 어떤 circuit이 되는지 한 문단에 모아 둡니다. amplitude를 memory에 펼쳐 두는 구조에서 gate 적용은 원리적으로 $2^{\text{number of qubits}}\times2^{\text{number of qubits}}$ matrix multiplication이지만, 3.4절에서 본 것처럼 Grover가 쓰는 gate는 matrix를 만들지 않고 **작용만** 구현하면 됩니다. $Z$ 류의 phase 반전이 특히 그렇습니다 — 표에 "$-1$ 을 곱한다"고 적힌 연산이 circuit에서는 multiplier가 아니라 **two's complement negate**(bit 반전 후 $+1$) 한 번입니다. predicate에 걸린 칸에 대해 oracle이 amplitude에 하는 일은 이것이 전부입니다([13.4절](13_oracle_diffusion_measurement_datapath.md#134-sign-반전--twos-complement-negate-한-번)). 덧붙이면 이 표의 다섯 gate 가운데 우리 datapath가 실제로 circuit으로 만드는 것은 $H$ 의 **결과**와 $Z$ 의 **sign 반전** 둘뿐입니다. $X$·$Y$ 는 이론을 세우는 데 꼭 필요하지만, diffusion operator를 gate sequence로 분해하지 않고 inversion about the mean 산술로 곧장 계산하기 때문에 circuit에는 등장하지 않습니다([13.5절](13_oracle_diffusion_measurement_datapath.md#135-diffusion-operator--2mean--amp가-circuit이-되는-순간)).
 
 ---
 
@@ -161,7 +161,7 @@ $U^\dagger U = I$ 는 $U^\dagger = U^{-1}$ 을 뜻합니다. 즉 **모든 quantu
 - **reversibility**: 모든 gate는 inverse $U^\dagger = U^{-1}$ 가 존재. quantum computation은 measurement 전까지 되돌릴 수 있음.
 - **circuit vs matrix 순서 반대**: circuit "먼저 $H$ 다음 $X$" = matrix $XH$.
 
-다음 장에서는 계산의 마지막 단계 — **measurement** — 를 배웁니다. 숨어 있던 amplitude가 어떻게 probability로 바뀌고, state가 어떻게 collapse하는지를 봅니다.
+다음 장에서는 계산의 마지막 단계 — **measurement** — 를 배웁니다. 직접 읽을 수 없던 amplitude가 어떻게 probability로 바뀌고 state가 어떻게 collapse하는지를 봅니다.
 
 ---
 

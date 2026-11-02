@@ -1,0 +1,147 @@
+{
+  "edits": [
+    {
+      "rule": "D-14",
+      "before": "오늘날 우리가 쓰는 모든 computer의 뿌리는 1936년 영국 수학자 **Alan Turing** 입니다.",
+      "after": "오늘날 우리가 쓰는 모든 computer의 기원은 1936년 영국 수학자 **Alan Turing**의 연구로 거슬러 올라갑니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "A-18",
+      "before": "각 입자를 qubit라고 (사실은 아니지만) 단순화하면,",
+      "after": "각 입자가 qubit인 것은 아니지만, 설명을 위해 그렇게 단순화하면,",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-2",
+      "before": "안타깝게도 안 됩니다. 바로 이 지점이 quantum의 진짜 핵심입니다.",
+      "after": "항상 그렇게 쓸 수는 없습니다. quantum의 중요한 성질이 여기서 드러납니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "지수적 폭발이 선형 증가로 바뀝니다.",
+      "after": "필요한 자원이 지수적 증가 대신 선형 증가에 그칩니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-2",
+      "before": "을 완전히 체득하게 됩니다.",
+      "after": "을 익힐 수 있습니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-8",
+      "before": "여기서 오해 하나를 미리 끊어 두겠습니다.",
+      "after": "여기서 한 가지를 구분해야 합니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "그러면 왜 만드느냐 — 겨룰 상대를 제대로 고르면 이야기가 달라집니다.",
+      "after": "그렇다면 왜 만들까요? 비교 대상을 살펴보면 이 작업의 목적을 알 수 있습니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "우리의 상대입니다.",
+      "after": "우리의 비교 대상입니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "들여다보는 순간 state가 무너지니까요.",
+      "after": "관측하는 순간 state가 바뀌기 때문입니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "14 qubits라는 숫자는 야심이 부족해서 고른 것이 아니라, amplitude array를 여러 벌 들고 계산하는 우리 구조를 이 board에 실을 수 있는 천장이 거기이기 때문입니다.",
+      "after": "14 qubits는 amplitude array를 여러 벌 저장하며 계산하는 우리 구조를 이 board에 구현할 수 있는 상한입니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "을 밑바닥부터 쌓아 올린 뒤",
+      "after": "을 기초부터 배운 뒤",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "로 내려앉는 과정을 따라갑니다",
+      "after": "로 구현되는 과정을 따라갑니다",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "어긋나면 15.4절이 이깁니다.",
+      "after": "어긋나면 15.4절을 기준으로 삼습니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "설계 질문별로 **가로질러** 읽으면서,",
+      "after": "설계 질문별로 **함께** 읽으면서,",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "각 장은 바로 앞 장의 개념 위에 세워집니다. 순서대로 읽는 것을 강력히 권합니다.",
+      "after": "각 장은 바로 앞 장의 개념을 바탕으로 설명합니다. 순서대로 읽기를 권합니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "Grover를 이해하는 4개의 기둥입니다.",
+      "after": "Grover를 이해하는 데 필요한 4개의 기본 개념입니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-8",
+      "before": "**12장을 13장 앞에 두는 것은 취향이 아닙니다.**",
+      "after": "**13장을 읽기 전에 12장의 내용이 필요합니다.**",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "개념은 앞 장에서 뒤 장으로 단조롭게 쌓이도록 배치했습니다.",
+      "after": "앞 장에서 배운 개념을 뒤 장에서 쓰도록 배치했습니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-8",
+      "before": "그 밖에 둘을 더 못 박아 둡니다.",
+      "after": "그 밖에 두 가지 범위를 더 정해 둡니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "설계 결정 하나를 통째로 떠받치는 논문이",
+      "after": "설계 결정 하나의 근거가 되는 논문이",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-2",
+      "before": "종이에 직접 $H|0\\rangle$ 을 계산해 보는 습관이 결정적입니다.",
+      "after": "종이에 직접 $H|0\\rangle$ 을 계산해 보는 습관이 중요합니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-2",
+      "before": "틀리면 \"좋았어!\"라고 외치세요.",
+      "after": "틀린 부분을 찾아 다시 계산해 보세요.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "classical은 지수적 폭발, quantum은",
+      "after": "classical은 지수적으로 증가, quantum은",
+      "occurrences": 1
+    }
+  ],
+  "self_check": {
+    "passed": 6,
+    "total": 6,
+    "note": "사용자 보존 조건 우선; 교육용 표·콜아웃과 필수 technical term 반복 유지"
+  }
+}

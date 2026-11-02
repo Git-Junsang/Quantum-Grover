@@ -1,0 +1,17 @@
+## 14.0 기호 충돌 주의
+
+이 장이 인용하는 세 자료가 **같은 글자를 다른 뜻으로** 씁니다. 이걸 정리하지 않으면 수식을 따라가다 반드시 헷갈립니다. 그래서 이 해설서는 **글자 대신 용어를 그대로 쓰고**(아래 표의 둘째 열), 원문을 인용할 때만 환산하겠습니다.
+
+| 개념 | **본 해설서(통일)** | 08번 논문 | 09번 논문 |
+|---|:---:|:---:|:---:|
+| search space의 크기 | number of states | $D$ | $K = 2^N$ |
+| solution의 개수 | number of solutions | $M$ | $S$ (또는 $n_s$) |
+| (08의 $N$) | — | diffusion operator가 뒤집는 state의 개수 | — |
+| (09의 $N$) | — | — | 사용자 수 |
+
+특히 조심할 것 두 가지입니다. **08번의 $N$ 은 number of qubits도 search space도 아닙니다** — diffusion operator가 phase를 뒤집는 state의 개수라는, 그 논문만의 variable입니다. 08번에서 search space는 $D$ 입니다. 그리고 **09번의 $N$ 은 "사용자 수"이고 search space는 $K=2^N$** 입니다. 그래서 09번의 optimal number of iterations 공식에 $S=1$ 을 넣으면 우리에게 익숙한 $\frac{\pi}{4}\sqrt K = \frac{\pi}{4}\sqrt{2^N}$ 이 나오지, $\frac{\pi}{4}\sqrt N$ 이 아닙니다. 교과서의 "$\frac{\pi}{4}\sqrt N$"은 $N$ 을 search space의 크기(이 해설서의 number of states)로 쓴 표기이니, 09번을 읽을 때는 반드시 $N\to K$ 로 환산하세요.
+
+이 표를 참고하면서, 아래부터는 search space의 크기를 number of states, solution의 개수를 number of solutions로 읽으시면 됩니다.
+
+---
+

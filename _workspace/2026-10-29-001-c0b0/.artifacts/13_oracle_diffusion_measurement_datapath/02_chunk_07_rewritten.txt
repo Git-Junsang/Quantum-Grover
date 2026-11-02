@@ -1,0 +1,14 @@
+## 13.6 왜 2 passes인가
+
+diffusion operator가 왜 굳이 두 번의 array 순회로 쪼개지는지는 한 문장으로 답할 수 있습니다. **$2\bar a - a_i$ 를 계산하려면 $\bar a$ 가 이미 확정돼 있어야 하는데, $\bar a$ 는 모든 $a_i$ 를 다 더해야 나오기 때문입니다.**
+
+<img src="diagrams/13_diffusion_2pass.svg" width="600" alt="diffusion operator 2 passes timing: accumulation이 확정된 뒤에야 subtraction이 가능">
+
+accumulation과 subtraction을 한 pass에서 섞으면 아직 다 더해지지도 않은 partial sum으로 subtraction이 시작됩니다. array 앞쪽 칸은 거의 0에 가까운 partial sum으로 반사되고 뒤쪽 칸은 거의 전체 sum으로 반사되어, 결과는 diffusion operator의 계산과 달라집니다. simulation에서 잡기 어려운 종류의 버그는 아니지만(amplitude의 오차가 뚜렷합니다), 이 순서 제약이 **algorithm에서 오는 것이지 implementation 편의가 아니라는** 점이 중요합니다. diffusion operator는 전역 연산이고, 전역 연산은 global reduction을 먼저 끝내야 합니다.
+
+그래서 Pass 1은 oracle을 건 amplitude를 memory에 되쓰면서 sum을 모으고, Pass 2는 그 되쓴 값을 다시 읽어 $2\bar a$ 에서 뺍니다. checkpoint가 출발점을 준 경우에는 Pass 1이 출발 checkpoint slot에서 읽어 목적 checkpoint slot에 쓰고, Pass 2가 목적 checkpoint slot을 읽고 덮어쓰는 식으로 두 pass가 checkpoint slot을 나눠 쓰기도 합니다(16.5절). 어느 쪽이든 순서 제약은 같습니다.
+
+이 제약이 남기는 흔적은 cycle만이 아닙니다. 12장에서 폭을 따로 잡았던 것이 전부 여기서 나옵니다. 첫째, Pass 1이 만드는 sum은 모든 amplitude의 총합이라 amplitude 하나보다 훨씬 큽니다. 그래서 accumulator는 amplitude container보다 넓어야 하고, 그 폭이 data word width + number of qubits + 2 = 23 + 14 + 2 = 39 bits입니다. 둘째 — 그리고 이쪽이 놓치기 쉬운데 — **넓혀야 하는 것이 accumulator만이 아닙니다.** Pass 2가 만드는 값 $2\bar a - a_i$ 자체가 이론상 $1 + 2/\sqrt{\text{number of states}} = 1.0156$ 까지 커져 Q1.22의 표현 범위를 넘을 수 있습니다. 그래서 이 값은 25-bit register에서 계산하고, memory에 되쓸 때만 23-bit 대칭 범위로 붙입니다([12.3절](12_fixed_point_and_precision.md#123-integer-bits는-몇-bit인가--재는-대상이-셋이다)). 되쓰는 값은 수학적으로 1을 넘지 않으므로 saturation이 걸리는 것은 rounding이 한두 LSB 넘긴 드문 경우뿐입니다.
+
+---
+

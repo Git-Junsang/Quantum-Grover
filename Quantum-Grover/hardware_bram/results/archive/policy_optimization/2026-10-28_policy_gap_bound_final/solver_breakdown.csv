@@ -1,0 +1,9 @@
+category,cycles,denominator_cycles,percent,nominal_us_at_100mhz
+build,63224,240657,26.271415,632.24
+scan_canonical_walk,45376,240657,18.855051,453.76
+scan_canonical_drain,54517,240657,22.653403,545.17
+frame_prep,16227,240657,6.742792,162.27
+dfs_return,16648,240657,6.917729,166.48
+memo_clear,11811,240657,4.907815,118.11
+seed_wait,6544,240657,2.719223,65.44
+root_init_finish_single_drain,26310,240657,10.932572,263.10

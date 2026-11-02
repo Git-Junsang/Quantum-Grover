@@ -1,0 +1,3 @@
+SUMMARY seed_replay cases=37 errors=0 skips=69 nested=54 seed_hits=83 seed_misses=388 canonical_misses=103 root_equal_bounds=7 skip_during_miss=0 max_universe=13 checked_bounds=4165 cached_bounds=2134 max_pruned_batch=4 max_scan_count=220
+CERTIFICATES root=20 inner=377 suffix=57 overlapped_reads=409 scan_lanes=4
+/workspace/hardware_bram/results/2026-10-28_policy_rank_timing/source/tb_policy_seed_replay.sv:314: $finish called at 2196580000 (1ps)

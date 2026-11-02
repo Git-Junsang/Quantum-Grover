@@ -1,0 +1,23 @@
+1. **Build — row weight 만들기.** amplitude memory를 한 바퀴 읽으며 row마다 32 lanes의 sum of squares(row weight)를 만들어 작은 memory에 적고, total weight도 함께 모읍니다. 512 rows를 32 rows씩 16개 **group**으로 묶어, group 경계를 지날 때마다 그때까지의 prefix sum을 group prefix sum으로 적어 둡니다 — 추가 square도 추가 cycle도 없이 따라 나오는 값입니다. squarer 한 벌이면 한 cycle에 1 row라 512 cycles인데, final configuration(**Dual-Row Build**)은 checkpoint memory가 한 번에 내주는 4 rows를 받아 **한 cycle에 2 rows씩** 제곱해 256 cycles로 줄입니다. squarer가 두 벌인 이유가 이것입니다(DSP 128개).
+2. **random number — rejection sampling.** 14.4절의 규칙대로 total weight 미만인 random number를 얻을 때까지 64-bit block를 뽑습니다.
+3. **group 고르기 (Two-Level Select).** 16 groups의 group prefix sum을 앞에서부터 보며 random number를 처음 넘는 group을 고릅니다. 최대 16 cycles입니다.
+4. **row 고르기.** 그 group의 32 rows 안에서 row weight의 prefix sum이 random number를 처음 넘는 row를 고릅니다. 최대 32 cycles입니다. (Linear Select라면 512 rows 전체를 앞에서부터 훑어야 합니다.)
+5. **lane 고르기.** 고른 row를 다시 읽어 32 lanes를 제곱하고, 그 row 안의 잔여값(random number에서 앞 row들까지의 prefix sum을 뺀 값)을 lane의 prefix sum이 처음 넘는 lane을 고릅니다. 후보 index는 `{row, lane}` 입니다.
+6. **verification.** `data_mem` 의 두 번째 port로 후보 칸의 값을 다시 읽어 oracle과 같은 predicate(와 padding·`found_mask`)로 판정합니다(16.4절).
+
+비교는 전부 **엄격한 `>`** 이고, 순서는 늘 group → row → lane입니다. 이 규칙이 하나라도 다르면 같은 random number에서 다른 칸이 나오므로, 18.3절에서 bit-exact 조건으로 명시한 항목입니다.
+
+얼마나 줄었는지는 shot 한 번의 나머지 비용(measurement·verification·policy 등)으로 봅니다. 500 workloads campaign에 직선을 맞춘 값으로, Single-Row Build · Linear Select configuration에서 shot당 약 821 cycles이던 것이 Dual-Row Build에서 약 567, Two-Level Select까지 더해 약 **354 cycles**이 되었습니다. Six-Stage Ablation에서 Dual-Row Build와 Two-Level Select가 각각 총 cycle을 18.15%, 18.94% 줄였고, 둘을 합치면 Stage 4 대비 33.7%입니다 — 눈에 잘 띄지 않는 자리였지만 이득의 큰 몫이 Measurement Unit에 있었습니다.
+
+**이 쪼개기가 분포를 바꾸지 않는다는 것을 반드시 확인해야 합니다.** index $i$ 가 row $b$ 에 속할 때, 이 절차가 $i$ 를 뽑을 probability는 두 단의 곱입니다:
+
+$$\text{probability}(i) = \underbrace{\frac{\text{row weight}_b}{\text{total weight}}}_{\text{row } b \text{ 선택}} \times \underbrace{\frac{a_i^2}{\text{row weight}_b}}_{\text{row } b \text{ 안에서 } i \text{ 선택}} = \frac{a_i^2}{\text{total weight}}$$
+
+row weight가 약분되어 원래의 Born-rule sampling이 그대로 남습니다. group 층을 하나 더 얹어도 같은 약분이 한 번 더 일어날 뿐입니다. 더 근본적으로는 — **inverse transform sampling은 index를 어떤 순서로 훑든, 몇 층으로 나눠 고르든 결과 분포가 같습니다.** probability 질량은 index에 붙어 있지 훑는 순서에 붙어 있지 않으니까요([4.3절](04_measurement.md#43-classical-hardware로-born-rule-흉내내기)). group·row·lane 순의 layer 선택은 순회 방식을 바꾼 것이고, 그래서 순차 prefix sum scan과 통계적으로 구별되지 않습니다. 이 성질은 verification에서도 쓰입니다([18.6절](18_reference_model_verification.md#186-born-sampler를-어떻게-검증하나)).
+
+**accumulator width.** 12장에서 미뤄 둔 논의가 여기서 결론이 납니다. square는 46 bits, 32개를 더한 row weight는 51 bits, 16,384개를 더한 total weight는 60 bits입니다. 실제 값은 norm이라 초기에 정확히 $2^{44}$ 이고 그 근처에 머무르니 상위 bit는 거의 쓰이지 않지만, saturation 없이 bit-exact를 보장하려면 최악 경계로 잡는 것이 맞습니다. diffusion operator 경로의 accumulator width `ACCW = 39` 와는 **별개의 accumulator**라는 점에 주의하세요. 재는 대상이 amplitude의 sum이 아니라 amplitude square의 sum이라 자릿수 계산이 처음부터 다릅니다.
+
+마지막으로, **Build도 lane 고르기도 amplitude memory를 읽기만 합니다.** 제곱해서 prefix sum을 만들 뿐 amplitude를 한 칸도 고쳐 쓰지 않습니다. 이 읽기 전용 성질이 16장 checkpoint의 근거가 됩니다([16.5절](16_iteration_control_and_checkpoints.md#165-checkpoint--measurement가-읽기-전용이라는-사실에서)).
+
+---
+

@@ -1,0 +1,33 @@
+## 9.4 진짜로 한 번 돌려보기 — 4 states
+
+작은 예제인 4 states(2 qubits)를 손으로 끝까지 계산해 봅시다. 먼저 solution이 하나인 경우이고, 그 solution을 $\omega$ 라 하겠습니다. 네 state의 amplitude를 순서대로 추적할게요.
+
+**시작 — uniform superposition.** 네 state 모두 amplitude $\frac12$:
+
+$$
+\text{amplitude} = \left(\tfrac12,\ \tfrac12,\ \tfrac12,\ \tfrac12\right)
+$$
+
+solution을 뽑을 probability는 $\left|\frac12\right|^2 = \frac14$. (넷 중 하나 찍기와 같음.)
+
+**동작 1 — oracle.** solution(세 번째라 하죠)의 amplitude만 negative로:
+
+$$
+\left(\tfrac12,\ \tfrac12,\ -\tfrac12,\ \tfrac12\right)
+$$
+
+**동작 2 — diffusion operator(inversion about the mean).** 먼저 mean을 구합니다:
+
+$$
+\bar a = \frac{1}{4}\left(\tfrac12 + \tfrac12 - \tfrac12 + \tfrac12\right) = \frac14
+$$
+
+각 막대를 mean 기준으로 뒤집는 것은 $a \mapsto 2\bar a - a = \frac12 - a$ 로 계산됩니다(왜 이 식인지는 **9.7절**에서):
+
+- non-solution 세 개 ($a = \tfrac12$): $\ \tfrac12 - \tfrac12 = 0$
+- solution ($a = -\tfrac12$): $\ \tfrac12 - (-\tfrac12) = 1$
+
+결과 amplitude는 $(0,\ 0,\ 1,\ 0)$ — state가 **정확히 solution $\omega$** 이 되었습니다! measurement를 하면 solution이 나올 probability가 $|1|^2 = 1$, 즉 **단 한 번의 iteration으로 100% 확실하게** 찾았습니다. 두 동작만으로 solution을 얻은 거예요.
+
+(4 states는 한 번에 딱 맞아떨어지는 특별히 운 좋은 크기입니다. state가 많으면 한 번으론 부족하고 여러 번 흔들어야 하는데, 그 얘기가 바로 다음 절입니다.)
+

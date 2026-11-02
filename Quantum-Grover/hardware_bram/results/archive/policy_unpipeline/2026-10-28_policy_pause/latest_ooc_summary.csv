@@ -1,0 +1,2 @@
+k,h,e,build_rows,prune,id,rtl_actions_per_decision,rtl_cycles_per_decision,rtl_decisions,rtl_exact_prune,rtl_max_latency,rtl_policy_actions,rtl_policy_cycles,cycles,iter,policy_actions,policy_cycles,policy_stall,validated_workloads,nominal_time_us,wns_ns,whs_ns,ooc_timing_pass,lut,ff,bram_tile,dsp,resource_stage
+3,3,4,3,6,k3h3_e4_b3_p6,4.71685393258427,45.38202247191011,445,6,472,2099,20195,381657,985,2249,21300,1451,20,3816.57,-0.114,0.068,False,41204,30682,81.5,192,route

@@ -1,0 +1,92 @@
+{
+  "source_chars": 27645,
+  "output_chars": 27603,
+  "total_ratio": 0.998,
+  "warnings": [],
+  "chunks": [
+    {
+      "index": 1,
+      "passthrough": false,
+      "orig_chars": 1161,
+      "rewritten_chars": 1167,
+      "ratio": 1.005
+    },
+    {
+      "index": 2,
+      "passthrough": false,
+      "orig_chars": 1514,
+      "rewritten_chars": 1515,
+      "ratio": 1.001
+    },
+    {
+      "index": 3,
+      "passthrough": false,
+      "orig_chars": 1203,
+      "rewritten_chars": 1204,
+      "ratio": 1.001
+    },
+    {
+      "index": 4,
+      "passthrough": false,
+      "orig_chars": 1998,
+      "rewritten_chars": 2007,
+      "ratio": 1.005
+    },
+    {
+      "index": 5,
+      "passthrough": false,
+      "orig_chars": 1219,
+      "rewritten_chars": 1193,
+      "ratio": 0.979
+    },
+    {
+      "index": 6,
+      "passthrough": false,
+      "orig_chars": 1849,
+      "rewritten_chars": 1830,
+      "ratio": 0.99
+    },
+    {
+      "index": 7,
+      "passthrough": false,
+      "orig_chars": 2763,
+      "rewritten_chars": 2761,
+      "ratio": 0.999
+    },
+    {
+      "index": 8,
+      "passthrough": false,
+      "orig_chars": 2472,
+      "rewritten_chars": 2472,
+      "ratio": 1.0
+    },
+    {
+      "index": 9,
+      "passthrough": false,
+      "orig_chars": 5813,
+      "rewritten_chars": 5815,
+      "ratio": 1.0
+    },
+    {
+      "index": 10,
+      "passthrough": false,
+      "orig_chars": 2882,
+      "rewritten_chars": 2888,
+      "ratio": 1.002
+    },
+    {
+      "index": 11,
+      "passthrough": false,
+      "orig_chars": 2600,
+      "rewritten_chars": 2587,
+      "ratio": 0.995
+    },
+    {
+      "index": 12,
+      "passthrough": false,
+      "orig_chars": 2148,
+      "rewritten_chars": 2141,
+      "ratio": 0.997
+    }
+  ]
+}

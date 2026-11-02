@@ -1,0 +1,54 @@
+[P0 문자율] 1.4% [전문] — OK (경고 30% / 중단 50%)
+[P1 목표달성] N/A — 구조 진단 (어휘 S1 앵커 없음)
+[P2 전멸] C-8 대구 7 → 7 — OK
+[P3 golden] PASS (수치 주입·각주·인용·register 이상 없음)
+[P4 터치율] 14.1% (21/149 문장) — 보고 전용
+[P5 서법] 소실 1문장 (참고 총수: 당위 8→7 / 완곡 4→5) — FAIL — 서법 소실 1문장
+          [당위] 출력 qubit에서 일어나야 할 변화가 입력 qubit의 ph → 출력 qubit에 가하는 연산의 효과가 입력 qubit의 ph
+gate: WARN — 경고. 사용자 고지 + finalize 승급
+{
+  "genre": "report",
+  "change_rate": {
+    "rate": 0.0141,
+    "scope": "전문",
+    "verdict": "OK"
+  },
+  "s1_targets": [],
+  "antithesis": {
+    "before": 7,
+    "after": 7,
+    "verdict": "OK"
+  },
+  "golden": [],
+  "sentence_touch": {
+    "rate": 0.1409,
+    "touched": 21,
+    "total": 149
+  },
+  "numbers_dropped": [],
+  "modality": {
+    "lost_pairs": [
+      {
+        "kind": "당위",
+        "before": "출력 qubit에서 일어나야 할 변화가 입력 qubit의 phase로 되차인 것입니다.",
+        "after": "출력 qubit에 가하는 연산의 효과가 입력 qubit의 phase 변화로 나타난 것입니다."
+      }
+    ],
+    "uncertain_pairs": [],
+    "counts": {
+      "deontic": {
+        "before": 8,
+        "after": 7
+      },
+      "hedge": {
+        "before": 4,
+        "after": 5
+      }
+    },
+    "verdict": "FAIL — 서법 소실 1문장"
+  },
+  "gate": {
+    "verdict": "WARN — 경고. 사용자 고지 + finalize 승급",
+    "exit_code": 1
+  }
+}

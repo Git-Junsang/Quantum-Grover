@@ -1,0 +1,80 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 12/12이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 09_grover_algorithm.md 진단
+
+## 장르·레지스터와 보존 조건
+
+학부생용 기술 해설서(report). 본문은 친근한 존댓말(합니다/입니다, 일부 해요체 설명), 수식 풀이·표·요약은 압축형입니다. 문장 격식을 올리지 않습니다. 영어 용어와 영어 토큰은 번역·삭제·교체·대소문자 변경하지 않습니다. glossary 기준은 `documents/design_references/22_appendix_glossary_and_retired_specs.md` §22.2입니다. 수치·수식·code·제목·link·직접 인용·기존 콜아웃/이모지·문단 구조는 보존합니다. 실제 주장, 부정/긍정, 인과, 조건, 확신도도 보존합니다. 보고서용 서식 축약·영어 순화 규칙은 적용하지 않습니다. 본문에 사실을 추가하거나 현행 설계와 대조해 기술 내용을 고치지 않습니다.
+
+## 정량 근거
+
+입력의 정량 블록을 확인했습니다. risk_band는 low이고, 장문 파일의 heavy 권고는 문서 길이에서 나옵니다. 영어 기술 term 반복은 장르상 필수이므로 lexical_diversity의 낮은 값만으로 수정하지 않습니다. 아래 수치는 탐지 보조이며 개별 문맥과 함께 판단합니다.
+
+## 겨냥 순서의 지배 패턴
+
+1. **D-14·D-5 — 설명용 비유가 본문까지 관통하는 반복**: "Grover가 실제로 사는 곳", "손끝 하나 바꾸지 않습니다", "function을 먹인 것", "전부 헛수고", "hardware에서 한층 더 날카로워집니다" 등은 동작 설명에 어색한 행위 술어를 붙입니다. 막대·reflection·rotation의 교육적 비유와 기존 비유 상자는 유지하고 과장된 연결 표현만 구체화합니다.
+
+2. **D-2·F-1 — 지나친 감탄과 확언**: "말로만 하면 안 믿기니", "소수점 끝까지 한 치도 어긋나지", "축하합니다 … 완주했습니다" 등 독자를 대신 평가하는 표현을 완화합니다. 수학적으로 정확히 같다는 주장은 그대로 보존합니다.
+
+3. **A-18 — 긴 관형절·삽입 설명**: 정량 relative_clause_nesting=3. 도입의 절 안내, 9.1절 emulator 비용, 9.6절 BBHT, 9.8절 real number 전용 논증, 9.9절 hardware 안내가 장문입니다. 조건·한계와 모든 수식·수치를 보존하며 필요한 문장만 분리합니다.
+
+4. **C-8·D-8 — 반복적인 부정 대구·정의 강조**: "대상의 성질이지 … 성능 지표가 아닙니다", "표준 문제라서가 아닙니다", "고장이 아니라", "신비로운 constant가 아니라" 등 반복을 확인합니다. algorithm과 emulator의 구분처럼 기술적으로 필요한 대조는 유지하고 감탄용 대조만 줄입니다.
+
+5. **C-11·I-3 — 연결어미 쉼표·설명 끝의 군더더기**: 연결어미 뒤 쉼표와 "것뿐이에요", "것이죠", "뜻인데" 등으로 결론을 감싸는 문장을 국소 검토합니다. 정량 conclusion_pivot_count=1은 과다 기준 미달이므로 삭제 목표로 삼지 않습니다.
+
+## 비적용·잔존 처리
+
+교육적 질문·표·연습문제·단계 목록·기존 비유는 그 자체로 결함이 아닙니다. 자연스러운 문장은 그대로 두고 확인된 구간만 보수적으로 다듬습니다. 수치/기술 주장에 의문이 있어도 이번 윤문에서는 보존합니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 2149
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.33  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.42  (z=-0.45 vs report 인간 baseline)
+- ending_comma_rate: 0.80  (n/a vs report 인간 baseline)
+- comma_segment_length: 9.26  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.003  (z=-1.89 vs report 인간 baseline)
+- lexical_diversity: 0.82  (z=+3.41 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 0
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 9.10 이 장의 요약
+
+- **문제**: 정렬 안 된 $\text{number of states} = 2^{\text{number of qubits}}$ 개 항목에서 조건을 만족하는 항목 찾기. solution 집합 $A$ 가 비어 있지 않은 경우($\text{number of solutions} \ge 1$)가 정식 설정이고, solution이 하나뿐인 경우는 가장 단순한 special case.
+- **핵심 장면**: 균등 막대에서 시작 → ① oracle로 조건에 걸리는 막대를 전부 negative로 → ② diffusion operator(inversion about the mean $a\mapsto2\bar a-a$)로 그 막대들을 껑충. 이 둘을 매 iteration마다 되풀이.
+- **4 states 예제**: amplitude $(\tfrac12,\tfrac12,\tfrac12,\tfrac12)$ → oracle → diffusion operator → $(0,0,1,0)$. 한 번에 probability 1. solution을 둘로 늘리면 두 amplitude가 **정확히 같은 값**으로 움직이고, 8 states·2 solutions에서는 나란히 $\frac{1}{\sqrt2}$ 까지 자란다.
+- **왜 $\sqrt{\text{number of states}}$·왜 $\pi$**: Grover는 solution 방향(직각)으로 매번 $2\theta$ 씩 도는 **rotation**. 직각까지 = $\frac{\pi}{2}$, 나눗셈하면 $\text{number of iterations} \approx \frac{\pi}{4\theta} \approx \frac{\pi}{4}\sqrt{\text{number of states}/\text{number of solutions}}$. $\pi$ 는 rotation angle이라서 나온 것.
+- **함정**: 최적 횟수를 넘기면 solution을 지나쳐 probability가 다시 떨어짐. number of solutions를 모르면 number of iterations를 계산할 수 없어 **BBHT** shot loop가 shot마다 그 값을 무작위로 뽑는다.
+- **수식**: 두 reflection $U_f = I - 2\sum_{x\in A}|x\rangle\langle x|$, $U_\psi = 2|\psi\rangle\langle\psi| - I$. 두 reflection의 composition = rotation. solution이 여러 개여도 rotation 평면은 2차원이고, 그래서 solution들의 amplitude가 **항상 동일**하다.
+- **real number 전용**: 초기 uniform superposition이 real number + oracle이 $\pm1$ 곱하기 + diffusion operator가 real linear → amplitude는 real number를 벗어나지 않는다. imaginary part memory가 없고, complex number를 강제하는 quantum counting(phase estimation) 계열은 설계에서 제외.
+- **emulator와의 관계**: $\sqrt{\text{number of states}}$ 는 real quantum hardware의 oracle 호출 횟수 이야기다. classical circuit으로 흉내 내면 $O(\text{number of states}\cdot\sqrt{\text{number of states}/\text{number of solutions}})$ 이라 classical linear scan보다 느리므로, 비교 대상은 Qiskit Aer·NumPy state vector simulator이고 값어치는 속도가 아니라 **재현성과 verification**에 있다.
+
+축하합니다 — quantum computing 기초부터 Grover까지 완주했습니다! 다음 장은 배운 내용을 한눈에 보는 **cheat sheet와 glossary**입니다.
+
+---
+
+> [← 8장 Deutsch–Jozsa algorithm](08_deutsch_jozsa_algorithm.md) · [index](index.md) · [10장 용어정리와 치트시트 →](10_glossary_and_cheat_sheet.md)
+[원문 끝]

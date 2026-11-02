@@ -1,0 +1,14 @@
+## 10.6 연습문제 답
+
+- **1-1** ([1장](01_qubits_and_states.md)): $|c| = \frac{\sqrt3}{2}$. ($\frac14 + |c|^2 = 1$.)
+- **2-1** ([2장](02_dirac_notation_and_linear_algebra.md)): $\langle +|-\rangle = 0$ (orthogonal). $\langle+|-\rangle = \frac{1}{\sqrt2}\begin{bmatrix}1&1\end{bmatrix}\cdot\frac{1}{\sqrt2}\begin{bmatrix}1\\-1\end{bmatrix} = \frac12(1\cdot1 + 1\cdot(-1)) = 0$. 그래서 $|+\rangle, |-\rangle$ 도 orthonormal basis를 이룹니다.
+- **3-1** ([3장](03_single_qubit_gates.md)): $Z|+\rangle = |-\rangle$. ($Z$ 가 $|1\rangle$ sign을 뒤집어 $\frac{|0\rangle-|1\rangle}{\sqrt2}$.)
+- **4-1** ([4장](04_measurement.md)): $P(1) = \left|\frac{\sqrt3}{2}\right|^2 = \frac34$. (Born rule: amplitude의 absolute value square. 참고로 $P(0) = \frac14$, sum은 1.)
+- **5-1** ([5장](05_multiple_qubits_and_entanglement.md)): **product state**. $\frac{|00\rangle+|01\rangle}{\sqrt2} = |0\rangle\otimes\frac{|0\rangle+|1\rangle}{\sqrt2} = |0\rangle|+\rangle$ 로 첫 qubit를 깔끔히 묶어낼 수 있으므로 entanglement가 아닙니다.
+- **6-1** ([6장](06_quantum_circuit_model_and_universality.md)): $\frac{1}{\sqrt8}$. $H^{\otimes 3}|000\rangle$ 은 8개 computational basis를 모두 amplitude $\frac{1}{\sqrt{2^3}} = \frac{1}{\sqrt8}$ 로 균등하게 담으므로, $|101\rangle$ 도 예외 없이 $\frac{1}{\sqrt8}$.
+- **7-1** ([7장](07_oracle_and_phase_kickback.md)): $|x\rangle|-\rangle$ (그대로). $f(x)=0$ 이면 $(-1)^{f(x)} = (-1)^0 = 1$ 이라 phase kickback으로 붙는 sign이 $+1$ 입니다. sign이 뒤집히는 것은 solution($f(x)=1$)뿐.
+- **8-1** ([8장](08_deutsch_jozsa_algorithm.md)): $0$. balanced function은 $|0\cdots0\rangle$ 의 amplitude $\frac{1}{2^{\text{number of qubits}}}\sum_x(-1)^{f(x)}$ 이 $+1$ 절반과 $-1$ 절반의 완벽한 destructive interference로 0이 되므로, measurement에서 절대 나오지 않습니다.
+- **9-1** ([9장](09_grover_algorithm.md)): $\text{number of iterations} \approx \frac{\pi}{4}\sqrt{\text{number of states}/\text{number of solutions}} = \frac{\pi}{4}\sqrt{64/4} = \frac{\pi}{4}\cdot 4 = \pi \approx 3.14$ → 약 **3 iterations**.
+
+---
+

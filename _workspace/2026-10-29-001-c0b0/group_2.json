@@ -1,0 +1,51 @@
+{
+  "skill_root": "/root/.codex/skills/humanize-korean",
+  "constraints": {
+    "scope": "한국어 해설서 윤문. 영어 용어·영어 토큰·수치·수식·code·제목·link·기존 콜아웃 표기는 모두 보존. glossary SSOT documents/design_references/22_appendix_glossary_and_retired_specs.md §22.2. 원문 주장 추가 금지. 기존 작업 변경 보존.",
+    "genre": "report (학부생용 해설서, 친근한 존댓말을 보존; report 서식 축약 규칙은 적용하지 않음)"
+  },
+  "files": [
+    {
+      "source": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/documents/study_references/02_dirac_notation_and_linear_algebra.md",
+      "run_dir": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/_workspace/2026-10-29-001-c0b0/.artifacts/02_dirac_notation_and_linear_algebra",
+      "route": "light",
+      "chars": 7651
+    },
+    {
+      "source": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/documents/study_references/05_multiple_qubits_and_entanglement.md",
+      "run_dir": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/_workspace/2026-10-29-001-c0b0/.artifacts/05_multiple_qubits_and_entanglement",
+      "route": "light",
+      "chars": 10669
+    },
+    {
+      "source": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/documents/study_references/08_deutsch_jozsa_algorithm.md",
+      "run_dir": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/_workspace/2026-10-29-001-c0b0/.artifacts/08_deutsch_jozsa_algorithm",
+      "route": "light",
+      "chars": 9772
+    },
+    {
+      "source": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/documents/study_references/11_state_vector_emulator.md",
+      "run_dir": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/_workspace/2026-10-29-001-c0b0/.artifacts/11_state_vector_emulator",
+      "route": "heavy",
+      "chars": 25858
+    },
+    {
+      "source": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/documents/study_references/14_multiple_solutions_and_minimum_search.md",
+      "run_dir": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/_workspace/2026-10-29-001-c0b0/.artifacts/14_multiple_solutions_and_minimum_search",
+      "route": "heavy",
+      "chars": 24691
+    },
+    {
+      "source": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/documents/study_references/17_rvx_soc_integration.md",
+      "run_dir": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/_workspace/2026-10-29-001-c0b0/.artifacts/17_rvx_soc_integration",
+      "route": "heavy",
+      "chars": 19627
+    },
+    {
+      "source": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/documents/study_references/index.md",
+      "run_dir": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/_workspace/2026-10-29-001-c0b0/.artifacts/index",
+      "route": "heavy",
+      "chars": 20847
+    }
+  ]
+}

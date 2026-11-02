@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-29",
+  "moved_directories": 20,
+  "moved_files": 961,
+  "moved_bytes": 108207845,
+  "moved_files_sha256_match": 949,
+  "moved_files_with_path_update": 12,
+  "unchanged_protected_tracked_files": 5974,
+  "deleted_files": 0,
+  "all_preservation_checks_passed": true
+}

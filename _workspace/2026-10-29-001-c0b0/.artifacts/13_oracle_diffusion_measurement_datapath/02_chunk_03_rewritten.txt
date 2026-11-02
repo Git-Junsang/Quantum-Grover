@@ -1,0 +1,22 @@
+## 13.2 Init — uniform amplitude를 square-root unit 없이
+
+initialization은 $H^{\otimes \text{number of qubits}}|0\rangle$ 을 만드는 일, 즉 array의 모든 칸을 $1/\sqrt{\text{number of states}}$ 로 채우는 일입니다. 문제는 $\sqrt{\ }$ 가 hardware로 비싸다는 것입니다. 그런데 $\text{number of states} = 2^{\text{number of qubits}}$ 라는 사실을 쓰면 square-root unit이 통째로 사라집니다:
+
+$$\frac{1}{\sqrt{\text{number of states}}} = \frac{1}{\sqrt{2^{\text{number of qubits}}}} = \begin{cases} 1 \times \dfrac{1}{2^{\text{number of qubits}/2}}, & \text{number of qubits}\text{ even} \\[2ex] \dfrac{1}{\sqrt 2}\times\dfrac{1}{2^{(\text{number of qubits}-1)/2}}, & \text{number of qubits}\text{ odd}\end{cases}$$
+
+number of qubits가 짝수면 $1/\sqrt{\text{number of states}}$ 가 딱 power of two라 constant $1.0$ 을 그만큼 right shift하면 되고, 홀수면 $1/\sqrt 2$ 라는 **constant 하나**만 있으면 나머지는 역시 shift입니다. 04번 논문(Choi & Lee, 2024)이 Q1.30에서 쓰는 code가 이 꼴입니다:
+
+```c
+init_coefficient = (NUM_QUBIT % 2 == 0)
+                 ? (0x4000_0000 >> (NUM_QUBIT / 2))         // 0x4000_0000 = 1.0
+                 : (0x2D41_3CCE >> ((NUM_QUBIT - 1) / 2));  // 0x2D41_3CCE = 1/√2
+```
+
+우리는 14 qubits, 즉 **짝수 분기**입니다. Q1.22에서 $1.0$ 에 해당하는 integer는 $2^{22}$ 이고, 이것을 7칸(14 / 2) right shift하면 $2^{15} = 32{,}768$ 이 나옵니다. 그래서 **`INIT_AMP` = 32768** 이고, $32768/2^{22} = 1/128 = 1/\sqrt{16384}$ 가 **정확히** 성립합니다. rounding이 한 번도 일어나지 않으므로 초기 state의 norm도 정확히 1입니다. measurement 쪽 숫자로 확인하면, amplitude square의 총합이 $16384 \times 32768^2 = 2^{44}$ 이고 이것이 Q1.22 square의 $1.0$ 에 해당하는 값 그대로입니다(14.5절). constant가 필요 없으니 RTL은 이 값을 `grover_param.vh` 의 integer 하나로 정의합니다.
+
+number of qubits가 홀수였다면 사정이 다릅니다. $1/\sqrt 2$ 를 22 fraction bits로 rounding하는 순간 error가 생기고, 그 error가 모든 칸에 똑같이 실려 초기 norm이 1을 살짝 벗어납니다. 짝수일 때는 이 오차가 생기지 않습니다.
+
+다만 원문의 값을 그대로 옮겨 쓰면 안 됩니다. 논문에 인쇄된 constant `0x2D41_3CCE` 는 실제 $\frac{1}{\sqrt2}\times2^{30}$ = `0x2D41_3CCD` 와 **1 LSB 어긋나** 있습니다. 같은 수법으로 만든 number of iterations constant `0x1_1C58_31AC`($\frac{\pi\sqrt2}{4}\times2^{32}$) 도 실제 값 `0x1_1C58_31AE` 와 **2 LSB 어긋나** 있고요(`0x4000_0000` 과 `0xC90F_DAA2` = $\frac{\pi}{4}\times2^{32}$ 는 정확합니다). error가 $\sim10^{-9}$ 라 실용적으로는 무해하지만, 교훈은 constant 자체가 아니라 **1차 자료도 틀린다**는 것입니다. magic number는 인용하지 말고 직접 계산해 넣으십시오. 위의 32768도 직접 계산해 유도한 값입니다. (논문 constant·수식의 오류 목록 전체는 [15.6절](15_paper_map_and_design_decisions.md#156-인용-시-주의--논문의-오류와-모호점)에 모여 있습니다. number of iterations constant를 우리가 어떻게 다루는지는 [16.2절](16_iteration_control_and_checkpoints.md#162-bbht--무작위로-뽑는-number-of-iterations와-12-growth-factor)입니다 — 우리는 최적 number of iterations를 고정 constant로 정의하지 않기 때문에 이 constant를 쓸 일 자체가 별로 없습니다.)
+
+---
+

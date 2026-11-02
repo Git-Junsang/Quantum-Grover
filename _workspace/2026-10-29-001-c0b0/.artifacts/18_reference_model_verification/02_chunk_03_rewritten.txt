@@ -1,0 +1,20 @@
+## 18.2 3단 verification ladder
+
+핵심 구조는 단순합니다. 참조 implementation을 **세 칸**으로 나누고, 각 칸이 잡는 버그의 종류를 다르게 둡니다. 마지막에는 board에서 확인합니다.
+
+<img src="diagrams/18_golden_ladder.svg" width="760" alt="verification ladder: 1단 NumPy float64 · Qiskit Aer(algorithm) → 2단 Q1.22 bit-exact reference model(수 표현) → 3단 RTL(circuit) → board(실물), 각 단계의 합격 기준과 benchmark 결과">
+
+**1단 — NumPy float64와 Qiskit Aer. 묻는 것은 "algorithm이 맞나".** amplitude를 double-precision real number로 두고 Grover iteration·Born-rule sampling·BBHT shot loop를 그대로 옮깁니다. 수 표현은 사실상 무한 precision이라고 보고, 오직 논리만 봅니다. 이 칸이 잡는 버그는 predicate 판정의 방향(`<` 를 `>` 로 짠 것), diffusion operator의 sign, number of iterations를 한 칸 잘못 센 overshoot, BBHT의 sampling range 갱신 누락 같은 것들입니다. 전부 "circuit 이전"의 실수이고, 여기서 못 잡으면 뒤 칸에서는 훨씬 비싸게 잡힙니다. 우리 저장소에는 이 칸이 둘입니다 — 직접 짠 NumPy state vector와 범용 quantum simulator Qiskit Aer. 둘은 Iteration-Count LFSR의 같은 random number와 같은 measurement 규칙으로 BBHT를 돌아, 500 workloads 전부에서 결과 index·shot count·requested iterations가 **서로** 같았습니다(500/500).
+
+이 칸의 결과를 2단과 그대로 맞대면 안 된다는 점을 짚어 둡니다. floating-point와 fixed-point는 probability distribution이 아주 조금 다르고, 같은 random number라도 prefix sum이 경계를 넘는 칸이 달라질 수 있습니다. 실제로 1 solution에서 requested iterations의 median이 1단은 149.5, 2단과 board는 163.5였습니다(shot count median은 둘 다 23). 둘 다 옳은 결과입니다 — BBHT trajectory가 같아야 하는 것은 **같은 칸끼리**입니다.
+
+**2단 — Q1.22 bit-exact reference model. 묻는 것은 "수 표현이 맞나".** 1단과 논리는 같지만 real number를 전부 integer로 바꿉니다. amplitude는 23-bit integer, shift는 arithmetic right shift에 round-half-to-even, 넘치면 symmetric saturation, accumulator는 정해진 폭, random number는 RTL과 같은 생성기와 같은 소비 규약. Python으로 쓰되 **floating-point를 한 줄도 섞지 않는 것**이 규율입니다. 이 칸이 잡는 버그는 rounding 편향, 예상 밖의 saturation, accumulator 폭 부족, shift를 rounding 앞에 둘지 뒤에 둘지 같은 것들입니다. 12.7절이 넘겨 둔 질문 — 22 fraction bits가 충분한가 — 의 답도 이 칸에서 나왔습니다. **이 model이 곧 "reference model"입니다.** RTL과 bit 단위로 맞춰 볼 상대가 이 칸이지 1단이 아닙니다. 저장소에서는 arithmetic·random number·measurement를 담은 `fixed_point_statevector.py` 와, 그 위에 BBHT 제어·checkpoint policy·enumeration을 얹은 `checkpoint_bbht_model.py` 가 이 칸입니다([software reference model 안내](../design_references/04_software_reference_model_and_test_vectors.md)).
+
+**3단 — RTL. 묻는 것은 "circuit이 맞나".** 이 칸이 잡는 버그는 앞의 둘과 완전히 종류가 다릅니다. FSM state 전이, address generator의 off-by-one, row·lane indexing(하위 5 bits인데 상위 5 bits를 쓴다든가), pipeline stage 사이의 latency 정렬, 같은 address를 읽으면서 쓰는 hazard, CSR handshake, reset 후 초기값. arithmetic은 이미 2단에서 검증됐으므로, 여기서 값이 어긋나면 원인은 **거의 언제나 timing이나 제어**입니다. 합격 기준은 2단과 **bit-exact** — iteration이 끝난 시점의 amplitude 16,384칸이 전수 일치하고, 같은 seed를 넣었을 때 shot별 후보 index sequence가 완전히 같아야 합니다. 2단이 만든 requested-j test vector 256 cases가 앞의 기준을, 500 workloads RTL campaign이 뒤의 기준을 봅니다.
+
+**그리고 board.** verification ladder의 마지막 확인은 실물입니다. 같은 500 workloads를 board에 올려, 2단 reference model과 board가 결과 index·shot count·requested iterations에서 500/500, checkpoint의 executed iterations까지 500/500 같았습니다. RTL과 board도 BBHT trajectory는 500/500 같았습니다 — 다만 cycle 값 자체는 달라서(final configuration은 대부분의 workload가 정확히 3,279 cycles 차이), board에서는 wall-clock time을, RTL에서는 cycle을 인용합니다.
+
+이 verification ladder에서 가장 중요한 규율은 **한 칸도 건너뛰지 않는 것**입니다. RTL을 곧바로 float64 model과 비교하면, 값이 어긋났을 때 원인이 rounding 규칙인지 FSM인지 구분할 방법이 없습니다. 두 종류의 error가 섞여 있으면 "얼마나 어긋나야 버그인가"라는 판정 기준조차 세울 수 없고, 그러면 허용 error를 임의로 넓게 잡고 넘어가는 유혹에 빠집니다. 중간 칸이 있어야 판정이 **일치 / 불일치**라는 이진값이 되고, 이진값이어야 regression test가 자동화됩니다.
+
+---
+

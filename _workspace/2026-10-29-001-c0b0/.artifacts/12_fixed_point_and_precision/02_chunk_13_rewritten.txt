@@ -1,0 +1,22 @@
+## 12.10 우리 project의 결정
+
+지금까지의 논증을 설계 언어로 정리하면 이렇습니다. 값의 source of truth는 [15.4절 설계 결정표](15_paper_map_and_design_decisions.md#154-우리-project의-좌표--확정-설계-결정표)입니다.
+
+| 항목 | 값 | 근거 |
+|---|---|---|
+| 수 체계 | real number 전용 fixed-point | 12.1 · 9.8 |
+| amplitude data word | 23 bits, **Q1.22** (sign 1 + fraction 22) | 12.2 · 12.3 |
+| 범위 / resolution | 대칭 $[-(1-2^{-22}),\ 1-2^{-22}]$ / $2^{-22} \approx 2.38\times10^{-7}$ | 12.2 · 12.5 |
+| `INIT_AMP` (14 qubits) | **32768** $= 2^{22}/128$, error 0 | 12.2 |
+| 2×mean · diffusion operator 중간값 | 25-bit register | 12.3 |
+| sum accumulator | 39 bits (data word width + number of qubits + 2) | 12.3 |
+| rounding | **round-half-to-even**, 13-bit right shift 한 곳 | 12.4 |
+| overflow | **symmetric saturation** + `amp_overflow` 진단 bit. wraparound 금지. norm renormalization 없음 | 12.5 |
+| fraction bits 충분성 | 공식이 아니라 benchmark — 모든 run에서 error $< 10^{-3}$ | 12.7 |
+| data word | 16-bit signed | 12.8 |
+| amplitude memory | state 한 벌 RAMB36 11개, checkpoint slot 4벌 44개 (Accelerator Core 84 / board 116 tile) | 12.8 |
+
+이 장에 미결로 남긴 항목은 없습니다. 초기 revision에서 "아직 하지 않은 benchmark"로 남겨 두었던 fraction bits 충분성은 이제 precision 분석과 671,600-run campaign으로 확인했습니다.
+
+---
+

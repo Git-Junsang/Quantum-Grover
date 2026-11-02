@@ -1,0 +1,46 @@
+{
+  "genre": "report",
+  "change_rate": {
+    "rate": 0.017,
+    "scope": "전문",
+    "verdict": "OK"
+  },
+  "s1_targets": [],
+  "antithesis": {
+    "before": 27,
+    "after": 27,
+    "verdict": "OK"
+  },
+  "golden": [],
+  "sentence_touch": {
+    "rate": 0.1508,
+    "touched": 49,
+    "total": 325
+  },
+  "numbers_dropped": [],
+  "modality": {
+    "lost_pairs": [
+      {
+        "kind": "추측",
+        "before": "문헌마다 같은 단어가 다른 것을 가리킬 수 있다는 것 자체가 새겨 둘 교훈입니다.",
+        "after": "문헌마다 같은 단어가 다른 것을 가리킬 수 있으므로 용법을 확인해야 합니다."
+      }
+    ],
+    "uncertain_pairs": [],
+    "counts": {
+      "deontic": {
+        "before": 16,
+        "after": 18
+      },
+      "hedge": {
+        "before": 6,
+        "after": 6
+      }
+    },
+    "verdict": "FAIL — 서법 소실 1문장"
+  },
+  "gate": {
+    "verdict": "WARN — 경고. 사용자 고지 + finalize 승급",
+    "exit_code": 1
+  }
+}

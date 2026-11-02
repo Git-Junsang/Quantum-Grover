@@ -1,0 +1,99 @@
+fpga ../../models/hardware_bram_K3H3_E4_M2/vivado/vivado_bbht_grover_fpga/2026-10-08_ax7a200b_board_predicate500/predicate500.csv
+fpga workloads 2000 (normal+ckpt per key: 2000)
+orca ③ normal: orca/normal_full.log
+  rows 2000 format_errors 0 duplicates 0 missing 0 wrong_model 0
+orca ② k3h3: orca/k3h3_full.log
+  rows 2000 format_errors 0 duplicates 0 missing 0 wrong_model 0
+host ③ normal #1: host/normal_full_1.log
+  rows 2000 format_errors 0 duplicates 0 missing 0 wrong_model 0
+host ③ normal #2: host/normal_full_2.log
+  rows 2000 format_errors 0 duplicates 0 missing 0 wrong_model 0
+host ③ normal #3: host/normal_full_3.log
+  rows 2000 format_errors 0 duplicates 0 missing 0 wrong_model 0
+host ③ normal #4: host/normal_full_4.log
+  rows 2000 format_errors 0 duplicates 0 missing 0 wrong_model 0
+host ③ normal #5: host/normal_full_5.log
+  rows 2000 format_errors 0 duplicates 0 missing 0 wrong_model 0
+host ③ normal #6: host/normal_full_6.log
+  rows 2000 format_errors 0 duplicates 0 missing 0 wrong_model 0
+host ③ normal #7: host/normal_full_7.log
+  rows 2000 format_errors 0 duplicates 0 missing 0 wrong_model 0
+host ③ normal #8: host/normal_full_8.log
+  rows 2000 format_errors 0 duplicates 0 missing 0 wrong_model 0
+host ③ normal #9: host/normal_full_9.log
+  rows 2000 format_errors 0 duplicates 0 missing 0 wrong_model 0
+host ③ normal #10: host/normal_full_10.log
+  rows 2000 format_errors 0 duplicates 0 missing 0 wrong_model 0
+host ② k3h3 #1: host/k3h3_full_1.log
+  rows 2000 format_errors 0 duplicates 0 missing 0 wrong_model 0
+host ② k3h3 #2: host/k3h3_full_2.log
+  rows 2000 format_errors 0 duplicates 0 missing 0 wrong_model 0
+host ② k3h3 #3: host/k3h3_full_3.log
+  rows 2000 format_errors 0 duplicates 0 missing 0 wrong_model 0
+host ② k3h3 #4: host/k3h3_full_4.log
+  rows 2000 format_errors 0 duplicates 0 missing 0 wrong_model 0
+host ② k3h3 #5: host/k3h3_full_5.log
+  rows 2000 format_errors 0 duplicates 0 missing 0 wrong_model 0
+host ② k3h3 #6: host/k3h3_full_6.log
+  rows 2000 format_errors 0 duplicates 0 missing 0 wrong_model 0
+host ② k3h3 #7: host/k3h3_full_7.log
+  rows 2000 format_errors 0 duplicates 0 missing 0 wrong_model 0
+host ② k3h3 #8: host/k3h3_full_8.log
+  rows 2000 format_errors 0 duplicates 0 missing 0 wrong_model 0
+host ② k3h3 #9: host/k3h3_full_9.log
+  rows 2000 format_errors 0 duplicates 0 missing 0 wrong_model 0
+host ② k3h3 #10: host/k3h3_full_10.log
+  rows 2000 format_errors 0 duplicates 0 missing 0 wrong_model 0
+host ① naive: host/naive_full.log
+  rows 2000 format_errors 0 duplicates 0 missing 0 wrong_model 0
+trajectory vs FPGA (seed_j seed_meas result_index trial_count L_BBHT actual_iter; 0 = all equal)
+  orca ③       0 mismatches
+  orca ②       0 mismatches
+  host ①       0 mismatches
+  host ③ #1    0 mismatches
+  host ③ #2    0 mismatches
+  host ③ #3    0 mismatches
+  host ③ #4    0 mismatches
+  host ③ #5    0 mismatches
+  host ③ #6    0 mismatches
+  host ③ #7    0 mismatches
+  host ③ #8    0 mismatches
+  host ③ #9    0 mismatches
+  host ③ #10   0 mismatches
+  host ② #1    0 mismatches
+  host ② #2    0 mismatches
+  host ② #3    0 mismatches
+  host ② #4    0 mismatches
+  host ② #5    0 mismatches
+  host ② #6    0 mismatches
+  host ② #7    0 mismatches
+  host ② #8    0 mismatches
+  host ② #9    0 mismatches
+  host ② #10   0 mismatches
+cross-platform, all non-time columns incl. termination and saturations
+  orca ③ vs host ③ #1: 0 differing workloads
+  orca ② vs host ② #1: 0 differing workloads
+  host ① vs orca ③   : 0 differing workloads (naive = Normal 궤적)
+  host ③ #1 vs #2: 0
+  host ③ #1 vs #3: 0
+  host ③ #1 vs #4: 0
+  host ③ #1 vs #5: 0
+  host ③ #1 vs #6: 0
+  host ③ #1 vs #7: 0
+  host ③ #1 vs #8: 0
+  host ③ #1 vs #9: 0
+  host ③ #1 vs #10: 0
+  host ② #1 vs #2: 0
+  host ② #1 vs #3: 0
+  host ② #1 vs #4: 0
+  host ② #1 vs #5: 0
+  host ② #1 vs #6: 0
+  host ② #1 vs #7: 0
+  host ② #1 vs #8: 0
+  host ② #1 vs #9: 0
+  host ② #1 vs #10: 0
+naive unit cost: orca iter 1154636860.5 us, measure 55027.0 us; host iter 101505.5 us, measure 9.0 us (median of 3)
+orca ① SUBSET: estimate = L x iter + trials x measure vs measured
+  ('GT', 256, 0): L=2 trials=4 measured=2309560468 est=2309493829 diff=+0.0029%  fpga_trajectory=same
+  ('RANGE', 256, 0): L=1 trials=2 measured=1154780394 est=1154746914 diff=+0.0029%  fpga_trajectory=same
+host ① FULL: measured 12802056514 us vs estimate 12699211521 us (+0.81%)

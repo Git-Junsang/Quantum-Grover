@@ -1,0 +1,82 @@
+{
+  "edits": [
+    {
+      "rule": "D-2",
+      "before": "일반적인 quantum computation은 놀랍도록 단순한 세 단계입니다.",
+      "after": "일반적인 quantum computation은 다음 세 단계로 이루어집니다."
+    },
+    {
+      "rule": "D-2",
+      "before": "이게 전부입니다. \"이게 다야?\"라는 말이 나올 만큼 단순하지만, 이 안에 놀라운 깊이가 있습니다. circuit diagram으로 그리면:",
+      "after": "이 세 단계를 circuit diagram으로 그리면 다음과 같습니다:"
+    },
+    {
+      "rule": "A-18",
+      "before": "그 결과가 어차피 모든 칸이",
+      "after": "그 결과 모든 칸이"
+    },
+    {
+      "rule": "D-14",
+      "before": "그 둘을 circuit으로 굳혀 두는 편이 훨씬 싸기 때문입니다.",
+      "after": "그 둘을 전용 circuit으로 구현하는 편이 훨씬 적은 자원을 쓰기 때문입니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "\"$H$ 는 $(-1)^{u\\cdot v}$ sign을 뿌린다\"만 기억해 두세요.",
+      "after": "\"$H$ 는 $(-1)^{u\\cdot v}$ sign을 부여한다\"만 기억해 두세요."
+    },
+    {
+      "rule": "D-2",
+      "before": "진짜 비결은 **interference** 입니다:",
+      "after": "이때 필요한 것이 **interference** 입니다:"
+    },
+    {
+      "rule": "D-14",
+      "before": "그 array를 읽어 square를 probability로 삼아 하나를 뽑을 뿐 amplitude에 한 글자도 쓰지 않습니다",
+      "after": "그 array를 읽어 square를 probability로 삼아 하나를 뽑을 뿐 amplitude를 수정하지 않습니다"
+    },
+    {
+      "rule": "D-14",
+      "before": "collapse가 없다는 사실이 벌어 주는 것은 답의 개수가 아니라, 실패한 shot이 남긴 amplitude array를 다음 shot이 이어받을 수 있다는 점입니다.",
+      "after": "collapse가 없다고 답의 개수가 늘지는 않습니다. 대신 실패한 shot이 남긴 amplitude array를 다음 shot에서 이어 쓸 수 있습니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "이 사실은 hardware에서 뜻밖의 배당금을 냅니다.",
+      "after": "이 성질은 hardware에서 계산 결과를 재사용하는 근거가 됩니다."
+    },
+    {
+      "rule": "C-11",
+      "before": "measurement 전까지, 여러 gate를",
+      "after": "measurement 전까지 여러 gate를"
+    },
+    {
+      "rule": "D-14",
+      "before": "state를 물리적으로 들고 있는 실기 quantum에만 걸립니다.",
+      "after": "state를 물리적으로 유지하는 실기 quantum에만 적용됩니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "universal gate set도 같은 자리에 놓입니다.",
+      "after": "universal gate set도 같은 맥락에서 이해하면 됩니다."
+    },
+    {
+      "rule": "D-14",
+      "before": "Toffoli와 CNOT은 우리에게 synthesis할 circuit이 아니라 논문의 circuit diagram을 읽는 언어로 남습니다.",
+      "after": "Toffoli와 CNOT은 우리가 synthesis할 circuit에는 쓰지 않지만, 논문의 circuit diagram을 읽으려면 알아야 합니다."
+    },
+    {
+      "rule": "D-2",
+      "before": "그 마법 같은 트릭 **phase kickback** 입니다.",
+      "after": "그 동작 원리인 **phase kickback** 입니다."
+    }
+  ],
+  "self_check": {
+    "preserved_anchors": true,
+    "genre": true,
+    "register": true,
+    "no_added_claims": true,
+    "no_added_metaphors": true,
+    "protected_tokens": true
+  }
+}

@@ -6,9 +6,9 @@
 
 ---
 
-이 장은 새 내용을 배우는 곳이 아니라, 앞 장들을 가로지르며 얻은 것을 **지도 한 장과 표 몇 개**로 압축하는 참조 자료입니다. 논문을 다시 읽으러 갈 때, 설계 결정을 되짚을 때, 그리고 무엇보다 — 논문을 **인용하기 전에** 펼쳐 보세요. [15.6절](#156-인용-시-주의--논문의-오류와-모호점)이 "1차 자료도 틀린다"는 것을 실물 목록으로 보여줍니다.
+이 장은 앞 장들에서 배운 내용을 **지도 한 장과 표 몇 개**로 압축한 참조 자료입니다. 논문을 다시 읽으러 갈 때, 설계 결정을 되짚을 때, 그리고 무엇보다 — 논문을 **인용하기 전에** 펼쳐 보세요. [15.6절](#156-인용-시-주의--논문의-오류와-모호점)이 "1차 자료도 틀린다"는 것을 실물 목록으로 보여줍니다.
 
-이 장의 숫자는 board에서 검증된 **final configuration**(Board-Verified Build: 2026-09-07 build, 2026-09-08 benchmark)을 따릅니다. 해설서 초판은 2026-08-15 에 설계를 한 번 확정했지만, 그 뒤 RTL을 실제로 짓고 board에 올리면서 number of qubits·amplitude 형식·checkpoint 구조가 바뀌었습니다. [15.4절](#154-우리-project의-좌표--확정-설계-결정표)이 그 최종값의 해설서 안 **단일 출처(source of truth)** 이고, 해설서 어느 장에 같은 숫자가 적혀 있든 어긋나면 15.4절이 이깁니다. 해설서 바깥까지 포함한 저장소 전체의 기준은 board build 그 자체이고, 이 표는 그것을 해설서의 언어로 옮긴 것입니다.
+이 장의 숫자는 board에서 검증된 **final configuration**(Board-Verified Build: 2026-09-07 build, 2026-09-08 benchmark)을 따릅니다. 해설서 초판은 2026-08-15 에 설계를 한 번 확정했지만, 그 뒤 RTL을 실제로 짓고 board에 올리면서 number of qubits·amplitude 형식·checkpoint 구조가 바뀌었습니다. [15.4절](#154-우리-project의-좌표--확정-설계-결정표)이 그 최종값의 해설서 안 **단일 출처(source of truth)** 이고, 해설서 어느 장에 같은 숫자가 적혀 있든 어긋나면 15.4절을 기준으로 합니다. 해설서 바깥까지 포함한 저장소 전체의 기준은 board build 그 자체이고, 이 표는 그것을 해설서의 언어로 옮긴 것입니다.
 
 ---
 
@@ -25,25 +25,25 @@
 
 핵심 사실 하나: **04·05·06은 이 project 지도교수 연구실(중앙대 이우주 교수님)의 논문**입니다. 특히 04번은 우리가 만들려는 것과 정확히 같은 물건(state vector를 fixed-point memory에 두고 oracle+diffusion operator를 FSM으로 $\sqrt{\text{number of states}}$ 번 도는 emulator)이라, 참고문헌이 아니라 사실상 **설계도**에 가깝습니다.
 
-이번 개정에서 09번의 자리가 한 칸 내려갔습니다. 이전 판은 09번을 14장의 원문처럼 다뤘지만, 우리 accelerator는 threshold를 계단처럼 낮추는 바깥 loop를 hardware에 넣지 않고 host firmware의 `while` 한 줄로 처리하기로 했고([14.9](14_multiple_solutions_and_minimum_search.md#149-확장--threshold를-낮추면-minimum-search)·[17.7](17_rvx_soc_integration.md#177-hardware와-firmware의-경계)), iteration schedule의 근거도 09번이 아니라 아래 15.2절의 BBHT 원전으로 옮겼습니다. 09번이 여전히 남기는 것은 **"oracle은 index가 아니라 predicate를 판정한다"** 는 관점 하나와, 그 관점을 실제 응용에 적용한 사례 하나입니다. 그 둘만으로도 인용할 값어치는 충분합니다.
+이번 개정에서는 09번의 참조 비중을 줄였습니다. 이전 판은 09번을 14장의 원문처럼 다뤘지만, 우리 accelerator는 threshold를 계단처럼 낮추는 바깥 loop를 hardware에 넣지 않고 host firmware의 `while` 한 줄로 처리하기로 했고([14.9](14_multiple_solutions_and_minimum_search.md#149-확장--threshold를-낮추면-minimum-search)·[17.7](17_rvx_soc_integration.md#177-hardware와-firmware의-경계)), iteration schedule의 근거도 09번이 아니라 아래 15.2절의 BBHT 원전으로 옮겼습니다. 09번이 여전히 남기는 것은 **"oracle은 index가 아니라 predicate를 판정한다"** 는 관점 하나와, 그 관점을 실제 응용에 적용한 사례 하나입니다. 이 두 내용을 참고하려고 인용합니다.
 
 ---
 
 ## 15.2 계보도 — 누가 누구를 딛고 섰나
 
-여섯 논문은 흩어진 개별 자료가 아니라 서로 인용하는 **하나의 지형**을 이룹니다.
+여섯 논문은 서로 인용하며 **연관된 연구 흐름**을 이룹니다.
 
 <img src="diagrams/15_lineage.svg" width="640" alt="여섯 논문의 계보: 04를 중심으로 05·06이 위성, 07은 대조군, 08·09는 응용축">
 
-- **04 → 06 → 05** 가 중앙대 연구실의 3부작입니다. 04번(Grover emulator)이 뿌리이고, 06번이 그 설계 철학을 QAOA라는 다른 algorithm으로 옮겼으며, 05번이 04번의 fixed-point precision 문제에 이론적 근거를 댔습니다. 04번이 중심이고 05·06은 그 위성입니다.
-- **07** 은 반대 진영(미국 Kansas 대학, HPC accelerator 계보)에서 온 **대조항**입니다. on-chip resource 대신 외부 DDR을, fixed-point 대신 floating-point를 택해 우리와 정반대의 선택을 합니다 — 그래서 12장의 논쟁 상대로 값집니다.
+- **04 → 06 → 05** 가 중앙대 연구실의 3부작입니다. 04번(Grover emulator)이 뿌리이고, 06번이 그 설계 철학을 QAOA라는 다른 algorithm으로 옮겼으며, 05번이 04번의 fixed-point precision 문제에 이론적 근거를 댔습니다. 04번이 중심이고 05·06은 그와 관련된 연구입니다.
+- **07** 은 반대 진영(미국 Kansas 대학, HPC accelerator 계보)에서 온 **대조항**입니다. on-chip resource 대신 외부 DDR을, fixed-point 대신 floating-point를 택해 우리와 정반대의 선택을 합니다 — 그래서 12장에서 선택의 근거를 비교할 때 참고합니다.
 - **08·09** 는 algorithm 축의 확장입니다. 08번은 Grover 자체의 이론적 일반화(FPGA 무관), 09번은 Grover를 통신 문제에 응용한 사례입니다.
 
-한 가지 정직하게 짚을 점 — 04번의 최적화 4종 중 기법 1(imaginary part 제거)과 기법 3(matrix multiplication 분해)의 **착상 자체는 선행연구 인용**입니다(각각 Ionescu 2019, Bag 2022). 04번의 실제 기여는 이들을 통합·정리하고 SoC로 만들고 자동 생성 tool(QEX)까지 붙인 데 있습니다. 그런데 04번은 자기가 인용한 그 선행연구와 정량 비교를 하지 않습니다 — 논문을 읽을 때 감안할 점입니다.
+04번의 최적화 4종 중 기법 1(imaginary part 제거)과 기법 3(matrix multiplication 분해)의 **착상 자체는 선행연구 인용**입니다(각각 Ionescu 2019, Bag 2022). 04번의 실제 기여는 이들을 통합·정리하고 SoC로 만들고 자동 생성 tool(QEX)까지 붙인 데 있습니다. 그런데 04번은 자기가 인용한 그 선행연구와 정량 비교를 하지 않습니다 — 논문을 읽을 때 감안할 점입니다.
 
-덧붙여, 이 여섯 편의 밑에는 공통의 조상이 하나 더 있습니다 — Pilch–Długopolski(2018)의 범용 FPGA quantum emulator입니다. 04·05·06·07번이 **모두** 이 논문을 인용합니다(각각 참고문헌 [18]·[48]·[11]·[41]). 여섯 편의 계보도에는 그리지 않았지만, FPGA quantum emulator라는 분야의 공통 출발점 격이라 알아 둘 값어치가 있습니다(더 읽을거리는 [15.9절](#159-여섯-논문-너머--더-읽을거리)).
+덧붙여, 이 여섯 편에는 공통으로 참고한 선행연구가 하나 더 있습니다 — Pilch–Długopolski(2018)의 범용 FPGA quantum emulator입니다. 04·05·06·07번이 **모두** 이 논문을 인용합니다(각각 참고문헌 [18]·[48]·[11]·[41]). 여섯 편의 계보도에는 그리지 않았지만, FPGA quantum emulator라는 분야의 공통 출발점 격이라 알아 둘 값어치가 있습니다(더 읽을거리는 [15.9절](#159-여섯-논문-너머--더-읽을거리)).
 
-계보 바깥에서 우리 설계 결정 하나를 통째로 떠받치는 논문도 한 편 있습니다. **Boyer·Brassard·Høyer·Tapp(1998), _Tight bounds on quantum searching_** — solution이 몇 개인지 모르는 채로 Grover를 돌리는 표준 절차(이른바 BBHT)의 원전입니다. 우리가 쓰는 schedule, 곧 sampling range를 1에서 시작해 실패할 때마다 growth factor 6/5(1.2×)로 넓히는 방식이 전부 이 논문에서 나왔습니다. 09번 논문의 Algorithm 1·2도 이 절차를 그대로 옮겨 온 것이고 — 옮기는 과정에서 한 줄이 빠졌습니다([15.6절](#156-인용-시-주의--논문의-오류와-모호점)). 그러니 iteration schedule을 인용할 때는 09번이 아니라 1998년 원전을 인용하십시오.
+이 계보 밖에도 우리 설계 결정 하나의 직접적인 근거가 되는 논문이 한 편 있습니다. **Boyer·Brassard·Høyer·Tapp(1998), _Tight bounds on quantum searching_** — solution이 몇 개인지 모르는 채로 Grover를 돌리는 표준 절차(이른바 BBHT)의 원전입니다. 우리가 쓰는 schedule, 곧 sampling range를 1에서 시작해 실패할 때마다 growth factor 6/5(1.2×)로 넓히는 방식이 전부 이 논문에서 나왔습니다. 09번 논문의 Algorithm 1·2도 이 절차를 그대로 옮겨 온 것이고 — 옮기는 과정에서 한 줄이 빠졌습니다([15.6절](#156-인용-시-주의--논문의-오류와-모호점)). 그러니 iteration schedule을 인용할 때는 09번이 아니라 1998년 원전을 인용하십시오.
 
 ---
 
@@ -62,7 +62,7 @@ Part 5~8의 각 장은 사실 "설계 질문 하나"였고, 그 질문마다 논
 | **G** | iteration을 몇 번 돌릴지 어떻게 정하는가 | number of solutions를 안다고 두고 $\text{optimal number of iterations}=\frac{\pi}{4}\sqrt{\text{number of states}/\text{number of solutions}}$(04·08·09) ↔ **BBHT로 모르는 채 시작(우리)** ↔ quantum counting(QPE, 우리가 기각) | [16.1](16_iteration_control_and_checkpoints.md#161-왜-solution이-몇-개인지-모르는가) · [16.2](16_iteration_control_and_checkpoints.md#162-bbht--무작위로-뽑는-number-of-iterations와-12-growth-factor) |
 | **H** | shot 사이에 state를 버리는가 남기는가 | shot마다 버리고 Init부터(여섯 논문 전부) ↔ **state를 세 벌 남겨 두고 policy가 고른 지점에서 차이만큼만 전진(우리)** | [16.5](16_iteration_control_and_checkpoints.md#165-checkpoint--measurement가-읽기-전용이라는-사실에서) · [16.6](16_iteration_control_and_checkpoints.md#166-왜-결과가-달라지지-않는가) |
 
-앞의 여섯 축(A~F)은 논문들끼리 갈리는 자리이고, 뒤의 둘은 성격이 다릅니다. G축은 여섯 논문이 대체로 "solution이 몇 개인지는 주어진 것"으로 놓고 지나가 버린 자리라 우리가 직접 세워야 했고, **H축은 여섯 논문 어디에도 없습니다.** shot을 여러 번 던지는 구조 자체가 G축을 세운 뒤에야 생기고, 실기 quantum에서는 measurement가 state를 collapse시켜 애초에 물음이 성립하지 않기 때문입니다. emulator에서만 물을 수 있는 질문이고, 이 project가 내놓는 답이 [checkpoint](16_iteration_control_and_checkpoints.md#165-checkpoint--measurement가-읽기-전용이라는-사실에서)입니다. board에서 잰 가속의 가장 큰 몫도 이 축에서 나왔습니다.
+앞의 여섯 축(A~F)은 논문들끼리 갈리는 자리이고, 뒤의 둘은 성격이 다릅니다. G축은 여섯 논문이 대체로 "solution이 몇 개인지는 주어진 것"으로 놓고 지나가 버린 자리라 우리가 직접 세워야 했고, **H축은 여섯 논문 어디에도 없습니다.** shot을 여러 번 수행하는 구조 자체가 G축을 세운 뒤에야 생기고, 실기 quantum에서는 measurement가 state를 collapse시켜 애초에 물음이 성립하지 않기 때문입니다. emulator에서만 물을 수 있는 질문이고, 이 project가 내놓는 답이 [checkpoint](16_iteration_control_and_checkpoints.md#165-checkpoint--measurement가-읽기-전용이라는-사실에서)입니다. board에서 잰 가속의 가장 큰 몫도 이 축에서 나왔습니다.
 
 ---
 
@@ -131,7 +131,7 @@ DSP 사용처는 둘로 갈립니다. diffusion operator·oracle·Init 경로에
 
 ## 15.6 인용 시 주의 — 논문의 오류와 모호점
 
-**이 절이 이 장에서 가장 값집니다.** 여섯 논문을 원문과 한 줄씩 대조한 결과, 전부에 인용 시 사고를 낼 오류·모호점이 있었습니다. "논문은 옳다"고 믿고 베끼면 circuit이 동작하지 않거나 틀린 값을 인용하게 됩니다. 특히 ★ 표시는 **그대로 옮기면 결과가 틀어지는** 것들입니다.
+여섯 논문을 원문과 한 줄씩 대조한 결과, 전부에 인용할 때 주의해야 할 오류·모호점이 있었습니다. "논문은 옳다"고 믿고 베끼면 circuit이 동작하지 않거나 틀린 값을 인용하게 됩니다. 특히 ★ 표시는 **그대로 옮기면 결과가 틀어지는** 것들입니다.
 
 | 논문 | 오류·모호점 | 인용 시 대응 |
 |:-:|------|------|
@@ -156,7 +156,7 @@ DSP 사용처는 둘로 갈립니다. diffusion operator·oracle·Init 경로에
 | 09 | ★ Algorithm 2(DHA)에 sampling range 갱신 줄 누락 (BBHT에만 있음) | 본문 기준으로 sampling range 증가 직접 추가([16.2](16_iteration_control_and_checkpoints.md#162-bbht--무작위로-뽑는-number-of-iterations와-12-growth-factor)) |
 | 09 | $N$(사용자 수)과 $K=2^N$(search space) 혼동 위험 | [14.0절](14_multiple_solutions_and_minimum_search.md#140-기호-충돌-주의) 표기 통일 규약 적용 |
 
-이 목록의 교훈은 정오표 그 자체가 아닙니다. **1차 자료도 틀린다** — 그러니 hardware로 옮기기 전에 반드시 원문을 의심하고, 수치는 직접 계산해 보고, sign은 simulation으로 확인하라는 것입니다. 04번의 pseudocode를 그대로 베끼면 circuit이 동작하지 않는다는 사실 하나만으로도 이 절은 값을 합니다.
+이 목록에서 확인하듯 **1차 자료도 틀립니다** — 그러니 hardware로 옮기기 전에 반드시 원문을 의심하고, 수치는 직접 계산해 보고, sign은 simulation으로 확인하라는 것입니다. 예를 들어 04번의 pseudocode를 그대로 옮기면 circuit이 동작하지 않습니다.
 
 ---
 
@@ -176,7 +176,7 @@ hardware 쪽에서 처음 나온 용어들을 모았습니다(quantum 이론 용
 | PE · number of PEs | Iteration Datapath에서 한 cycle에 row 하나를 처리하는 circuit 한 벌과 그 개수. final configuration은 4 PEs | [13.1](13_oracle_diffusion_measurement_datapath.md#131-한-iteration-안의-fsm) |
 | Dual-Row Build · Two-Level Select | Measurement Unit에서 한 cycle에 2 rows의 row weight를 만드는 Build와, 16 groups → 32 rows 두 단으로 고르는 Select. final configuration의 Measurement Microarchitecture | [14.5](14_multiple_solutions_and_minimum_search.md#145-2단-병렬-measurement) |
 | memory-bound | 속도가 산술이 아니라 memory bandwidth · port에 묶인 state | [11.6](11_state_vector_emulator.md#116-memory-bound의-두-얼굴--용량과-port) |
-| fixed-point | 소수점 위치를 못 박아 integer처럼 다루는 수 표현 | [12.2](12_fixed_point_and_precision.md#122-fixed-point와-q-format-명명-규약) |
+| fixed-point | 소수점 위치를 고정해 integer처럼 다루는 수 표현 | [12.2](12_fixed_point_and_precision.md#122-fixed-point와-q-format-명명-규약) |
 | Q format | `Q<integer bits>.<fraction bits>`. sign은 integer bits에 포함 → 우리는 Q1.22 | [12.2](12_fixed_point_and_precision.md#122-fixed-point와-q-format-명명-규약) |
 | round-half-to-even | 정확히 0.5인 값을 짝수 쪽으로 보내 rounding 편향을 없애는 규칙 | [12.4](12_fixed_point_and_precision.md#124-rounding--왜-half-to-even인가) |
 | saturation | 표현 범위를 넘으면 wraparound 대신 maximum · minimum에 붙이는 처리. 우리는 symmetric saturation | [12.5](12_fixed_point_and_precision.md#125-overflow-policy--saturationwraparound-금지renormalization-없음) |
@@ -189,7 +189,7 @@ hardware 쪽에서 처음 나온 용어들을 모았습니다(quantum 이론 용
 | prefix sum | 앞에서부터 차례로 더한 partial sum. 우리 Measurement Unit은 row weight의 prefix sum을 32 rows마다 group prefix sum으로 적어 두고 group → row → lane 순으로 좁혀 감 | [14.5](14_multiple_solutions_and_minimum_search.md#145-2단-병렬-measurement) |
 | rejection sampling | 넓은 범위에서 뽑아 원하는 범위 밖이면 버리고 다시 뽑아 정확한 균등분포를 얻는 방법. number of iterations를 뽑을 때와 Measurement PRNG 둘 다 씀 | [14.4](14_multiple_solutions_and_minimum_search.md#144-born-rule-sampling--probability를-circuit으로) · [16.2](16_iteration_control_and_checkpoints.md#162-bbht--무작위로-뽑는-number-of-iterations와-12-growth-factor) |
 | argmax | array에서 maximum의 **index**를 찾는 것. amplitude 동률 때문에 **기각한** measurement 방식 | [14.3](14_multiple_solutions_and_minimum_search.md#143-amplitude-동률--argmax가-무너지는-지점) |
-| weighted random number generator | probability distribution을 따라 뽑는 random number 발생기(04번 논문의 measurement). 우리와 같은 진영 | [14.4](14_multiple_solutions_and_minimum_search.md#144-born-rule-sampling--probability를-circuit으로) |
+| weighted random number generator | probability distribution을 따라 뽑는 random number 발생기(04번 논문의 measurement). 우리와 같은 방식 | [14.4](14_multiple_solutions_and_minimum_search.md#144-born-rule-sampling--probability를-circuit으로) |
 | LFSR | linear-feedback shift register. shift와 XOR만으로 만드는 의사난수 발생기. Iteration-Count LFSR이 씀 | [16.2](16_iteration_control_and_checkpoints.md#162-bbht--무작위로-뽑는-number-of-iterations와-12-growth-factor) |
 | BBHT | Boyer–Brassard–Høyer–Tapp. number of solutions를 모를 때 쓰는 iteration 스케줄(sampling range를 growth factor 6/5씩 키움) | [16.2](16_iteration_control_and_checkpoints.md#162-bbht--무작위로-뽑는-number-of-iterations와-12-growth-factor) |
 | checkpoint | 실패한 shot의 amplitude state를 몇 벌 남겨 두었다가 가장 가까운 것에서 이어 도는 기법. 우리는 a Checkpoint-Capacity of 3 | [16.5](16_iteration_control_and_checkpoints.md#165-checkpoint--measurement가-읽기-전용이라는-사실에서) |
@@ -204,9 +204,9 @@ hardware 쪽에서 처음 나온 용어들을 모았습니다(quantum 이론 용
 
 ## 15.8 되돌아보며
 
-여기까지가 이론을 **hardware의 언어로 번역**하는 여정이었습니다. state vector가 array가 되고(11장), amplitude가 Q1.22 fixed-point 숫자가 되고(12장), oracle과 diffusion operator가 multiplier 없는 datapath가 되고(13장), measurement가 probability를 뽑는 circuit이 되어 enumeration까지 열린(14장) 과정을 따라왔습니다. 그 밑에는 늘 여섯 논문의 종축 비교가 깔려 있었고요.
+여기까지 이론을 **hardware로 구현**하는 과정을 살펴보았습니다. state vector가 array가 되고(11장), amplitude가 Q1.22 fixed-point 숫자가 되고(12장), oracle과 diffusion operator가 multiplier 없는 datapath가 되고(13장), measurement가 probability를 뽑는 circuit이 되어 enumeration까지 열린(14장) 과정을 따라왔습니다. 각 과정에서 여섯 논문의 선택을 비교했습니다.
 
-이제 여러분은 04번 논문을 "설계도"로 읽을 수 있고, 07번의 반대 선택이 왜 그럴듯한지 판단할 수 있으며, 논문의 수치를 그대로 믿지 않고 검증할 수 있습니다. 그리고 [15.4절](#154-우리-project의-좌표--확정-설계-결정표)의 표는 이제 계획이 아니라 **board에서 돈 물건의 기록**입니다.
+이제 여러분은 04번 논문을 "설계도"로 읽을 수 있고, 07번의 반대 선택이 왜 그럴듯한지 판단할 수 있으며, 논문의 수치를 그대로 믿지 않고 검증할 수 있습니다. 그리고 [15.4절](#154-우리-project의-좌표--확정-설계-결정표)의 표는 이제 계획이 아니라 **board에서 동작을 확인한 설계의 기록**입니다.
 
 초판은 아홉 가지를 **미정**으로 열어 두었습니다. RTL을 짓고 board에 올리면서 전부 정해졌고, 어떻게 정해졌는지를 그대로 적어 둡니다. 앞의 넷은 [16.9절](16_iteration_control_and_checkpoints.md#169-초판의-미정-넷은-이렇게-정해졌다)이, 뒤의 다섯은 [17.8절](17_rvx_soc_integration.md#178-초판의-미정-다섯은-이렇게-정해졌다)이 자세히 다룹니다.
 
@@ -228,9 +228,9 @@ hardware 쪽에서 처음 나온 용어들을 모았습니다(quantum 이론 용
 
 ## 15.9 여섯 논문 너머 — 더 읽을거리
 
-이 해설서의 척추는 여섯 편이지만, 같은 문제(quantum algorithm을 고전 hardware로 흉내 내기)를 다른 각도에서 다룬 논문이 많습니다. 함께 참고한, 여섯 편 밖의 자료들을 여기 모읍니다.
+이 해설서의 중심 자료는 여섯 편이지만 같은 문제(quantum algorithm을 고전 hardware로 흉내 내기)를 다른 각도에서 다룬 논문이 많습니다. 함께 참고한, 여섯 편 밖의 자료들을 여기 모읍니다.
 
-먼저 큰 지형 하나 — 지금까지 당연한 듯 쓴 "state vector를 array로 펼쳐 계산"하는 방식은 사실 **유일한 길이 아니라 세 갈래 중 하나**입니다. Cicero 외(2025) survey는 algorithm 수준 simulation을 **Schrödinger식(state vector)·Feynman식(path sum)·tensor network** 으로 나눕니다. 우리 Grover emulator는 전형적인 Schrödinger식으로, 셋 중 memory를 가장 많이 쓰지만($2^{\text{number of qubits}}$ amplitudes를 전부 저장) implementation이 가장 단순합니다. tensor network는 qubit가 많고 circuit이 얕을 때 소수의 출력 amplitude만 뽑아 훨씬 효율적이지만, Grover는 iteration마다 amplitude 전체를 건드리는 깊은 circuit이라 tensor network의 이점이 약해집니다 — 즉 Grover에 state vector 방식은 게으른 선택이 아니라 합리적인 선택입니다.
+먼저 전체적인 분류를 보면, 지금까지 당연한 듯 쓴 "state vector를 array로 펼쳐 계산"하는 방식은 사실 **유일한 길이 아니라 세 갈래 중 하나**입니다. Cicero 외(2025) survey는 algorithm 수준 simulation을 **Schrödinger식(state vector)·Feynman식(path sum)·tensor network** 으로 나눕니다. 우리 Grover emulator는 전형적인 Schrödinger식으로, 셋 중 memory를 가장 많이 쓰지만($2^{\text{number of qubits}}$ amplitudes를 전부 저장) implementation이 가장 단순합니다. tensor network는 qubit가 많고 circuit이 얕을 때 소수의 출력 amplitude만 뽑아 훨씬 효율적이지만, Grover는 iteration마다 amplitude 전체를 건드리는 깊은 circuit이라 tensor network의 이점이 약해집니다 — 즉 Grover에 state vector 방식을 쓰는 데에는 이런 근거가 있습니다.
 
 | 논문 | 무엇을 더하나 | 본문 연결 |
 |------|---------------|:--------:|
@@ -241,9 +241,9 @@ hardware 쪽에서 처음 나온 용어들을 모았습니다(quantum 이론 용
 | **Belfore (2024)** — Scalable FPGA Architecture | 병렬화의 **제3비용 = routing**(Beneš permutation network가 logic 36%). 순차 streaming인 우리는 회피 | [11.7](11_state_vector_emulator.md#117-병렬도와-banking) |
 | **Cicero 외 (2025)** — simulation survey | 방식 3분류(Schrödinger/Feynman/tensor network), FPGA의 두 역할(emulation↔acceleration) | [11장](11_state_vector_emulator.md) · 위 문단 |
 | **Häner 외 (2016)** — High-Performance Emulation | "emulation vs simulation" 용어의 원전. 단 이들의 "emulation"은 QFT→FFT 같은 **software 지름길** 뜻이라 우리(state vector를 hardware에 펼침)와 다른 갈래 | — |
-| **AMARETTO (2024)** — 저가 FPGA emulator | **algorithm을 RTL에 박제(04·우리)** vs **gate를 명령어로 실행**(butterfly amplitude pair 선택, KV260에서 16 qubits)의 대조 | — |
+| **AMARETTO (2024)** — 저가 FPGA emulator | **algorithm을 RTL에 고정(04·우리)** vs **gate를 명령어로 실행**(butterfly amplitude pair 선택, KV260에서 16 qubits)의 대조 | — |
 
-이 논문들의 원문 PDF는 [`../papers/5. 추가 수집 (OpenAlex)/`](papers/5.%20추가%20수집%20(OpenAlex)/)에, 더 넓은 목록은 [`../papers/references.md`](papers/references.md)에 있습니다. 다만 이들은 여섯 편처럼 정독·검증한 자료가 **아니라 곁다리 참고**이니, 인용하기 전에는 원문을 직접 확인하세요.
+이 논문들의 원문 PDF는 [`../papers/5. 추가 수집 (OpenAlex)/`](papers/5.%20추가%20수집%20(OpenAlex)/)에, 더 넓은 목록은 [`../papers/references.md`](papers/references.md)에 있습니다. 다만 이들은 여섯 편처럼 정독·검증한 자료가 **아니라 보조 참고 자료**이니 인용하기 전에는 원문을 직접 확인하세요.
 
 ---
 

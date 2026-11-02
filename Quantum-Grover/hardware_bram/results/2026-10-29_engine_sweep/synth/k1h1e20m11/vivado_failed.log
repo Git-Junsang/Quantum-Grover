@@ -1,0 +1,1876 @@
+INFO: [Common 17-3922] A valid Vivado Design Suite BASIC license has been detected. Your current license is active and will expire on 21-aug-2027.
+#-----------------------------------------------------------
+# Vivado v2026.1 (64-bit)
+# SW Build 6511674 on Tue Jun 16 11:01:26 MDT 2026
+# IP Build 6504888 on Tue Jun 09 09:05:25 MDT 2026
+# SharedData Build 6501428 on Mon Jun 08 17:34:18 MDT 2026
+# Start of session at: Thu Oct 29 13:32:13 2026
+# Process ID         : 1564533
+# Current directory  : /tmp/engine_ooc_n8462462
+# Command line       : vivado -mode batch -nojournal -log /tmp/engine_ooc_n8462462/vivado.log -source /workspace/hardware_bram/synth/engine_ooc.tcl
+# Log file           : /tmp/engine_ooc_n8462462/vivado.log
+# Journal file       : 
+# Running On         : Intern-Ubuntu
+# Platform           : Ubuntu
+# Operating System   : Ubuntu 24.04 LTS
+# Processor Detail   : Intel(R) Core(TM) i5-14600K
+# CPU Frequency      : 4000.191 MHz
+# CPU Physical cores : 8
+# CPU Logical cores  : 8
+# Host memory        : 12884 MB
+# Swap memory        : 2147 MB
+# Total Virtual      : 15032 MB
+# Available Virtual  : 13688 MB
+#-----------------------------------------------------------
+source /workspace/hardware_bram/synth/engine_ooc.tcl
+# set src $::env(ENGINE_SRC)
+# set out $::env(ENGINE_OUT)
+# set part $::env(ENGINE_PART)
+# file mkdir $out
+# set_param general.maxThreads 1
+# set_param synth.maxThreads 1
+# set files [list]
+# foreach name {
+#     bbht_grover_main_ip.v grover_arithmetic.v grover_bbht.v grover_checkpoint.v
+#     grover_iteration.v grover_loader.v grover_measurement.v grover_memories.v
+#     grover_policy.v grover_status.v bbht_rvx_wrapper.v bbht_grover_mmio.v bbht_ahb_loader.v
+#     adapter.v
+# } { lappend files [file join $src $name] }
+# read_verilog $files
+read_verilog: Time (s): cpu = 00:00:08 ; elapsed = 00:00:08 . Memory (MB): peak = 1686.426 ; gain = 210.844 ; free physical = 8872 ; free virtual = 12619
+# read_verilog -sv [list $src/grover_parallel.sv $src/grover_policy_parameterized.sv]
+# synth_design -top bbht_rvx_wrapper -part $part -mode out_of_context \
+#     -flatten_hierarchy rebuilt -include_dirs $src -verilog_define SYNTHESIS=1
+Command: synth_design -top bbht_rvx_wrapper -part xc7a200tfbg484-2 -mode out_of_context -flatten_hierarchy rebuilt -include_dirs /tmp/engine_ooc_n8462462/cell/source -verilog_define SYNTHESIS=1
+Starting synth_design
+Attempting to get a license for feature 'Vivado_Synthesis' and/or device 'xc7a200t'
+INFO: [Common 17-349] Got license for feature 'Vivado_Synthesis' and/or device 'xc7a200t'
+INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 1 processes.
+INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
+INFO: [Synth 8-7075] Helper process launched with PID 1564710
+---------------------------------------------------------------------------------
+Starting Synthesize : Time (s): cpu = 00:00:04 ; elapsed = 00:00:05 . Memory (MB): peak = 2221.059 ; gain = 521.758 ; free physical = 8157 ; free virtual = 11927
+---------------------------------------------------------------------------------
+INFO: [Synth 8-11241] undeclared symbol 'generic_next_flat', assumed default net type 'wire' [/tmp/engine_ooc_n8462462/cell/source/bbht_grover_main_ip.v:1573]
+WARNING: [Synth 8-8895] 'generic_next_flat' is already implicitly declared on line 1573 [/tmp/engine_ooc_n8462462/cell/source/bbht_grover_main_ip.v:1578]
+WARNING: [Synth 8-6901] identifier 'plan_epoch_advance' is used before its declaration [/tmp/engine_ooc_n8462462/cell/source/bbht_grover_main_ip.v:799]
+INFO: [Synth 8-6157] synthesizing module 'bbht_rvx_wrapper' [/tmp/engine_ooc_n8462462/cell/source/bbht_rvx_wrapper.v:21]
+INFO: [Synth 8-6157] synthesizing module 'bbht_grover_mmio' [/tmp/engine_ooc_n8462462/cell/source/bbht_grover_mmio.v:27]
+INFO: [Synth 8-6155] done synthesizing module 'bbht_grover_mmio' (0#1) [/tmp/engine_ooc_n8462462/cell/source/bbht_grover_mmio.v:27]
+INFO: [Synth 8-6157] synthesizing module 'bbht_ahb_loader' [/tmp/engine_ooc_n8462462/cell/source/bbht_ahb_loader.v:30]
+	Parameter SRAM_BASE bound to: -536870912 - type: integer 
+	Parameter SRAM_LAST bound to: -536739841 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'bbht_ahb_loader' (0#1) [/tmp/engine_ooc_n8462462/cell/source/bbht_ahb_loader.v:30]
+INFO: [Synth 8-6157] synthesizing module 'bbht_grover_core' [/tmp/engine_ooc_n8462462/cell/source/adapter.v:66]
+INFO: [Synth 8-6157] synthesizing module 'bbht_grover_main_ip' [/tmp/engine_ooc_n8462462/cell/source/bbht_grover_main_ip.v:23]
+	Parameter CHECKPOINT_ENABLE bound to: 1 - type: integer 
+	Parameter CHECKPOINT_CAPACITY bound to: 1 - type: integer 
+	Parameter LOOKAHEAD_SHOTS bound to: 1 - type: integer 
+	Parameter POLICY_SEARCH_MODE bound to: 6 - type: integer 
+	Parameter POLICY_CANON_LANES bound to: 4 - type: integer 
+	Parameter POLICY_SCAN_LANES bound to: 4 - type: integer 
+	Parameter GENERALIZED_RTL bound to: 1 - type: integer 
+	Parameter POLICY_FORCE_GENERIC bound to: 1 - type: integer 
+	Parameter CHECKPOINT_MANUAL_ENABLE bound to: 0 - type: integer 
+	Parameter SPECULATIVE_PLANNING_ENABLE bound to: 1 - type: integer 
+	Parameter NUMBER_OF_PES bound to: 20 - type: integer 
+	Parameter BUILD_ROWS_PER_CYCLE bound to: 11 - type: integer 
+	Parameter USE_TWO_LEVEL_SELECT bound to: 1 - type: integer 
+INFO: [Synth 8-6157] synthesizing module 'grover_ckpt_policy_parameterized' [/tmp/engine_ooc_n8462462/cell/source/grover_policy_parameterized.sv:8]
+	Parameter CHECKPOINT_CAPACITY bound to: 1 - type: integer 
+	Parameter LOOKAHEAD_SHOTS bound to: 1 - type: integer 
+	Parameter EXACT_PRUNE bound to: 6 - type: integer 
+	Parameter FORCE_GENERIC bound to: 1 - type: integer 
+	Parameter SCAN_LANES bound to: 4 - type: integer 
+	Parameter MEMO_ADDR_W bound to: 12 - type: integer 
+	Parameter COUNT_W bound to: 3 - type: integer 
+INFO: [Synth 8-6157] synthesizing module 'grover_ckpt_policy_generic' [/tmp/engine_ooc_n8462462/cell/source/grover_policy_parameterized.sv:83]
+	Parameter K bound to: 1 - type: integer 
+	Parameter H bound to: 1 - type: integer 
+	Parameter MODE bound to: 6 - type: integer 
+	Parameter LANES bound to: 4 - type: integer 
+	Parameter MEMO_ADDR_W bound to: 12 - type: integer 
+	Parameter EPOCH_W bound to: 16 - type: integer 
+	Parameter CW bound to: 3 - type: integer 
+	Parameter FAST_PATHS bound to: 1 - type: integer 
+INFO: [Synth 8-6157] synthesizing module 'grover_ckpt_gap_bound' [/tmp/engine_ooc_n8462462/cell/source/grover_policy.v:228]
+	Parameter UB bound to: 3 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'grover_ckpt_gap_bound' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_policy.v:228]
+INFO: [Synth 8-6155] done synthesizing module 'grover_ckpt_policy_generic' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_policy_parameterized.sv:83]
+INFO: [Synth 8-6155] done synthesizing module 'grover_ckpt_policy_parameterized' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_policy_parameterized.sv:8]
+INFO: [Synth 8-6157] synthesizing module 'grover_shadow_j' [/tmp/engine_ooc_n8462462/cell/source/grover_policy.v:3110]
+	Parameter FUTURE_COUNT bound to: 7 - type: integer 
+	Parameter OUTPUT_COUNT bound to: 9 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'grover_shadow_j' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_policy.v:3110]
+INFO: [Synth 8-6157] synthesizing module 'grover_ckpt_plan_queue' [/tmp/engine_ooc_n8462462/cell/source/grover_policy.v:3291]
+	Parameter DEPTH bound to: 4 - type: integer 
+	Parameter PTR_W bound to: 2 - type: integer 
+	Parameter SLOTS bound to: 4 - type: integer 
+	Parameter COUNT_W bound to: 3 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'grover_ckpt_plan_queue' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_policy.v:3291]
+INFO: [Synth 8-6157] synthesizing module 'grover_ckpt_planner_generic_pipe' [/tmp/engine_ooc_n8462462/cell/source/grover_checkpoint.v:1688]
+	Parameter CHECKPOINT_CAPACITY bound to: 1 - type: integer 
+INFO: [Synth 8-6157] synthesizing module 'grover_ckpt_planner' [/tmp/engine_ooc_n8462462/cell/source/grover_checkpoint.v:355]
+	Parameter CHECKPOINT_CAPACITY bound to: 1 - type: integer 
+	Parameter SLOTS bound to: 4 - type: integer 
+	Parameter COUNT_W bound to: 3 - type: integer 
+	Parameter SLOT_W bound to: 2 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'grover_ckpt_planner' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_checkpoint.v:355]
+INFO: [Synth 8-6155] done synthesizing module 'grover_ckpt_planner_generic_pipe' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_checkpoint.v:1688]
+INFO: [Synth 8-6157] synthesizing module 'grover_ckpt_meta' [/tmp/engine_ooc_n8462462/cell/source/grover_checkpoint.v:296]
+	Parameter CHECKPOINT_CAPACITY bound to: 1 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'grover_ckpt_meta' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_checkpoint.v:296]
+INFO: [Synth 8-6157] synthesizing module 'grover_ckpt_executor' [/tmp/engine_ooc_n8462462/cell/source/grover_checkpoint.v:1024]
+	Parameter CHECKPOINT_CAPACITY bound to: 1 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'grover_ckpt_executor' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_checkpoint.v:1024]
+INFO: [Synth 8-6157] synthesizing module 'grover_inner_parallel' [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:529]
+	Parameter CHECKPOINT_CAPACITY bound to: 1 - type: integer 
+	Parameter INTRA_ENGINES bound to: 20 - type: integer 
+	Parameter SQUARE_ENGINES bound to: 11 - type: integer 
+	Parameter SLOT_W bound to: 2 - type: integer 
+INFO: [Synth 8-6157] synthesizing module 'grover_data_mem' [/tmp/engine_ooc_n8462462/cell/source/grover_memories.v:29]
+INFO: [Synth 8-6155] done synthesizing module 'grover_data_mem' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_memories.v:29]
+INFO: [Synth 8-6157] synthesizing module 'grover_found_mask_mem' [/tmp/engine_ooc_n8462462/cell/source/grover_memories.v:225]
+INFO: [Synth 8-6155] done synthesizing module 'grover_found_mask_mem' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_memories.v:225]
+INFO: [Synth 8-6157] synthesizing module 'grover_ctrl_fsm_parallel' [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:432]
+	Parameter INTRA_ENGINES bound to: 20 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'grover_ctrl_fsm_parallel' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:432]
+INFO: [Synth 8-6157] synthesizing module 'grover_ckpt_mem_parallel' [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:9]
+	Parameter CHECKPOINT_CAPACITY bound to: 1 - type: integer 
+	Parameter READ_PORTS bound to: 20 - type: integer 
+	Parameter WRITE_PORTS bound to: 20 - type: integer 
+	Parameter SLOT_W bound to: 2 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'grover_ckpt_mem_parallel' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:9]
+INFO: [Synth 8-6157] synthesizing module 'grover_iter_datapath_parallel' [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:326]
+	Parameter INTRA_ENGINES bound to: 20 - type: integer 
+INFO: [Synth 8-6157] synthesizing module 'grover_predicate' [/tmp/engine_ooc_n8462462/cell/source/grover_arithmetic.v:34]
+INFO: [Synth 8-226] default block is never used [/tmp/engine_ooc_n8462462/cell/source/grover_arithmetic.v:70]
+INFO: [Synth 8-6155] done synthesizing module 'grover_predicate' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_arithmetic.v:34]
+INFO: [Synth 8-6157] synthesizing module 'grover_oracle_flip' [/tmp/engine_ooc_n8462462/cell/source/grover_arithmetic.v:271]
+INFO: [Synth 8-6155] done synthesizing module 'grover_oracle_flip' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_arithmetic.v:271]
+INFO: [Synth 8-6157] synthesizing module 'grover_diffusion_sat' [/tmp/engine_ooc_n8462462/cell/source/grover_arithmetic.v:300]
+WARNING: [Synth 8-693] zero replication count - replication ignored [/tmp/engine_ooc_n8462462/cell/source/grover_arithmetic.v:307]
+INFO: [Synth 8-6155] done synthesizing module 'grover_diffusion_sat' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_arithmetic.v:300]
+INFO: [Synth 8-6157] synthesizing module 'grover_adder_tree' [/tmp/engine_ooc_n8462462/cell/source/grover_arithmetic.v:120]
+INFO: [Synth 8-6155] done synthesizing module 'grover_adder_tree' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_arithmetic.v:120]
+INFO: [Synth 8-6157] synthesizing module 'grover_sum_accum' [/tmp/engine_ooc_n8462462/cell/source/grover_arithmetic.v:191]
+INFO: [Synth 8-6155] done synthesizing module 'grover_sum_accum' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_arithmetic.v:191]
+INFO: [Synth 8-6157] synthesizing module 'grover_two_mean_calc' [/tmp/engine_ooc_n8462462/cell/source/grover_arithmetic.v:231]
+INFO: [Synth 8-6155] done synthesizing module 'grover_two_mean_calc' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_arithmetic.v:231]
+INFO: [Synth 8-6155] done synthesizing module 'grover_iter_datapath_parallel' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:326]
+INFO: [Synth 8-6155] done synthesizing module 'grover_inner_parallel' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:529]
+WARNING: [Synth 8-589] replacing case/wildcard equality operator === with logical equality operator == [/tmp/engine_ooc_n8462462/cell/source/bbht_grover_main_ip.v:185]
+WARNING: [Synth 8-589] replacing case/wildcard equality operator === with logical equality operator == [/tmp/engine_ooc_n8462462/cell/source/bbht_grover_main_ip.v:191]
+INFO: [Synth 8-6157] synthesizing module 'grover_loader_ctrl' [/tmp/engine_ooc_n8462462/cell/source/grover_loader.v:36]
+INFO: [Synth 8-6155] done synthesizing module 'grover_loader_ctrl' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_loader.v:36]
+INFO: [Synth 8-6157] synthesizing module 'grover_bbht_shot_fsm' [/tmp/engine_ooc_n8462462/cell/source/grover_bbht.v:506]
+INFO: [Synth 8-6157] synthesizing module 'grover_bbht_random' [/tmp/engine_ooc_n8462462/cell/source/grover_bbht.v:284]
+INFO: [Synth 8-6157] synthesizing module 'grover_iter_rom' [/tmp/engine_ooc_n8462462/cell/source/grover_bbht.v:221]
+INFO: [Synth 8-6155] done synthesizing module 'grover_iter_rom' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_bbht.v:221]
+INFO: [Synth 8-6157] synthesizing module 'grover_lfsr32_jump7' [/tmp/engine_ooc_n8462462/cell/source/grover_bbht.v:30]
+	Parameter FALLBACK_SEED bound to: -1394531515 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'grover_lfsr32_jump7' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_bbht.v:30]
+INFO: [Synth 8-6157] synthesizing module 'grover_j_reject' [/tmp/engine_ooc_n8462462/cell/source/grover_bbht.v:168]
+INFO: [Synth 8-6155] done synthesizing module 'grover_j_reject' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_bbht.v:168]
+INFO: [Synth 8-6155] done synthesizing module 'grover_bbht_random' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_bbht.v:284]
+INFO: [Synth 8-6155] done synthesizing module 'grover_bbht_shot_fsm' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_bbht.v:506]
+INFO: [Synth 8-6157] synthesizing module 'grover_cache_ctrl' [/tmp/engine_ooc_n8462462/cell/source/grover_bbht.v:388]
+INFO: [Synth 8-6155] done synthesizing module 'grover_cache_ctrl' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_bbht.v:388]
+INFO: [Synth 8-226] default block is never used [/tmp/engine_ooc_n8462462/cell/source/bbht_grover_main_ip.v:1315]
+INFO: [Synth 8-6157] synthesizing module 'grover_meas_prng64_adapter' [/tmp/engine_ooc_n8462462/cell/source/grover_bbht.v:92]
+	Parameter FALLBACK_SEED bound to: -1091583778 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'grover_meas_prng64_adapter' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_bbht.v:92]
+INFO: [Synth 8-6157] synthesizing module 'grover_measure_verify' [/tmp/engine_ooc_n8462462/cell/source/grover_measurement.v:1688]
+	Parameter BUILD_ENGINES bound to: 11 - type: integer 
+	Parameter AMP_READ_LATENCY bound to: 2 - type: integer 
+	Parameter E4_DUAL_BUILD bound to: 1 - type: integer 
+	Parameter E4_TRIPLE_BUILD bound to: 0 - type: integer 
+	Parameter E4_QUAD_BUILD bound to: 0 - type: integer 
+	Parameter E4_HIER_SELECT bound to: 1 - type: integer 
+INFO: [Synth 8-6157] synthesizing module 'grover_born_sampler_parallel' [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:90]
+	Parameter SQUARE_ENGINES bound to: 11 - type: integer 
+INFO: [Synth 8-6157] synthesizing module 'grover_born_square_parallel' [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:295]
+	Parameter SQUARE_ENGINES bound to: 11 - type: integer 
+INFO: [Synth 8-6157] synthesizing module 'grover_born_square32' [/tmp/engine_ooc_n8462462/cell/source/grover_measurement.v:44]
+INFO: [Synth 8-6155] done synthesizing module 'grover_born_square32' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_measurement.v:44]
+INFO: [Synth 8-6155] done synthesizing module 'grover_born_square_parallel' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:295]
+INFO: [Synth 8-6157] synthesizing module 'grover_born_reject64' [/tmp/engine_ooc_n8462462/cell/source/grover_measurement.v:262]
+INFO: [Synth 8-6155] done synthesizing module 'grover_born_reject64' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_measurement.v:262]
+INFO: [Synth 8-6155] done synthesizing module 'grover_born_sampler_parallel' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:90]
+INFO: [Synth 8-6157] synthesizing module 'grover_verify' [/tmp/engine_ooc_n8462462/cell/source/grover_measurement.v:1562]
+WARNING: [Synth 8-589] replacing case/wildcard equality operator === with logical equality operator == [/tmp/engine_ooc_n8462462/cell/source/grover_measurement.v:1653]
+INFO: [Synth 8-6155] done synthesizing module 'grover_verify' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_measurement.v:1562]
+INFO: [Synth 8-6155] done synthesizing module 'grover_measure_verify' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_measurement.v:1688]
+INFO: [Synth 8-6157] synthesizing module 'grover_result_fifo' [/tmp/engine_ooc_n8462462/cell/source/grover_memories.v:360]
+	Parameter DEPTH bound to: 256 - type: integer 
+	Parameter CNT_W bound to: 9 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'grover_result_fifo' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_memories.v:360]
+INFO: [Synth 8-6157] synthesizing module 'grover_status_counters' [/tmp/engine_ooc_n8462462/cell/source/grover_status.v:11]
+INFO: [Synth 8-6155] done synthesizing module 'grover_status_counters' (0#1) [/tmp/engine_ooc_n8462462/cell/source/grover_status.v:11]
+INFO: [Synth 8-6155] done synthesizing module 'bbht_grover_main_ip' (0#1) [/tmp/engine_ooc_n8462462/cell/source/bbht_grover_main_ip.v:23]
+INFO: [Synth 8-6155] done synthesizing module 'bbht_grover_core' (0#1) [/tmp/engine_ooc_n8462462/cell/source/adapter.v:66]
+INFO: [Synth 8-6155] done synthesizing module 'bbht_rvx_wrapper' (0#1) [/tmp/engine_ooc_n8462462/cell/source/bbht_rvx_wrapper.v:21]
+WARNING: [Synth 8-6014] Unused sequential element g_gap[0].request_oh_reg was removed.  [/tmp/engine_ooc_n8462462/cell/source/grover_policy.v:293]
+WARNING: [Synth 8-6014] Unused sequential element pool_mask_reg was removed.  [/tmp/engine_ooc_n8462462/cell/source/grover_policy_parameterized.sv:424]
+WARNING: [Synth 8-6014] Unused sequential element frame_pred_reg[0] was removed.  [/tmp/engine_ooc_n8462462/cell/source/grover_policy_parameterized.sv:427]
+WARNING: [Synth 8-6014] Unused sequential element frame_pred_reg[1] was removed.  [/tmp/engine_ooc_n8462462/cell/source/grover_policy_parameterized.sv:427]
+WARNING: [Synth 8-6014] Unused sequential element found_reg was removed.  [/tmp/engine_ooc_n8462462/cell/source/grover_policy_parameterized.sv:469]
+WARNING: [Synth 8-6014] Unused sequential element position_reg was removed.  [/tmp/engine_ooc_n8462462/cell/source/grover_policy_parameterized.sv:469]
+WARNING: [Synth 8-6014] Unused sequential element n_reg was removed.  [/tmp/engine_ooc_n8462462/cell/source/grover_policy_parameterized.sv:520]
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_policy_parameterized.sv:523]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM 'cache_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_policy_parameterized.sv:523]
+Reason is one or more of the following :
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: No valid clock found for write to RAM. 
+WARNING: [Synth 8-6014] Unused sequential element current_boundary_j_reg was removed.  [/tmp/engine_ooc_n8462462/cell/source/grover_checkpoint.v:1119]
+WARNING: [Synth 8-6014] Unused sequential element current_boundary_slot_reg was removed.  [/tmp/engine_ooc_n8462462/cell/source/grover_checkpoint.v:1120]
+WARNING: [Synth 8-6014] Unused sequential element target_j_reg was removed.  [/tmp/engine_ooc_n8462462/cell/source/grover_checkpoint.v:1175]
+WARNING: [Synth 8-6014] Unused sequential element target_slot_reg was removed.  [/tmp/engine_ooc_n8462462/cell/source/grover_checkpoint.v:1176]
+WARNING: [Synth 8-6014] Unused sequential element delta16_reg was removed.  [/tmp/engine_ooc_n8462462/cell/source/grover_checkpoint.v:1190]
+WARNING: [Synth 8-4767] Trying to implement RAM 'g_bank[0].mem_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:47]
+Reason is one or more of the following :
+	1: RAM has too many ports (16). Maximum supported = 16. 
+	2: RAM has too many ports (16). Maximum supported = 16. 
+	3: RAM has too many ports (16). Maximum supported = 16. 
+	4: RAM has too many ports (16). Maximum supported = 16. 
+	5: RAM has too many ports (16). Maximum supported = 16. 
+	6: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	7: Invalid write to RAM. 
+	8: RAM has too many ports (16). Maximum supported = 16. 
+	9: Found multiple writes to the RAM with same address. 
+	10: Invalid write to RAM. 
+	11: RAM has too many ports (16). Maximum supported = 16. 
+	12: RAM has too many ports (16). Maximum supported = 16. 
+	13: RAM has too many ports (16). Maximum supported = 16. 
+	14: RAM has too many ports (16). Maximum supported = 16. 
+	15: RAM has too many ports (16). Maximum supported = 16. 
+	16: RAM has too many ports (16). Maximum supported = 16. 
+	17: RAM has too many ports (16). Maximum supported = 16. 
+	18: RAM has too many ports (16). Maximum supported = 16. 
+	19: RAM has too many ports (16). Maximum supported = 16. 
+	20: RAM has too many ports (16). Maximum supported = 16. 
+	21: No valid clock found for write to RAM. 
+WARNING: [Synth 8-13159] Potential Runtime issue for RAM 'g_bank[0].mem_reg' since this is dissolved into (19136) registers bits. Consider modifying RTL as per supported RAM templates
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM 'g_bank[1].mem_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:47]
+Reason is one or more of the following :
+	1: RAM has too many ports (16). Maximum supported = 16. 
+	2: RAM has too many ports (16). Maximum supported = 16. 
+	3: RAM has too many ports (16). Maximum supported = 16. 
+	4: RAM has too many ports (16). Maximum supported = 16. 
+	5: RAM has too many ports (16). Maximum supported = 16. 
+	6: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	7: Invalid write to RAM. 
+	8: RAM has too many ports (16). Maximum supported = 16. 
+	9: Found multiple writes to the RAM with same address. 
+	10: Invalid write to RAM. 
+	11: RAM has too many ports (16). Maximum supported = 16. 
+	12: RAM has too many ports (16). Maximum supported = 16. 
+	13: RAM has too many ports (16). Maximum supported = 16. 
+	14: RAM has too many ports (16). Maximum supported = 16. 
+	15: RAM has too many ports (16). Maximum supported = 16. 
+	16: RAM has too many ports (16). Maximum supported = 16. 
+	17: RAM has too many ports (16). Maximum supported = 16. 
+	18: RAM has too many ports (16). Maximum supported = 16. 
+	19: RAM has too many ports (16). Maximum supported = 16. 
+	20: RAM has too many ports (16). Maximum supported = 16. 
+	21: No valid clock found for write to RAM. 
+WARNING: [Synth 8-13159] Potential Runtime issue for RAM 'g_bank[1].mem_reg' since this is dissolved into (19136) registers bits. Consider modifying RTL as per supported RAM templates
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM 'g_bank[2].mem_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:47]
+Reason is one or more of the following :
+	1: RAM has too many ports (16). Maximum supported = 16. 
+	2: RAM has too many ports (16). Maximum supported = 16. 
+	3: RAM has too many ports (16). Maximum supported = 16. 
+	4: RAM has too many ports (16). Maximum supported = 16. 
+	5: RAM has too many ports (16). Maximum supported = 16. 
+	6: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	7: Invalid write to RAM. 
+	8: RAM has too many ports (16). Maximum supported = 16. 
+	9: Found multiple writes to the RAM with same address. 
+	10: Invalid write to RAM. 
+	11: RAM has too many ports (16). Maximum supported = 16. 
+	12: RAM has too many ports (16). Maximum supported = 16. 
+	13: RAM has too many ports (16). Maximum supported = 16. 
+	14: RAM has too many ports (16). Maximum supported = 16. 
+	15: RAM has too many ports (16). Maximum supported = 16. 
+	16: RAM has too many ports (16). Maximum supported = 16. 
+	17: RAM has too many ports (16). Maximum supported = 16. 
+	18: RAM has too many ports (16). Maximum supported = 16. 
+	19: RAM has too many ports (16). Maximum supported = 16. 
+	20: RAM has too many ports (16). Maximum supported = 16. 
+	21: No valid clock found for write to RAM. 
+WARNING: [Synth 8-13159] Potential Runtime issue for RAM 'g_bank[2].mem_reg' since this is dissolved into (19136) registers bits. Consider modifying RTL as per supported RAM templates
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM 'g_bank[3].mem_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:47]
+Reason is one or more of the following :
+	1: RAM has too many ports (16). Maximum supported = 16. 
+	2: RAM has too many ports (16). Maximum supported = 16. 
+	3: RAM has too many ports (16). Maximum supported = 16. 
+	4: RAM has too many ports (16). Maximum supported = 16. 
+	5: RAM has too many ports (16). Maximum supported = 16. 
+	6: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	7: Invalid write to RAM. 
+	8: RAM has too many ports (16). Maximum supported = 16. 
+	9: Found multiple writes to the RAM with same address. 
+	10: Invalid write to RAM. 
+	11: RAM has too many ports (16). Maximum supported = 16. 
+	12: RAM has too many ports (16). Maximum supported = 16. 
+	13: RAM has too many ports (16). Maximum supported = 16. 
+	14: RAM has too many ports (16). Maximum supported = 16. 
+	15: RAM has too many ports (16). Maximum supported = 16. 
+	16: RAM has too many ports (16). Maximum supported = 16. 
+	17: RAM has too many ports (16). Maximum supported = 16. 
+	18: RAM has too many ports (16). Maximum supported = 16. 
+	19: RAM has too many ports (16). Maximum supported = 16. 
+	20: RAM has too many ports (16). Maximum supported = 16. 
+	21: No valid clock found for write to RAM. 
+WARNING: [Synth 8-13159] Potential Runtime issue for RAM 'g_bank[3].mem_reg' since this is dissolved into (19136) registers bits. Consider modifying RTL as per supported RAM templates
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM 'g_bank[4].mem_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:47]
+Reason is one or more of the following :
+	1: RAM has too many ports (16). Maximum supported = 16. 
+	2: RAM has too many ports (16). Maximum supported = 16. 
+	3: RAM has too many ports (16). Maximum supported = 16. 
+	4: RAM has too many ports (16). Maximum supported = 16. 
+	5: RAM has too many ports (16). Maximum supported = 16. 
+	6: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	7: Invalid write to RAM. 
+	8: RAM has too many ports (16). Maximum supported = 16. 
+	9: Found multiple writes to the RAM with same address. 
+	10: Invalid write to RAM. 
+	11: RAM has too many ports (16). Maximum supported = 16. 
+	12: RAM has too many ports (16). Maximum supported = 16. 
+	13: RAM has too many ports (16). Maximum supported = 16. 
+	14: RAM has too many ports (16). Maximum supported = 16. 
+	15: RAM has too many ports (16). Maximum supported = 16. 
+	16: RAM has too many ports (16). Maximum supported = 16. 
+	17: RAM has too many ports (16). Maximum supported = 16. 
+	18: RAM has too many ports (16). Maximum supported = 16. 
+	19: RAM has too many ports (16). Maximum supported = 16. 
+	20: RAM has too many ports (16). Maximum supported = 16. 
+	21: No valid clock found for write to RAM. 
+WARNING: [Synth 8-13159] Potential Runtime issue for RAM 'g_bank[4].mem_reg' since this is dissolved into (19136) registers bits. Consider modifying RTL as per supported RAM templates
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM 'g_bank[5].mem_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:47]
+Reason is one or more of the following :
+	1: RAM has too many ports (16). Maximum supported = 16. 
+	2: RAM has too many ports (16). Maximum supported = 16. 
+	3: RAM has too many ports (16). Maximum supported = 16. 
+	4: RAM has too many ports (16). Maximum supported = 16. 
+	5: RAM has too many ports (16). Maximum supported = 16. 
+	6: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	7: Invalid write to RAM. 
+	8: RAM has too many ports (16). Maximum supported = 16. 
+	9: Found multiple writes to the RAM with same address. 
+	10: Invalid write to RAM. 
+	11: RAM has too many ports (16). Maximum supported = 16. 
+	12: RAM has too many ports (16). Maximum supported = 16. 
+	13: RAM has too many ports (16). Maximum supported = 16. 
+	14: RAM has too many ports (16). Maximum supported = 16. 
+	15: RAM has too many ports (16). Maximum supported = 16. 
+	16: RAM has too many ports (16). Maximum supported = 16. 
+	17: RAM has too many ports (16). Maximum supported = 16. 
+	18: RAM has too many ports (16). Maximum supported = 16. 
+	19: RAM has too many ports (16). Maximum supported = 16. 
+	20: RAM has too many ports (16). Maximum supported = 16. 
+	21: No valid clock found for write to RAM. 
+WARNING: [Synth 8-13159] Potential Runtime issue for RAM 'g_bank[5].mem_reg' since this is dissolved into (19136) registers bits. Consider modifying RTL as per supported RAM templates
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM 'g_bank[6].mem_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:47]
+Reason is one or more of the following :
+	1: RAM has too many ports (16). Maximum supported = 16. 
+	2: RAM has too many ports (16). Maximum supported = 16. 
+	3: RAM has too many ports (16). Maximum supported = 16. 
+	4: RAM has too many ports (16). Maximum supported = 16. 
+	5: RAM has too many ports (16). Maximum supported = 16. 
+	6: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	7: Invalid write to RAM. 
+	8: RAM has too many ports (16). Maximum supported = 16. 
+	9: Found multiple writes to the RAM with same address. 
+	10: Invalid write to RAM. 
+	11: RAM has too many ports (16). Maximum supported = 16. 
+	12: RAM has too many ports (16). Maximum supported = 16. 
+	13: RAM has too many ports (16). Maximum supported = 16. 
+	14: RAM has too many ports (16). Maximum supported = 16. 
+	15: RAM has too many ports (16). Maximum supported = 16. 
+	16: RAM has too many ports (16). Maximum supported = 16. 
+	17: RAM has too many ports (16). Maximum supported = 16. 
+	18: RAM has too many ports (16). Maximum supported = 16. 
+	19: RAM has too many ports (16). Maximum supported = 16. 
+	20: RAM has too many ports (16). Maximum supported = 16. 
+	21: No valid clock found for write to RAM. 
+WARNING: [Synth 8-13159] Potential Runtime issue for RAM 'g_bank[6].mem_reg' since this is dissolved into (19136) registers bits. Consider modifying RTL as per supported RAM templates
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM 'g_bank[7].mem_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:47]
+Reason is one or more of the following :
+	1: RAM has too many ports (16). Maximum supported = 16. 
+	2: RAM has too many ports (16). Maximum supported = 16. 
+	3: RAM has too many ports (16). Maximum supported = 16. 
+	4: RAM has too many ports (16). Maximum supported = 16. 
+	5: RAM has too many ports (16). Maximum supported = 16. 
+	6: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	7: Invalid write to RAM. 
+	8: RAM has too many ports (16). Maximum supported = 16. 
+	9: Found multiple writes to the RAM with same address. 
+	10: Invalid write to RAM. 
+	11: RAM has too many ports (16). Maximum supported = 16. 
+	12: RAM has too many ports (16). Maximum supported = 16. 
+	13: RAM has too many ports (16). Maximum supported = 16. 
+	14: RAM has too many ports (16). Maximum supported = 16. 
+	15: RAM has too many ports (16). Maximum supported = 16. 
+	16: RAM has too many ports (16). Maximum supported = 16. 
+	17: RAM has too many ports (16). Maximum supported = 16. 
+	18: RAM has too many ports (16). Maximum supported = 16. 
+	19: RAM has too many ports (16). Maximum supported = 16. 
+	20: RAM has too many ports (16). Maximum supported = 16. 
+	21: No valid clock found for write to RAM. 
+WARNING: [Synth 8-13159] Potential Runtime issue for RAM 'g_bank[7].mem_reg' since this is dissolved into (19136) registers bits. Consider modifying RTL as per supported RAM templates
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM 'g_bank[8].mem_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:47]
+Reason is one or more of the following :
+	1: RAM has too many ports (16). Maximum supported = 16. 
+	2: RAM has too many ports (16). Maximum supported = 16. 
+	3: RAM has too many ports (16). Maximum supported = 16. 
+	4: RAM has too many ports (16). Maximum supported = 16. 
+	5: RAM has too many ports (16). Maximum supported = 16. 
+	6: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	7: Invalid write to RAM. 
+	8: RAM has too many ports (16). Maximum supported = 16. 
+	9: Found multiple writes to the RAM with same address. 
+	10: Invalid write to RAM. 
+	11: RAM has too many ports (16). Maximum supported = 16. 
+	12: RAM has too many ports (16). Maximum supported = 16. 
+	13: RAM has too many ports (16). Maximum supported = 16. 
+	14: RAM has too many ports (16). Maximum supported = 16. 
+	15: RAM has too many ports (16). Maximum supported = 16. 
+	16: RAM has too many ports (16). Maximum supported = 16. 
+	17: RAM has too many ports (16). Maximum supported = 16. 
+	18: RAM has too many ports (16). Maximum supported = 16. 
+	19: RAM has too many ports (16). Maximum supported = 16. 
+	20: RAM has too many ports (16). Maximum supported = 16. 
+	21: No valid clock found for write to RAM. 
+WARNING: [Synth 8-13159] Potential Runtime issue for RAM 'g_bank[8].mem_reg' since this is dissolved into (19136) registers bits. Consider modifying RTL as per supported RAM templates
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM 'g_bank[9].mem_reg' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:47]
+Reason is one or more of the following :
+	1: RAM has too many ports (16). Maximum supported = 16. 
+	2: RAM has too many ports (16). Maximum supported = 16. 
+	3: RAM has too many ports (16). Maximum supported = 16. 
+	4: RAM has too many ports (16). Maximum supported = 16. 
+	5: RAM has too many ports (16). Maximum supported = 16. 
+	6: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	7: Invalid write to RAM. 
+	8: RAM has too many ports (16). Maximum supported = 16. 
+	9: Found multiple writes to the RAM with same address. 
+	10: Invalid write to RAM. 
+	11: RAM has too many ports (16). Maximum supported = 16. 
+	12: RAM has too many ports (16). Maximum supported = 16. 
+	13: RAM has too many ports (16). Maximum supported = 16. 
+	14: RAM has too many ports (16). Maximum supported = 16. 
+	15: RAM has too many ports (16). Maximum supported = 16. 
+	16: RAM has too many ports (16). Maximum supported = 16. 
+	17: RAM has too many ports (16). Maximum supported = 16. 
+	18: RAM has too many ports (16). Maximum supported = 16. 
+	19: RAM has too many ports (16). Maximum supported = 16. 
+	20: RAM has too many ports (16). Maximum supported = 16. 
+	21: No valid clock found for write to RAM. 
+WARNING: [Synth 8-13159] Potential Runtime issue for RAM 'g_bank[9].mem_reg' since this is dissolved into (19136) registers bits. Consider modifying RTL as per supported RAM templates
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+WARNING: [Synth 8-4767] Trying to implement RAM ' ' in registers. Block RAM or DRAM implementation is not possible; see log for reasons. [/tmp/engine_ooc_n8462462/cell/source/grover_parallel.sv:51]
+INFO: [Common 17-14] Message 'Synth 8-4767' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+Reason is one or more of the following :
+	1: RAM has too many ports (16). Maximum supported = 16. 
+	2: RAM has too many ports (16). Maximum supported = 16. 
+	3: RAM has too many ports (16). Maximum supported = 16. 
+	4: RAM has too many ports (16). Maximum supported = 16. 
+	5: RAM has too many ports (16). Maximum supported = 16. 
+	6: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	7: Invalid write to RAM. 
+	8: RAM has too many ports (16). Maximum supported = 16. 
+	9: Found multiple writes to the RAM with same address. 
+	10: Invalid write to RAM. 
+	11: RAM has too many ports (16). Maximum supported = 16. 
+	12: RAM has too many ports (16). Maximum supported = 16. 
+	13: RAM has too many ports (16). Maximum supported = 16. 
+	14: RAM has too many ports (16). Maximum supported = 16. 
+	15: RAM has too many ports (16). Maximum supported = 16. 
+	16: RAM has too many ports (16). Maximum supported = 16. 
+	17: RAM has too many ports (16). Maximum supported = 16. 
+	18: RAM has too many ports (16). Maximum supported = 16. 
+	19: RAM has too many ports (16). Maximum supported = 16. 
+	20: RAM has too many ports (16). Maximum supported = 16. 
+	21: No valid clock found for write to RAM. 
+WARNING: [Synth 8-13159] Potential Runtime issue for RAM 'g_bank[10].mem_reg' since this is dissolved into (19136) registers bits. Consider modifying RTL as per supported RAM templates
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+Reason is one or more of the following :
+	1: RAM has too many ports (16). Maximum supported = 16. 
+	2: RAM has too many ports (16). Maximum supported = 16. 
+	3: RAM has too many ports (16). Maximum supported = 16. 
+	4: RAM has too many ports (16). Maximum supported = 16. 
+	5: RAM has too many ports (16). Maximum supported = 16. 
+	6: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	7: Invalid write to RAM. 
+	8: RAM has too many ports (16). Maximum supported = 16. 
+	9: Found multiple writes to the RAM with same address. 
+	10: Invalid write to RAM. 
+	11: RAM has too many ports (16). Maximum supported = 16. 
+	12: RAM has too many ports (16). Maximum supported = 16. 
+	13: RAM has too many ports (16). Maximum supported = 16. 
+	14: RAM has too many ports (16). Maximum supported = 16. 
+	15: RAM has too many ports (16). Maximum supported = 16. 
+	16: RAM has too many ports (16). Maximum supported = 16. 
+	17: RAM has too many ports (16). Maximum supported = 16. 
+	18: RAM has too many ports (16). Maximum supported = 16. 
+	19: RAM has too many ports (16). Maximum supported = 16. 
+	20: RAM has too many ports (16). Maximum supported = 16. 
+	21: No valid clock found for write to RAM. 
+WARNING: [Synth 8-13159] Potential Runtime issue for RAM 'g_bank[11].mem_reg' since this is dissolved into (19136) registers bits. Consider modifying RTL as per supported RAM templates
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+Reason is one or more of the following :
+	1: RAM has too many ports (16). Maximum supported = 16. 
+	2: RAM has too many ports (16). Maximum supported = 16. 
+	3: RAM has too many ports (16). Maximum supported = 16. 
+	4: RAM has too many ports (16). Maximum supported = 16. 
+	5: RAM has too many ports (16). Maximum supported = 16. 
+	6: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	7: Invalid write to RAM. 
+	8: RAM has too many ports (16). Maximum supported = 16. 
+	9: Found multiple writes to the RAM with same address. 
+	10: Invalid write to RAM. 
+	11: RAM has too many ports (16). Maximum supported = 16. 
+	12: RAM has too many ports (16). Maximum supported = 16. 
+	13: RAM has too many ports (16). Maximum supported = 16. 
+	14: RAM has too many ports (16). Maximum supported = 16. 
+	15: RAM has too many ports (16). Maximum supported = 16. 
+	16: RAM has too many ports (16). Maximum supported = 16. 
+	17: RAM has too many ports (16). Maximum supported = 16. 
+	18: RAM has too many ports (16). Maximum supported = 16. 
+	19: RAM has too many ports (16). Maximum supported = 16. 
+	20: RAM has too many ports (16). Maximum supported = 16. 
+	21: No valid clock found for write to RAM. 
+WARNING: [Synth 8-13159] Potential Runtime issue for RAM 'g_bank[12].mem_reg' since this is dissolved into (19136) registers bits. Consider modifying RTL as per supported RAM templates
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+Reason is one or more of the following :
+	1: RAM has too many ports (16). Maximum supported = 16. 
+	2: RAM has too many ports (16). Maximum supported = 16. 
+	3: RAM has too many ports (16). Maximum supported = 16. 
+	4: RAM has too many ports (16). Maximum supported = 16. 
+	5: RAM has too many ports (16). Maximum supported = 16. 
+	6: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	7: Invalid write to RAM. 
+	8: RAM has too many ports (16). Maximum supported = 16. 
+	9: Found multiple writes to the RAM with same address. 
+	10: Invalid write to RAM. 
+	11: RAM has too many ports (16). Maximum supported = 16. 
+	12: RAM has too many ports (16). Maximum supported = 16. 
+	13: RAM has too many ports (16). Maximum supported = 16. 
+	14: RAM has too many ports (16). Maximum supported = 16. 
+	15: RAM has too many ports (16). Maximum supported = 16. 
+	16: RAM has too many ports (16). Maximum supported = 16. 
+	17: RAM has too many ports (16). Maximum supported = 16. 
+	18: RAM has too many ports (16). Maximum supported = 16. 
+	19: RAM has too many ports (16). Maximum supported = 16. 
+	20: RAM has too many ports (16). Maximum supported = 16. 
+	21: No valid clock found for write to RAM. 
+WARNING: [Synth 8-13159] Potential Runtime issue for RAM 'g_bank[13].mem_reg' since this is dissolved into (19136) registers bits. Consider modifying RTL as per supported RAM templates
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+Reason is one or more of the following :
+	1: RAM has too many ports (16). Maximum supported = 16. 
+	2: RAM has too many ports (16). Maximum supported = 16. 
+	3: RAM has too many ports (16). Maximum supported = 16. 
+	4: RAM has too many ports (16). Maximum supported = 16. 
+	5: RAM has too many ports (16). Maximum supported = 16. 
+	6: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	7: Invalid write to RAM. 
+	8: RAM has too many ports (16). Maximum supported = 16. 
+	9: Found multiple writes to the RAM with same address. 
+	10: Invalid write to RAM. 
+	11: RAM has too many ports (16). Maximum supported = 16. 
+	12: RAM has too many ports (16). Maximum supported = 16. 
+	13: RAM has too many ports (16). Maximum supported = 16. 
+	14: RAM has too many ports (16). Maximum supported = 16. 
+	15: RAM has too many ports (16). Maximum supported = 16. 
+	16: RAM has too many ports (16). Maximum supported = 16. 
+	17: RAM has too many ports (16). Maximum supported = 16. 
+	18: RAM has too many ports (16). Maximum supported = 16. 
+	19: RAM has too many ports (16). Maximum supported = 16. 
+	20: RAM has too many ports (16). Maximum supported = 16. 
+	21: No valid clock found for write to RAM. 
+WARNING: [Synth 8-13159] Potential Runtime issue for RAM 'g_bank[14].mem_reg' since this is dissolved into (19136) registers bits. Consider modifying RTL as per supported RAM templates
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+Reason is one or more of the following :
+	1: RAM has too many ports (16). Maximum supported = 16. 
+	2: RAM has too many ports (16). Maximum supported = 16. 
+	3: RAM has too many ports (16). Maximum supported = 16. 
+	4: RAM has too many ports (16). Maximum supported = 16. 
+	5: RAM has too many ports (16). Maximum supported = 16. 
+	6: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	7: Invalid write to RAM. 
+	8: RAM has too many ports (16). Maximum supported = 16. 
+	9: Found multiple writes to the RAM with same address. 
+	10: Invalid write to RAM. 
+	11: RAM has too many ports (16). Maximum supported = 16. 
+	12: RAM has too many ports (16). Maximum supported = 16. 
+	13: RAM has too many ports (16). Maximum supported = 16. 
+	14: RAM has too many ports (16). Maximum supported = 16. 
+	15: RAM has too many ports (16). Maximum supported = 16. 
+	16: RAM has too many ports (16). Maximum supported = 16. 
+	17: RAM has too many ports (16). Maximum supported = 16. 
+	18: RAM has too many ports (16). Maximum supported = 16. 
+	19: RAM has too many ports (16). Maximum supported = 16. 
+	20: RAM has too many ports (16). Maximum supported = 16. 
+	21: No valid clock found for write to RAM. 
+WARNING: [Synth 8-13159] Potential Runtime issue for RAM 'g_bank[15].mem_reg' since this is dissolved into (19136) registers bits. Consider modifying RTL as per supported RAM templates
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+Reason is one or more of the following :
+	1: RAM has too many ports (16). Maximum supported = 16. 
+	2: RAM has too many ports (16). Maximum supported = 16. 
+	3: RAM has too many ports (16). Maximum supported = 16. 
+	4: RAM has too many ports (16). Maximum supported = 16. 
+	5: RAM has too many ports (16). Maximum supported = 16. 
+	6: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	7: Invalid write to RAM. 
+	8: RAM has too many ports (16). Maximum supported = 16. 
+	9: Found multiple writes to the RAM with same address. 
+	10: Invalid write to RAM. 
+	11: RAM has too many ports (16). Maximum supported = 16. 
+	12: RAM has too many ports (16). Maximum supported = 16. 
+	13: RAM has too many ports (16). Maximum supported = 16. 
+	14: RAM has too many ports (16). Maximum supported = 16. 
+	15: RAM has too many ports (16). Maximum supported = 16. 
+	16: RAM has too many ports (16). Maximum supported = 16. 
+	17: RAM has too many ports (16). Maximum supported = 16. 
+	18: RAM has too many ports (16). Maximum supported = 16. 
+	19: RAM has too many ports (16). Maximum supported = 16. 
+	20: RAM has too many ports (16). Maximum supported = 16. 
+	21: No valid clock found for write to RAM. 
+WARNING: [Synth 8-13159] Potential Runtime issue for RAM 'g_bank[16].mem_reg' since this is dissolved into (19136) registers bits. Consider modifying RTL as per supported RAM templates
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+Reason is one or more of the following :
+	1: RAM has too many ports (16). Maximum supported = 16. 
+	2: RAM has too many ports (16). Maximum supported = 16. 
+	3: RAM has too many ports (16). Maximum supported = 16. 
+	4: RAM has too many ports (16). Maximum supported = 16. 
+	5: RAM has too many ports (16). Maximum supported = 16. 
+	6: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	7: Invalid write to RAM. 
+	8: RAM has too many ports (16). Maximum supported = 16. 
+	9: Found multiple writes to the RAM with same address. 
+	10: Invalid write to RAM. 
+	11: RAM has too many ports (16). Maximum supported = 16. 
+	12: RAM has too many ports (16). Maximum supported = 16. 
+	13: RAM has too many ports (16). Maximum supported = 16. 
+	14: RAM has too many ports (16). Maximum supported = 16. 
+	15: RAM has too many ports (16). Maximum supported = 16. 
+	16: RAM has too many ports (16). Maximum supported = 16. 
+	17: RAM has too many ports (16). Maximum supported = 16. 
+	18: RAM has too many ports (16). Maximum supported = 16. 
+	19: RAM has too many ports (16). Maximum supported = 16. 
+	20: RAM has too many ports (16). Maximum supported = 16. 
+	21: No valid clock found for write to RAM. 
+WARNING: [Synth 8-13159] Potential Runtime issue for RAM 'g_bank[17].mem_reg' since this is dissolved into (19136) registers bits. Consider modifying RTL as per supported RAM templates
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+Reason is one or more of the following :
+	1: RAM has too many ports (16). Maximum supported = 16. 
+	2: RAM has too many ports (16). Maximum supported = 16. 
+	3: RAM has too many ports (16). Maximum supported = 16. 
+	4: RAM has too many ports (16). Maximum supported = 16. 
+	5: RAM has too many ports (16). Maximum supported = 16. 
+	6: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	7: Invalid write to RAM. 
+	8: RAM has too many ports (16). Maximum supported = 16. 
+	9: Found multiple writes to the RAM with same address. 
+	10: Invalid write to RAM. 
+	11: RAM has too many ports (16). Maximum supported = 16. 
+	12: RAM has too many ports (16). Maximum supported = 16. 
+	13: RAM has too many ports (16). Maximum supported = 16. 
+	14: RAM has too many ports (16). Maximum supported = 16. 
+	15: RAM has too many ports (16). Maximum supported = 16. 
+	16: RAM has too many ports (16). Maximum supported = 16. 
+	17: RAM has too many ports (16). Maximum supported = 16. 
+	18: RAM has too many ports (16). Maximum supported = 16. 
+	19: RAM has too many ports (16). Maximum supported = 16. 
+	20: RAM has too many ports (16). Maximum supported = 16. 
+	21: No valid clock found for write to RAM. 
+WARNING: [Synth 8-13159] Potential Runtime issue for RAM 'g_bank[18].mem_reg' since this is dissolved into (19136) registers bits. Consider modifying RTL as per supported RAM templates
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+Reason is one or more of the following :
+	1: RAM has too many ports (16). Maximum supported = 16. 
+	2: RAM has too many ports (16). Maximum supported = 16. 
+	3: RAM has too many ports (16). Maximum supported = 16. 
+	4: RAM has too many ports (16). Maximum supported = 16. 
+	5: RAM has too many ports (16). Maximum supported = 16. 
+	6: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	7: Invalid write to RAM. 
+	8: RAM has too many ports (16). Maximum supported = 16. 
+	9: Found multiple writes to the RAM with same address. 
+	10: Invalid write to RAM. 
+	11: RAM has too many ports (16). Maximum supported = 16. 
+	12: RAM has too many ports (16). Maximum supported = 16. 
+	13: RAM has too many ports (16). Maximum supported = 16. 
+	14: RAM has too many ports (16). Maximum supported = 16. 
+	15: RAM has too many ports (16). Maximum supported = 16. 
+	16: RAM has too many ports (16). Maximum supported = 16. 
+	17: RAM has too many ports (16). Maximum supported = 16. 
+	18: RAM has too many ports (16). Maximum supported = 16. 
+	19: RAM has too many ports (16). Maximum supported = 16. 
+	20: RAM has too many ports (16). Maximum supported = 16. 
+	21: No valid clock found for write to RAM. 
+WARNING: [Synth 8-13159] Potential Runtime issue for RAM 'g_bank[19].mem_reg' since this is dissolved into (19136) registers bits. Consider modifying RTL as per supported RAM templates
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 
+	1: RAM has multiple writes via different ports in same process. If RAM inferencing intended, write to one port per process. 
+	2: Invalid write to RAM. 
+	3: Invalid write to RAM. 
+	4: Invalid write to RAM. 
+	5: Unable to determine number of words or word size in RAM. 
+	6: No valid clock found for write to RAM. 

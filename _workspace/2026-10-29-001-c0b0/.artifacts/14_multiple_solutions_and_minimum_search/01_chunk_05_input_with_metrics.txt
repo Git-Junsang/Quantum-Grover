@@ -1,0 +1,98 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 5/13이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 윤문 진단
+
+대상: `14_multiple_solutions_and_minimum_search.md`
+
+## 장르와 레지스터
+
+학부생용 공부 해설서입니다. 설명 본문은 합쇼체 중심의 친근한 존댓말이고, 질문·권유에는 해요체가 섞입니다. 요약·표의 간결한 명사형은 의도된 형식입니다. 이 register와 독자 수준을 그대로 유지합니다.
+
+## 겨냥 순서와 근거
+
+1. **D-14 / D-5 — 동작을 과장한 의인화·비유**: 「circuit으로 내렸습니다」·「설계를 통째로 뒤엎습니다」·「손끝 하나 달라지지」·「function을 먹였으니」·「귀납이 끝났습니다」·「measurement를 무너뜨립니다」·「checkpoint가 살아」 등은 동작·증명·유효성 설명으로 바로 쓸 수 있습니다. 기존 제목의 표현과 technical term은 보존합니다.
+
+2. **D-8 / D-2 — 예고와 감탄의 누적**: 「여기가 이 장의 본론」·「마지막으로 눈여겨볼 것」·「좋은 소식」 같은 문패가 실제 설명 앞에 붙습니다. 수식·조건·실패 규약을 손대지 않고 불필요한 안내만 줄입니다.
+
+3. **A-18 / I-3 — 긴 조건부 설명과 형식명사**: 14.3·14.4·14.7·14.8은 긴 괄호·대시와 「…것입니다」·「…뜻」이 거듭됩니다. relative_clause_nesting=9. sampling의 균등 조건과 checkpoint 무효화·종료 조건이 흐려지지 않게 문장을 나눕니다.
+
+4. **C-8 — 「공짜/공짜 아님」 대구 반복**: 14.1 도입·이후 설명·요약에서 대립이 누적됩니다. oracle·diffusion operator의 cycle 불변성과 measurement·iteration-control의 추가 고려라는 실질 구별을 유지하고 본문의 반복 비유만 완화합니다.
+
+## 정량 앵커와 해석
+
+입력 정량 블록의 route_hint는 `heavy`, 원문은 24,691자입니다. 위에 적은 양성 카운트만 해당 ID의 보조 근거로 사용했습니다. lexical_diversity의 낮은 값은 전문용어 반복의 영향이 있으므로 영어 용어를 치환하는 근거로 쓰지 않습니다. 이중 피동·by 피동·have 직역은 카운트가 0이어서 지배 패턴으로 지목하지 않습니다.
+
+## 보존 지침
+
+- 영어 용어·영어 토큰의 철자와 대소문자를 그대로 둡니다. 영어를 한국어로 옮기거나 동의어로 바꾸지 않습니다. 용어집 SSOT는 `documents/design_references/22_appendix_glossary_and_retired_specs.md` 22.2절입니다.
+- 사실·주장·수치·단위·수식·code·identifier·인용·조건·부정/긍정·인과를 보존합니다. 내용 보충이나 과학적 사실 수정은 이번 윤문의 범위가 아닙니다.
+- 제목·절 번호·link·그림·기존 콜아웃·표 구조를 유지합니다. 기존 볼드·이모지는 교재 고유 관습이므로 일괄 삭제하지 않습니다.
+- 어색한 비유·한국어 연결·조사·수식어만 국소 수정합니다. 단순히 technical term이 많이 나온다는 이유로 B 계열 처방을 적용하지 않습니다.
+- 의무·가능·추정의 강도를 보존하고 원문에 없던 설명이나 평가를 넣지 않습니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 2667
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.27  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.32  (z=-0.56 vs report 인간 baseline)
+- ending_comma_rate: 0.38  (n/a vs report 인간 baseline)
+- comma_segment_length: 8.76  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.002  (z=-1.93 vs report 인간 baseline)
+- lexical_diversity: 0.74  (z=+1.87 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 0
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 14.3 amplitude 동률 — argmax가 무너지는 지점
+
+solution 두 칸 $i$, $i'$ 를 골라 그 amplitude가 매 순간 어떻게 되는지 따라가 봅시다.
+
+- 시작은 uniform superposition이므로 $a_i = a_{i'} = 1/\sqrt{\text{number of states}}$ 입니다. **같습니다.**
+- oracle은 predicate를 만족하는 **모든** 칸에 똑같이 $-1$ 을 곱합니다. 둘 다 solution이니 둘 다 sign이 뒤집힙니다. **여전히 같습니다.**
+- diffusion operator $a \mapsto 2\bar a - a$ 는 index를 구별하지 않습니다. 같은 값에 같은 function을 먹였으니 결과도 같습니다. **여전히 같습니다.**
+
+귀납이 끝났습니다. oracle과 diffusion operator가 solution 집합을 **완전히 대칭으로** 다루므로, 모든 solution의 amplitude는 매 iteration 후 정확히 같습니다. 게다가 우리는 fixed-point를 쓰고([12장](12_fixed_point_and_precision.md)) 두 칸이 지나온 연산열이 문자 그대로 동일하므로, rounding error까지 똑같이 생겨 **bit 단위로 같습니다.** 우연히 갈릴 여지가 없습니다.
+
+숫자로 보겠습니다. 8 states 가운데 predicate를 만족하는 칸이 $\{1,3,5\}$ 인 경우(3 solutions, $\theta = 37.761°$, optimal number of iterations $0.692 \to 1$):
+
+| number of iterations | solution amplitude | non-solution amplitude | solution 하나의 probability | solution 전체 probability |
+|:-:|--:|--:|--:|--:|
+| 0 | $+0.35355$ | $+0.35355$ | 0.1250 (= 4/32) | 0.3750 |
+| 1 | $+0.53033$ | $-0.17678$ | **0.2812 (= 9/32)** | 0.8437 |
+| 2 | $-0.08839$ | $-0.44194$ | 0.0078 | 0.0234 |
+| 3 | $-0.57452$ | $-0.04419$ | 0.3301 | 0.9902 |
+
+한 번 돌리고 나면 1번·3번·5번 칸의 amplitude가 **셋 다 정확히 $0.53033$** 이고, 각각 $9/32 = 28.1\%$ 의 probability를 나눠 가집니다. non-solution 다섯 칸은 $-0.17678$ 로 눌려 있고요. Grover는 제 일을 완벽하게 했습니다 — solution 쪽에 84.4%의 probability가 모였습니다.
+
+문제는 여기서 답을 꺼내는 circuit입니다. 이 project가 한동안 상정했던 measurement는 **argmax**, 즉 $|a_i|$ 가 가장 큰 index를 고르는 comparator tree였습니다([4.2절](04_measurement.md#42-argmax는-왜-measurement가-아닌가)이 이미 기각해 둔 그 circuit입니다). 그런데 지금 maximum을 갖는 칸이 셋이고 그 값이 bit까지 같습니다. comparator tree는 동률에서 무엇을 내놓을까요? 구조가 정한 우선순위 — 순차 scan이면 먼저 만난 칸, tournament tree면 leaf 배치 순서 — 에 따라 **index 1** 하나입니다. circuit이 결정론적이므로 몇 번을 다시 돌려도 1입니다.
+
+즉 argmax를 쓰면 **3번과 5번은 영원히 나오지 않습니다.** random number seed를 바꿔도, iteration을 늘려도, clock을 아무리 오래 돌려도 나오지 않습니다. 이것은 probability가 낮아서 못 찾는 것이 아니라 **원리적으로 도달할 수 없는** 것입니다. 우리 accelerator의 두 번째 출력 요구 — "predicate를 만족하는 원소를 전부 열거한다" — 가 여기서 통째로 막힙니다.
+
+동률을 감지해서 random number로 하나 고르면 되지 않느냐고 물을 수 있습니다. 그러면 $\{1,3,5\}$ 는 균등하게 나오겠지만, 그건 이미 argmax가 아니라 probability sampling의 어설픈 특수 경우입니다. 게다가 "동률"을 정확 일치로 판정해야 하는데 amplitude가 조금이라도 다른 경우가 섞이면 곧바로 무너지고, 무엇보다 **순위만 남기고 probability의 크기 정보를 버린다**는 근본 문제가 그대로입니다. 순위로 뽑는 대신, 처음부터 probability로 뽑아야 합니다.
+
+(solution 두 개짜리 최소 예제는 [9.4절](09_grover_algorithm.md#94-진짜로-한-번-돌려보기--4-states)의 4 states 손계산에 2 solutions 변형으로 붙여 두었습니다. 두 막대의 높이가 **정확히 같아지는 것**을 네 줄짜리 계산으로 확인할 수 있습니다. 다만 4 states에 solution이 둘이면 처음부터 절반이 solution이라 probability가 $\frac12$ 에서 제자리인 퇴화 사례입니다 — 동률인 채로 **자라는** 모습은 이 절 앞의 8 states · 3 solutions 예에서 이미 봤습니다.)
+
+---
+[원문 끝]

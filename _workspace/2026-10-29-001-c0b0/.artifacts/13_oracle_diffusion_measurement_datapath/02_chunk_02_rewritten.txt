@@ -1,0 +1,21 @@
+## 13.1 한 iteration 안의 FSM
+
+안쪽 FSM은 네 종류의 state뿐입니다. initialization 한 번, 그다음 **Pass 1과 Pass 2를 iteration마다 한 번씩 왕복**하고 끝입니다.
+
+| state | cycle (4 PEs) | 하는 일 |
+|---|---:|---|
+| `S_INIT` | 128 | amplitude array의 모든 칸을 `INIT_AMP` 로 (13.2) |
+| `S_PASS1` | 128 + pipeline | predicate 판정 → sign 반전 → 되쓰기. **같은 흐름에서** 전체 accumulation (13.3·13.4) |
+| `S_MEAN` | 1 | accumulator를 13칸 right shift하고 rounding해 $2\bar a$ 확정 (13.5) |
+| `S_PASS2` | 128 + pipeline | 각 칸을 $2\bar a - a_i$ 로 갱신하고 saturation (13.5) |
+
+final configuration은 4 PEs(PE 하나가 32 lanes)가 한 cycle에 4 rows(128칸)를 처리하므로 array 한 바퀴가 $\text{number of states}/128 = 128$ cycles입니다([11.7절](11_state_vector_emulator.md#117-병렬도와-banking)). 여기에 pipeline을 채우고 비우는 몇 cycle이 더해져 500 workloads campaign에서 잰 **Grover iteration 1회는 약 268 cycles**, 100 MHz에서 약 2.7 µs입니다([11.8절](11_state_vector_emulator.md#118-cycle-비용-model)). Pass 1에는 100 MHz timing을 맞추려고 adder tree 중간에 pipeline register를 넣은 탓에, 마지막 row를 되쓴 뒤 partial sum이 accumulator에 도착하기를 기다리는 **drain cycle**이 하나 있습니다. 결과 산술은 바뀌지 않고 latency만 늘어납니다.
+
+oracle이 독립된 pass를 갖지 않는다는 점이 중요합니다 — sign 반전은 amplitude를 읽어 되쓰는 김에 끼워 넣을 수 있으므로, oracle은 **cycle을 한 개도 쓰지 않습니다.**
+
+<img src="diagrams/13_datapath.svg" width="760" alt="안쪽 iteration FSM: Init(checkpoint가 출발점을 주면 생략) → (Pass 1 oracle + accumulation → 13칸 shift로 2×mean 확정 → Pass 2 diffusion operator와 symmetric saturation) × iterations → measurement로">
+
+그림 맨 위의 "Init을 할지 말지"만 이 장 바깥의 결정입니다. checkpoint slot 중 하나에 이어 쓸 수 있는 amplitude array가 있으면 `S_INIT` 을 건너뛰고 곧바로 Pass 1로 들어가는데, 그 판정 규칙과 정당화는 [16.5절](16_iteration_control_and_checkpoints.md#165-checkpoint--measurement가-읽기-전용이라는-사실에서)에 있습니다. iteration이 끝난 뒤 amplitude array를 **지우지 않고 그대로 두는 것**도 같은 이유입니다.
+
+---
+

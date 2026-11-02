@@ -1,0 +1,35 @@
+빌드 일시   2026-09-25 12:35~12:44 (KST, Vivado 세션 기준)
+플랫폼      bbht_grover_dram (hardware_dram/rvx/bbht_grover_dram.xml)
+타깃        arty-100t / xc7a100tcsg324-1
+구조        DRAM 갈래 Main IP + 통신 계층 + grover_dram_axi_bridge
+            (32비트 AXI4, 버스트 최대 16 beat, AW/AR 넷까지, awlen 큐)
+DRAM        RVX slow_dram = MIG xilinx_ddr3_ctrl_axi32 (mig_b.prj, 2:1, ui_clk 150 MHz)
+클럭 목표   가속기 100 MHz (sys_clk_pin) / 시스템 50 MHz / NoC = MIG ui_clk 150 MHz (clk_pll_i)
+Vivado      v2026.1 (64-bit)
+RVX         /opt/rvx (로컬 전체 설치)
+작업방      $RVX_MINI_HOME/platform/bbht_grover_dram/imp_arty-100t_2026-09-25 (make reimp)
+
+합성 대상 최상단   bbht_dram_axi_top (user region 이 무는 것)
+user region 클럭   gclk_accel
+                   생성 RTL arch/rtl/src/bbht_grover_dram_rtl.v:1896 가
+                   assign gclk_accel = clk_accel; -- 순수 별칭
+NoC 클럭           같은 파일 :1895 가 assign clk_noc = clk_dram_if; (DRAM 을 넣으면 RVX 가
+                   NoC 를 MIG ui_clk 로 돌림. bram 플랫폼은 clk_system 50 MHz)
+배치/배선          user/fpga/arty-100t/pnr_manually.tcl (저장소 hardware_dram/rvx/pnr_manually.tcl)
+                   opt Explore -> place ExtraTimingOpt -> phys_opt AggressiveExplore
+                   -> route Explore -> (음수면) phys_opt AggressiveExplore
+
+이 빌드의 단계별 셋업 WNS
+                   opt -3.043 / place -0.573 / phys_opt(place) +0.001 / route +0.005
+                   (배선 뒤 양수라 마지막 phys_opt 는 돌지 않음)
+
+같은 날 앞선 두 빌드 (비트스트림은 남기지 않음)
+  1차  기본 흐름, 브리지 256 beat           WNS -2.097 / TNS -39.563 / 89곳
+       sys_clk_pin -2.097 (브리지 w_left 10곳), clk_pll_i -0.659 (NoC 79곳)
+       -- first_try_timing_summary.rpt
+  2차  pnr_manually.tcl, 브리지 256 beat + w_left 한 사이클 늦춤
+       WNS +0.068. 타이밍은 맞았지만 SoC RTL 시뮬에서 NoC 가 256 beat 쓰기를
+       16 beat 로 쪼개 B 를 조각마다 돌려줘 첫 탐색이 멈춤 -> 브리지를 16 beat 로
+
+bbht_console       make bbht_console (TARGET_IMP_CLASS=arty-100t). ELF 에 "script done" 없음 = UART 판
+                   RTL 과 무관해서 2차 빌드 때 만든 hex 를 그대로 씀

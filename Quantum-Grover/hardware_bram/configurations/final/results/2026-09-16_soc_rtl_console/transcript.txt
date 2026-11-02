@@ -1,0 +1,80 @@
+
+bbht_console -- HELP 를 치면 명령 목록이 나옵니다
+OK
+> ID
+STAT name=bbht_console csr_ver=0.9.8
+STAT csr_base=0xe2020000 q_bits=14 n_entries=16384 fifo_depth=256
+STAT accel_clk_hz=100000000 sram_base=0xe0000000 sram_last=0xe001ffff
+STAT dataset_addr=0xe0009f40 dataset_count=0 loaded=0
+OK
+> RUN
+ERR NOT_LOADED
+> GEN COUNT=16384 TARGETS=0 VAL=12345 SEED=1
+OK count=16384 targets=0 val=12345
+> POKE IDX=507 VAL=12345
+OK idx=507 val=12345
+> POKE IDX=2852 VAL=12345
+OK idx=2852 val=12345
+> POKE IDX=4724 VAL=12345
+OK idx=4724 val=12345
+> POKE IDX=8685 VAL=12345
+OK idx=8685 val=12345
+> PEEK IDX=8685
+STAT idx=8685 val=12345
+OK
+> LOAD
+OK loaded=16384 addr=0xe0009f40
+> SET MODE=EQ A=12345 AUTO=1 BURST=0 SEEDJ=0x7B1DCDAF SEEDM=0x24370DF2
+OK
+> SHOW
+CFG mode=EQ a=12345 b=0 count=16384 cap=100
+CFG auto=1 burst=0 j=0 faillim=4 seedj=0x7b1dcdaf seedm=0x24370df2
+OK
+> RUN
+HIT idx=8685 val=12345 trials=21 l=119 iters=119 cyc=41310 us=413
+OK
+> STAT
+STAT status=0x0000080c valid=1 idx=8685
+STAT trials=21 l_bbht=119 actual_iter=119 cyc=41310 us=413
+STAT found=0 consec_fail=0 max_fifo=0 fifo_stall=0
+STAT policy_cyc=0 stall=0 actions=0 memo_hit=0 memo_miss=0
+STAT plan_level=0 high=0 empty=0 hit=0 mismatch=0
+STAT cold_solve=0 spec_solve=0 max_latency=0
+OK
+> SET BURST=1
+OK
+> RUN
+HIT idx=8685 val=12345 trials=21 l=119 iters=38 cyc=20935 us=209
+OK
+> STAT
+STAT status=0x0000080c valid=1 idx=8685
+STAT trials=21 l_bbht=119 actual_iter=38 cyc=20935 us=209
+STAT found=0 consec_fail=0 max_fifo=0 fifo_stall=0
+STAT policy_cyc=7063 stall=3560 actions=594 memo_hit=123 memo_miss=196
+STAT plan_level=1 high=1 empty=3 hit=20 mismatch=0
+STAT cold_solve=1 spec_solve=21 max_latency=3352
+OK
+> RUN
+HIT idx=8685 val=12345 trials=21 l=119 iters=38 cyc=17847 us=178
+OK
+> STAT
+STAT status=0x0000080c valid=1 idx=8685
+STAT trials=21 l_bbht=119 actual_iter=38 cyc=17847 us=178
+STAT found=0 consec_fail=0 max_fifo=0 fifo_stall=0
+STAT policy_cyc=4265 stall=472 actions=681 memo_hit=146 memo_miss=227
+STAT plan_level=1 high=1 empty=6 hit=20 mismatch=0
+STAT cold_solve=1 spec_solve=21 max_latency=444
+OK
+> SET MODE=NOPE
+ERR BAD_KV
+> ENUM
+FOUND idx=8685 val=12345
+FOUND idx=2852 val=12345
+FOUND idx=507 val=12345
+FOUND idx=4724 val=12345
+END count=4 found=4 cyc=280494 us=2804
+OK
+> QUIT
+OK
+script done
+

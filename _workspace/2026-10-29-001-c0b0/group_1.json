@@ -1,0 +1,51 @@
+{
+  "skill_root": "/root/.codex/skills/humanize-korean",
+  "constraints": {
+    "scope": "한국어 해설서 윤문. 영어 용어·영어 토큰·수치·수식·code·제목·link·기존 콜아웃 표기는 모두 보존. glossary SSOT documents/design_references/22_appendix_glossary_and_retired_specs.md §22.2. 원문 주장 추가 금지. 기존 작업 변경 보존.",
+    "genre": "report (학부생용 해설서, 친근한 존댓말을 보존; report 서식 축약 규칙은 적용하지 않음)"
+  },
+  "files": [
+    {
+      "source": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/documents/study_references/01_qubits_and_states.md",
+      "run_dir": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/_workspace/2026-10-29-001-c0b0/.artifacts/01_qubits_and_states",
+      "route": "light",
+      "chars": 8457
+    },
+    {
+      "source": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/documents/study_references/04_measurement.md",
+      "run_dir": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/_workspace/2026-10-29-001-c0b0/.artifacts/04_measurement",
+      "route": "standard",
+      "chars": 11798
+    },
+    {
+      "source": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/documents/study_references/07_oracle_and_phase_kickback.md",
+      "run_dir": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/_workspace/2026-10-29-001-c0b0/.artifacts/07_oracle_and_phase_kickback",
+      "route": "light",
+      "chars": 11133
+    },
+    {
+      "source": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/documents/study_references/10_glossary_and_cheat_sheet.md",
+      "run_dir": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/_workspace/2026-10-29-001-c0b0/.artifacts/10_glossary_and_cheat_sheet",
+      "route": "heavy",
+      "chars": 15337
+    },
+    {
+      "source": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/documents/study_references/13_oracle_diffusion_measurement_datapath.md",
+      "run_dir": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/_workspace/2026-10-29-001-c0b0/.artifacts/13_oracle_diffusion_measurement_datapath",
+      "route": "heavy",
+      "chars": 21908
+    },
+    {
+      "source": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/documents/study_references/16_iteration_control_and_checkpoints.md",
+      "run_dir": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/_workspace/2026-10-29-001-c0b0/.artifacts/16_iteration_control_and_checkpoints",
+      "route": "heavy",
+      "chars": 26357
+    },
+    {
+      "source": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/documents/study_references/A_math_review.md",
+      "run_dir": "/mnt/nas/data/2026-CAU/중앙대학교 학부인턴/Project/Quantum-Grover/_workspace/2026-10-29-001-c0b0/.artifacts/A_math_review",
+      "route": "light",
+      "chars": 12360
+    }
+  ]
+}

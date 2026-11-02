@@ -1,0 +1,225 @@
+[진단]
+# paper_outline.md 진단
+
+## 장르·레지스터와 보존 조건
+
+학부생용 기술 해설서(report). 본문은 친근한 존댓말(합니다/입니다, 일부 해요체 설명), 수식 풀이·표·요약은 압축형입니다. 문장 격식을 올리지 않습니다. 영어 용어와 영어 토큰은 번역·삭제·교체·대소문자 변경하지 않습니다. glossary 기준은 `documents/design_references/22_appendix_glossary_and_retired_specs.md` §22.2입니다. 수치·수식·code·제목·link·직접 인용·기존 콜아웃/이모지·문단 구조는 보존합니다. 실제 주장, 부정/긍정, 인과, 조건, 확신도도 보존합니다. 보고서용 서식 축약·영어 순화 규칙은 적용하지 않습니다. 본문에 사실을 추가하거나 현행 설계와 대조해 기술 내용을 고치지 않습니다.
+
+## 정량 근거
+
+입력의 정량 블록을 확인했습니다. risk_band는 low이고, 장문 파일의 heavy 권고는 문서 길이에서 나옵니다. 영어 기술 term 반복은 장르상 필수이므로 lexical_diversity의 낮은 값만으로 수정하지 않습니다. 아래 수치는 탐지 보조이며 개별 문맥과 함께 판단합니다.
+
+## 겨냥 순서의 지배 패턴
+
+1. **A-18 — 긴 설명절 제한적으로 확인**: 정량 relative_clause_nesting=0. 도입의 "각 절 옆의 근거는 그 절을 쓸 때 끌어올…" 정도만 조사·동사 대응을 검토합니다. 전반적으로 정돈된 개요이므로 수정 불필요한 줄은 그대로 둡니다.
+
+2. **D-14 — 구어성 동사 하나**: "끌어올 기술문서 장"은 참조의 뜻을 기술문서 개요에 맞게 자연스럽게 다듬을 수 있는 후보입니다. 다른 비유를 새로 만들지 않습니다.
+
+3. **C-1·C-2·C-9 비적용 — 의도적인 개요 형식**: IEEE 절·소절 목록과 번호는 이 문서의 기능이므로 기계적 병렬이나 과잉 불릿으로 판단하지 않습니다. 영어 제목·용어·본문·숫자·link를 전부 보존합니다.
+
+## 비적용·잔존 처리
+
+교육적 질문·표·연습문제·단계 목록·기존 비유는 그 자체로 결함이 아닙니다. 자연스러운 문장은 그대로 두고 확인된 구간만 보수적으로 다듬습니다. 수치/기술 주장에 의문이 있어도 이번 윤문에서는 보존합니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+route_hint: light  (권고 — 사용자·오케스트레이터가 무시 가능)
+route_reason: 카운트형 티 0건(라우터가 세는 항목 기준) · risk_band low — 단일 콜·최소 파이프라인 권장. 카운터 밖 티는 monolith 가 룰북으로 잡는다
+genre: report
+char_count: 6874
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.22  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.32  (z=-0.56 vs report 인간 baseline)
+- ending_comma_rate: 0.50  (n/a vs report 인간 baseline)
+- comma_segment_length: 3.65  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.000  (z=-2.00 vs report 인간 baseline)
+- lexical_diversity: 0.64  (z=-0.24 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 0
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+# 논문 목차 (IEEE 양식)
+
+IEEE Transactions / Conference 양식(IEEEtran)에 맞춘 논문 뼈대입니다. 대단원은 로마 숫자와
+대문자 제목, 소단원은 `A.` `B.`, 그 아래는 `1)` `2)` 로 매깁니다. Abstract · Index Terms ·
+Acknowledgment · References · Appendix 는 번호를 붙이지 않습니다.
+
+각 절 옆의 "근거" 는 그 절을 쓸 때 끌어올 기술문서 장과 benchmark 묶음입니다. 성능 수치는 세 축
+(RTL cycle · board wall-clock time · software 대비)을 섞지 않고, 축마다 source of truth 묶음에서만 인용합니다
+([1장 1.5절](../../design_references/01_project_overview.md#15-성능-지표와-인용-기준)).
+
+---
+
+## Title
+
+**A Checkpointed Multi-Solution Grover Search Emulator with BBHT Scheduling on an Artix-7 RISC-V SoC**
+
+(가제. 저자 · 소속: 중앙대학교 학부인턴 LPSoC BBHT/Grover 팀)
+
+## Abstract
+
+150~250 단어 한 문단. 문제(number of solutions를 모르는 multi-solution search의 FPGA emulation) → 방법(BBHT +
+a Checkpoint-Capacity of 3 · 3-shot Lookahead policy · 4 PEs · Dual-Row Build와 Two-Level Select로 된 Measurement Microarchitecture) → platform(Arty A7-100T, RVX SoC,
+14 qubits) → 결과(RTL cycle 6.1401×, board wall-clock time 7.626×, ORCA 1 core 대비 116,426× — 축 표기 필수)
+→ verification(software reference model과 BBHT trajectory 500/500).
+
+## Index Terms
+
+Grover's algorithm, BBHT, quantum computing emulation, FPGA, fixed-point arithmetic,
+checkpointing, RISC-V SoC, hardware accelerator
+
+---
+
+## I. INTRODUCTION
+
+- A. Motivation — quantum algorithm verification용 hardware emulator의 필요
+- B. Problem Statement — number of solutions를 모를 때 number of iterations를 정하는 문제와, shot 실패 시 amplitude 재계산 비용
+- C. Contributions — 기여 항목 4~5개 (checkpoint · Policy Engine, 4 PEs, Dual-Row Build · Two-Level Select, bit-exact reference model, board benchmark)
+- D. Paper Organization
+
+근거: [1장](../../design_references/01_project_overview.md)
+
+## II. BACKGROUND
+
+- A. Grover's Algorithm
+  - 1) Oracle and Diffusion Operators
+  - 2) Born-Rule Sampling
+- B. BBHT Algorithm for Unknown Number of Solutions
+- C. Predicate Oracles: `LT` `GT` `EQ` `RANGE`
+- D. Multi-Solution Enumeration and Found Mask
+
+근거: [3장](../../design_references/03_grover_and_bbht_algorithm.md),
+[해설서](../index.md)
+
+## III. RELATED WORK
+
+- A. FPGA-Based Quantum Circuit Emulators
+- B. Grover Emulators on FPGA
+- C. Software State-Vector Simulators (Qiskit Aer, NumPy)
+- D. Fixed-Point Precision in Quantum Emulation
+- E. Checkpointing and Recomputation Strategies
+
+근거: [`bbht_related_work.md`](bbht_related_work.md),
+[`references.md`](references.md)
+
+## IV. SYSTEM ARCHITECTURE
+
+- A. System Overview — host · UART · RVX SoC · Accelerator Core
+- B. Data Representation
+  - 1) Signed 16-Bit Input Data Words
+  - 2) Q1.22 Amplitude Format
+  - 3) 32-Lane Mapping and BRAM Layout
+- C. Bus Interface and Host Protocol
+  - 1) APB CSR Interface
+  - 2) AHB DMA Engine
+  - 3) UART Command Protocol
+- D. Execution Modes
+
+근거: [5장](../../design_references/05_hardware_architecture_overview.md),
+[6장](../../design_references/06_data_representation_and_memory_map.md),
+[7장](../../design_references/07_bus_interface.md),
+[13장](../../design_references/13_csr_registers_and_execution_modes.md),
+[14장](../../design_references/14_host_interface_and_uart_protocol.md)
+
+## V. ACCELERATOR MICROARCHITECTURE
+
+- A. BBHT Control and Shot Controller
+- B. Iteration Datapath and Number of PEs
+- C. Measurement Microarchitecture
+- D. Amplitude Checkpointing
+- E. Dynamic-Programming Policy Engine
+  - 1) Iteration-Count Predictor Planning
+  - 2) Memo Table and Reset Behavior
+
+근거: [8장](../../design_references/08_accelerator_core_top_and_bbht_control.md),
+[9장](../../design_references/09_iteration_datapath_and_number_of_pes.md),
+[10장](../../design_references/10_measurement_unit_and_microarchitecture.md),
+[11장](../../design_references/11_checkpoint_and_policy_engine.md),
+[15장](../../design_references/15_operation_sequence_and_cycle_breakdown.md)
+
+## VI. VERIFICATION METHODOLOGY
+
+- A. Bit-Exact Software Reference Model
+- B. RTL Simulation and Workload Testbenches
+- C. SoC-Level RTL Co-Simulation
+- D. Board-Level Validation
+
+근거: [4장](../../design_references/04_software_reference_model_and_test_vectors.md),
+[16장](../../design_references/16_verification_framework.md),
+[18장](../../design_references/18_predicate500_automated_test.md),
+board benchmark [실험 12](../../reports/12_board_verified_build_500_runs.md) · [실험 15](../../reports/15_revised_bus_interface_board_console.md) ·
+[실험 16](../../reports/16_three_revisions_board_predicate500.md)
+
+## VII. EXPERIMENTAL RESULTS
+
+- A. Experimental Setup — board, clock, 500 workloads(1 · 4 · 16 · 64 · 256 solutions × 100 seeds)
+- B. RTL Cycle Performance and Six-Stage Ablation
+- C. Board Wall-Clock Performance
+- D. Comparison with Software Baselines (ORCA 1-core, the same C on one host x86 core, Qiskit Aer, NumPy)
+- E. Resource Utilization and Timing
+- F. Comparison with Alternative Implementations
+  - 1) No-Checkpoint Baseline
+  - 2) DRAM Variant
+
+근거:
+[`2026-09-08_publication_6stage`](../../../hardware_bram/results/2026-09-08_publication_6stage/) (RTL cycle),
+[`2026-09-08_k3h3_e4_m2_board_500run`](../../../hardware_bram/configurations/final/vivado/vivado_bbht_grover_fpga/2026-09-08_k3h3_e4_m2_board_500run/) (board wall-clock time),
+[`2026-09-08_orca_1core_baseline`](../../../hardware_bram/configurations/final/vivado/vivado_bbht_grover_fpga/2026-09-08_orca_1core_baseline/) (software 대비),
+[`2026-10-11_predicate500`](../../../software/orca_grover_result/2026-10-11_predicate500/2026-10-11_predicate500.md) (새 software baseline, ORCA board · server · FPGA, [실험 19](../../reports/19_orca_server_software_baseline.md)),
+[실험 17](../../reports/17_cpp_numpy_qiskit_baselines.md) (C++ · NumPy · Qiskit baseline),
+[실험 18](../../reports/18_six_stage_ablation_comparison.md) (같은 board의 Six-Stage Ablation build 비교),
+[`2026-09-08_resource_ablation_5config`](../../../hardware_bram/results/2026-09-08_resource_ablation_5config/) (resource),
+[`2026-09-11_common500`](../../../software/reference_model_data/2026-09-11_common500/2026-09-11_common500.md),
+[19장](../../design_references/19_synthesis_implementation_bitstream.md),
+[20장](../../design_references/20_no_checkpoint_baseline.md),
+[21장](../../design_references/21_dram_variant.md)
+
+## VIII. DISCUSSION
+
+- A. Design Rationale — precision · Lookahead-Shots 선택 · 채택하지 않은 설계안
+- B. Interpreting the Speedup — ORCA 대비 speedup은 32 lanes 병렬과 clock 2×에서 오며 algorithm 우위가 아님.
+  같은 C 를 server x86 core 하나에서 돌리면 FPGA 와 시간이 비슷하다는 점을 함께 다룸
+- C. Limitations — 14 qubits 상한, classical linear scan보다 느림, DRAM Variant의 enumeration · prefetch 부재
+
+근거: 설계 근거 [실험 01 ~ 11](../../reports/index.md#실험-목록),
+[실험 19](../../reports/19_orca_server_software_baseline.md)
+
+## IX. CONCLUSION
+
+요약과 향후 과제(두 variant 중 최종 선택, DRAM prefetch, qubit 확장).
+
+---
+
+## ACKNOWLEDGMENT
+
+## REFERENCES
+
+IEEE 번호식 `[1]` `[2]` … 인용 순서대로.
+후보 목록: [`references.md`](references.md)
+
+## APPENDIX
+
+- A. CSR Register Map
+- B. Glossary
+
+근거: [13장](../../design_references/13_csr_registers_and_execution_modes.md),
+[22장](../../design_references/22_appendix_glossary_and_retired_specs.md)
+[원문 끝]

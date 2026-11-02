@@ -1,0 +1,99 @@
+{
+  "edits": [
+    {
+      "rule": "D-2",
+      "before": "드디어 완전한 quantum algorithm 하나를 처음부터 끝까지 봅니다.",
+      "after": "이제 quantum algorithm 하나를 처음부터 끝까지 살펴봅니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-2",
+      "before": "**천문학적으로** 앞설 수 있음을",
+      "after": "**큰 차이로** 앞설 수 있음을",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-5",
+      "before": "가 어떻게 협력하는지를 명확한 계산으로 보여주기 때문에,",
+      "after": "가 어떻게 작용하는지를 계산으로 보여주므로,",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-2",
+      "before": "이해하기 위한 완벽한 준비운동입니다.",
+      "after": "이해하는 데 도움이 됩니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "호출 횟수의 이득을 그대로 물려받지 못합니다.",
+      "after": "호출 횟수의 이득을 그대로 얻지는 못합니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "C-8",
+      "before": "emulator가 대신 보여 주는 것은 속도가 아니라, interference가 실제로 어떻게 답을 만들어 내는지를 한 칸씩 재현하고 검증할 수 있다는 점입니다.",
+      "after": "emulator에서는 속도의 이득 대신 interference가 답을 만드는 과정을 한 칸씩 재현하고 검증할 수 있습니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "이 발동합니다. oracle이 입력 각 항에",
+      "after": "이 일어납니다. oracle이 입력 각 항에",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "은 이제부터 곁다리 constant이므로 떼어놓고,",
+      "after": "은 이후에도 그대로인 constant이므로 따로 두고,",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "가 amplitude의 **sign**에 새겨졌습니다.",
+      "after": "가 amplitude의 **sign**으로 표현되었습니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "이 마법의 정체는 **interference**입니다:",
+      "after": "이 결과는 **interference**로 설명됩니다:",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-2",
+      "before": "**quantum algorithm의 3박자 구조**를 완벽히 보여줍니다:",
+      "after": "**quantum algorithm의 3박자 구조**를 보여줍니다:",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-8",
+      "before": "그런데도 이 장이 해설서에 남아 있는 이유는 하나입니다 — **interference가 어떻게 답을 만들어 내는지를 처음부터 끝까지 수식으로 계산해 보이는 유일한 대목**이기 때문입니다.",
+      "after": "이 장에서는 **interference가 답을 만들어 내는 과정을 처음부터 끝까지 수식으로 계산**합니다. 해설서에서 이 과정을 모두 계산하는 곳은 이 장뿐입니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-2",
+      "before": "다음 장은 이 해설서의 정점, **Grover algorithm**입니다.",
+      "after": "다음 장에서는 **Grover algorithm**을 다룹니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-2",
+      "before": "에 찾아내는 과정을 완전히 해부합니다.",
+      "after": "에 찾아내는 과정을 살펴봅니다.",
+      "occurrences": 1
+    },
+    {
+      "rule": "D-14",
+      "before": "emulator는 이 이득을 물려받지 못합니다",
+      "after": "emulator는 이 이득을 얻지 못합니다",
+      "occurrences": 1
+    }
+  ],
+  "self_check": {
+    "passed": 6,
+    "total": 6,
+    "note": "사용자 보존 조건 우선; 교육용 표·콜아웃과 필수 technical term 반복 유지"
+  }
+}

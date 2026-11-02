@@ -1,0 +1,63 @@
+{
+  "status": "corrected",
+  "genre": "report / 학부생용 기술 해설서",
+  "route": "light",
+  "source_chars": 10865,
+  "final_chars": 10833,
+  "change_rate": 0.0122,
+  "grade": "B",
+  "grade_note": "교재 고유의 제목·목록·콜아웃·용어 반복을 보존한 국소 윤문. 과윤문 없이 지배 패턴을 완화함.",
+  "self_check": {
+    "passed": 6,
+    "total": 6,
+    "scope": "사용자가 보존을 지시한 영어 용어·수식·code·제목·link·기존 콜아웃 형식은 패턴 제거 대상에서 제외함"
+  },
+  "fidelity_violations": [],
+  "residual_findings": [
+    {
+      "kind": "preexisting_gate_false_positive",
+      "detail": "수식/목록의 1) 표기를 각주로 간주하는 golden 경고. 원문끼리 비교한 baseline과 내용·건수가 같고 보호된 수식/수치는 원형대로 보존됨.",
+      "count": 4
+    }
+  ],
+  "over_editing": false,
+  "correction_count": 2,
+  "corrections": [
+    {
+      "before": "Toffoli와 CNOT은 우리가 synthesis할 circuit에는 쓰지 않지만, 논문의 circuit diagram을 읽으려면 알아야 합니다.",
+      "after": "Toffoli와 CNOT은 우리가 synthesis할 circuit에 쓰이지 않고, 논문의 circuit diagram을 읽는 데 쓰입니다.",
+      "reason": "원문에 없던 당위 서법을 서술형으로 복구"
+    },
+    {
+      "before": "그 동작 원리인 **phase kickback** 입니다.",
+      "after": "그 과정에 쓰이는 **phase kickback** 입니다.",
+      "reason": "oracle 전체의 동작 원리로 읽힐 수 있는 과한 재정의 완화"
+    }
+  ],
+  "categories": [
+    "A-18",
+    "C-11",
+    "D-14",
+    "D-2"
+  ],
+  "review": "원문과 윤문본의 변경 구간·주변 문맥, 진단, gate를 직접 대조. 사실·부정/긍정·인과·조건·추측/당위와 의미를 보존. 불필요한 당위·가능성 주입 및 부자연스러운 조사·영어 용어 결합을 국소 보정.",
+  "preservation_check": "PASS: 영어 token·수치·수식·code fence·inline code·제목·link·콜아웃",
+  "gate_final": {
+    "verdict": "WARN — 경고. 사용자 고지 + finalize 승급",
+    "exit_code": 1
+  },
+  "baseline_golden_count": 4,
+  "new_golden_failures": 0,
+  "highlights": [
+    {
+      "rule": "D-2",
+      "before": "일반적인 quantum computation은 놀랍도록 단순한 세 단계입니다.",
+      "after": "일반적인 quantum computation은 다음 세 단계로 이루어집니다."
+    },
+    {
+      "rule": "D-2",
+      "before": "이게 전부입니다. \"이게 다야?\"라는 말이 나올 만큼 단순하지만, 이 안에 놀라운 깊이가 있습니다. circuit diagram으로 그리면:",
+      "after": "이 세 단계를 circuit diagram으로 그리면 다음과 같습니다:"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "platform": "bbht_grover_policy_sorted_values_bg_20261028",
+  "implementation": "/opt/rvx/platform/bbht_grover_policy_sorted_values_bg_20261028/imp_ax7a200b_2026-10-28",
+  "process_exit": 0,
+  "timing_pass": false,
+  "wns_ns": -0.321,
+  "whs_ns": 0.048,
+  "lut": 52291,
+  "ff": 47254,
+  "bram_tiles": 113.5,
+  "dsp": 196,
+  "policy_sha256": "77e2f67d25e3cb32ec2767f7920c78c4451209bd5b99af4ce873e212cfec3627",
+  "scope": "Prior RTL. These timing/resource values do not validate the new SCAN-parallel source.",
+  "worst_path": "root_init_id0_reg to f_val2_reg[0]",
+  "worst_path_logic_ns": 3.036,
+  "worst_path_route_ns": 7.172
+}

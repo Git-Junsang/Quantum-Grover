@@ -1,0 +1,22 @@
+## 10.3 핵심 공식
+
+**normalization / measurement (1·4장)**
+$$|\alpha|^2 + |\beta|^2 = 1, \qquad \langle\psi|\psi\rangle = 1, \qquad P(\text{outcome } k) = |\text{amplitude}_k|^2$$
+
+**uniform superposition / Hadamard (6장)**
+$$H^{\otimes \text{number of qubits}}|0\rangle^{\otimes \text{number of qubits}} = \frac{1}{\sqrt{2^{\text{number of qubits}}}}\sum_{x}|x\rangle, \qquad H^{\otimes \text{number of qubits}}|u\rangle = \frac{1}{\sqrt{2^{\text{number of qubits}}}}\sum_v (-1)^{u\cdot v}|v\rangle$$
+
+**oracle / phase kickback (7장)**
+$$U_f|x\rangle = (-1)^{f(x)}|x\rangle, \qquad U_f|x\rangle|-\rangle = (-1)^{f(x)}|x\rangle|-\rangle, \qquad U_f = I - 2|\omega\rangle\langle\omega|$$
+
+**Grover (9장)**
+$$U_\psi = 2|\psi\rangle\langle\psi| - I \;(\text{inversion about the mean } a\mapsto 2\bar a - a), \qquad \sin\theta = \sqrt{\tfrac{\text{number of solutions}}{\text{number of states}}}, \qquad P(\text{number of iterations}) = \sin^2\!\big((2\cdot \text{number of iterations}+1)\theta\big)$$
+
+**number of iterations — 세 가지 경우 (9·14·16장)**
+
+- number of solutions를 **알 때**의 최적 number of iterations: $\frac{\pi}{4}\sqrt{\tfrac{\text{number of states}}{\text{number of solutions}}} - \frac12$. (14 qubits·1 solution이면 $100.03 \to 100$ iterations.)
+- number of solutions를 **모를 때** (이 project의 기본): BBHT recurrence — $\text{sampling range} \leftarrow 1$ 로 시작해 shot마다 $\text{number of iterations} \sim U[0, \text{sampling range})$ 를 뽑고, 실패하면 $\text{sampling range} \leftarrow \min(\text{growth factor} \cdot \text{sampling range}, \sqrt{\text{number of states}})$, $\text{growth factor} = 6/5$ ([16.2절](16_iteration_control_and_checkpoints.md#162-bbht--무작위로-뽑는-number-of-iterations와-12-growth-factor)).
+- 조건을 만족하는 원소를 **전부 enumeration**할 때의 총비용: $\sum_{k=1}^{\text{number of solutions}}\sqrt{\text{number of states}/k} \approx 2\sqrt{\text{number of states} \cdot \text{number of solutions}}$ — solution이 하나씩 줄어 뒤 enumeration round가 비싸집니다 ([14.7절](14_multiple_solutions_and_minimum_search.md#147-enumeration-mode--mask로-중복-없이)).
+
+---
+

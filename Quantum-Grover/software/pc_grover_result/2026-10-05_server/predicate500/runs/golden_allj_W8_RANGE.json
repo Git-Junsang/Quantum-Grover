@@ -1,0 +1,62 @@
+{
+  "backend": "GOLDEN_PY_ALLJ",
+  "policy": "allj",
+  "predicate": "RANGE",
+  "threads": 1,
+  "workers": 8,
+  "reps": 1,
+  "workloads": 500,
+  "success": 500,
+  "trials": 7213,
+  "L_BBHT": 29676,
+  "physical_iterations": 7875,
+  "campaign_wall_ns": 1721934991,
+  "campaign_wall_note": "warm-up + reps + prep for all workloads",
+  "throughput_searches_per_s": 580.7,
+  "per_target": {
+    "1": {
+      "search_ns_sum": 2559349686,
+      "compute_ns_sum": 1998721976,
+      "e2e_ns_sum": 3569134093
+    },
+    "4": {
+      "search_ns_sum": 1207315309,
+      "compute_ns_sum": 811122652,
+      "e2e_ns_sum": 2277299838
+    },
+    "16": {
+      "search_ns_sum": 867954445,
+      "compute_ns_sum": 555652323,
+      "e2e_ns_sum": 1953655465
+    },
+    "64": {
+      "search_ns_sum": 483296058,
+      "compute_ns_sum": 262966484,
+      "e2e_ns_sum": 1443009293
+    },
+    "256": {
+      "search_ns_sum": 240021032,
+      "compute_ns_sum": 101232551,
+      "e2e_ns_sum": 1243122929
+    }
+  },
+  "search_ns_sum": 5357936530,
+  "compute_ns_sum": 3729695986,
+  "e2e_ns_sum_per_workload_load": 10486221618,
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.14-8-pve-x86_64-with-glibc2.39",
+    "cpu": "x86_64",
+    "process_cpus": [
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "numpy": "2.4.6"
+  }
+}

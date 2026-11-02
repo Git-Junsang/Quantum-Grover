@@ -1,0 +1,20 @@
+## 11.3 qubit 하나 = memory 두 배
+
+이 구조의 가장 중요한 성질은 **비용이 number of qubits에 지수적**이라는 것입니다. 5장에서 qubit가 여럿인 state의 dimension이 $2^{\text{number of qubits}}$ 임을 배웠습니다. amplitude를 명시적으로 펼치면, array 크기가 곧 number of states이고 $\text{number of states} = 2^{\text{number of qubits}}$ 입니다:
+
+| number of qubits | number of states |
+|:---:|:---:|
+| 4 | 16 |
+| 10 | 1,024 |
+| **14** | **16,384** ← 우리 IP |
+| 20 | 약 100만 |
+| 30 | 약 10억 |
+
+qubit를 **하나** 늘릴 때마다 저장해야 할 amplitude가 **두 배**가 됩니다. 진짜 quantum computer라면 qubit 하나를 추가하는 것이 state space를 두 배로 키우는 "공짜 지수 이득"이지만, emulator에서는 정반대로 **memory·연산이 두 배로 드는 지수 비용**입니다. qubit를 늘리는 것이 아니라 memory를 지수적으로 늘리는 구조인 셈이고, 이것이 emulator가 넘을 수 없는 근본 한계입니다.
+
+엄밀히 말하면 이 지수 비용은 물리 법칙이 아니라 **우리가 택한 방식의 결과**입니다. 복잡도 이론에는 amplitude를 저장하는 대신 필요할 때마다 다시 계산해 memory를 number of qubits에 선형($O(s+t)$)으로 줄이는 공간–시간 맞바꿈이 알려져 있습니다(Frank 외 2009, SEQCSim). 다만 그 대가로 이번엔 **시간**이 지수적으로 늘어나고, 특히 Grover에는 불리합니다 — diffusion operator가 매 iteration amplitude **전체**의 mean을 요구하므로 결국 모든 amplitude가 동시에 필요하고, "한 번에 하나씩 재계산"하는 그 방식과 정면으로 충돌하기 때문입니다. 그래서 우리는 memory를 사용하는 state vector 전개를 택합니다 — 부담을 다른 resource로 옮길 수는 있어도, Grover accelerator에서는 그 맞바꿈이 손해입니다.
+
+그래서 이 분야의 모든 논문은 사실상 **"이 지수 벽을 몇 qubit까지 미룰 수 있는가"** 의 경쟁입니다. 그리고 그 경쟁의 첫 갈림길이 바로 다음 절 — amplitude를 **어디에** 저장할 것인가입니다.
+
+---
+

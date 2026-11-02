@@ -1,0 +1,15 @@
+{
+  "k": 3,
+  "e": 1,
+  "m": 4,
+  "scope": "independent memory/iteration/square RTL blocks; no Main IP integration",
+  "sha256": {
+    "hardware_bram/src/grover_parallel.sv": "f246303b80c0cb916ee60462661c2075fbdd225edccfc64117888ed1fddb71fe",
+    "hardware_bram/src/grover_arithmetic.v": "0ccbac17f68cd331d2766f04ae0f896c4434e695da0ed1d151635e4a83ed590d",
+    "hardware_bram/src/grover_measurement.v": "160e9e66fa0c3864741dc951998f1902c3c6202ea829a73f9734ac5940bae26f",
+    "hardware_bram/src/grover_memories.v": "d745da86d04b248dccfafc9f259201cbdd0825ddd00e8da4344fc51370790fbd",
+    "hardware_bram/src/grover_param.vh": "f334d27683ec7660250a4c9ccefd90c1c82b9c7047d37bd4ca887fb29a11f2fd",
+    "hardware_bram/testbench/tb_parallel_generalized.sv": "35a457731749023f9ac32f5c7266a10d9486fdd863827bed42db13664a74b067"
+  },
+  "summary": "SUMMARY parallel capacity=3 iteration_engines=1 square_engines=4 memory_rows=1536 square_rows=512 pass1_rows=2048 diffusion_rows=2048 errors=0"
+}

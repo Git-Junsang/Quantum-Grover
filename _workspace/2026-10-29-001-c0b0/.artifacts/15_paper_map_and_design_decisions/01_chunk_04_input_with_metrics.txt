@@ -1,0 +1,80 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 4/13이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 15_paper_map_and_design_decisions.md 진단
+
+## 장르·레지스터와 보존 조건
+
+학부생용 기술 해설서(report). 본문은 친근한 존댓말(합니다/입니다, 일부 해요체 설명), 수식 풀이·표·요약은 압축형입니다. 문장 격식을 올리지 않습니다. 영어 용어와 영어 토큰은 번역·삭제·교체·대소문자 변경하지 않습니다. glossary 기준은 `documents/design_references/22_appendix_glossary_and_retired_specs.md` §22.2입니다. 수치·수식·code·제목·link·직접 인용·기존 콜아웃/이모지·문단 구조는 보존합니다. 실제 주장, 부정/긍정, 인과, 조건, 확신도도 보존합니다. 보고서용 서식 축약·영어 순화 규칙은 적용하지 않습니다. 본문에 사실을 추가하거나 현행 설계와 대조해 기술 내용을 고치지 않습니다.
+
+## 정량 근거
+
+입력의 정량 블록을 확인했습니다. risk_band는 low이고, 장문 파일의 heavy 권고는 문서 길이에서 나옵니다. 영어 기술 term 반복은 장르상 필수이므로 lexical_diversity의 낮은 값만으로 수정하지 않습니다. 아래 수치는 탐지 보조이며 개별 문맥과 함께 판단합니다.
+
+## 겨냥 순서의 지배 패턴
+
+1. **D-14·D-5 — 지형·계보·축 은유의 과도한 반복**: "15.4절이 이깁니다", "09번의 자리가 한 칸 내려갔습니다", "공통의 조상", "설계 결정 … 떠받치는", "해설서의 척추", "곁다리 참고" 등은 참조 자료에 과한 비유를 얹습니다. 표의 내용과 계보도·제목은 유지하고 본문 비유를 구체화합니다.
+
+2. **D-2·F-1 — 가치 판단·평가성 안내**: "가장 값집니다", "단단해집니다", "값어치는 충분", "이 절은 값을 합니다" 등 평가가 반복됩니다. 실제 오류·판단 근거를 앞세웁니다.
+
+3. **A-18 — 참조·조건이 겹친 긴 문장**: 정량 relative_clause_nesting=5. 15.1절 09번 위치, 15.2절 공통 출처와 BBHT, 15.5절 성능 축, 15.9절 simulation 방식 문단에서 긴 수식·참조를 보존하며 호흡을 조정합니다.
+
+4. **C-8·D-8 — 부정 대구와 정의 공식 반복**: "새 내용을 배우는 곳이 아니라", "참고문헌이 아니라", "목록 … 그 자체가 아닙니다", "게으른 선택이 아니라 합리적인 선택" 등 수사 대조를 선별합니다. 기술적 구별·성능 해석에 필수인 대조는 유지합니다.
+
+## 비적용·잔존 처리
+
+교육적 질문·표·연습문제·단계 목록·기존 비유는 그 자체로 결함이 아닙니다. 자연스러운 문장은 그대로 두고 확인된 구간만 보수적으로 다듬습니다. 수치/기술 주장에 의문이 있어도 이번 윤문에서는 보존합니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 2790
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.35  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.55  (z=-0.30 vs report 인간 baseline)
+- ending_comma_rate: 0.55  (n/a vs report 인간 baseline)
+- comma_segment_length: 10.42  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.000  (z=-2.00 vs report 인간 baseline)
+- lexical_diversity: 0.74  (z=+1.72 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 0
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 15.3 여덟 개의 대립축
+
+Part 5~8의 각 장은 사실 "설계 질문 하나"였고, 그 질문마다 논문들이 다른 답을 냈습니다. 그 대립을 한 표로 모읍니다. 굵게 표시한 것이 우리 좌표입니다.
+
+| 축 | 질문 | 답들 | 다룬 곳 |
+|:-:|------|------|:------:|
+| **A** | state vector를 어디에 두는가 | register array(04·06, 6~9 qubits) ↔ **on-chip BRAM, row 32 lanes × 4 PEs(우리, 14 qubits)** ↔ 외부 DDR(07, 32 qubits) | [11.4](11_state_vector_emulator.md#114-amplitude를-어디에-둘-것인가) · [15.5](#155-확정-platform과-resource-예산) |
+| **B** | 수를 어떻게 담는가 | **fixed-point(04·05·우리)** ↔ float32(07). minimum fraction bits 공식(05) | [12장](12_fixed_point_and_precision.md) |
+| **C** | multiplier를 어떻게 없애는가 | **2의 거듭제곱은 shift → diffusion operator DSP 0개(04·우리)** ↔ 임의 각도 CORDIC(06) | [13.5](13_oracle_diffusion_measurement_datapath.md#135-diffusion-operator--2mean--amp가-circuit이-되는-순간) · [13.8](13_oracle_diffusion_measurement_datapath.md#138-multiplier는-어디에-있고-어디에-없는가) |
+| **D** | measurement를 어떻게 하는가 | **Born-rule sampling(04의 WRNG · 우리 — 단 우리는 integer 정확 계산과 group→row→lane layer 선택)** ↔ argmax(우리가 기각) ↔ Q2C 미해결(07) | [14.3](14_multiple_solutions_and_minimum_search.md#143-amplitude-동률--argmax가-무너지는-지점) · [14.4](14_multiple_solutions_and_minimum_search.md#144-born-rule-sampling--probability를-circuit으로) |
+| **E** | oracle은 무엇인가 | index를 안다(04) ↔ **predicate를 판정한다(09·우리)** | [13.3](13_oracle_diffusion_measurement_datapath.md#133-oracle--predicate-4종이-subtractor-하나를-공유한다) · [14.2](14_multiple_solutions_and_minimum_search.md#142-oracle은-solution을-아는-circuit이-아니다) |
+| **F** | 실기 vs emulator 비용 | 실기에서 싼 것이 emulator에서 비싸고, 그 반대도 참 | [11.9](11_state_vector_emulator.md#119-emulator가-실기보다-쉬운-것들) · [11.10](11_state_vector_emulator.md#1110-emulator가-숨기는-것) |
+| **G** | iteration을 몇 번 돌릴지 어떻게 정하는가 | number of solutions를 안다고 두고 $\text{optimal number of iterations}=\frac{\pi}{4}\sqrt{\text{number of states}/\text{number of solutions}}$(04·08·09) ↔ **BBHT로 모르는 채 시작(우리)** ↔ quantum counting(QPE, 우리가 기각) | [16.1](16_iteration_control_and_checkpoints.md#161-왜-solution이-몇-개인지-모르는가) · [16.2](16_iteration_control_and_checkpoints.md#162-bbht--무작위로-뽑는-number-of-iterations와-12-growth-factor) |
+| **H** | shot 사이에 state를 버리는가 남기는가 | shot마다 버리고 Init부터(여섯 논문 전부) ↔ **state를 세 벌 남겨 두고 policy가 고른 지점에서 차이만큼만 전진(우리)** | [16.5](16_iteration_control_and_checkpoints.md#165-checkpoint--measurement가-읽기-전용이라는-사실에서) · [16.6](16_iteration_control_and_checkpoints.md#166-왜-결과가-달라지지-않는가) |
+
+앞의 여섯 축(A~F)은 논문들끼리 갈리는 자리이고, 뒤의 둘은 성격이 다릅니다. G축은 여섯 논문이 대체로 "solution이 몇 개인지는 주어진 것"으로 놓고 지나가 버린 자리라 우리가 직접 세워야 했고, **H축은 여섯 논문 어디에도 없습니다.** shot을 여러 번 던지는 구조 자체가 G축을 세운 뒤에야 생기고, 실기 quantum에서는 measurement가 state를 collapse시켜 애초에 물음이 성립하지 않기 때문입니다. emulator에서만 물을 수 있는 질문이고, 이 project가 내놓는 답이 [checkpoint](16_iteration_control_and_checkpoints.md#165-checkpoint--measurement가-읽기-전용이라는-사실에서)입니다. board에서 잰 가속의 가장 큰 몫도 이 축에서 나왔습니다.
+
+---
+[원문 끝]

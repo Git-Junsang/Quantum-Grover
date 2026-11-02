@@ -1,0 +1,14 @@
+## 12.7 몇 bit면 되나 — minimum fraction bits 공식과 그 전제
+
+이제 필요한 폭을 정하는 문제를 봅시다. "목표 정확도를 맞추려면 fraction bits를 최소 몇 bit로 잡아야 하는가?" 05번 논문은 위 error 공식을 뒤집어 닫힌 형태의 답을 냅니다. 허용 가능한 최대 error를 $\ell_{2,\max}$ 라 하면:
+
+$$\boxed{\,\text{minimum fraction bits} = \left\lceil\, \text{number of qubits} - \log_2 \ell_{2,\max} - 1.03 \,\right\rceil\,}$$
+
+qubit가 많을수록 bit가 더 필요하고, 더 엄격한 정확도를 원할수록 bit가 더 필요합니다. constant $1.03$ 은 error 계수를 실험으로 보정한 값입니다. 예를 들어 6 qubits에서 error를 $10^{-5}$ 이하로 잡고 싶다면 $\log_2 10^{-5}\approx -16.6$ 이므로 minimum fraction bits는 $\lceil 6 + 16.6 - 1.03 \rceil = 22$, 곧 22 bits입니다. 04번의 30 fraction bits는 같은 조건에서 **8 bits가 과잉**인 셈입니다.
+
+이 공식을 우리 설계에 대입해 봅시다. 14 qubits, 22 fraction bits이므로
+
+$$\ell_2 \approx 2^{\,\text{number of qubits}-\text{fraction bits}-1.03} = 2^{\,14-22-1.03} = 2^{-9.03} \approx 1.9\times 10^{-3}$$
+
+입니다. 흔히 쓰는 기준 $10^{-3}$ 을 조금 넘는 값이라, 공식만 믿으면 아슬아슬해 보입니다. 그러나 이 공식에는 **세 가지 전제**가 있고, 우리 설계는 셋 다 다릅니다.
+

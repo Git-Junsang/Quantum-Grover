@@ -1,0 +1,38 @@
+## 11.2 세 개의 array — amp·data·mask
+
+9장에서 Grover의 시작 state를 이렇게 썼습니다:
+
+$$|\psi\rangle = H^{\otimes \text{number of qubits}}|0\rangle^{\otimes \text{number of qubits}} = \frac{1}{\sqrt{\text{number of states}}}\sum_{x=0}^{\text{number of states}-1}|x\rangle$$
+
+이 ket을 hardware에서 계산하려면 hardware가 다루는 **memory에 담긴 숫자**로 표현해야 합니다. 그래서 emulator는 이 state를 **amplitude array**로 펼칩니다:
+
+$$|\psi\rangle = \sum_{i=0}^{\text{number of states}-1}\alpha_i|i\rangle \;\longrightarrow\; \texttt{amp\_mem}[0..\text{number of states}-1] = [\alpha_0,\ \alpha_1,\ \dots,\ \alpha_{\text{number of states}-1}]$$
+
+`amp_mem[i]` 는 computational basis state $|i\rangle$ 의 amplitude $\alpha_i$ 를 담는 memory 한 칸입니다. uniform superposition은 이 array의 **모든 칸을 $\frac{1}{\sqrt{\text{number of states}}}$ 로 채우는 것**과 정확히 같습니다.
+
+그런데 우리 IP에는 array가 하나가 아니라 **셋**입니다. 우리가 푸는 문제가 추상적인 "표시된 state 찾기"가 아니라 **memory에 담긴 data 중 predicate를 만족하는 index 찾기**이기 때문입니다.
+
+| array | data word width | 깊이 | 담는 것 | 누가 건드리나 |
+|---|---|:-:|---|---|
+| `amp_mem` | **23b** (Q1.22) | 16,384 | amplitude $\alpha_i$ | Init·oracle·diffusion operator가 **씁니다**. measurement는 읽기만 |
+| `data_mem` | **16b signed** | 16,384 | search 대상 값 `value[i]` | host가 load. IP는 **읽기만** |
+| `found_mask` | **1b** | 16,384 | 이미 찾은 solution 표시 `found[i]` | enumeration mode에서 solution이 하나 나올 때마다 한 bit씩 |
+
+<img src="diagrams/11_memory_map.svg" width="760" alt="index 14 bits가 row 번호 9 bits와 lane 번호 5 bits로 갈리고, amplitude·checkpoint memory(checkpoint slot 4벌, RAMB36 44개)·data_mem(RAMB18 64개)·found_mask(RAMB36 2개)로 이어지며 Accelerator Core 합계 84 tile, board 전체 116/135 tile">
+
+amplitude 폭을 왜 23 bits로 잡았는지는 [12장](12_fixed_point_and_precision.md)이 통째로 답합니다. 여기서는 array가 셋이라는 사실과, 그중 amplitude만 쓰기 대상이라는 사실만 기억해 두면 됩니다 — 뒤의 사실은 [16.5절](16_iteration_control_and_checkpoints.md#165-checkpoint--measurement가-읽기-전용이라는-사실에서) checkpoint의 근거가 됩니다. 하나 미리 적어 두면, 실제 chip 안의 `amp_mem` 은 한 벌이 아닙니다. amplitude array 여러 벌을 같은 memory에 두고 그중 하나에서 계산을 이어 가는 **checkpoint slot** 구조인데, 그 이유는 16장이 설명합니다.
+
+이제 gate가 array 연산이 되는 모습을 봅니다. 9장에서 본 Grover 한 바퀴 $G = U_\psi U_f$ 는 다음과 같은 연산이 됩니다.
+
+**oracle $U_f$.** 9장에서는 "solution index의 amplitude를 뒤집는다"고 썼습니다. 그것은 답을 이미 아는 사람의 서술입니다. 우리 circuit은 solution index를 **모릅니다.** circuit이 가진 것은 threshold와 predicate뿐이고, 하는 일은 이것입니다:
+
+$$\texttt{amp\_mem}[i] \;\leftarrow\; -\,\texttt{amp\_mem}[i] \quad \text{if } \mathrm{pred}\big(\texttt{data\_mem}[i],\ \texttt{thr}\big)$$
+
+predicate $\mathrm{pred}$ 는 네 종류입니다 — `value < thr_a`, `value > thr_a`, `value == thr_a`, 그리고 범위 `thr_a < value < thr_b`. predicate를 만족하는 칸이 하나일 수도 수백 개일 수도 있고, circuit은 **몇 개인지조차 모른 채** array 전체를 훑으며 칸마다 판정합니다. 이 명제 — **oracle은 solution을 아는 circuit이 아니라 predicate를 판정하는 circuit** — 는 해설서 전체에서 일관되게 따르는 설명이고, [14.2절](14_multiple_solutions_and_minimum_search.md#142-oracle은-solution을-아는-circuit이-아니다)에서 다시 다룹니다. predicate가 실제로 어떤 gate가 되는지는 [13.3절](13_oracle_diffusion_measurement_datapath.md#133-oracle--predicate-4종이-subtractor-하나를-공유한다)입니다.
+
+**diffusion operator $U_\psi$.** 이쪽은 predicate와 무관하게 전 칸에 똑같이 걸립니다 — inversion about the mean `amp_mem[i] ← 2*mean - amp_mem[i]` 입니다. index를 가리지 않으므로 data를 볼 필요조차 없습니다.
+
+즉 ket과 unitary matrix로 쓰던 모든 것이, emulator에서는 **array에 대한 산술**로 표현됩니다. Part 5 이후에는 이 대응 관계를 바탕으로 설명합니다.
+
+---
+

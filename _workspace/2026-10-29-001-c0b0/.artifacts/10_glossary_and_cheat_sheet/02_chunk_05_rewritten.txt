@@ -1,0 +1,12 @@
+## 10.4 algorithm 한 줄 요약
+
+| algorithm | 문제 | 핵심 | complexity (classical→quantum) |
+|----------|------|------|:---:|
+| Deutsch–Jozsa | constant vs balanced 판별 | $H^{\otimes \text{number of qubits}}$→$U_f$→$H^{\otimes \text{number of qubits}}$, interference 1회 | $O(2^{\text{number of qubits}}) \to O(1)$ |
+| Grover | 정렬 안 된 search | $(U_\psi U_f)$ iteration, $\frac{\pi}{4}\sqrt{\text{number of states}}$ 회 | $O(\text{number of states}) \to O(\sqrt{\text{number of states}})$ |
+| Grover **emulation** (이 project) | 같은 algorithm을 classical circuit으로 흉내 | iteration당 $O(\text{number of states}/\text{number of lanes})$ cycles × $O(\sqrt{\text{number of states}/\text{number of solutions}})$ iterations | $O(\text{number of states}\cdot\sqrt{\text{number of states}/\text{number of solutions}})$ — classical scan보다 **느림** |
+
+마지막 줄을 오해하지 마세요. $\sqrt{\text{number of states}}$ 이득은 **real quantum hardware**의 oracle 호출 횟수 이야기이고, 모든 state의 amplitude를 매 iteration 전부 훑어야 하는 emulator에는 해당하지 않습니다. 그래서 이 해설서는 우리 accelerator를 classical linear scan과 비교하지 않습니다 — 비교 대상은 같은 일을 하는 **Qiskit `AerSimulator`·NumPy state vector simulator**이고, 이 장치의 목적은 속도 우위를 얻는 데 있지 않습니다. quantum algorithm의 동작을 **결정적이고 재현 가능하게 재현·검증하는 전용 hardware**입니다([11.1절](11_state_vector_emulator.md#111-emulationsimulation진짜-quantum-computer)).
+
+---
+

@@ -1,0 +1,57 @@
+{
+  "genre": "report",
+  "change_rate": {
+    "rate": 0.0125,
+    "scope": "전문",
+    "verdict": "OK"
+  },
+  "s1_targets": [],
+  "antithesis": {
+    "before": 3,
+    "after": 1,
+    "verdict": "스킵 (원문 대구 < 5)"
+  },
+  "golden": [
+    {
+      "code": "footnote_anchor",
+      "message": "각주 1)이 원위치를 벗어났습니다 (인접 수치 앵커 '0,1' → '0'): 인용 출처 변조 위험"
+    },
+    {
+      "code": "footnote_anchor",
+      "message": "각주 1)이 원위치를 벗어났습니다 (인접 수치 앵커 '1' → '0'): 인용 출처 변조 위험"
+    },
+    {
+      "code": "footnote_anchor",
+      "message": "각주 1)이 원위치를 벗어났습니다 (인접 수치 앵커 '0,1' → '0'): 인용 출처 변조 위험"
+    },
+    {
+      "code": "footnote_anchor",
+      "message": "각주 1)이 원위치를 벗어났습니다 (인접 수치 앵커 '2' → '0'): 인용 출처 변조 위험"
+    }
+  ],
+  "sentence_touch": {
+    "rate": 0.1103,
+    "touched": 16,
+    "total": 145
+  },
+  "numbers_dropped": [],
+  "modality": {
+    "lost_pairs": [],
+    "uncertain_pairs": [],
+    "counts": {
+      "deontic": {
+        "before": 3,
+        "after": 4
+      },
+      "hedge": {
+        "before": 6,
+        "after": 6
+      }
+    },
+    "verdict": "OK"
+  },
+  "gate": {
+    "verdict": "WARN — 경고. 사용자 고지 + finalize 승급",
+    "exit_code": 1
+  }
+}

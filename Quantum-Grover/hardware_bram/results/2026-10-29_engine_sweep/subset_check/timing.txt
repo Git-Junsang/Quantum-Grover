@@ -1,0 +1,2 @@
+e4m2 exit=0 elapsed=23s
+e20m11 exit=0 elapsed=91s

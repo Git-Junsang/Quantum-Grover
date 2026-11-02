@@ -1,0 +1,20 @@
+## 10.9 다음 단계 — Part 5: 이론에서 hardware로
+
+이론을 마쳤으니, 이 algorithm을 **FPGA hardware로 흉내 내는** 이야기로 넘어갈 준비가 되었습니다. 11장부터 18장까지 여덟 장에서 이 project가 실제로 만들려는 장치를 다룹니다. Part 5(11·12장)가 기초가 되는 memory 지도와 수 표현을 설명하고 Part 6(13·14장)이 한 shot 안의 datapath를, Part 7(15장)이 설계 좌표를, Part 8(16~18장)이 shot 바깥의 제어·system·verification을 다룹니다.
+
+- [11장 state vector emulator](11_state_vector_emulator.md) — ket $|\psi\rangle$ 이 array가 되는 원리, `amp`·`data`·`mask` 세 array의 BRAM 예산, 32-lane banking, pass 단위 cycle 비용 model.
+- [12장 amplitude를 숫자로](12_fixed_point_and_precision.md) — 왜 floating-point가 아니라 fixed-point인가. Q1.22(23 bits)와 넓은 중간값·symmetric saturation, round-half-to-even, 그리고 bit width는 공식이 아니라 **재서** 정한다는 것.
+- [13장 oracle과 diffusion operator](13_oracle_diffusion_measurement_datapath.md) — 한 iteration 안의 FSM, predicate 4종($<$·$>$·$=$·범위)이 subtractor 하나를 공유하는 방법, accumulation·shift·subtraction만으로 계산하는 diffusion operator(0 multipliers).
+- [14장 multiple solutions](14_multiple_solutions_and_minimum_search.md) — solution이 여럿일 때의 amplitude 동률, Born-rule sampling, row·lane layer measurement, Found Mask로 중복 없이 전부 찾는 enumeration mode.
+- [15장 논문 지도와 설계 결정표](15_paper_map_and_design_decisions.md) — 여섯 논문의 계보와 여덟 개의 대립축, 확정 설계 결정표, 인용 시 주의할 정오표.
+- [16장 몇 번 돌릴지 모를 때](16_iteration_control_and_checkpoints.md) — number of solutions를 모를 때의 BBHT shot loop(mean 22.7 shots, 14 qubits·1 solution)와, 실패한 shot이 남긴 amplitude를 세 벌까지 남겨 두고 이어 도는 checkpoint.
+- [17장 RVX SoC에 붙이기](17_rvx_soc_integration.md) — accelerator를 system에 얹는 일. APB CSR로 제어하고, AHB master로 data를 실어 오고, host와는 UART로 통신합니다.
+- [18장 3단 reference model과 bit-exact verification](18_reference_model_verification.md) — float64 → fixed-point model → RTL의 verification ladder로 "무엇이 틀렸나"를 층마다 나눠 묻는 방법.
+
+hardware 쪽 용어(LUT·FF·BRAM·DSP·APB·AHB 같은 것들)는 [15.7절 hardware glossary](15_paper_map_and_design_decisions.md#157-hardware-용어집)에 모아 두었습니다. 위 10.5절의 glossary는 quantum 이론 용어 전용입니다. 그리고 설계 수치 — bit width·BRAM 개수·number of lanes·shot 통계 — 의 source of truth는 [15.4절 확정 설계 결정표](15_paper_map_and_design_decisions.md#154-우리-project의-좌표--확정-설계-결정표)입니다. 다른 장이 같은 값을 본문에 다시 적어 두는 것은 읽는 도중 link를 따라가지 않고도 확인할 수 있게 하기 위해서입니다. 값이 어긋나면 설계 결정표를 기준으로 합니다.
+
+이제 "state vector·oracle·diffusion operator·$\sqrt{\text{number of states}}$ iterations·measurement probability"가 무슨 뜻인지 알고 있으므로, 이 이론이 Verilog RTL과 datapath로 바뀌는 것을 따라갈 수 있습니다. 각 논문을 원문으로 정독하고 싶다면 한국어 해설본이 [`../papers/papers_ko/`](papers/papers_ko/)에 있습니다(원문 대조용 보조 자료).
+
+---
+
+> [← 9장 Grover algorithm](09_grover_algorithm.md) · [index](index.md) · [11장 state vector emulator →](11_state_vector_emulator.md)

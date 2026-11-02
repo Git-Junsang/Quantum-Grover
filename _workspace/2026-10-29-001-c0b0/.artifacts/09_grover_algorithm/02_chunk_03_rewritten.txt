@@ -1,0 +1,12 @@
+## 9.2 문제를 기호로
+
+- qubit의 개수를 number of qubits, search space의 크기를 $\text{number of states} = 2^{\text{number of qubits}}$ 라 씁니다.
+- oracle: 조건을 만족하면 $f(x)=1$, 아니면 $0$ ([7장](07_oracle_and_phase_kickback.md)).
+- 조건을 만족하는 index 전체를 **solution 집합** $A = \{\,x : f(x)=1\,\}$ 이라 하고, 그 크기를 $\text{number of solutions} = |A|$ 라 씁니다.
+
+이 장은 처음부터 solution이 하나 이상인 경우(**$\text{number of solutions} \ge 1$**)를 정식 설정으로 둡니다. solution이 하나뿐인 경우는 그중 **가장 단순한 special case**이고, 그때만 유일한 solution을 $\omega$ 라 부르겠습니다. 교과서가 흔히 solution 하나짜리부터 시작하는 것은 기호가 짧아지기 때문이지 그게 표준 문제라서가 아닙니다. 실제 search에서 oracle은 "이 index가 solution이냐"가 아니라 **predicate를 만족하느냐**만 판정하고, 그 predicate를 몇 칸이 만족하는지는 data에 따라 정해집니다([14.2절](14_multiple_solutions_and_minimum_search.md#142-oracle은-solution을-아는-circuit이-아니다)). solution을 하나로 못 박는 것은 "solution이 하나뿐임을 이미 안다"는 꽤 강한 가정이에요.
+
+Grover는 oracle을 약 $\frac{\pi}{4}\sqrt{\text{number of states}/\text{number of solutions}}$ 번 호출한 뒤 높은 probability로 solution 하나를 내놓습니다. 이 횟수가 어디서 오는지는 **9.5절**에서 풀립니다. (0 solutions, 즉 조건을 만족하는 칸이 하나도 없는 경우는 rotation angle 자체가 정의되지 않아 algorithm 바깥에서 따로 판정해야 합니다 — hardware에서 이를 어떻게 끝낼지는 아직 확정하지 않았습니다([16.9절](16_iteration_control_and_checkpoints.md#169-초판의-미정-넷은-이렇게-정해졌다)).)
+
+---
+

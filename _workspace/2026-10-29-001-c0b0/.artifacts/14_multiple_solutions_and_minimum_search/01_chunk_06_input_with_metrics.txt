@@ -1,0 +1,93 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 6/13이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 윤문 진단
+
+대상: `14_multiple_solutions_and_minimum_search.md`
+
+## 장르와 레지스터
+
+학부생용 공부 해설서입니다. 설명 본문은 합쇼체 중심의 친근한 존댓말이고, 질문·권유에는 해요체가 섞입니다. 요약·표의 간결한 명사형은 의도된 형식입니다. 이 register와 독자 수준을 그대로 유지합니다.
+
+## 겨냥 순서와 근거
+
+1. **D-14 / D-5 — 동작을 과장한 의인화·비유**: 「circuit으로 내렸습니다」·「설계를 통째로 뒤엎습니다」·「손끝 하나 달라지지」·「function을 먹였으니」·「귀납이 끝났습니다」·「measurement를 무너뜨립니다」·「checkpoint가 살아」 등은 동작·증명·유효성 설명으로 바로 쓸 수 있습니다. 기존 제목의 표현과 technical term은 보존합니다.
+
+2. **D-8 / D-2 — 예고와 감탄의 누적**: 「여기가 이 장의 본론」·「마지막으로 눈여겨볼 것」·「좋은 소식」 같은 문패가 실제 설명 앞에 붙습니다. 수식·조건·실패 규약을 손대지 않고 불필요한 안내만 줄입니다.
+
+3. **A-18 / I-3 — 긴 조건부 설명과 형식명사**: 14.3·14.4·14.7·14.8은 긴 괄호·대시와 「…것입니다」·「…뜻」이 거듭됩니다. relative_clause_nesting=9. sampling의 균등 조건과 checkpoint 무효화·종료 조건이 흐려지지 않게 문장을 나눕니다.
+
+4. **C-8 — 「공짜/공짜 아님」 대구 반복**: 14.1 도입·이후 설명·요약에서 대립이 누적됩니다. oracle·diffusion operator의 cycle 불변성과 measurement·iteration-control의 추가 고려라는 실질 구별을 유지하고 본문의 반복 비유만 완화합니다.
+
+## 정량 앵커와 해석
+
+입력 정량 블록의 route_hint는 `heavy`, 원문은 24,691자입니다. 위에 적은 양성 카운트만 해당 ID의 보조 근거로 사용했습니다. lexical_diversity의 낮은 값은 전문용어 반복의 영향이 있으므로 영어 용어를 치환하는 근거로 쓰지 않습니다. 이중 피동·by 피동·have 직역은 카운트가 0이어서 지배 패턴으로 지목하지 않습니다.
+
+## 보존 지침
+
+- 영어 용어·영어 토큰의 철자와 대소문자를 그대로 둡니다. 영어를 한국어로 옮기거나 동의어로 바꾸지 않습니다. 용어집 SSOT는 `documents/design_references/22_appendix_glossary_and_retired_specs.md` 22.2절입니다.
+- 사실·주장·수치·단위·수식·code·identifier·인용·조건·부정/긍정·인과를 보존합니다. 내용 보충이나 과학적 사실 수정은 이번 윤문의 범위가 아닙니다.
+- 제목·절 번호·link·그림·기존 콜아웃·표 구조를 유지합니다. 기존 볼드·이모지는 교재 고유 관습이므로 일괄 삭제하지 않습니다.
+- 어색한 비유·한국어 연결·조사·수식어만 국소 수정합니다. 단순히 technical term이 많이 나온다는 이유로 B 계열 처방을 적용하지 않습니다.
+- 의무·가능·추정의 강도를 보존하고 원문에 없던 설명이나 평가를 넣지 않습니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 2884
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.53  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.68  (z=-0.15 vs report 인간 baseline)
+- ending_comma_rate: 0.72  (n/a vs report 인간 baseline)
+- comma_segment_length: 8.19  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.002  (z=-1.93 vs report 인간 baseline)
+- lexical_diversity: 0.78  (z=+2.68 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 2
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+## 14.4 Born-rule sampling — probability를 circuit으로
+
+[4.1절](04_measurement.md#41-computational-basis-measurement와-born-rule)의 Born rule이 답을 이미 갖고 있습니다. state $|\psi\rangle = \sum_i a_i |i\rangle$ 를 computational basis로 측정하면 결과 $i$ 가 나올 probability는
+
+$$\text{probability}(i) = |a_i|^2$$
+
+입니다. amplitude가 실수뿐인 우리 datapath에서는 그냥 $a_i^2$ 이고요. 우리가 할 일은 이 분포를 따르는 random number를 circuit으로 뽑는 것 — 실기 quantum에서 자연이 공짜로 해 주는 일을, emulator에서는 우리가 만들어야 합니다.
+
+교과서적인 방법은 **inverse transform sampling** 입니다. prefix sum
+
+$$\text{prefix sum}(i) = \sum_{k \le i} a_k^2$$
+
+를 만들어 두고, uniform random number를 하나 뽑아 $\text{prefix sum}(i) > \text{random number}$ 가 되는 **첫 번째** $i$ 를 답으로 씁니다. index $i$ 가 뽑힐 조건은 random number가 $[\text{prefix sum}(i-1),\, \text{prefix sum}(i))$ interval에 떨어지는 것이고, 그 interval의 길이가 정확히 $a_i^2$ 이므로 $\text{probability}(i) = a_i^2$ 가 그대로 성립합니다. 4장의 규칙과 circuit이 한 치도 어긋나지 않습니다.
+
+여기서 세 가지 실용적 결정을 합니다.
+
+**전부 integer로, 자르지 않고 계산합니다.** amplitude가 23-bit integer이므로 square는 46-bit integer이고, 우리는 이 곱을 한 bit도 자르지 않습니다. 잘린 하위 bit가 곧 probability의 왜곡이고, 값이 작은 칸일수록 상대 error가 커져 분포가 체계적으로 기울기 때문입니다. prefix sum과 total weight도 필요한 폭 그대로 담습니다(14.5절). integer라서 좋은 점이 하나 더 있습니다 — prefix sum이 array 끝에서 **정확히** total weight에 닿으므로, random number가 total weight 미만이기만 하면 어디선가 반드시 멈춥니다. floating-point prefix sum이라면 rounding 때문에 끝까지 가도 random number를 못 넘는 경우를 대비한 안전망이 필요했겠지만, integer 설계에서는 그 경로 자체가 없습니다. 남는 예외는 total weight가 0인 경우 하나이고, 이때 circuit은 `zero_weight_error` 를 세우고 끝냅니다.
+
+**나눗셈을 하지 않습니다.** 보통은 probability가 되도록 prefix sum을 전체 sum of squares로 나누지만, 우리는 나누는 대신 random number를 $[0,\ \text{total weight})$ 범위에서 뽑습니다($\text{total weight} = \sum_k a_k^2$). 비교의 양변에 같은 constant를 곱한 것과 같으므로 분포는 동일하고, divider가 통째로 사라집니다. 다만 이 동치는 random number가 $[0,\ \text{total weight})$ 에서 **정확히 균등**할 때만 성립하는데, total weight는 2의 거듭제곱이 아니라서 PRNG 출력을 그대로 잘라 쓰면 균등해지지 않습니다. 그래서 **rejection sampling**을 씁니다 — 64-bit PRNG 출력에서 total weight − 1 의 bit 길이만큼 하위 bit를 후보로 꺼내, 후보가 total weight 이상이면 버리고 다시 뽑습니다. comparator 하나면 되니 divider가 도로 들어오지는 않고, 후보가 받아들여질 probability가 늘 절반을 넘으므로 mean 두 번 안에 끝납니다. 64-bit 출력은 Measurement PRNG(xorshift64)가 한 block씩 내며, 32-bit seed 하나에서 결정적으로 확장됩니다. 초기 state에서 total weight는 정확히 $2^{44}$ 인데(13.2절), iteration을 거친 뒤에는 rounding 때문에 정확히 그 값이 아니어도 이 방식은 그때의 total weight를 그대로 쓰므로 영향을 받지 않습니다.
+
+**squarer는 필요합니다.** argmax 시절에는 $|a|$ 의 최대와 $a^2$ 의 최대가 같아서 square를 건너뛸 수 있었지만, probability로 뽑으려면 크기 자체가 필요하므로 square를 피할 수 없습니다. [13.8절](13_oracle_diffusion_measurement_datapath.md#138-multiplier는-어디에-있고-어디에-없는가)의 "0 multipliers"는 **diffusion operator·oracle·Init 경로에 한정된** 이야기이고, Measurement Unit은 squarer를 씁니다. 이것이 우리 설계에서 DSP가 잡히는 유일한 자리입니다.
+
+남은 문제는 속도입니다. 위 절차를 곧이곧대로 짜면 amplitude를 한 칸씩 훑는 직렬 scan이라 16,384 cycles이 듭니다. Grover iteration 한 번이 약 268 cycles인데([11.8절](11_state_vector_emulator.md#118-cycle-비용-model)) measurement 한 번이 그 60×를 먹는 셈이고, 128 lanes datapath가 통째로 놀게 됩니다.
+
+---
+[원문 끝]

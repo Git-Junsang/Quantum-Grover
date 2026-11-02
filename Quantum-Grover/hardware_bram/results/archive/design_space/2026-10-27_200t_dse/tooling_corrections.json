@@ -1,0 +1,7 @@
+{
+  "file": "hardware_bram/synth/dse_ooc.tcl",
+  "previous_sha256": "d4455fd4c386d5a571601932382dfbac2966a9617b9647af68e1abbe32a1c199",
+  "corrected_sha256": "e5ce18dad41b1d7bcdc49c697b71f53d204faf662cdb69a7c559a2716780e9b9",
+  "reason": "Vivado 2026.1 read_verilog does not accept -include_dirs; pass it to synth_design instead",
+  "impact": "No completed synthesis/route result existed. RTL, policy and simulation inputs are identical."
+}

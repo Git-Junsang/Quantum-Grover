@@ -1,0 +1,19 @@
+## 18.5 predicate 4종과 경계값
+
+기본 예제를 확인한 뒤에는 실제 predicate circuit을 봅니다. 13.3절에서 네 predicate를 모두 **strict inequality**로 고정했으므로, 경계값 test는 그 약속이 circuit에 그대로 반영됐는지를 확인하는 일입니다.
+
+가장 먼저 볼 것은 **threshold와 정확히 같은 값**입니다. `value == thr_a` 인 칸은 `LT` 에서도 `GT` 에서도 solution이 아니어야 하고, `EQ` 에서만 solution이어야 하며, range predicate `thr_a < value < thr_b` 에서는 양 끝 모두 제외돼야 합니다. 이 네 가지가 한 data array에서 동시에 확인되도록 threshold와 같은 값을 data에 **일부러 심어 둡니다.** inequality sign을 한 칸 잘못 짠 circuit은 다른 test를 전부 통과하고 이 test에서만 걸립니다.
+
+다음은 data word의 **범위 양 끝**입니다. data word width가 16 bits(signed)이므로 값은 $[-32768,\ 32767]$ 입니다. `thr_a = -32768` 로 두면 `LT` 의 solution이 하나도 없고(0 solutions), `thr_a = 32767` 로 두면 `GT` 의 solution이 하나도 없습니다. 이때 확인할 것은 결과만이 아니라 **subtractor의 폭**입니다. 13.3절이 sign extension한 17-bit subtraction을 쓰는 이유가 정확히 이 극단에서 드러납니다 — 16 bits로 빼면 $32767 - (-32768)$ 이 넘쳐 MSB가 뒤집히고, predicate가 정반대 답을 냅니다. range predicate에서는 폭이 좁은 경우와 넓은 경우를 넣습니다. requested-j 묶음의 방향성 case(`gt_max_m0`, `lt_min_m0`, `range_narrow`, `range_wide`)가 이 자리입니다.
+
+그다음은 number of solutions의 극단입니다. 네 가지를 각각 시나리오로 둡니다.
+
+- **0 solutions — solution이 하나도 없다.** BBHT는 영원히 실패하므로 16.9절의 종료 규칙에 따라 멈춰야 합니다. 확인할 것은 shot cap이나 requested iterations budget에서 FSM이 **멈춰 있지 않고 종료하는가**, 그리고 해당 status bit가 서는가입니다.
+- **1 solution.** 최적 iteration이 100회인 표준 경우입니다. number of iterations별 success probability 표(100 iterations에서 100%)를 1단 model이 재현하는지, 그리고 100 iterations · 127 iterations 방향성 case가 2단·3단에서 bit 단위로 같은지 봅니다.
+- **$\text{number of solutions} > \text{number of states}/2$ — 역주행.** 14.8절의 함정 2입니다. solution을 절반 넘게, 혹은 전부 심으면(`eq_mhalf`, `eq_mall`) oracle이 사실상 $-I$ 에 가까워져 iteration이 measurement distribution을 거의 바꾸지 못합니다. 확인할 것은 "그래도 답이 나오는가"입니다 — 초반 shot은 iteration이 0 근처라 사실상 균등 무작위 추출이고, solution이 많으면 그것만으로 곧바로 맞아야 합니다.
+- **enumeration에서 solution이 256개를 넘을 때 — FIFO가 찬다.** solution이 FIFO 깊이보다 많은 data를 넣고 firmware가 일부러 늦게 뽑아, hardware가 멈췄다가(`FIFO_STALL` 증가) 뽑는 대로 다시 진행하는지, 결과가 하나도 빠지거나 겹치지 않는지 확인합니다.
+
+data distribution은 **세 종류**를 씁니다. 첫째, uniform random number — 기본 regression입니다. 둘째, 정렬된 data — solution이 index의 연속 interval에 몰립니다. 우리 indexing은 하위 5 bits가 lane이므로 연속 interval은 이웃한 row들의 lane에 골고루 퍼지고, 그 성질이 실제로 성립하는지 확인하는 것이 이 distribution의 목적입니다. 셋째, **solution이 한 row나 한 group 경계에 몰리는 인위적 data** — row weight의 prefix sum이 group 경계(32 rows마다)나 row 경계(lane 31/32)에서 넘어가는 자리입니다. Two-Level Select의 group·row 선택이 가장 까다로운 입력을 받는 경우이고, prefix sum의 off-by-one이 여기서 드러납니다(`eq_min_lane31`, `eq_max_lane32`, `d31`·`d32`·`d33` case). 중복 값이 많은 data를 넷째로 두면 `EQ` predicate에서 solution이 갑자기 많아지는 상황도 함께 볼 수 있습니다.
+
+---
+

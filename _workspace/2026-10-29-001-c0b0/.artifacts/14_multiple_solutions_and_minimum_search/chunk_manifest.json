@@ -1,0 +1,162 @@
+{
+  "version": 1,
+  "created": "2026-10-29",
+  "source_file": "01_input.txt",
+  "source_chars": 24691,
+  "source_sha256": "283bf1f22a2d42699389d12fcef358df747971d5e30fd142a93c282f0973eaf4",
+  "genre": "report",
+  "target_chunk_chars": 7000,
+  "max_chunk_chars": 9000,
+  "route_hint": "heavy",
+  "route_reason": "24,691자 초장문(>15,000) — 진단 + 청킹 권장",
+  "chunk_count": 13,
+  "body_chunk_count": 13,
+  "passthrough_chunk_count": 0,
+  "lossless_check": "ok",
+  "warnings": [],
+  "chunks": [
+    {
+      "index": 1,
+      "start": 0,
+      "end": 1072,
+      "char_count": 1072,
+      "starts_with_heading": true,
+      "heading": "# 14장. multiple solutions — Born-rule sampling과 enumeration",
+      "passthrough": false,
+      "input_file": "01_chunk_01_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_01_rewritten.txt"
+    },
+    {
+      "index": 2,
+      "start": 1072,
+      "end": 2104,
+      "char_count": 1032,
+      "starts_with_heading": true,
+      "heading": "## 14.0 기호 충돌 주의",
+      "passthrough": false,
+      "input_file": "01_chunk_02_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_02_rewritten.txt"
+    },
+    {
+      "index": 3,
+      "start": 2104,
+      "end": 3378,
+      "char_count": 1274,
+      "starts_with_heading": true,
+      "heading": "## 14.1 solution이 여럿이면 — oracle에서는 공짜",
+      "passthrough": false,
+      "input_file": "01_chunk_03_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_03_rewritten.txt"
+    },
+    {
+      "index": 4,
+      "start": 3378,
+      "end": 4659,
+      "char_count": 1281,
+      "starts_with_heading": true,
+      "heading": "## 14.2 oracle은 solution을 아는 circuit이 아니다",
+      "passthrough": false,
+      "input_file": "01_chunk_04_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_04_rewritten.txt"
+    },
+    {
+      "index": 5,
+      "start": 4659,
+      "end": 7326,
+      "char_count": 2667,
+      "starts_with_heading": true,
+      "heading": "## 14.3 amplitude 동률 — argmax가 무너지는 지점",
+      "passthrough": false,
+      "input_file": "01_chunk_05_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_05_rewritten.txt"
+    },
+    {
+      "index": 6,
+      "start": 7326,
+      "end": 10210,
+      "char_count": 2884,
+      "starts_with_heading": true,
+      "heading": "## 14.4 Born-rule sampling — probability를 circuit으로",
+      "passthrough": false,
+      "input_file": "01_chunk_06_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_06_rewritten.txt"
+    },
+    {
+      "index": 7,
+      "start": 10210,
+      "end": 10739,
+      "char_count": 529,
+      "starts_with_heading": true,
+      "heading": "## 14.5 2단 병렬 measurement",
+      "passthrough": false,
+      "input_file": "01_chunk_07_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_07_rewritten.txt"
+    },
+    {
+      "index": 8,
+      "start": 10739,
+      "end": 13953,
+      "char_count": 3214,
+      "starts_with_heading": true,
+      "heading": "1. **Build — row weight 만들기.** amplitude memory를 한 바퀴 읽으며 row마다 32 lanes의 sum of squares(row weight)를 만들어 작은 memory에 적고, total weight도 함께 모읍니다. 512 rows를 32 rows씩 16개 **group**으로 묶어, group 경계를 지날 때마다 그때까지의 prefix sum을 group prefix sum으로 적어 둡니다 — 추가 square도 추가 cycle도 없이 따라 나오는 값입니다. squarer 한 벌이면 한 cycle에 1 row라 512 cycles인데, final configuration(**Dual-Row Build**)은 checkpoint memory가 한 번에 내주는 4 rows를 받아 **한 cycle에 2 rows씩** 제곱해 256 cycles로 줄입니다. squarer가 두 벌인 이유가 이것입니다(DSP 128개).",
+      "passthrough": false,
+      "input_file": "01_chunk_08_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_08_rewritten.txt"
+    },
+    {
+      "index": 9,
+      "start": 13953,
+      "end": 15905,
+      "char_count": 1952,
+      "starts_with_heading": true,
+      "heading": "## 14.6 기각한 대안들",
+      "passthrough": false,
+      "input_file": "01_chunk_09_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_09_rewritten.txt"
+    },
+    {
+      "index": 10,
+      "start": 15905,
+      "end": 19049,
+      "char_count": 3144,
+      "starts_with_heading": true,
+      "heading": "## 14.7 enumeration mode — mask로 중복 없이",
+      "passthrough": false,
+      "input_file": "01_chunk_10_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_10_rewritten.txt"
+    },
+    {
+      "index": 11,
+      "start": 19049,
+      "end": 21025,
+      "char_count": 1976,
+      "starts_with_heading": true,
+      "heading": "## 14.8 두 개의 함정",
+      "passthrough": false,
+      "input_file": "01_chunk_11_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_11_rewritten.txt"
+    },
+    {
+      "index": 12,
+      "start": 21025,
+      "end": 21768,
+      "char_count": 743,
+      "starts_with_heading": true,
+      "heading": "## 14.9 확장 — threshold를 낮추면 minimum search",
+      "passthrough": false,
+      "input_file": "01_chunk_12_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_12_rewritten.txt"
+    },
+    {
+      "index": 13,
+      "start": 21768,
+      "end": 24691,
+      "char_count": 2923,
+      "starts_with_heading": true,
+      "heading": "## 14.10 이 장의 요약",
+      "passthrough": false,
+      "input_file": "01_chunk_13_input_with_metrics.txt",
+      "rewritten_file": "02_chunk_13_rewritten.txt"
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "date": "2026-10-29",
+  "timezone": "Asia/Seoul",
+  "original_top_level_experiment_directories": 32,
+  "retained_top_level_experiment_directories": 12,
+  "moves": [
+    {
+      "old": "hardware_bram/results/2026-10-26_kh_sweep",
+      "new": "hardware_bram/results/archive/design_space/2026-10-26_kh_sweep",
+      "category": "design_space"
+    },
+    {
+      "old": "hardware_bram/results/2026-10-27_200t_dse",
+      "new": "hardware_bram/results/archive/design_space/2026-10-27_200t_dse",
+      "category": "design_space"
+    },
+    {
+      "old": "hardware_bram/results/2026-10-27_200t_kh_smoke",
+      "new": "hardware_bram/results/archive/design_space/2026-10-27_200t_kh_smoke",
+      "category": "design_space"
+    },
+    {
+      "old": "hardware_bram/results/2026-10-27_kh_sweep_m2_m3",
+      "new": "hardware_bram/results/archive/design_space/2026-10-27_kh_sweep_m2_m3",
+      "category": "design_space"
+    },
+    {
+      "old": "hardware_bram/results/2026-10-26_policy_search_full40_seedfull",
+      "new": "hardware_bram/results/archive/policy_search/2026-10-26_policy_search_full40_seedfull",
+      "category": "policy_search"
+    },
+    {
+      "old": "hardware_bram/results/2026-10-26_policy_search_method1",
+      "new": "hardware_bram/results/archive/policy_search/2026-10-26_policy_search_method1",
+      "category": "policy_search"
+    },
+    {
+      "old": "hardware_bram/results/2026-10-27_policy_seed_first",
+      "new": "hardware_bram/results/archive/policy_search/2026-10-27_policy_seed_first",
+      "category": "policy_search"
+    },
+    {
+      "old": "hardware_bram/results/2026-10-26_policy_memo_compact",
+      "new": "hardware_bram/results/archive/policy_optimization/2026-10-26_policy_memo_compact",
+      "category": "policy_optimization"
+    },
+    {
+      "old": "hardware_bram/results/2026-10-28_policy_single_action",
+      "new": "hardware_bram/results/archive/policy_optimization/2026-10-28_policy_single_action",
+      "category": "policy_optimization"
+    },
+    {
+      "old": "hardware_bram/results/2026-10-28_policy_bottleneck",
+      "new": "hardware_bram/results/archive/policy_optimization/2026-10-28_policy_bottleneck",
+      "category": "policy_optimization"
+    },
+    {
+      "old": "hardware_bram/results/2026-10-28_policy_gap_bound_final",
+      "new": "hardware_bram/results/archive/policy_optimization/2026-10-28_policy_gap_bound_final",
+      "category": "policy_optimization"
+    },
+    {
+      "old": "hardware_bram/results/2026-10-28_policy_parallel_paths_verified",
+      "new": "hardware_bram/results/archive/policy_optimization/2026-10-28_policy_parallel_paths_verified",
+      "category": "policy_optimization"
+    },
+    {
+      "old": "hardware_bram/results/2026-10-28_policy_scan_parallel_verified",
+      "new": "hardware_bram/results/archive/policy_optimization/2026-10-28_policy_scan_parallel_verified",
+      "category": "policy_optimization"
+    },
+    {
+      "old": "hardware_bram/results/2026-10-28_policy_kh_cycles",
+      "new": "hardware_bram/results/archive/policy_optimization/2026-10-28_policy_kh_cycles",
+      "category": "policy_optimization"
+    },
+    {
+      "old": "hardware_bram/results/2026-10-28_k3h3_performance_recheck",
+      "new": "hardware_bram/results/archive/policy_optimization/2026-10-28_k3h3_performance_recheck",
+      "category": "policy_optimization"
+    },
+    {
+      "old": "hardware_bram/results/2026-10-28_policy_unpipeline_final",
+      "new": "hardware_bram/results/archive/policy_unpipeline/2026-10-28_policy_unpipeline_final",
+      "category": "policy_unpipeline"
+    },
+    {
+      "old": "hardware_bram/results/2026-10-28_policy_unpipeline_timingfix",
+      "new": "hardware_bram/results/archive/policy_unpipeline/2026-10-28_policy_unpipeline_timingfix",
+      "category": "policy_unpipeline"
+    },
+    {
+      "old": "hardware_bram/results/2026-10-28_policy_pause",
+      "new": "hardware_bram/results/archive/policy_unpipeline/2026-10-28_policy_pause",
+      "category": "policy_unpipeline"
+    },
+    {
+      "old": "hardware_bram/results/2026-10-28_policy_rank_timing",
+      "new": "hardware_bram/results/archive/implementation_pipeline/2026-10-28_policy_rank_timing",
+      "category": "implementation_pipeline"
+    },
+    {
+      "old": "hardware_bram/results/2026-10-28_k3h3_e4_m2_policy6_board",
+      "new": "hardware_bram/results/archive/implementation_pipeline/2026-10-28_k3h3_e4_m2_policy6_board",
+      "category": "implementation_pipeline"
+    }
+  ]
+}

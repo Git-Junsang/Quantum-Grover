@@ -1,0 +1,22 @@
+ERROR,row=141,next1,got=2,expected=1
+ERROR,row=142,next1,got=2,expected=1
+ERROR,row=1332,next0,got=1,expected=0
+ERROR,row=1332,next1,got=2,expected=1
+ERROR,row=1333,next0,got=1,expected=0
+ERROR,row=1333,next1,got=2,expected=1
+ERROR,row=1334,next0,got=1,expected=0
+ERROR,row=1334,next1,got=4,expected=1
+ERROR,row=1335,next0,got=1,expected=0
+ERROR,row=1335,next1,got=4,expected=1
+ERROR,row=1336,next0,got=1,expected=0
+ERROR,row=1336,next1,got=4,expected=1
+ERROR,row=2021,next1,got=2,expected=1
+ERROR,row=2022,next1,got=2,expected=1
+ERROR,row=2023,next1,got=2,expected=1
+ERROR,row=2024,next1,got=2,expected=1
+ERROR,row=2025,source,got=2,expected=1
+ERROR,row=4334,next1,got=2,expected=1
+ERROR,row=4335,next1,got=2,expected=1
+ERROR,row=4336,next1,got=2,expected=1
+SUMMARY,3,3,7403,81128,19050,414,20
+/workspace/hardware_bram/results/2026-10-28_policy_certified_suffix/source/tb_policy_kh_sweep.sv:208: $finish(2) called at 1033446000 (1ps)

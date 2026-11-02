@@ -1,0 +1,20 @@
+{
+  "checked_at": "2026-10-29T16:35:39.584803+09:00",
+  "source": "/tmp/claude-1000/-workspace/955a78d1-b88e-402e-85da-d001bfbd4798/scratchpad/synth_wt",
+  "targets": [
+    "k5h7e4m4",
+    "k6h8e4m4",
+    "k7h8e4m4"
+  ],
+  "measured": [],
+  "pending_targets": [
+    "k5h7e4m4",
+    "k6h8e4m4",
+    "k7h8e4m4"
+  ],
+  "unattributed_cases": [],
+  "policy_revisions": [],
+  "scope": "cache and memo primitive attribution only; no device fitting boundary",
+  "note": "Compare K/H scaling only within the same policy source revision. Named control LUT/FF attribution is partial.",
+  "status": "initial_audit"
+}

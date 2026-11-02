@@ -1,0 +1,7 @@
+{
+  "complete": 0,
+  "empty": 1,
+  "partial": 1,
+  "duplicate": 1,
+  "owned_ocd_cleanup": "working-directory guard and own PID termination passed"
+}

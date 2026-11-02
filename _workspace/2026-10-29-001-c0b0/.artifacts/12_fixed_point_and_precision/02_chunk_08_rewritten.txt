@@ -1,0 +1,27 @@
+## 12.6 error는 어떻게 자라나
+
+05번 논문에서 제시한 분석 결과입니다. truncation error가 Grover iteration을 거치며 최종 measurement probability distribution을 얼마나 왜곡하는지를, 두 state의 amplitude만 추적하는 방법으로 닫힌 형태로 유도합니다.
+
+그 방법의 출발점은 **two-amplitude theorem**입니다 — Grover의 어느 iteration 시점에서도 state vector에는 딱 **두 종류의 값**만 존재한다는 것입니다: solution amplitude $\alpha_{\text{solution}}$ 하나와, 나머지 non-solution amplitude $\alpha_{\text{non-solution}}$ 하나. 9장에서 4 states를 손으로 돌릴 때 non-solution 세 칸이 항상 같은 값이었던 것을 기억하시나요? 그게 우연이 아니라 **number of states와 무관하게 성립하는 성질**입니다. 덕분에 $2^{\text{number of qubits}}$ dimension 문제가 2 scalars 문제로 줄어 분석이 가능해집니다.
+
+이 theorem은 이 해설서에서 두 번 쓰입니다. 여기서는 error 분석을 가능하게 하고, 14.3절에서는 **solution이 여럿일 때 그 amplitude들이 매 iteration 정확히 같다**는 사실을 뒷받침해 measurement 방식 자체를 결정하는 근거가 됩니다. 9.4절 손계산에서 숫자로 확인할 수 있습니다.
+
+분석의 결론을 한 줄로 쓰면:
+
+$$\ell_2 \text{ error} = O\!\left(2^{\,\text{number of qubits}-\text{fraction bits}}\right)$$
+
+measurement probability distribution의 $\ell_2$ 거리(참값과 얼마나 벌어졌는가)가 $2^{\text{number of qubits}-\text{fraction bits}}$ 규모로 자란다는 뜻입니다. 이 exponent는 다음 관계를 뜻합니다:
+
+- **fraction bits를 1 bit 늘리면** → exponent가 1 줄어 **error가 절반**.
+- **qubit를 1개 늘리면** → exponent가 1 늘어 **error가 두 배**.
+
+<img src="diagrams/12_error_scaling.svg" width="600" alt="ℓ2 error = 2^(number of qubits − fraction bits) 등고선과 16 qubits · 16 fraction bits 붕괴 지점">
+
+왜 하필 solution amplitude에 이렇게 빠르게 error가 쌓일까요? solution amplitude는 작게 시작해 iteration마다 커지는데, 그 커지는 과정이 **inversion about the mean**($a\mapsto 2\bar a - a$)라서 매 iteration non-solution들의 truncation error까지 함께 끌어와 증폭하기 때문입니다. number of iterations가 $\frac{\pi}{4}\sqrt{\text{number of states}} \approx O(2^{\text{number of qubits}/2})$ 이고 error가 대략 그 square로 누적되므로 $O(2^{\text{number of qubits}})$, 여기에 한 번의 truncation 크기 $2^{-\text{fraction bits}}$ 가 곱해져 $O(2^{\text{number of qubits}-\text{fraction bits}})$ 가 됩니다.
+
+이 공식이 실무에 주는 경고가 하나 있습니다. 05번 논문의 실험에서 16 qubits, 16 fraction bits를 넣으면 $\ell_2$ error가 무려 **0.494** 로 치솟습니다. measurement probability의 총합이 1인데 error가 0.494라면, 결과는 사실상 **무의미**합니다. "amplitude를 그냥 16 bits에 담으면 충분하겠지"라는 순진한 가정이 정확히 어디서 무너지는지 보여주는 반례입니다 — qubit가 늘면 fraction bits도 그만큼 따라 키워야 한다는 것이죠.
+
+그리고 여기서 반드시 붙여 두어야 할 단서가 있습니다. 위 유도에서 error가 number of iterations의 square로 누적되는 것은 **매 iteration 같은 방향으로 밀리는 error**의 그림입니다. 12.4절에서 본 그대로, 그것은 **truncation**의 성질입니다. 05번의 이론 전체가 truncation을 전제로 합니다.
+
+---
+

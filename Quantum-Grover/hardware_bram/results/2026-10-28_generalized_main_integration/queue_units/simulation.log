@@ -1,0 +1,2 @@
+SUMMARY wide_queue slots=10 count_width=4 full_flush_simultaneous=passed errors=0
+hardware_bram/testbench/tb_plan_queue_parameterized.sv:54: $finish called at 170000 (1ps)

@@ -1,0 +1,78 @@
+[청크 컨텍스트] 이 텍스트는 한 문서를 나눈 청크 1/26이다.
+- 문서 전체가 아니므로 서두·결말·전환 문구를 새로 만들지 말 것. 경계가 잘린 듯 보여도 그대로 둔다.
+- 첫 줄은 제목/헤딩이다. 번호·기호·형식을 그대로 보존하고 본문 문장과 병합하지 말 것.
+[진단]
+# 윤문 진단
+
+대상: `index.md`
+
+## 장르와 레지스터
+
+학부생용 공부 해설서입니다. 설명 본문은 합쇼체 중심의 친근한 존댓말이고, 질문·권유에는 해요체가 섞입니다. 요약·표의 간결한 명사형은 의도된 형식입니다. 이 register와 독자 수준을 그대로 유지합니다.
+
+## 겨냥 순서와 근거
+
+1. **D-14 / D-5 — 학습 서술을 지배하는 비유**: 「뿌리」·「토대」·「물속에서 헤엄치는 장치」·「지수적 폭발」·「야심이 부족해서」·「네 기둥」·「15.4절이 이깁니다」가 연속됩니다. 기존 비유 박스는 유지하되 어색한 본문의 비유를 저장·복잡도·학습 순서·기준 문서로 구체화합니다.
+
+2. **D-8 / D-2 — 단정적 안내와 과한 평가**: 「완전히 체득」·「강력히 권합니다」·「취향이 아닙니다」·「둘을 더 못 박아」·「틀리면 좋았어라고 외치세요」 같은 표현이 교재 안내를 과장합니다. 학부생에게 설명하는 친근한 존댓말을 유지하며 현실적인 안내로 다듬을 여지가 있습니다. 발화자 있는 실제 인용은 그대로 둡니다.
+
+3. **A-18 / A-19 — 긴 관형구·이중 조사**: Grover project 소개와 emulation 이유를 묶은 문장·독자 가정 문단을 확인합니다. relative_clause_nesting=14, double_particle_count=1. interface·predicate·complexity·scope 조건을 보존하고 한국어 연결만 고칩니다.
+
+4. **C-8 / I-3 — 대립 구조와 반복적인 간접 설명**: 「…아니라」·「…것입니다」·「…데 있습니다」가 project 이유와 범위를 설명할 때 반복됩니다. simulator와 classical scan의 구별은 핵심이므로 남기고, 주변 메타 설명을 직접 진술합니다.
+
+## 정량 앵커와 해석
+
+입력 정량 블록의 route_hint는 `heavy`, 원문은 20,847자입니다. 위에 적은 양성 카운트만 해당 ID의 보조 근거로 사용했습니다. lexical_diversity의 낮은 값은 전문용어 반복의 영향이 있으므로 영어 용어를 치환하는 근거로 쓰지 않습니다. 이중 피동·by 피동·have 직역은 카운트가 0이어서 지배 패턴으로 지목하지 않습니다.
+
+## 보존 지침
+
+- 영어 용어·영어 토큰의 철자와 대소문자를 그대로 둡니다. 영어를 한국어로 옮기거나 동의어로 바꾸지 않습니다. 용어집 SSOT는 `documents/design_references/22_appendix_glossary_and_retired_specs.md` 22.2절입니다.
+- 사실·주장·수치·단위·수식·code·identifier·인용·조건·부정/긍정·인과를 보존합니다. 내용 보충이나 과학적 사실 수정은 이번 윤문의 범위가 아닙니다.
+- 제목·절 번호·link·그림·기존 콜아웃·표 구조를 유지합니다. 기존 볼드·이모지는 교재 고유 관습이므로 일괄 삭제하지 않습니다.
+- 어색한 비유·한국어 연결·조사·수식어만 국소 수정합니다. 단순히 technical term이 많이 나온다는 이유로 B 계열 처방을 적용하지 않습니다.
+- 의무·가능·추정의 강도를 보존하고 원문에 없던 설명이나 평가를 넣지 않습니다.
+[진단 끝]
+
+[정량 사전 점수 v2.0 — v1.6 8지표(KatFish baseline) + v2.0 카운트형]
+risk_band: low  (score 0)
+genre: report
+char_count: 384
+
+[v1.6 지표]
+- comma_inclusion_rate: 0.11  (n/a vs report 인간 baseline)
+- comma_usage_rate: 0.22  (z=-0.67 vs report 인간 baseline)
+- ending_comma_rate: 0.00  (n/a vs report 인간 baseline)
+- comma_segment_length: 6.45  (n/a vs report 인간 baseline)
+- conclusion_pivot_count: 0
+- safe_balance_count: 0
+- hanja_nominalizer_density: 0.000  (z=-2.00 vs report 인간 baseline)
+- lexical_diversity: 0.87  (z=+4.39 vs report 인간 baseline)
+
+[v2.0 카운트형 지표 — 원값 / baseline calibration 전 z-score 해석 보류]
+- double_passive_count (이중 피동, 본진 A-8): 0
+- by_passive_count (~에 의해 피동, 본진 A-9): 0
+- pronoun_density (인칭 대명사 밀도, 본진 A-16): 0.000
+- have_make_literal_count (have/make 직역, 본진 A-7): 0
+- double_particle_count (이중 조사 결합, 본진 A-19): 0
+- relative_clause_nesting (관형절 3중+ 중첩 문장 수, 본진 A-18): 0
+- deul_overuse_rate ('-들' 남용률, 본진 A-17 hold): 0.000
+- 카운트 > 0 지표는 해당 본진 ID 처방(quick-rules.md·taxonomy)과 교차 확인 후 윤문할 것.
+
+[근거 사용 가이드]
+- 위 점수는 *근거 보조*다. 단독 판정 금지(보고서 명시).
+- z>1.0 지표는 quick-rules.md S1·S2 패턴과 교차 확인 후 윤문할 것.
+- ending_comma_rate가 ★ S1 트리거인 경우 C-11(연결어미 뒤 쉼표) 우선 손질.
+- conclusion_pivot 매치 토큰은 D-1·H-1 처방 적용 대상.
+
+[원문 시작]
+# 해설서 index — quantum computing 시작하기
+
+> [1장 qubit와 state →](01_qubits_and_states.md)
+> **Part 0** — 이 글은 사전 지식이 필요 없습니다. 편하게 읽으세요.
+
+---
+
+quantum computer를 처음 배울 때 가장 먼저 드는 질문은 "이게 대체 왜 필요한가?"입니다. 이 글은 수식 없이, quantum computer가 어디에서 왔고 왜 만들어졌는지, 그리고 우리 project가 왜 하필 **Grover algorithm**을 다루는지를 이야기합니다. 이 글을 읽고 나면 [1장](01_qubits_and_states.md)부터 이어지는 수학이 "무엇을 향해 가는지" 감이 잡힐 것입니다.
+
+---
+[원문 끝]

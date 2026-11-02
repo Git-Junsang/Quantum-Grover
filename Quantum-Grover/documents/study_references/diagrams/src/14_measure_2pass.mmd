@@ -1,0 +1,8 @@
+flowchart TD
+    START([measurement 진입 · amplitude array 확정 · 읽기만]) --> BUILD["Build · 512 rows를 한 바퀴 읽음<br/>row weight 51-bit · 32 rows마다 group prefix sum 16개 · total weight 60 bits<br/>Dual-Row Build: cycle당 2 rows · square PE 2벌 · DSP 128"]
+    BUILD --> RNG["Measurement PRNG · 64-bit xorshift 출력의 하위 bits<br/>total weight 이상이면 버리고 다시 (rejection sampling)"]
+    RNG -->|total weight = 0| ZW["zero_weight_error"]
+    RNG --> GRP["group 고르기 (Two-Level Select) · 최대 16 cycles"]
+    GRP --> ROW["row 고르기 · group 안 32 rows · 최대 32 cycles"]
+    ROW --> LANE["lane 고르기 · row를 다시 읽어 32 lanes square · 잔여값을 처음 넘는 lane"]
+    LANE --> VER(["후보 (row, lane) → solution check · predicate · DATA_COUNT · Found Mask"])

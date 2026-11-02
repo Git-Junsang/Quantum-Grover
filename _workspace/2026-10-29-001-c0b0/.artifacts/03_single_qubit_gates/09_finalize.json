@@ -1,0 +1,54 @@
+{
+  "status": "corrected",
+  "genre": "report / 학부생용 기술 해설서",
+  "route": "light",
+  "source_chars": 10539,
+  "final_chars": 10535,
+  "change_rate": 0.0077,
+  "grade": "B",
+  "grade_note": "교재 고유의 제목·목록·콜아웃·용어 반복을 보존한 국소 윤문. 과윤문 없이 지배 패턴을 완화함.",
+  "self_check": {
+    "passed": 6,
+    "total": 6,
+    "scope": "사용자가 보존을 지시한 영어 용어·수식·code·제목·link·기존 콜아웃 형식은 패턴 제거 대상에서 제외함"
+  },
+  "fidelity_violations": [],
+  "residual_findings": [],
+  "over_editing": false,
+  "correction_count": 1,
+  "corrections": [
+    {
+      "before": "state들(\"바다\")로 계산할 수 있게 해 주어 지름길을 마련합니다.",
+      "after": "state들(\"바다\")에서 계산하도록 해 지름길을 마련합니다.",
+      "reason": "부자연스러운 조사·서술 결합 보정"
+    }
+  ],
+  "categories": [
+    "A-18",
+    "C-11",
+    "D-14",
+    "D-2",
+    "D-8",
+    "I-3"
+  ],
+  "review": "원문과 윤문본의 변경 구간·주변 문맥, 진단, gate를 직접 대조. 사실·부정/긍정·인과·조건·추측/당위와 의미를 보존. 불필요한 당위·가능성 주입 및 부자연스러운 조사·영어 용어 결합을 국소 보정.",
+  "preservation_check": "PASS: 영어 token·수치·수식·code fence·inline code·제목·link·콜아웃",
+  "gate_final": {
+    "verdict": "OK — 수렴",
+    "exit_code": 0
+  },
+  "baseline_golden_count": 0,
+  "new_golden_failures": 0,
+  "highlights": [
+    {
+      "rule": "C-11",
+      "before": "qubit state를 알았으니, 이제",
+      "after": "qubit state를 알았으니 이제"
+    },
+    {
+      "rule": "I-3",
+      "before": "state vector에 matrix를 곱하는 것이 곧 gate를 적용하는 것입니다.",
+      "after": "state vector에 matrix를 곱해 gate를 적용합니다."
+    }
+  ]
+}

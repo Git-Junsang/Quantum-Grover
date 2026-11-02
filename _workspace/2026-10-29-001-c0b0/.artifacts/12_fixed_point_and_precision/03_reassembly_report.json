@@ -1,0 +1,106 @@
+{
+  "source_chars": 25593,
+  "output_chars": 25538,
+  "total_ratio": 0.998,
+  "warnings": [],
+  "chunks": [
+    {
+      "index": 1,
+      "passthrough": false,
+      "orig_chars": 1305,
+      "rewritten_chars": 1310,
+      "ratio": 1.004
+    },
+    {
+      "index": 2,
+      "passthrough": false,
+      "orig_chars": 1083,
+      "rewritten_chars": 1083,
+      "ratio": 1.0
+    },
+    {
+      "index": 3,
+      "passthrough": false,
+      "orig_chars": 2421,
+      "rewritten_chars": 2419,
+      "ratio": 0.999
+    },
+    {
+      "index": 4,
+      "passthrough": false,
+      "orig_chars": 3861,
+      "rewritten_chars": 3839,
+      "ratio": 0.994
+    },
+    {
+      "index": 5,
+      "passthrough": false,
+      "orig_chars": 181,
+      "rewritten_chars": 181,
+      "ratio": 1.0
+    },
+    {
+      "index": 6,
+      "passthrough": false,
+      "orig_chars": 2700,
+      "rewritten_chars": 2689,
+      "ratio": 0.996
+    },
+    {
+      "index": 7,
+      "passthrough": false,
+      "orig_chars": 1744,
+      "rewritten_chars": 1743,
+      "ratio": 0.999
+    },
+    {
+      "index": 8,
+      "passthrough": false,
+      "orig_chars": 2342,
+      "rewritten_chars": 2337,
+      "ratio": 0.998
+    },
+    {
+      "index": 9,
+      "passthrough": false,
+      "orig_chars": 928,
+      "rewritten_chars": 928,
+      "ratio": 1.0
+    },
+    {
+      "index": 10,
+      "passthrough": false,
+      "orig_chars": 1515,
+      "rewritten_chars": 1500,
+      "ratio": 0.99
+    },
+    {
+      "index": 11,
+      "passthrough": false,
+      "orig_chars": 1889,
+      "rewritten_chars": 1889,
+      "ratio": 1.0
+    },
+    {
+      "index": 12,
+      "passthrough": false,
+      "orig_chars": 1840,
+      "rewritten_chars": 1832,
+      "ratio": 0.996
+    },
+    {
+      "index": 13,
+      "passthrough": false,
+      "orig_chars": 1184,
+      "rewritten_chars": 1186,
+      "ratio": 1.002
+    },
+    {
+      "index": 14,
+      "passthrough": false,
+      "orig_chars": 2573,
+      "rewritten_chars": 2575,
+      "ratio": 1.001
+    }
+  ]
+}

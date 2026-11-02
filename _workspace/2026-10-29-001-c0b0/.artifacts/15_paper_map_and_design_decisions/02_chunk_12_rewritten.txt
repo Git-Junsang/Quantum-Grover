@@ -1,0 +1,21 @@
+## 15.9 여섯 논문 너머 — 더 읽을거리
+
+이 해설서의 중심 자료는 여섯 편이지만 같은 문제(quantum algorithm을 고전 hardware로 흉내 내기)를 다른 각도에서 다룬 논문이 많습니다. 함께 참고한, 여섯 편 밖의 자료들을 여기 모읍니다.
+
+먼저 전체적인 분류를 보면, 지금까지 당연한 듯 쓴 "state vector를 array로 펼쳐 계산"하는 방식은 사실 **유일한 길이 아니라 세 갈래 중 하나**입니다. Cicero 외(2025) survey는 algorithm 수준 simulation을 **Schrödinger식(state vector)·Feynman식(path sum)·tensor network** 으로 나눕니다. 우리 Grover emulator는 전형적인 Schrödinger식으로, 셋 중 memory를 가장 많이 쓰지만($2^{\text{number of qubits}}$ amplitudes를 전부 저장) implementation이 가장 단순합니다. tensor network는 qubit가 많고 circuit이 얕을 때 소수의 출력 amplitude만 뽑아 훨씬 효율적이지만, Grover는 iteration마다 amplitude 전체를 건드리는 깊은 circuit이라 tensor network의 이점이 약해집니다 — 즉 Grover에 state vector 방식을 쓰는 데에는 이런 근거가 있습니다.
+
+| 논문 | 무엇을 더하나 | 본문 연결 |
+|------|---------------|:--------:|
+| **Boyer, Brassard, Høyer, Tapp (1998)** — Tight bounds on quantum searching | **BBHT의 원전.** solution이 몇 개인지 모를 때의 iteration schedule(growth factor 6/5)과 success probability의 lower bound가 여기서 나옴 | [15.2](#152-계보도--누가-누구를-딛고-섰나) · [16.2](16_iteration_control_and_checkpoints.md#162-bbht--무작위로-뽑는-number-of-iterations와-12-growth-factor) |
+| **Pilch & Długopolski (2018)** — FPGA quantum emulator | 04·05·06·07이 공통 인용하는 **baseline**. qubit=지수 hardware의 benchmark(2 qubits 8k → 3 qubits 25k ALM). hardware von Neumann measurement | [15.2](#152-계보도--누가-누구를-딛고-섰나) · [14.6](14_multiple_solutions_and_minimum_search.md#146-기각한-대안들) |
+| **Frank 외 (2009)** — SEQCSim | 저장 대신 **재계산**으로 memory를 $O(s+t)$ 로 (공간–시간 맞바꿈). 단 Grover엔 자멸적 | [11.3](11_state_vector_emulator.md#113-qubit-하나--memory-두-배) |
+| **Tiwari 외 (2026)** — 30 qubits HBM simulator | memory-bound의 다음 수 = **HBM**. bank interleaving + BRAM→HBM 성능 절벽 benchmark | [11.6](11_state_vector_emulator.md#116-memory-bound의-두-얼굴--용량과-port) |
+| **Belfore (2024)** — Scalable FPGA Architecture | 병렬화의 **제3비용 = routing**(Beneš permutation network가 logic 36%). 순차 streaming인 우리는 회피 | [11.7](11_state_vector_emulator.md#117-병렬도와-banking) |
+| **Cicero 외 (2025)** — simulation survey | 방식 3분류(Schrödinger/Feynman/tensor network), FPGA의 두 역할(emulation↔acceleration) | [11장](11_state_vector_emulator.md) · 위 문단 |
+| **Häner 외 (2016)** — High-Performance Emulation | "emulation vs simulation" 용어의 원전. 단 이들의 "emulation"은 QFT→FFT 같은 **software 지름길** 뜻이라 우리(state vector를 hardware에 펼침)와 다른 갈래 | — |
+| **AMARETTO (2024)** — 저가 FPGA emulator | **algorithm을 RTL에 고정(04·우리)** vs **gate를 명령어로 실행**(butterfly amplitude pair 선택, KV260에서 16 qubits)의 대조 | — |
+
+이 논문들의 원문 PDF는 [`../papers/5. 추가 수집 (OpenAlex)/`](papers/5.%20추가%20수집%20(OpenAlex)/)에, 더 넓은 목록은 [`../papers/references.md`](papers/references.md)에 있습니다. 다만 이들은 여섯 편처럼 정독·검증한 자료가 **아니라 보조 참고 자료**이니 인용하기 전에는 원문을 직접 확인하세요.
+
+---
+

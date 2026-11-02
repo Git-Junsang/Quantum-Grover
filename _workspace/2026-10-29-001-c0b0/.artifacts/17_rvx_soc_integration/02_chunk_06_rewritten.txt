@@ -1,0 +1,29 @@
+## 17.5 data load — AHB master
+
+14 qubits면 `data_mem` 은 16,384개 × 16-bit = **32 KB**, 32-bit data word로 8,192개입니다. 이것을 SoC의 system SRAM에서 IP 안으로 옮기는 것이 AHB master(`bbht_ahb_loader`)가 하는 유일한 일입니다.
+
+DMA Engine은 data word 하나를 **SINGLE 읽기로 하나씩**(single outstanding) 읽고, 받은 32 bits를 16-bit 두 칸으로 나눠 `data_mem` 에 씁니다 — 하위 16 bits가 짝수 index, 상위 16 bits가 다음 index입니다. data word 하나에 address 1 + data 1 + 쓰기 1로 3 cycles이 들어 전체가 24,576 cycles, 100 MHz에서 **약 246 µs** 입니다. 같은 board에서 final configuration이 solution 하나를 찾는 search가 mean 약 0.23 ms(wall-clock time)이니, load 한 번이 search 한 번과 비슷한 시간입니다. data를 한 번 올려 두고 threshold만 바꿔 가며 여러 번 탐색하는 usage pattern이라면 load 비용은 더 희석됩니다.
+
+load를 시작하기 전에 DMA Engine이 스스로 검사하는 것이 넷 있고, 어긋나면 `DMA_STATUS` 의 해당 오류 bit를 세우고 거절합니다.
+
+| 검사 | 조건 |
+|---|---|
+| 정렬 | `DATA_ADDR` 가 4-byte 정렬 |
+| 개수 | `DATA_COUNT` 가 1~16384 |
+| 범위 | 읽을 interval이 system SRAM(`0xE0000000` ~ `0xE001FFFF`) 안 |
+| status | Accelerator Core가 실행 중이 아님 |
+
+다음 세 가지 규약을 따릅니다.
+
+**load 중에는 시작을 받지 않습니다.** load가 도는 동안은 `STATUS.load_busy` 가 서고, 17.4절의 수락 조건에 걸려 시작 pulse가 무시됩니다. 절반만 채워진 `data_mem` 위에서 oracle을 돌리면 아무 경고 없이 틀린 답이 나옵니다.
+
+**`DATA_COUNT` 가 홀수면 마지막 data word의 상위 16 bits는 쓰지 않습니다.** 설령 쓰더라도 그 index는 `DATA_COUNT` 밖이라 oracle이 non-solution으로 봅니다(13.3절). 다만 Accelerator Core 쪽 load port는 같은 address를 두 번 써도 개수를 올리므로, 바깥의 DMA Engine이 각 address를 정확히 한 번씩 쓰도록 짜여 있습니다.
+
+**load는 checkpoint를 무효화합니다.** data가 바뀌면 predicate가 같아도 solution 집합이 달라지므로, 남아 있던 amplitude는 의미가 없습니다(16.7절).
+
+system SRAM 크기도 이 경로와 묶여 있습니다. 32 KB array에 firmware code와 stack까지 들어가야 하므로 SRAM을 128 KB로 잡았고, 그 몫이 SoC가 쓰는 32 BRAM tiles의 대부분입니다(15.5절).
+
+data를 어디서 만드느냐는 firmware의 몫으로 정했습니다. benchmark용 data는 console app의 `GEN` 명령이 RISC-V core에서 **seed 둘로부터 결정적으로** 만들어 SRAM에 씁니다 — 배경값은 xorshift random number로, solution을 심을 위치는 또 다른 seed로 정하고, 배경값이 우연히 목표값과 같아지는 자리는 한 bit를 뒤집어 피해서 심은 개수가 곧 number of solutions가 되게 합니다. seed가 같으면 array가 같으므로 재현성도 확보됩니다. 초판은 IP 안에 PRNG를 두는 안을 적었지만, firmware에서 만들어도 load가 search와 비슷한 시간에 끝나므로 IP를 가볍게 두는 쪽을 택했습니다. (재현 package에는 RVX 없이 IP 안의 생성기로 data를 만드는 독립 FPGA revision도 있었지만, 임의 data를 올릴 수 없어 final revision에는 쓰지 않았습니다.)
+
+---
+

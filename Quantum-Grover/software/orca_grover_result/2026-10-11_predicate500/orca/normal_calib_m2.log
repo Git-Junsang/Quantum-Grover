@@ -1,0 +1,18 @@
+# capture start 2026-10-11 07:02:56 port=/dev/serial/by-id/usb-Silicon_Labs_CP2102N_USB_to_UART_Bridge_Controller_00bdfd44bd8cf011b0a528b9d9065118-if00-port0
+
+
+[RVX/START] EMU@FPGA
+[RVX/START] ORCA_BBHT_BASELINE
+SW_MODEL,3,OPT_ONEPASS_NORMAL
+SW_SOURCE,orca_bbht_c,2026-10-10b
+SW_CONTRACT,Q14,N=16384,Q1.22,BUDGET=576,SHOT_CAP=100,WORKLOAD=PREDICATE500
+SW_TIMING_SOURCE,RVX_REAL_CLOCK
+SW_TIMING_UNIT,microsecond_tick
+SW_TIMING_CORE_CLK_HZ,50000000
+SW_TIMING_SCOPE,bbht_search_only,oracle_setup_and_printf_excluded
+SW_RUN_HEADER,model,predicate,target_count,seed_index,seed_j,seed_meas,success,result_index,trial_count,L_BBHT,actual_grover_iterations,termination,saturations,timer_hi,timer_lo
+SW_PROFILE,CALIBRATE,EQ,M=1
+SW_CALIB_ITER,3,iterations=20,0,1283366
+SW_CALIB_MEASURE,3,measurements=1,0,54178
+[RVX/END] ORCA_BBHT_BASELINE
+# capture end 2026-10-11 07:03:01 (5.0s)
